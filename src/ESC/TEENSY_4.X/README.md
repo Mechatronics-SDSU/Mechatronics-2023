@@ -13,13 +13,13 @@ testing was done with somewhat interesting findings.
 > Response times are unsurprisingly lightning fast  
   
 ### To Use
-> Choose Which Timer to Test (Quad or Flex) by uncommenting one and commenting the other
-> Upload to Teensy 4.X
-> Observe output on scope
-> Vary the speed through sending any byte (or no byte) through your favorite serial monitor
-> That's it!
+> Choose Which Timer to Test (Quad or Flex) by uncommenting one and commenting the other  
+> Upload to Teensy 4.X  
+> Observe output on scope  
+> Vary the speed through sending any byte (or no byte) through your favorite serial monitor  
+> That's it!  
   
-### Notes on Deadzone Considerations
+### Notes on Deadzone Considerations (see Attached Image for Visual Representation)
 A deadzone is almost required for any PWM based system to ensure that the 0% setting maintains  
 a safety margin (ie. changes in signal or processing will not turn the motor on inside a  
 tolerance band). Unfortunately this means with a direct map system (1% -> 0% PWM Val + 1%)  
