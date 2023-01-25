@@ -25,9 +25,20 @@ and guaranteed to follow the core design requirements of the embedded subsystem.
 - `IntervalTimer` Provides ISR triggering interval timer bindings
 
 
-## Design Requirements
+## T4 Design Requirements
 - No polling or blocking. All processes should leverage the asynchronous nature of peripherals and priority driven interrupts
 - Minimal reliance on unknown code. If you don't know what's in a library, it shouldn't be in here. (FlexCAN gets a slight pass here)  
 - Optimized response for higher priority CAN frames, or "Reflex Responses" (ex. Shutdown 000# and Motor Drive 010#)
 - Timer + ISR driven events if periodic queries are requested. (Interval Timer)
-- Slow Speed
+- Slow Speed tasks should be avoided entirely, instead these should be offloaded to subsystems
+  
+  
+## RP2040 Dependencies
+- RP2040 C SDK
+  
+## RP2040 Design Requirements
+- Utilize both cores, one for mostly non-blocking and one for blocking tasks
+- Implement all low/slow speed tasks on chip if possible
+- Drive servos, torpedo launch systems
+- Actively sense power system datapoints if power system does not contain standalone processing
+- Drive non-critical human interfaces (lights, indicators)
