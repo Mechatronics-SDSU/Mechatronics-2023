@@ -20,8 +20,8 @@ and guaranteed to follow the core design requirements of the embedded subsystem.
   
 ## T4 Dependencies
 - `FlexCAN_T4` Provides asynchronous access to the iMX.RT 1062 CAN Peripheral
-- `T4_WAYFINDER_DVL` Provides asynchronous handling and bindings to read from and write to the Wayfinder DVL
-- `T4_MS5837` Provides asynchronous bindings and optimizations to the Blue Robotics MS5837 library
+- [T4_WAYFINDER_DVL](https://github.com/4n3m4i1/T4_WAYFINDER_DVL) Provides asynchronous handling and bindings to read from and write to the Wayfinder DVL
+- [T4_MS5837](https://github.com/4n3m4i1/T4_MS5837) Provides asynchronous bindings and optimizations to the Blue Robotics MS5837 library
 - `IntervalTimer` Provides ISR triggering interval timer bindings
 
 
