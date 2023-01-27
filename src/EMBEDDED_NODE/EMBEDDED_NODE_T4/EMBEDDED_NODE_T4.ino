@@ -24,6 +24,9 @@ Please Note: Tab/file names that match CAN message types
 
 #endif
 
+// Include Devices and Topics Jump Tables
+#include "T4_installed_devices_and_topics.h"
+
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can0;
 
 CONTROL control;
