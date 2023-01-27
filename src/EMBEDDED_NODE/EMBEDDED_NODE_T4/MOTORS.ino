@@ -37,6 +37,13 @@ Definitions:
 void motorInit(){
   control.thruster[0].pin = MOTOR_0;
   control.thruster[1].pin = MOTOR_1;
+  
+  control.thruster[2].pin = MOTOR_2;
+  control.thruster[3].pin = MOTOR_3;
+  control.thruster[4].pin = MOTOR_4;
+  control.thruster[5].pin = MOTOR_5;
+  control.thruster[6].pin = MOTOR_6;
+  control.thruster[7].pin = MOTOR_7;
 }
 
 uint16_t map2Motor(float input_val__){    // Scale -100% - 100% to valid uint16_t value
@@ -86,6 +93,16 @@ int setupMainDrives(){
  
   analogWriteFrequency(control.thruster[0].pin, 400);       // 400 Hz hardcoded. Do not change.
   analogWriteFrequency(control.thruster[1].pin, 400);       // 400 Hz hardcoded. Do not change.
+
+  analogWriteFrequency(control.thruster[2].pin, 400);       // 400 Hz hardcoded. Do not change.
+  analogWriteFrequency(control.thruster[3].pin, 400);       // 400 Hz hardcoded. Do not change.
+
+  analogWriteFrequency(control.thruster[4].pin, 400);       // 400 Hz hardcoded. Do not change.
+  analogWriteFrequency(control.thruster[5].pin, 400);       // 400 Hz hardcoded. Do not change.
+
+  analogWriteFrequency(control.thruster[6].pin, 400);       // 400 Hz hardcoded. Do not change.
+  analogWriteFrequency(control.thruster[7].pin, 400);       // 400 Hz hardcoded. Do not change.
+
   analogWriteResolution(PWM_RES);                       // Full hardware resolution avail at these slow speeds. Do not change.
   
   for(int n = 0; n < ACTIVE_THRUSTERS; n++){            // Initialize all motors to 0
