@@ -5,13 +5,13 @@
  
 #define INSTALLED_DEVICE_CT 4
 
-typedef void (**device_ptr_array_t)(const CAN_message_t &msg);
-typedef void (*topic_ptr_array_t)(const CAN_message_t &msg);
+typedef void (**device_ptr_array_t)( CAN_message_t &msg);
+typedef void (*topic_ptr_array_t)( CAN_message_t &msg);
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // General Use DREQ Functions
- void dreq_nop(const CAN_message_t &msg);
- void dreq_res(const CAN_message_t &msg);
+ void dreq_nop( CAN_message_t &msg);
+ void dreq_res( CAN_message_t &msg);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -21,8 +21,8 @@ typedef void (*topic_ptr_array_t)(const CAN_message_t &msg);
 // EMBDSYS Topics
   // 0x0000 NOP
   // 0x0001- 0x000F RES
- void embsys_subsysct(const CAN_message_t &msg);
- void embsys_conndevct(const CAN_message_t &msg);
+ void embsys_subsysct( CAN_message_t &msg);
+ void embsys_conndevct( CAN_message_t &msg);
 
 topic_ptr_array_t dreq_EMBSYS[EMBSYS_TOPIC_CT] =
   {
@@ -52,30 +52,30 @@ topic_ptr_array_t dreq_EMBSYS[EMBSYS_TOPIC_CT] =
 
 // PWRSYS Topics
   // 0x0000 RES
- void pwrsys_vbatt(const CAN_message_t &msg);           // 0x0001
- void pwrsys_vrail0(const CAN_message_t &msg);          // 0x0002
- void pwrsys_vrail1(const CAN_message_t &msg);          // 0x0003
- void pwrsys_vrail2(const CAN_message_t &msg);          // 0x0004
- void pwrsys_vrail3(const CAN_message_t &msg);          // 0x0005
- void pwrsys_vrail4(const CAN_message_t &msg);          // 0x0006
- void pwrsys_vrail5(const CAN_message_t &msg);          // 0x0007
- void pwrsys_vrail6(const CAN_message_t &msg);          // 0x0008
- void pwrsys_vrail7(const CAN_message_t &msg);          // 0x0009
+ void pwrsys_vbatt( CAN_message_t &msg);           // 0x0001
+ void pwrsys_vrail0( CAN_message_t &msg);          // 0x0002
+ void pwrsys_vrail1( CAN_message_t &msg);          // 0x0003
+ void pwrsys_vrail2( CAN_message_t &msg);          // 0x0004
+ void pwrsys_vrail3( CAN_message_t &msg);          // 0x0005
+ void pwrsys_vrail4( CAN_message_t &msg);          // 0x0006
+ void pwrsys_vrail5( CAN_message_t &msg);          // 0x0007
+ void pwrsys_vrail6( CAN_message_t &msg);          // 0x0008
+ void pwrsys_vrail7( CAN_message_t &msg);          // 0x0009
   // 0x000A RES
- void pwrsys_ibatt(const CAN_message_t &msg);           // 0x000B
- void pwrsys_irail0(const CAN_message_t &msg);          // 0x000C
- void pwrsys_irail1(const CAN_message_t &msg);          // 0x000D
- void pwrsys_irail2(const CAN_message_t &msg);          // 0x000E
- void pwrsys_irail3(const CAN_message_t &msg);          // 0x000F
- void pwrsys_irail4(const CAN_message_t &msg);          // 0x0010
- void pwrsys_irail5(const CAN_message_t &msg);          // 0x0011
- void pwrsys_irail6(const CAN_message_t &msg);          // 0x0012
- void pwrsys_irail7(const CAN_message_t &msg);          // 0x0013
+ void pwrsys_ibatt( CAN_message_t &msg);           // 0x000B
+ void pwrsys_irail0( CAN_message_t &msg);          // 0x000C
+ void pwrsys_irail1( CAN_message_t &msg);          // 0x000D
+ void pwrsys_irail2( CAN_message_t &msg);          // 0x000E
+ void pwrsys_irail3( CAN_message_t &msg);          // 0x000F
+ void pwrsys_irail4( CAN_message_t &msg);          // 0x0010
+ void pwrsys_irail5( CAN_message_t &msg);          // 0x0011
+ void pwrsys_irail6( CAN_message_t &msg);          // 0x0012
+ void pwrsys_irail7( CAN_message_t &msg);          // 0x0013
   // 0x0014 - 0x0019 RES
- void pwrsys_tbatt(const CAN_message_t &msg);           // 0x001A
- void pwrsys_trail0(const CAN_message_t &msg);          // 0x001B
- void pwrsys_trail1(const CAN_message_t &msg);          // 0x001C
- void pwrsys_trail2(const CAN_message_t &msg);          // 0x001D
+ void pwrsys_tbatt( CAN_message_t &msg);           // 0x001A
+ void pwrsys_trail0( CAN_message_t &msg);          // 0x001B
+ void pwrsys_trail1( CAN_message_t &msg);          // 0x001C
+ void pwrsys_trail2( CAN_message_t &msg);          // 0x001D
 
 topic_ptr_array_t dreq_PWRSYS[PWRSYS_TOPIC_CT] =
   {
@@ -117,17 +117,17 @@ topic_ptr_array_t dreq_PWRSYS[PWRSYS_TOPIC_CT] =
 #define WAYFDVL_TOPIC_CT    16
 
   // 0x0000 NOP
- void wayfdvl_velocity_3(const CAN_message_t &msg);
- void wayfdvl_velocity_x(const CAN_message_t &msg);
- void wayfdvl_velocity_y(const CAN_message_t &msg);
- void wayfdvl_velocity_z(const CAN_message_t &msg);
- void wayfdvl_velocity_e(const CAN_message_t &msg);
+ void wayfdvl_velocity_3( CAN_message_t &msg);
+ void wayfdvl_velocity_x( CAN_message_t &msg);
+ void wayfdvl_velocity_y( CAN_message_t &msg);
+ void wayfdvl_velocity_z( CAN_message_t &msg);
+ void wayfdvl_velocity_e( CAN_message_t &msg);
   // 4x res
- void wayfdvl_dist_mean(const CAN_message_t &msg);
- void wayfdvl_dist_1(const CAN_message_t &msg);
- void wayfdvl_dist_2(const CAN_message_t &msg);
- void wayfdvl_dist_3(const CAN_message_t &msg);
- void wayfdvl_dist_4(const CAN_message_t &msg);
+ void wayfdvl_dist_mean( CAN_message_t &msg);
+ void wayfdvl_dist_1( CAN_message_t &msg);
+ void wayfdvl_dist_2( CAN_message_t &msg);
+ void wayfdvl_dist_3( CAN_message_t &msg);
+ void wayfdvl_dist_4( CAN_message_t &msg);
   // 1x res
 
 
@@ -156,9 +156,9 @@ topic_ptr_array_t dreq_WAYFDVL[WAYFDVL_TOPIC_CT] =
 #define MS5837_TOPIC_CT     4
 
   // 0x0000 NOP
- void ms5837_data(const CAN_message_t &msg);
- void ms5837_depth(const CAN_message_t &msg);
- void ms5837_temp(const CAN_message_t &msg);
+ void ms5837_data( CAN_message_t &msg);
+ void ms5837_depth( CAN_message_t &msg);
+ void ms5837_temp( CAN_message_t &msg);
 
 topic_ptr_array_t dreq_MS5837[MS5837_TOPIC_CT] =
   {
@@ -172,7 +172,7 @@ topic_ptr_array_t dreq_MS5837[MS5837_TOPIC_CT] =
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // Device Array
-device_ptr_array_t dreq_topic[INSTALLED_DEVICE_CT] =
+device_ptr_array_t dreq_device[INSTALLED_DEVICE_CT] =
   {
     dreq_EMBSYS,
     dreq_PWRSYS,
@@ -184,6 +184,8 @@ device_ptr_array_t dreq_topic[INSTALLED_DEVICE_CT] =
 
 
 // Super important wrapper macro for easy nested array access
- void dreq_access(uint16_t *device, uint16_t *topic, const CAN_message_t &msg);
+ void dreq_access(uint16_t device, uint16_t topic,  CAN_message_t &msg);
 
+void fill_msg_buffer_w_float_buffer(CAN_message_t &msg,  uint8_t *buf);
+void float_2_char_array(uint8_t *arr_out, float *d_in);
 #endif

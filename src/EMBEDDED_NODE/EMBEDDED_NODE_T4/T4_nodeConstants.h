@@ -2,8 +2,17 @@
 #define T4_NODECONSTANTS_h
 
 // STATE CONTROL DEFINES, THESE ARE IMPORTANT!!!!
-#define DEBUG_MODE
 
+
+  // Define USB Serial Print Debug Messaging
+#define DEBUG_MODE
+#define DEBUG_DECODE
+#define DEBUG_DREQ_PTR
+
+
+
+
+  // Define Enabled Devices
 //#define ENABLE_PRES_SENS    // Enables i2c0 and MS5837 code
 
 

@@ -12,7 +12,7 @@ Please Note: Tab/file names that match CAN message types
 
 // Core essential constants and struct definitions
 #include "T4_nodeConstants.h"
-
+#include "device_data_structs.h"
 #ifdef ENABLE_PRES_SENS
 
 // MS5837 Library, Joseph D
@@ -26,10 +26,14 @@ Please Note: Tab/file names that match CAN message types
 
 // Include Devices and Topics Jump Tables
 //  this is done automatically, don't re include!!!!!
+//#include "T4_installed_devices_and_topics.h"
+
 
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can0;
 
 CONTROL control;
+
+pressure_sensor_t installed_MS5837;
 
 #ifdef ENABLE_PRES_SENS
 pressure_sensor_t pressure_sensor;
@@ -70,6 +74,38 @@ void setup() {
 void loop() {
   // Need to have this here
   Can0.events();
+
+/*
+  // for at home (ie no CAN) debugging of DRES
+  // 03 01 pres depth
+  if(Serial.read() == 'A'){
+    uint16_t _fake_dev = 3;
+    uint16_t _fake_top = 1;
+    CAN_message_t fake_msg;
+    fake_msg.id = 0x021;
+
+    while(!Serial.available());
+
+    switch(Serial.read()){
+      case '0':
+        _fake_top = 0;
+      break;
+      case '1':
+        _fake_top = 1;
+      break;
+      case '2':
+        _fake_top = 2;
+      break;
+      case '3':
+        _fake_top = 3;
+      break;
+    }
+    
+    dreq_access(_fake_dev, _fake_top,  fake_msg);  
+  }
+*/
+
+
 
 #ifdef ENABLE_PRES_SENS
   update_pres_data();
