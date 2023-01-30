@@ -18,7 +18,7 @@ struct pressure_sensor_t{
   uint8_t temperature[4];
   uint8_t average_temperature[4];
   char  model[7];
-  uint8_t healthy;
+  uint8_t health;
 };
 
 

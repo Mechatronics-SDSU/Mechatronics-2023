@@ -1,7 +1,5 @@
 //#include "T4_installed_devices_and_topics.h"
 
-
-
 void sensor_interaction_handler(const CAN_message_t &msg){
   uint16_t err_val = 0;
 #ifdef DEBUG_DECODE

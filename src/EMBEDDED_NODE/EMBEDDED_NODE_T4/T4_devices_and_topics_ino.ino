@@ -167,26 +167,24 @@ void dreq_res( CAN_message_t &msg){
 // 0x0003 MS5837  MS5837 Pressure and Temp Sensor
 
 void ms5837_data( CAN_message_t &msg){
+#ifdef DEBUG_DREQ_PTR
   Serial.printf("Data Requested!\n");
-  
+#endif
+  // Macros unsupported at the moment
 }
 
 void ms5837_depth(CAN_message_t &msg){
-  //float rando_depth = (float)(rand() * 100);
-
-  float rando_depth = 2.0f;
-
-  uint8_t dp[4];
-
+#ifdef DEBUG_DREQ_PTR
   Serial.println("Depth Requested!\n");
-
-  float_2_char_array(dp, &rando_depth);
-  fill_msg_buffer_w_float_buffer(msg, dp);
-
+#endif
+  fill_msg_buffer_w_float_buffer(msg, pressure_sensor.depth);
 }
 
-void ms5837_temp( CAN_message_t &msg){
+void ms5837_temp(CAN_message_t &msg){
+#ifdef DEBUG_DREQ_PTR
   Serial.printf("Temp Requested!\n");
+#endif
+  fill_msg_buffer_w_float_buffer(msg, pressure_sensor.temperature);
 }
 
 
@@ -265,7 +263,6 @@ void dreq_access(uint16_t device, uint16_t topic,  CAN_message_t &msg){
   (*(*(dreq_device[device])[topic]))(msg);
 }
 
-
 void fill_msg_buffer_w_float_buffer(CAN_message_t &msg, uint8_t *buf){
   msg.buf[4] = buf[0];
   msg.buf[5] = buf[1];
@@ -273,9 +270,9 @@ void fill_msg_buffer_w_float_buffer(CAN_message_t &msg, uint8_t *buf){
   msg.buf[7] = buf[3];
 }
 
-void float_2_char_array(uint8_t *arr_out, float *d_in){
-  arr_out[0] = *((uint8_t *)(d_in));
-  arr_out[1] = *((uint8_t *)(d_in) + 1u);
-  arr_out[2] = *((uint8_t *)(d_in) + 2u);
-  arr_out[3] = *((uint8_t *)(d_in) + 3u); 
+void float_2_char_array(uint8_t *arr_out, float d_in){
+  arr_out[0] = *((uint8_t *)(&d_in));
+  arr_out[1] = *((uint8_t *)(&d_in) + 1u);
+  arr_out[2] = *((uint8_t *)(&d_in) + 2u);
+  arr_out[3] = *((uint8_t *)(&d_in) + 3u); 
 }

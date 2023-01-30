@@ -5,8 +5,8 @@ void startup_pressure_sensor(pressure_sensor_t *pres_sense_struct){
 //            INITIALIZE i2c0 AND MS5837 DEPTH SENSOR
 ///////////////////////////////////////////////////////////////
 
-  const char _bar30_name[7] = "MSBAR30";
-  const char _bar02_name[7] = "MSBAR02";
+  const char _bar30_name[8] = "MSBAR30";
+  const char _bar02_name[8] = "MSBAR02";
 
   // Initiate 400k i2C 0, MS5837 main dependant
   FAST_I2C.begin();
@@ -23,14 +23,18 @@ void startup_pressure_sensor(pressure_sensor_t *pres_sense_struct){
   if(ms5837_getModel() == MS5837_02BA_ID){
     for(uint32_t n = 0; n < 7; n++) pres_sense_struct->model[n] = _bar02_name[n];
 #ifdef DEBUG_MODE
-    Serial.printf("Model Decoded: %s\n", B02_STR);
+    Serial.printf("Model Decoded: %s\n", _bar02_name);
 #endif
   } else {
     for(uint32_t n = 0; n < 7; n++) pres_sense_struct->model[n] = _bar30_name[n];
 #ifdef DEBUG_MODE
-    Serial.printf("Model Decoded: %s\n", B30_STR);
+    Serial.printf("Model Decoded: %s\n", _bar30_name);
 #endif
   }
+
+  pres_sense_struct->health = 0x00;
+
+  ms5837_loop_begin();
   
 }
 #endif

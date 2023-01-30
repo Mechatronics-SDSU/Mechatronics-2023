@@ -1,3 +1,4 @@
+
 /*
 Joseph A De Vico
 for questions: @sudo apt install better grades
@@ -13,14 +14,22 @@ Please Note: Tab/file names that match CAN message types
 // Core essential constants and struct definitions
 #include "T4_nodeConstants.h"
 #include "device_data_structs.h"
-#ifdef ENABLE_PRES_SENS
 
-// MS5837 Library, Joseph D
-#include "T4_MS5837.h"
+#ifdef ENABLE_PRES_SENS
 
 // Richard Gemmell T4 i2C Library, for MS5837 Mostly
 #include <i2c_driver.h>
 #include <i2c_driver_wire.h>
+
+// MS5837 Library, Joseph De Vico
+#include <T4_MS5837_CONSTANTS.h>
+#include <T4_MS5837.h>
+
+
+
+// Wayfinder DVL Library, Joseph De Vico
+//#include <DVL_CONSTANTS.h>
+//#include <T4_DVL.h>
 
 #endif
 
@@ -33,6 +42,7 @@ FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can0;
 
 CONTROL control;
 
+// Pressure Sensor Data Struct
 pressure_sensor_t installed_MS5837;
 
 #ifdef ENABLE_PRES_SENS
@@ -53,7 +63,9 @@ void setup() {
     // Error!
   }
 
+
 #ifdef ENABLE_PRES_SENS
+  // Start i2C 0 at 400kHz, initiate pressure sensor
   startup_pressure_sensor( &pressure_sensor);
 #endif
 
@@ -75,40 +87,14 @@ void loop() {
   // Need to have this here
   Can0.events();
 
-/*
-  // for at home (ie no CAN) debugging of DRES
-  // 03 01 pres depth
-  if(Serial.read() == 'A'){
-    uint16_t _fake_dev = 3;
-    uint16_t _fake_top = 1;
-    CAN_message_t fake_msg;
-    fake_msg.id = 0x021;
-
-    while(!Serial.available());
-
-    switch(Serial.read()){
-      case '0':
-        _fake_top = 0;
-      break;
-      case '1':
-        _fake_top = 1;
-      break;
-      case '2':
-        _fake_top = 2;
-      break;
-      case '3':
-        _fake_top = 3;
-      break;
-    }
-    
-    dreq_access(_fake_dev, _fake_top,  fake_msg);  
-  }
-*/
-
-
-
 #ifdef ENABLE_PRES_SENS
-  update_pres_data();
+  if(ms5873_Data_ready() && !pressure_sensor.health){
+    float_2_char_array(pressure_sensor.depth, ms5873_Read_Depth());
+    float_2_char_array(pressure_sensor.average_depth, ms5873_Avg_Depth());
+    float_2_char_array(pressure_sensor.temperature, ms5873_Read_Temp());
+    float_2_char_array(pressure_sensor.average_temperature, ms5873_Avg_Temp());
+  }
+ 
 #endif
 
 }

@@ -187,5 +187,5 @@ device_ptr_array_t dreq_device[INSTALLED_DEVICE_CT] =
  void dreq_access(uint16_t device, uint16_t topic,  CAN_message_t &msg);
 
 void fill_msg_buffer_w_float_buffer(CAN_message_t &msg,  uint8_t *buf);
-void float_2_char_array(uint8_t *arr_out, float *d_in);
+void float_2_char_array(uint8_t *arr_out, float d_in);
 #endif

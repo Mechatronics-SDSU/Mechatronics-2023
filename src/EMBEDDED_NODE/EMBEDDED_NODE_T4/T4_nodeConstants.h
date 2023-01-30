@@ -7,13 +7,13 @@
   // Define USB Serial Print Debug Messaging
 #define DEBUG_MODE
 #define DEBUG_DECODE
-#define DEBUG_DREQ_PTR
+//#define DEBUG_DREQ_PTR
 
 
 
 
   // Define Enabled Devices
-//#define ENABLE_PRES_SENS    // Enables i2c0 and MS5837 code
+#define ENABLE_PRES_SENS    // Enables i2c0 and MS5837 code
 
 
 // END STATE CONTROL DEFINES
