@@ -21,6 +21,7 @@ target_link_libraries(
                         EMBEDDED_NODE_RP2040
                         pico_stdlib
                         pico_multicore
+                        hardware_i2c
                         hardware_pwm
                         )
 
