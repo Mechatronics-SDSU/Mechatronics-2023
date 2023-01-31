@@ -15,7 +15,7 @@ void core_1_entry();        // Main for Core 1
 void setup_i2C(i2c_inst_t* i2c);
 
 ///////////////////// MAIN //////////////////////////////
-int main(){                 // Main for Core 0
+int main(){                 // Main for Core 0, Comms and processing Done here
 #ifdef DEBUG_MODE
     stdio_init_all();
 #endif
@@ -24,7 +24,7 @@ int main(){                 // Main for Core 0
 
 }
 
-void core_1_entry(){        // Main for Core 1
+void core_1_entry(){        // Main for Core 1, Motor PWM driven here
 
 }
 
