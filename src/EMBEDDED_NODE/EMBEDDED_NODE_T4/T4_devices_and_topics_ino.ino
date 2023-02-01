@@ -173,8 +173,10 @@ void ms5837_data( CAN_message_t &msg){                // 0x00 01
   Serial.printf("Data Requested!\n");
 #endif
   // Macro support def needs to be better than this idk
+  msg.buf[2] = 0x02;
   dreq_access(MS5837_DEVICE_ID, 0x0002, msg);
   Can0.write(msg);
+  msg.buf[2] = 0x03;
   dreq_access(MS5837_DEVICE_ID, 0x0003, msg);
 }
 
