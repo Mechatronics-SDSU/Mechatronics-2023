@@ -166,28 +166,33 @@ void dreq_res( CAN_message_t &msg){
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0003 MS5837  MS5837 Pressure and Temp Sensor
 
-void ms5837_data( CAN_message_t &msg){
+#define MS5837_DEVICE_ID  0x0003
+
+void ms5837_data( CAN_message_t &msg){                // 0x00 01
 #ifdef DEBUG_DREQ_PTR
   Serial.printf("Data Requested!\n");
 #endif
-  // Macros unsupported at the moment
+  // Macro support def needs to be better than this idk
+  dreq_access(MS5837_DEVICE_ID, 0x0002, msg);
+  Can0.write(msg);
+  dreq_access(MS5837_DEVICE_ID, 0x0003, msg);
 }
 
-void ms5837_depth(CAN_message_t &msg){
+void ms5837_depth(CAN_message_t &msg){                // 0x00 02
 #ifdef DEBUG_DREQ_PTR
   Serial.println("Depth Requested!\n");
 #endif
   fill_msg_buffer_w_float_buffer(msg, pressure_sensor.depth);
 }
 
-void ms5837_temp(CAN_message_t &msg){
+void ms5837_temp(CAN_message_t &msg){                 // 0x00 03
 #ifdef DEBUG_DREQ_PTR
   Serial.printf("Temp Requested!\n");
 #endif
   fill_msg_buffer_w_float_buffer(msg, pressure_sensor.temperature);
 }
 
-
+#undef MS5837_DEVICE_ID
 ////////////////////////////////////////////////////////////////////////////////////////
 // Addressing function to find correct jump table address
 /*  
@@ -249,6 +254,10 @@ void ms5837_temp(CAN_message_t &msg){
  *    This notation is proper, effective, and easy to read.
  *    Please do not modify.
  * 
+ * 
+ * 
+ *  dreq_access will locate the correct function and fill the msg data field appropriately
+ *  dreq_access will not send the message
  */
 void dreq_access(uint16_t device, uint16_t topic,  CAN_message_t &msg){
 #ifdef DEBUG_DREQ_PTR

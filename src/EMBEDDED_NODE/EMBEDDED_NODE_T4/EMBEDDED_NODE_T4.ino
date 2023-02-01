@@ -89,6 +89,7 @@ void loop() {
 
 #ifdef ENABLE_PRES_SENS
   if(ms5873_Data_ready() && !pressure_sensor.health){
+    
     float_2_char_array(pressure_sensor.depth, ms5873_Read_Depth());
     float_2_char_array(pressure_sensor.average_depth, ms5873_Avg_Depth());
     float_2_char_array(pressure_sensor.temperature, ms5873_Read_Temp());
