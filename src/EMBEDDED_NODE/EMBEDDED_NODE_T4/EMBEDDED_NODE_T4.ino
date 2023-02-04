@@ -1,4 +1,3 @@
-
 /*
 Joseph A De Vico
 for questions: @sudo apt install better grades
@@ -25,12 +24,11 @@ Please Note: Tab/file names that match CAN message types
 #include <T4_MS5837_CONSTANTS.h>
 #include <T4_MS5837.h>
 
+#endif
 
-
+#ifdef ENABLE_DVL
 // Wayfinder DVL Library, Joseph De Vico
-//#include <DVL_CONSTANTS.h>
-//#include <T4_DVL.h>
-
+#include <T4_DVL.h>
 #endif
 
 // Include Devices and Topics Jump Tables
@@ -69,6 +67,13 @@ void setup() {
   startup_pressure_sensor( &pressure_sensor);
 #endif
 
+#ifdef ENABLE_DVL
+  init_DVL_serial();
+#ifdef DEBUG_MODE
+  Serial.printf("Serial 1\nTX Capacity:\t%d bytes\nRX Capacity:\t%d bytes\n", DVLSERIAL.availableForWrite(), DVLSERIAL.available());
+#endif
+#endif
+
   pinMode(DEBUG_LED, OUTPUT);
   pinMode(TEENSY_BOARD_LED, OUTPUT);
   analogWrite(TEENSY_BOARD_LED, 1024);  
@@ -86,6 +91,10 @@ void setup() {
 void loop() {
   // Need to have this here
   Can0.events();
+  
+#ifdef ENABLE_DVL
+  DVL_DATA_UPDATE();    // Returns status of DVL serial data update
+#endif
 
 #ifdef ENABLE_PRES_SENS
   if(ms5873_Data_ready() && !pressure_sensor.health){

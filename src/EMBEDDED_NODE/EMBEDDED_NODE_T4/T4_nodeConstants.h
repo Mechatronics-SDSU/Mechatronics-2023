@@ -12,9 +12,10 @@
 
 
 
+
   // Define Enabled Devices
 #define ENABLE_PRES_SENS    // Enables i2c0 and MS5837 code
-
+#define ENABLE_DVL
 
 // END STATE CONTROL DEFINES
 
