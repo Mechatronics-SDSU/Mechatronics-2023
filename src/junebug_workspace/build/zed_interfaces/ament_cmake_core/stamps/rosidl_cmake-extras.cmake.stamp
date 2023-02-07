@@ -1,0 +1,4 @@
+# generated from rosidl_cmake/cmake/rosidl_cmake-extras.cmake.in
+
+set(zed_interfaces_IDL_FILES "msg/Object.idl;msg/ObjectsStamped.idl;msg/Keypoint2Di.idl;msg/Keypoint2Df.idl;msg/Keypoint3D.idl;msg/BoundingBox2Di.idl;msg/BoundingBox2Df.idl;msg/BoundingBox3D.idl;msg/Skeleton2D.idl;msg/Skeleton3D.idl;msg/DepthInfoStamped.idl;msg/PlaneStamped.idl;srv/SetPose.idl;srv/StartSvoRec.idl;srv/SetROI.idl")
+set(zed_interfaces_INTERFACE_FILES "msg/Object.msg;msg/ObjectsStamped.msg;msg/Keypoint2Di.msg;msg/Keypoint2Df.msg;msg/Keypoint3D.msg;msg/BoundingBox2Di.msg;msg/BoundingBox2Df.msg;msg/BoundingBox3D.msg;msg/Skeleton2D.msg;msg/Skeleton3D.msg;msg/DepthInfoStamped.msg;msg/PlaneStamped.msg;srv/SetPose.srv;srv/SetPose_Request.msg;srv/SetPose_Response.msg;srv/StartSvoRec.srv;srv/StartSvoRec_Request.msg;srv/StartSvoRec_Response.msg;srv/SetROI.srv;srv/SetROI_Request.msg;srv/SetROI_Response.msg")

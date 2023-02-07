@@ -1,0 +1,16 @@
+package.xml
+setup.cfg
+setup.py
+../../build/ahr/ahr.egg-info/PKG-INFO
+../../build/ahr/ahr.egg-info/SOURCES.txt
+../../build/ahr/ahr.egg-info/dependency_links.txt
+../../build/ahr/ahr.egg-info/entry_points.txt
+../../build/ahr/ahr.egg-info/requires.txt
+../../build/ahr/ahr.egg-info/top_level.txt
+../../build/ahr/ahr.egg-info/zip-safe
+ahr/__init__.py
+ahr/ahr.py
+resource/ahr
+test/test_copyright.py
+test/test_flake8.py
+test/test_pep257.py

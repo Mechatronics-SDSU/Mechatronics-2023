@@ -1,0 +1,77 @@
+Determining if the function sgemm_ exists failed with the following output:
+Change Dir: /home/mechatronics/junebug_workspace/build/zed_components/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_48c09/fast && /usr/bin/make -f CMakeFiles/cmTC_48c09.dir/build.make CMakeFiles/cmTC_48c09.dir/build
+make[1]: Entering directory '/home/mechatronics/junebug_workspace/build/zed_components/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_48c09.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=sgemm_   -o CMakeFiles/cmTC_48c09.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.16/Modules/CheckFunctionExists.c
+Linking C executable cmTC_48c09
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_48c09.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=sgemm_    CMakeFiles/cmTC_48c09.dir/CheckFunctionExists.c.o  -o cmTC_48c09 
+/usr/bin/ld: CMakeFiles/cmTC_48c09.dir/CheckFunctionExists.c.o: in function `main':
+CheckFunctionExists.c:(.text+0x10): undefined reference to `sgemm_'
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_48c09.dir/build.make:87: cmTC_48c09] Error 1
+make[1]: Leaving directory '/home/mechatronics/junebug_workspace/build/zed_components/CMakeFiles/CMakeTmp'
+make: *** [Makefile:121: cmTC_48c09/fast] Error 2
+
+
+
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/mechatronics/junebug_workspace/build/zed_components/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_6888d/fast && /usr/bin/make -f CMakeFiles/cmTC_6888d.dir/build.make CMakeFiles/cmTC_6888d.dir/build
+make[1]: Entering directory '/home/mechatronics/junebug_workspace/build/zed_components/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_6888d.dir/src.c.o
+/usr/bin/cc   -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_6888d.dir/src.c.o   -c /home/mechatronics/junebug_workspace/build/zed_components/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_6888d
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6888d.dir/link.txt --verbose=1
+/usr/bin/cc  -DCMAKE_HAVE_LIBC_PTHREAD    CMakeFiles/cmTC_6888d.dir/src.c.o  -o cmTC_6888d 
+/usr/bin/ld: CMakeFiles/cmTC_6888d.dir/src.c.o: in function `main':
+src.c:(.text+0x48): undefined reference to `pthread_create'
+/usr/bin/ld: src.c:(.text+0x50): undefined reference to `pthread_detach'
+/usr/bin/ld: src.c:(.text+0x5c): undefined reference to `pthread_join'
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_6888d.dir/build.make:87: cmTC_6888d] Error 1
+make[1]: Leaving directory '/home/mechatronics/junebug_workspace/build/zed_components/CMakeFiles/CMakeTmp'
+make: *** [Makefile:121: cmTC_6888d/fast] Error 2
+
+
+Source file was:
+#include <pthread.h>
+
+void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/mechatronics/junebug_workspace/build/zed_components/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_7e16b/fast && /usr/bin/make -f CMakeFiles/cmTC_7e16b.dir/build.make CMakeFiles/cmTC_7e16b.dir/build
+make[1]: Entering directory '/home/mechatronics/junebug_workspace/build/zed_components/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_7e16b.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_7e16b.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.16/Modules/CheckFunctionExists.c
+Linking C executable cmTC_7e16b
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7e16b.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_7e16b.dir/CheckFunctionExists.c.o  -o cmTC_7e16b  -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_7e16b.dir/build.make:87: cmTC_7e16b] Error 1
+make[1]: Leaving directory '/home/mechatronics/junebug_workspace/build/zed_components/CMakeFiles/CMakeTmp'
+make: *** [Makefile:121: cmTC_7e16b/fast] Error 2
+
+
+

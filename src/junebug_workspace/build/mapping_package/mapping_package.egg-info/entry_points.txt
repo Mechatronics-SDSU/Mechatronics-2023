@@ -1,0 +1,3 @@
+[console_scripts]
+mapping_node = mapping_package.mapping_node:main
+

@@ -1,0 +1,3 @@
+[console_scripts]
+object_detection_node = object_detection_package.object_detection_node:main
+

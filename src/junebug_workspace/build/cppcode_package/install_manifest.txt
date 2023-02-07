@@ -1,0 +1,16 @@
+/home/mechatronics/junebug_workspace/install/cppcode_package/lib/cppcode_package/cppcode_node
+/home/mechatronics/junebug_workspace/install/cppcode_package/share/ament_index/resource_index/package_run_dependencies/cppcode_package
+/home/mechatronics/junebug_workspace/install/cppcode_package/share/ament_index/resource_index/parent_prefix_path/cppcode_package
+/home/mechatronics/junebug_workspace/install/cppcode_package/share/cppcode_package/environment/ament_prefix_path.sh
+/home/mechatronics/junebug_workspace/install/cppcode_package/share/cppcode_package/environment/ament_prefix_path.dsv
+/home/mechatronics/junebug_workspace/install/cppcode_package/share/cppcode_package/environment/path.sh
+/home/mechatronics/junebug_workspace/install/cppcode_package/share/cppcode_package/environment/path.dsv
+/home/mechatronics/junebug_workspace/install/cppcode_package/share/cppcode_package/local_setup.bash
+/home/mechatronics/junebug_workspace/install/cppcode_package/share/cppcode_package/local_setup.sh
+/home/mechatronics/junebug_workspace/install/cppcode_package/share/cppcode_package/local_setup.zsh
+/home/mechatronics/junebug_workspace/install/cppcode_package/share/cppcode_package/local_setup.dsv
+/home/mechatronics/junebug_workspace/install/cppcode_package/share/cppcode_package/package.dsv
+/home/mechatronics/junebug_workspace/install/cppcode_package/share/ament_index/resource_index/packages/cppcode_package
+/home/mechatronics/junebug_workspace/install/cppcode_package/share/cppcode_package/cmake/cppcode_packageConfig.cmake
+/home/mechatronics/junebug_workspace/install/cppcode_package/share/cppcode_package/cmake/cppcode_packageConfig-version.cmake
+/home/mechatronics/junebug_workspace/install/cppcode_package/share/cppcode_package/package.xml

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libcan_mbox_pubsub.a  CMakeFiles/can_mbox_pubsub.dir/src/mbox_can.c.o
+/usr/bin/ranlib libcan_mbox_pubsub.a

@@ -1,0 +1,103 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from zed_interfaces/msg/Object.msg
+// generated code does not contain a copyright notice
+
+#include "zed_interfaces/msg/BoundingBox2Df.idl"
+#include "zed_interfaces/msg/BoundingBox2Di.idl"
+#include "zed_interfaces/msg/BoundingBox3D.idl"
+#include "zed_interfaces/msg/Skeleton2D.idl"
+#include "zed_interfaces/msg/Skeleton3D.idl"
+
+module zed_interfaces {
+  module msg {
+    typedef float float__3[3];
+    typedef float float__6[6];
+    @verbatim (language="comment", text=
+      " Object label")
+    struct Object {
+      string label;
+
+      @verbatim (language="comment", text=
+        " Object label ID")
+      int16 label_id;
+
+      @verbatim (language="comment", text=
+        " Object sub")
+      string sublabel;
+
+      @verbatim (language="comment", text=
+        " Object confidence level (1-99)")
+      float confidence;
+
+      @verbatim (language="comment", text=
+        " Object centroid position")
+      float__3 position;
+
+      @verbatim (language="comment", text=
+        " Position covariance")
+      float__6 position_covariance;
+
+      @verbatim (language="comment", text=
+        " Object velocity")
+      float__3 velocity;
+
+      boolean tracking_available;
+
+      @verbatim (language="comment", text=
+        " Tracking available" "\n"
+        " Tracking state" "\n"
+        " 0 -> OFF (object not valid)" "\n"
+        " 1 -> OK" "\n"
+        " 2 -> SEARCHING (occlusion occurred, trajectory is estimated)")
+      int8 tracking_state;
+
+      @verbatim (language="comment", text=
+        " Action state" "\n"
+        " 0 -> IDLE" "\n"
+        " 2 -> MOVING")
+      int8 action_state;
+
+      @verbatim (language="comment", text=
+        " 2D Bounding box projected to Camera image")
+      zed_interfaces::msg::BoundingBox2Di bounding_box_2d;
+
+      @verbatim (language="comment", text=
+        " 3D Bounding box in world frame")
+      zed_interfaces::msg::BoundingBox3D bounding_box_3d;
+
+      @verbatim (language="comment", text=
+        " 3D dimensions (width, height, lenght)")
+      float__3 dimensions_3d;
+
+      @verbatim (language="comment", text=
+        " Is skeleton available?")
+      boolean skeleton_available;
+
+      @verbatim (language="comment", text=
+        " Skeleton format" "\n"
+        " 0 -> POSE_18" "\n"
+        " 2 -> POSE_34")
+      int8 body_format;
+
+      @verbatim (language="comment", text=
+        " 2D Bounding box projected to Camera image of the person head")
+      zed_interfaces::msg::BoundingBox2Df head_bounding_box_2d;
+
+      @verbatim (language="comment", text=
+        " 3D Bounding box in world frame of the person head")
+      zed_interfaces::msg::BoundingBox3D head_bounding_box_3d;
+
+      @verbatim (language="comment", text=
+        " 3D position of the centroid of the person head")
+      float__3 head_position;
+
+      @verbatim (language="comment", text=
+        " 2D Person skeleton projected to Camera image")
+      zed_interfaces::msg::Skeleton2D skeleton_2d;
+
+      @verbatim (language="comment", text=
+        " 3D Person skeleton in world frame")
+      zed_interfaces::msg::Skeleton3D skeleton_3d;
+    };
+  };
+};

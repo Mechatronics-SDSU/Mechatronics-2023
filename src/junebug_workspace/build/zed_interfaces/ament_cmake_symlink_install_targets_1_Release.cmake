@@ -1,0 +1,1 @@
+ament_cmake_symlink_install_targets("TARGET_FILES" "/home/mechatronics/junebug_workspace/build/zed_interfaces/libzed_interfaces__rosidl_typesupport_fastrtps_cpp.so" "TARGETS" "zed_interfaces__rosidl_typesupport_fastrtps_cpp" "ARCHIVE_DESTINATION" "lib" "LIBRARY_DESTINATION" "lib" "RUNTIME_DESTINATION" "bin")

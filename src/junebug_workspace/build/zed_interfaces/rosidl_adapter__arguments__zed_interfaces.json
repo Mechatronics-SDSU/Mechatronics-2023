@@ -1,0 +1,20 @@
+{
+  "package_name": "zed_interfaces",
+  "non_idl_tuples": [
+    "/home/mechatronics/junebug_workspace/src/zed-ros2-wrapper/zed-ros2-interfaces:msg/Object.msg",
+    "/home/mechatronics/junebug_workspace/src/zed-ros2-wrapper/zed-ros2-interfaces:msg/ObjectsStamped.msg",
+    "/home/mechatronics/junebug_workspace/src/zed-ros2-wrapper/zed-ros2-interfaces:msg/Keypoint2Di.msg",
+    "/home/mechatronics/junebug_workspace/src/zed-ros2-wrapper/zed-ros2-interfaces:msg/Keypoint2Df.msg",
+    "/home/mechatronics/junebug_workspace/src/zed-ros2-wrapper/zed-ros2-interfaces:msg/Keypoint3D.msg",
+    "/home/mechatronics/junebug_workspace/src/zed-ros2-wrapper/zed-ros2-interfaces:msg/BoundingBox2Di.msg",
+    "/home/mechatronics/junebug_workspace/src/zed-ros2-wrapper/zed-ros2-interfaces:msg/BoundingBox2Df.msg",
+    "/home/mechatronics/junebug_workspace/src/zed-ros2-wrapper/zed-ros2-interfaces:msg/BoundingBox3D.msg",
+    "/home/mechatronics/junebug_workspace/src/zed-ros2-wrapper/zed-ros2-interfaces:msg/Skeleton2D.msg",
+    "/home/mechatronics/junebug_workspace/src/zed-ros2-wrapper/zed-ros2-interfaces:msg/Skeleton3D.msg",
+    "/home/mechatronics/junebug_workspace/src/zed-ros2-wrapper/zed-ros2-interfaces:msg/DepthInfoStamped.msg",
+    "/home/mechatronics/junebug_workspace/src/zed-ros2-wrapper/zed-ros2-interfaces:msg/PlaneStamped.msg",
+    "/home/mechatronics/junebug_workspace/src/zed-ros2-wrapper/zed-ros2-interfaces:srv/SetPose.srv",
+    "/home/mechatronics/junebug_workspace/src/zed-ros2-wrapper/zed-ros2-interfaces:srv/StartSvoRec.srv",
+    "/home/mechatronics/junebug_workspace/src/zed-ros2-wrapper/zed-ros2-interfaces:srv/SetROI.srv"
+  ]
+}

@@ -1,0 +1,3 @@
+[console_scripts]
+top_view_node = top_view_package.top_view_node:main
+

@@ -1,0 +1,16 @@
+/home/mechatronics/junebug_workspace/install/can_mbox_pubsub/lib/can_mbox_pubsub/mbox_publisher
+/home/mechatronics/junebug_workspace/install/can_mbox_pubsub/share/ament_index/resource_index/package_run_dependencies/can_mbox_pubsub
+/home/mechatronics/junebug_workspace/install/can_mbox_pubsub/share/ament_index/resource_index/parent_prefix_path/can_mbox_pubsub
+/home/mechatronics/junebug_workspace/install/can_mbox_pubsub/share/can_mbox_pubsub/environment/ament_prefix_path.sh
+/home/mechatronics/junebug_workspace/install/can_mbox_pubsub/share/can_mbox_pubsub/environment/ament_prefix_path.dsv
+/home/mechatronics/junebug_workspace/install/can_mbox_pubsub/share/can_mbox_pubsub/environment/path.sh
+/home/mechatronics/junebug_workspace/install/can_mbox_pubsub/share/can_mbox_pubsub/environment/path.dsv
+/home/mechatronics/junebug_workspace/install/can_mbox_pubsub/share/can_mbox_pubsub/local_setup.bash
+/home/mechatronics/junebug_workspace/install/can_mbox_pubsub/share/can_mbox_pubsub/local_setup.sh
+/home/mechatronics/junebug_workspace/install/can_mbox_pubsub/share/can_mbox_pubsub/local_setup.zsh
+/home/mechatronics/junebug_workspace/install/can_mbox_pubsub/share/can_mbox_pubsub/local_setup.dsv
+/home/mechatronics/junebug_workspace/install/can_mbox_pubsub/share/can_mbox_pubsub/package.dsv
+/home/mechatronics/junebug_workspace/install/can_mbox_pubsub/share/ament_index/resource_index/packages/can_mbox_pubsub
+/home/mechatronics/junebug_workspace/install/can_mbox_pubsub/share/can_mbox_pubsub/cmake/can_mbox_pubsubConfig.cmake
+/home/mechatronics/junebug_workspace/install/can_mbox_pubsub/share/can_mbox_pubsub/cmake/can_mbox_pubsubConfig-version.cmake
+/home/mechatronics/junebug_workspace/install/can_mbox_pubsub/share/can_mbox_pubsub/package.xml

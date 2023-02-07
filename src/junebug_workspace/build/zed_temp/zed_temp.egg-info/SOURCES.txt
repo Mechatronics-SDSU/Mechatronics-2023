@@ -1,0 +1,16 @@
+package.xml
+setup.cfg
+setup.py
+../../build/zed_temp/zed_temp.egg-info/PKG-INFO
+../../build/zed_temp/zed_temp.egg-info/SOURCES.txt
+../../build/zed_temp/zed_temp.egg-info/dependency_links.txt
+../../build/zed_temp/zed_temp.egg-info/entry_points.txt
+../../build/zed_temp/zed_temp.egg-info/requires.txt
+../../build/zed_temp/zed_temp.egg-info/top_level.txt
+../../build/zed_temp/zed_temp.egg-info/zip-safe
+resource/zed_temp
+test/test_copyright.py
+test/test_flake8.py
+test/test_pep257.py
+zed_temp/__init__.py
+zed_temp/temp.py

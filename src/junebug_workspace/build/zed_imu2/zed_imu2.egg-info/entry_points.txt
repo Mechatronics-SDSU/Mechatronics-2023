@@ -1,0 +1,3 @@
+[console_scripts]
+imu_node = zed_imu2.imu_node:main
+

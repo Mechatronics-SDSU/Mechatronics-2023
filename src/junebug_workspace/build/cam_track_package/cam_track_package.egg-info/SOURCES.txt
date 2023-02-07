@@ -1,0 +1,17 @@
+package.xml
+setup.cfg
+setup.py
+../../build/cam_track_package/cam_track_package.egg-info/PKG-INFO
+../../build/cam_track_package/cam_track_package.egg-info/SOURCES.txt
+../../build/cam_track_package/cam_track_package.egg-info/dependency_links.txt
+../../build/cam_track_package/cam_track_package.egg-info/entry_points.txt
+../../build/cam_track_package/cam_track_package.egg-info/requires.txt
+../../build/cam_track_package/cam_track_package.egg-info/top_level.txt
+../../build/cam_track_package/cam_track_package.egg-info/zip-safe
+cam_track_package/__init__.py
+cam_track_package/cam_track_node (copy).py
+cam_track_package/cam_track_node.py
+resource/cam_track_package
+test/test_copyright.py
+test/test_flake8.py
+test/test_pep257.py

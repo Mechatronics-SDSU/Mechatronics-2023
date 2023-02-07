@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/mechatronics/junebug_workspace/src/can_mbox_pubsub/mbox_can/mbox_can.h
+linux/can.h
+-
+linux/can/raw.h
+-
+sys/socket.h
+-
+fcntl.h
+-
+net/if.h
+-
+sys/ioctl.h
+-
+
+/home/mechatronics/junebug_workspace/src/can_mbox_pubsub/src/mbox_can.c
+mbox_can.h
+/home/mechatronics/junebug_workspace/src/can_mbox_pubsub/src/mbox_can.h
+unistd.h
+-
+string.h
+-
+stdlib.h
+-
+

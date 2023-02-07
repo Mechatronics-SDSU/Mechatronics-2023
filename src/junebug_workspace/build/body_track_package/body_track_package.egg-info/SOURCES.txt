@@ -1,0 +1,16 @@
+package.xml
+setup.cfg
+setup.py
+../../build/body_track_package/body_track_package.egg-info/PKG-INFO
+../../build/body_track_package/body_track_package.egg-info/SOURCES.txt
+../../build/body_track_package/body_track_package.egg-info/dependency_links.txt
+../../build/body_track_package/body_track_package.egg-info/entry_points.txt
+../../build/body_track_package/body_track_package.egg-info/requires.txt
+../../build/body_track_package/body_track_package.egg-info/top_level.txt
+../../build/body_track_package/body_track_package.egg-info/zip-safe
+body_track_package/__init__.py
+body_track_package/body_track_node.py
+resource/body_track_package
+test/test_copyright.py
+test/test_flake8.py
+test/test_pep257.py

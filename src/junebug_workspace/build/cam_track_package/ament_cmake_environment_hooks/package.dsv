@@ -1,0 +1,4 @@
+source;share/cam_track_package/local_setup.bash
+source;share/cam_track_package/local_setup.dsv
+source;share/cam_track_package/local_setup.sh
+source;share/cam_track_package/local_setup.zsh

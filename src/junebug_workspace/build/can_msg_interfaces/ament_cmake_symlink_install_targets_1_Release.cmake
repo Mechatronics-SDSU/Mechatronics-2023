@@ -1,0 +1,1 @@
+ament_cmake_symlink_install_targets("TARGET_FILES" "/home/mechatronics/junebug_workspace/build/can_msg_interfaces/libcan_msg_interfaces__rosidl_typesupport_fastrtps_cpp.so" "TARGETS" "can_msg_interfaces__rosidl_typesupport_fastrtps_cpp" "ARCHIVE_DESTINATION" "lib" "LIBRARY_DESTINATION" "lib" "RUNTIME_DESTINATION" "bin")
