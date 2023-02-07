@@ -1,0 +1,4 @@
+string id		# CAN ID to use
+string data		# Actual data to be sent over CAN
+---
+bool success	# Return True if message Sent
