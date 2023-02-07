@@ -41,4 +41,4 @@ and guaranteed to follow the core design requirements of the embedded subsystem.
 - Implement all low/slow speed tasks on chip if possible
 - Drive servos, torpedo launch systems
 - Actively sense power system datapoints if power system does not contain standalone processing
-- Drive non-critical human interfaces (lights, indicators)
+- Drive non-critical human interfaces (lights, indicators).
