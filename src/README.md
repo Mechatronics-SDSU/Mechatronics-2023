@@ -1,3 +1,15 @@
+ros stuff goes into ros workspace
+robot specific stuff has robotname prefix
+all lowercase_with_underscore_folder_name
+master (untouched branched) cloned to beta.
+beta compiled code organzed by leads
+fullname-dev cloned from beta to be merged to beta when completed
+
+
+
+
+
+
 ### **SRC Folder Description**
 
 Within this SRC folder you will create a new folder named after your project, in the newly created project folder is where you will update code relating to the task 
