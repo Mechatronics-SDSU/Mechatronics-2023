@@ -5,7 +5,7 @@
 
 # About contributions
 
-If you are unsure where to start, refer to the Kanban board on Trello or ask Software Project Manager or Software Lead.
+If you are unsure where to start, ask Software Project Manager or Software Lead.
 
 Build and environment setup instructions are located in the docs. Refer to them before running `git clone` on this repository!
 
