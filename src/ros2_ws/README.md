@@ -1,15 +1,3 @@
-ros stuff goes into ros workspace
-robot specific stuff has robotname prefix
-all lowercase_with_underscore_folder_name
-master (untouched branched) cloned to beta.
-beta compiled code organzed by leads
-fullname-dev cloned from beta to be merged to beta when completed
-
-
-
-
-
-
 ### **SRC Folder Description**
 
 Within this SRC folder you will create a new folder named after your project, in the newly created project folder is where you will update code relating to the task 
@@ -25,4 +13,4 @@ The folder name should be easily identifiable to anyone who needs to find code r
 Name your main folder ALL lowercase, and keep the main folder name short (one word descriptor)
 >(i.e. If you are working on Computer Vision name your main folder "vision")
 
-If you have any questions pertaining to the Git/Github, please reach out to Software Lead or Electrical Lead
+If you have any questions pertaining to the Git/Github, please reach out to Ken (Electrical Lead), or Yuli (Software Lead)..

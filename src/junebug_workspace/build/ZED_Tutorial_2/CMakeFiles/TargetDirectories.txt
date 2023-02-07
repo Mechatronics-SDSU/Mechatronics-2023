@@ -1,3 +1,0 @@
-/home/mechatronics/junebug_workspace/build/ZED_Tutorial_2/CMakeFiles/rebuild_cache.dir
-/home/mechatronics/junebug_workspace/build/ZED_Tutorial_2/CMakeFiles/edit_cache.dir
-/home/mechatronics/junebug_workspace/build/ZED_Tutorial_2/CMakeFiles/ZED_Tutorial_2.dir

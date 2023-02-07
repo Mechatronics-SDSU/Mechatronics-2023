@@ -1,1 +1,0 @@
-ament_cmake_symlink_install_targets("TARGET_FILES" "/home/mechatronics/junebug_workspace/build/can_msg_interfaces/rosidl_generator_py/can_msg_interfaces/can_msg_interfaces_s__rosidl_typesupport_introspection_c.cpython-38-aarch64-linux-gnu.so" "TARGETS" "can_msg_interfaces__rosidl_typesupport_introspection_c__pyext" "DESTINATION" "lib/python3.8/site-packages/can_msg_interfaces")

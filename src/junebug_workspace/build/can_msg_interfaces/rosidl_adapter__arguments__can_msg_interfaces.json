@@ -1,6 +1,0 @@
-{
-  "package_name": "can_msg_interfaces",
-  "non_idl_tuples": [
-    "/home/mechatronics/junebug_workspace/src/can_msg_interfaces:msg/CanFrame.msg"
-  ]
-}

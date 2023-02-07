@@ -1,3 +1,0 @@
-/home/mechatronics/junebug_workspace/build/ZED_Point_Cloud_Mapping/CMakeFiles/rebuild_cache.dir
-/home/mechatronics/junebug_workspace/build/ZED_Point_Cloud_Mapping/CMakeFiles/edit_cache.dir
-/home/mechatronics/junebug_workspace/build/ZED_Point_Cloud_Mapping/CMakeFiles/ZED_Point_Cloud_Mapping.dir

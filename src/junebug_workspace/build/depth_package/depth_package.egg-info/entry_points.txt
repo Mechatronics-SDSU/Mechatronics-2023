@@ -1,3 +1,0 @@
-[console_scripts]
-depth_node = depth_package.depth_node:main
-

@@ -1,3 +1,0 @@
-[console_scripts]
-body_track_node = body_track_package.body_track_node:main
-

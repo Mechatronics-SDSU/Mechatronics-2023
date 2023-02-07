@@ -1,3 +1,0 @@
-/home/mechatronics/junebug_workspace/build/ZED_Object_detection_image_viewer/CMakeFiles/rebuild_cache.dir
-/home/mechatronics/junebug_workspace/build/ZED_Object_detection_image_viewer/CMakeFiles/edit_cache.dir
-/home/mechatronics/junebug_workspace/build/ZED_Object_detection_image_viewer/CMakeFiles/ZED_Object_detection_image_viewer.dir

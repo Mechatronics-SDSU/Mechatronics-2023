@@ -1,3 +1,0 @@
-[console_scripts]
-cam_track_node = cam_track_package.cam_track_node:main
-

@@ -1,4 +1,0 @@
-source;share/can_mbox_pubsub/local_setup.bash
-source;share/can_mbox_pubsub/local_setup.dsv
-source;share/can_mbox_pubsub/local_setup.sh
-source;share/can_mbox_pubsub/local_setup.zsh

@@ -1,1 +1,0 @@
-/usr/bin/c++     CMakeFiles/cam_track_node.dir/src/cam_track_node.cpp.o  -o cam_track_node 
