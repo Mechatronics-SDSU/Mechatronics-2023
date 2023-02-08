@@ -14,43 +14,35 @@
 
 import rclpy
 from rclpy.node import Node
-from ahr.ahr import SpartonAHRSDataPackets
+from classes.ahrs_driver_lg import SpartonAHRSDataPackets
+from scion_types.srv import Position
 
-from std_msgs.msg import String
-from std_msgs.msg import Float32MultiArray
 
-class MinimalPublisher(Node):
+class AHRS_Node(Node):
 
     def __init__(self):
-        super().__init__('minimal_publisher')
-        self.publisher_ = self.create_publisher(String, 'topic', 10)
+        super().__init__('ahrs_node')
+        self.publisher_ = self.create_publisher(Position, 'ahrs', 10)
         timer_period = 0.5  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
-        self.i = 0
-        self.ahr = SpartonAHRSDataPackets()
+        self.ahrs = SpartonAHRSDataPackets()
 
     def timer_callback(self):
-        yaw = self.ahr.get_true_heading()
-        pitch, roll = self.ahr.get_pitch_roll()
-        msg = String()
-      #  msg = Float64MultiArray(data=num)
-        msg.data = str(yaw)
+        yaw = self.ahrs.get_true_heading()
+        pitch, roll = self.ahrs.get_pitch_roll()
+        msg = [0.0, 0.0, 0.0]
+
+        msg.position = [roll, pitch, yaw]
         self.publisher_.publish(msg)
-        self.get_logger().info('Publishing: "%s"' % msg.data)
-        self.i += 1
+        self.get_logger().info('Publishing Orientation Data')
+        print(msg.position)
 
 
 def main(args=None):
+
     rclpy.init(args=args)
-
-    minimal_publisher = MinimalPublisher()
-
+    minimal_publisher = AHRS_Node()
     rclpy.spin(minimal_publisher)
-
-    # Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
-    minimal_publisher.destroy_node()
     rclpy.shutdown()
 
 
