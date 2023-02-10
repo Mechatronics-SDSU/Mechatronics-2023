@@ -1,0 +1,25 @@
+[0.032s] Invoking command in '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/build/scion_types': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/conner/ahrs_node/Mechatronics-2023/install/ahrs_node:/opt/ros/foxy /usr/bin/cmake /home/conner/nodes/Mechatronics-2023/ros2_ws/src/scion_types -DCMAKE_INSTALL_PREFIX=/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types
+[1.169s] -- The C compiler identification is GNU 9.4.0
+[1.969s] -- The CXX compiler identification is GNU 9.4.0
+[2.305s] -- Check for working C compiler: /usr/bin/cc
+[2.660s] -- Check for working C compiler: /usr/bin/cc -- works
+[2.668s] -- Detecting C compiler ABI info
+[2.965s] -- Detecting C compiler ABI info - done
+[2.983s] -- Detecting C compile features
+[2.985s] -- Detecting C compile features - done
+[2.992s] -- Check for working CXX compiler: /usr/bin/c++
+[3.258s] -- Check for working CXX compiler: /usr/bin/c++ -- works
+[3.259s] -- Detecting CXX compiler ABI info
+[3.537s] -- Detecting CXX compiler ABI info - done
+[3.553s] -- Detecting CXX compile features
+[3.554s] -- Detecting CXX compile features - done
+[3.565s] -- Found ament_cmake: 0.9.11 (/opt/ros/foxy/share/ament_cmake/cmake)
+[3.618s] -- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3") 
+[3.618s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[3.976s] CMake Error at CMakeLists.txt:16 (rosidl_generate_interfaces):
+[3.976s]   Unknown CMake command "rosidl_generate_interfaces".
+[3.977s] 
+[3.977s] 
+[3.977s] -- Configuring incomplete, errors occurred!
+[3.977s] See also "/home/conner/nodes/Mechatronics-2023/ros2_ws/src/build/scion_types/CMakeFiles/CMakeOutput.log".
+[3.982s] Invoked command in '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/build/scion_types' returned '1': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/conner/ahrs_node/Mechatronics-2023/install/ahrs_node:/opt/ros/foxy /usr/bin/cmake /home/conner/nodes/Mechatronics-2023/ros2_ws/src/scion_types -DCMAKE_INSTALL_PREFIX=/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types

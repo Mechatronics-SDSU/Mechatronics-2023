@@ -1,0 +1,20 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from scion_types/srv/SendFrame.srv
+// generated code does not contain a copyright notice
+
+
+module scion_types {
+  module srv {
+    typedef uint8 uint8__8[8];
+    struct SendFrame_Request {
+      int32 can_id;
+
+      int8 can_dlc;
+
+      uint8__8 can_data;
+    };
+    struct SendFrame_Response {
+      int8 status;
+    };
+  };
+};

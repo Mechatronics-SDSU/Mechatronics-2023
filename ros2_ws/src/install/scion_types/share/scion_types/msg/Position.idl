@@ -1,0 +1,12 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from scion_types/msg/Position.msg
+// generated code does not contain a copyright notice
+
+
+module scion_types {
+  module msg {
+    struct Position {
+      sequence<float> position;
+    };
+  };
+};

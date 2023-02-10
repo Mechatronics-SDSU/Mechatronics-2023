@@ -1,0 +1,191 @@
+[0.538s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build', '--packages-select', 'scion_types']
+[0.539s] DEBUG:colcon:Parsed command line arguments: Namespace(allow_overriding=[], ament_cmake_args=None, base_paths=['.'], build_base='build', catkin_cmake_args=None, catkin_skip_building_tests=False, cmake_args=None, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, cmake_target=None, cmake_target_skip_unavailable=False, continue_on_error=False, event_handlers=None, executor='parallel', ignore_user_meta=False, install_base='install', log_base=None, log_level=None, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7fa61b981100>>, merge_install=False, metas=['./colcon.meta'], packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_end=None, packages_ignore=None, packages_ignore_regex=None, packages_select=['scion_types'], packages_select_build_failed=False, packages_select_by_dep=None, packages_select_regex=None, packages_select_test_failures=False, packages_skip=None, packages_skip_build_finished=False, packages_skip_by_dep=None, packages_skip_regex=None, packages_skip_test_passed=False, packages_skip_up_to=None, packages_start=None, packages_up_to=None, packages_up_to_regex=None, parallel_workers=8, paths=None, symlink_install=False, test_result_base=None, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7fa61b981100>, verb_name='build', verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0x7fa61b981640>)
+[0.569s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.570s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.570s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.570s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.570s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.570s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.570s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/conner/nodes/Mechatronics-2023/ros2_ws/src'
+[0.570s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.571s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.571s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.571s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.571s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.571s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.571s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.571s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.571s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.596s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.596s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.597s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.597s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.597s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.597s] Level 1:colcon.colcon_core.package_identification:_identify(ahrs_node) by extensions ['ignore', 'ignore_ament_install']
+[0.597s] Level 1:colcon.colcon_core.package_identification:_identify(ahrs_node) by extension 'ignore'
+[0.597s] Level 1:colcon.colcon_core.package_identification:_identify(ahrs_node) by extension 'ignore_ament_install'
+[0.597s] Level 1:colcon.colcon_core.package_identification:_identify(ahrs_node) by extensions ['colcon_pkg']
+[0.597s] Level 1:colcon.colcon_core.package_identification:_identify(ahrs_node) by extension 'colcon_pkg'
+[0.597s] Level 1:colcon.colcon_core.package_identification:_identify(ahrs_node) by extensions ['colcon_meta']
+[0.598s] Level 1:colcon.colcon_core.package_identification:_identify(ahrs_node) by extension 'colcon_meta'
+[0.598s] Level 1:colcon.colcon_core.package_identification:_identify(ahrs_node) by extensions ['ros']
+[0.598s] Level 1:colcon.colcon_core.package_identification:_identify(ahrs_node) by extension 'ros'
+[0.601s] DEBUG:colcon.colcon_core.package_identification:Package 'ahrs_node' with type 'ros.ament_python' and name 'ahrs_node'
+[0.601s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.601s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.601s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.602s] Level 1:colcon.colcon_core.package_identification:_identify(can2ros_driver) by extensions ['ignore', 'ignore_ament_install']
+[0.602s] Level 1:colcon.colcon_core.package_identification:_identify(can2ros_driver) by extension 'ignore'
+[0.602s] Level 1:colcon.colcon_core.package_identification:_identify(can2ros_driver) by extension 'ignore_ament_install'
+[0.602s] Level 1:colcon.colcon_core.package_identification:_identify(can2ros_driver) by extensions ['colcon_pkg']
+[0.602s] Level 1:colcon.colcon_core.package_identification:_identify(can2ros_driver) by extension 'colcon_pkg'
+[0.602s] Level 1:colcon.colcon_core.package_identification:_identify(can2ros_driver) by extensions ['colcon_meta']
+[0.602s] Level 1:colcon.colcon_core.package_identification:_identify(can2ros_driver) by extension 'colcon_meta'
+[0.602s] Level 1:colcon.colcon_core.package_identification:_identify(can2ros_driver) by extensions ['ros']
+[0.602s] Level 1:colcon.colcon_core.package_identification:_identify(can2ros_driver) by extension 'ros'
+[0.603s] DEBUG:colcon.colcon_core.package_identification:Package 'can2ros_driver' with type 'ros.ament_cmake' and name 'can2ros_driver'
+[0.603s] Level 1:colcon.colcon_core.package_identification:_identify(dres_ms5837_decode) by extensions ['ignore', 'ignore_ament_install']
+[0.603s] Level 1:colcon.colcon_core.package_identification:_identify(dres_ms5837_decode) by extension 'ignore'
+[0.603s] Level 1:colcon.colcon_core.package_identification:_identify(dres_ms5837_decode) by extension 'ignore_ament_install'
+[0.604s] Level 1:colcon.colcon_core.package_identification:_identify(dres_ms5837_decode) by extensions ['colcon_pkg']
+[0.604s] Level 1:colcon.colcon_core.package_identification:_identify(dres_ms5837_decode) by extension 'colcon_pkg'
+[0.604s] Level 1:colcon.colcon_core.package_identification:_identify(dres_ms5837_decode) by extensions ['colcon_meta']
+[0.604s] Level 1:colcon.colcon_core.package_identification:_identify(dres_ms5837_decode) by extension 'colcon_meta'
+[0.604s] Level 1:colcon.colcon_core.package_identification:_identify(dres_ms5837_decode) by extensions ['ros']
+[0.604s] Level 1:colcon.colcon_core.package_identification:_identify(dres_ms5837_decode) by extension 'ros'
+[0.604s] DEBUG:colcon.colcon_core.package_identification:Package 'dres_ms5837_decode' with type 'ros.ament_cmake' and name 'dres_ms5837_decode'
+[0.605s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.605s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.605s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.605s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.605s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.605s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.606s] Level 1:colcon.colcon_core.package_identification:_identify(pid_node) by extensions ['ignore', 'ignore_ament_install']
+[0.606s] Level 1:colcon.colcon_core.package_identification:_identify(pid_node) by extension 'ignore'
+[0.606s] Level 1:colcon.colcon_core.package_identification:_identify(pid_node) by extension 'ignore_ament_install'
+[0.606s] Level 1:colcon.colcon_core.package_identification:_identify(pid_node) by extensions ['colcon_pkg']
+[0.606s] Level 1:colcon.colcon_core.package_identification:_identify(pid_node) by extension 'colcon_pkg'
+[0.606s] Level 1:colcon.colcon_core.package_identification:_identify(pid_node) by extensions ['colcon_meta']
+[0.606s] Level 1:colcon.colcon_core.package_identification:_identify(pid_node) by extension 'colcon_meta'
+[0.606s] Level 1:colcon.colcon_core.package_identification:_identify(pid_node) by extensions ['ros']
+[0.606s] Level 1:colcon.colcon_core.package_identification:_identify(pid_node) by extension 'ros'
+[0.607s] DEBUG:colcon.colcon_core.package_identification:Package 'pid_node' with type 'ros.ament_cmake' and name 'pid_node'
+[0.607s] Level 1:colcon.colcon_core.package_identification:_identify(scion_types) by extensions ['ignore', 'ignore_ament_install']
+[0.608s] Level 1:colcon.colcon_core.package_identification:_identify(scion_types) by extension 'ignore'
+[0.608s] Level 1:colcon.colcon_core.package_identification:_identify(scion_types) by extension 'ignore_ament_install'
+[0.608s] Level 1:colcon.colcon_core.package_identification:_identify(scion_types) by extensions ['colcon_pkg']
+[0.608s] Level 1:colcon.colcon_core.package_identification:_identify(scion_types) by extension 'colcon_pkg'
+[0.608s] Level 1:colcon.colcon_core.package_identification:_identify(scion_types) by extensions ['colcon_meta']
+[0.608s] Level 1:colcon.colcon_core.package_identification:_identify(scion_types) by extension 'colcon_meta'
+[0.608s] Level 1:colcon.colcon_core.package_identification:_identify(scion_types) by extensions ['ros']
+[0.608s] Level 1:colcon.colcon_core.package_identification:_identify(scion_types) by extension 'ros'
+[0.609s] DEBUG:colcon.colcon_core.package_identification:Package 'scion_types' with type 'ros.ament_cmake' and name 'scion_types'
+[0.610s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.610s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.610s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.610s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.610s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.641s] INFO:colcon.colcon_core.package_selection:Skipping not selected package 'ahrs_node' in 'ahrs_node'
+[0.641s] INFO:colcon.colcon_core.package_selection:Skipping not selected package 'can2ros_driver' in 'can2ros_driver'
+[0.641s] INFO:colcon.colcon_core.package_selection:Skipping not selected package 'dres_ms5837_decode' in 'dres_ms5837_decode'
+[0.641s] INFO:colcon.colcon_core.package_selection:Skipping not selected package 'pid_node' in 'pid_node'
+[0.643s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.643s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.646s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 2 installed packages in /home/conner/ahrs_node/Mechatronics-2023/install
+[0.648s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 256 installed packages in /opt/ros/foxy
+[0.650s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[0.725s] Level 5:colcon.colcon_core.verb:set package 'scion_types' build argument 'cmake_args' from command line to 'None'
+[0.725s] Level 5:colcon.colcon_core.verb:set package 'scion_types' build argument 'cmake_target' from command line to 'None'
+[0.725s] Level 5:colcon.colcon_core.verb:set package 'scion_types' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.725s] Level 5:colcon.colcon_core.verb:set package 'scion_types' build argument 'cmake_clean_cache' from command line to 'False'
+[0.725s] Level 5:colcon.colcon_core.verb:set package 'scion_types' build argument 'cmake_clean_first' from command line to 'False'
+[0.725s] Level 5:colcon.colcon_core.verb:set package 'scion_types' build argument 'cmake_force_configure' from command line to 'False'
+[0.725s] Level 5:colcon.colcon_core.verb:set package 'scion_types' build argument 'ament_cmake_args' from command line to 'None'
+[0.725s] Level 5:colcon.colcon_core.verb:set package 'scion_types' build argument 'catkin_cmake_args' from command line to 'None'
+[0.725s] Level 5:colcon.colcon_core.verb:set package 'scion_types' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.725s] DEBUG:colcon.colcon_core.verb:Building package 'scion_types' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/build/scion_types', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types', 'merge_install': False, 'path': '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/scion_types', 'symlink_install': False, 'test_result_base': None}
+[0.726s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.731s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.732s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/scion_types' with build type 'ament_cmake'
+[0.733s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/scion_types'
+[0.740s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.740s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.740s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.770s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/build/scion_types': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/conner/ahrs_node/Mechatronics-2023/install/ahrs_node:/opt/ros/foxy /usr/bin/cmake /home/conner/nodes/Mechatronics-2023/ros2_ws/src/scion_types -DCMAKE_INSTALL_PREFIX=/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types
+[29.018s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/build/scion_types' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/conner/ahrs_node/Mechatronics-2023/install/ahrs_node:/opt/ros/foxy /usr/bin/cmake /home/conner/nodes/Mechatronics-2023/ros2_ws/src/scion_types -DCMAKE_INSTALL_PREFIX=/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types
+[29.024s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/build/scion_types': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/conner/ahrs_node/Mechatronics-2023/install/ahrs_node:/opt/ros/foxy /usr/bin/cmake --build /home/conner/nodes/Mechatronics-2023/ros2_ws/src/build/scion_types -- -j8 -l8
+[38.136s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/build/scion_types' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/conner/ahrs_node/Mechatronics-2023/install/ahrs_node:/opt/ros/foxy /usr/bin/cmake --build /home/conner/nodes/Mechatronics-2023/ros2_ws/src/build/scion_types -- -j8 -l8
+[38.369s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/build/scion_types': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/conner/ahrs_node/Mechatronics-2023/install/ahrs_node:/opt/ros/foxy /usr/bin/cmake --install /home/conner/nodes/Mechatronics-2023/ros2_ws/src/build/scion_types
+[38.499s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(scion_types)
+[38.500s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/build/scion_types' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/conner/ahrs_node/Mechatronics-2023/install/ahrs_node:/opt/ros/foxy /usr/bin/cmake --install /home/conner/nodes/Mechatronics-2023/ros2_ws/src/build/scion_types
+[38.508s] Level 1:colcon.colcon_core.environment:checking '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types' for CMake module files
+[38.509s] Level 1:colcon.colcon_core.environment:checking '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types' for CMake config files
+[38.511s] Level 1:colcon.colcon_core.shell:create_environment_hook('scion_types', 'cmake_prefix_path')
+[38.514s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/cmake_prefix_path.ps1'
+[38.517s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/cmake_prefix_path.dsv'
+[38.518s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/cmake_prefix_path.sh'
+[38.521s] Level 1:colcon.colcon_core.environment:checking '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/lib'
+[38.522s] Level 1:colcon.colcon_core.shell:create_environment_hook('scion_types', 'ld_library_path_lib')
+[38.525s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/ld_library_path_lib.ps1'
+[38.526s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/ld_library_path_lib.dsv'
+[38.527s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/ld_library_path_lib.sh'
+[38.527s] Level 1:colcon.colcon_core.environment:checking '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/bin'
+[38.528s] Level 1:colcon.colcon_core.environment:checking '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/lib/pkgconfig/scion_types.pc'
+[38.528s] Level 1:colcon.colcon_core.environment:checking '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/lib/python3.8/site-packages'
+[38.529s] Level 1:colcon.colcon_core.shell:create_environment_hook('scion_types', 'pythonpath')
+[38.531s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/pythonpath.ps1'
+[38.532s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/pythonpath.dsv'
+[38.532s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/pythonpath.sh'
+[38.533s] Level 1:colcon.colcon_core.environment:checking '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/bin'
+[38.535s] INFO:colcon.colcon_core.shell:Creating package script '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/package.ps1'
+[38.537s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/package.dsv'
+[38.538s] INFO:colcon.colcon_core.shell:Creating package script '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/package.sh'
+[38.539s] INFO:colcon.colcon_core.shell:Creating package script '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/package.bash'
+[38.540s] INFO:colcon.colcon_core.shell:Creating package script '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/package.zsh'
+[38.541s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/colcon-core/packages/scion_types)
+[38.691s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(scion_types)
+[38.694s] Level 1:colcon.colcon_core.environment:checking '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types' for CMake module files
+[38.695s] Level 1:colcon.colcon_core.environment:checking '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types' for CMake config files
+[38.696s] Level 1:colcon.colcon_core.shell:create_environment_hook('scion_types', 'cmake_prefix_path')
+[38.698s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/cmake_prefix_path.ps1'
+[38.699s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/cmake_prefix_path.dsv'
+[38.700s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/cmake_prefix_path.sh'
+[38.702s] Level 1:colcon.colcon_core.environment:checking '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/lib'
+[38.702s] Level 1:colcon.colcon_core.shell:create_environment_hook('scion_types', 'ld_library_path_lib')
+[38.704s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/ld_library_path_lib.ps1'
+[38.705s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/ld_library_path_lib.dsv'
+[38.706s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/ld_library_path_lib.sh'
+[38.707s] Level 1:colcon.colcon_core.environment:checking '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/bin'
+[38.707s] Level 1:colcon.colcon_core.environment:checking '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/lib/pkgconfig/scion_types.pc'
+[38.708s] Level 1:colcon.colcon_core.environment:checking '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/lib/python3.8/site-packages'
+[38.708s] Level 1:colcon.colcon_core.shell:create_environment_hook('scion_types', 'pythonpath')
+[38.711s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/pythonpath.ps1'
+[38.713s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/pythonpath.dsv'
+[38.713s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/hook/pythonpath.sh'
+[38.715s] Level 1:colcon.colcon_core.environment:checking '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/bin'
+[38.719s] INFO:colcon.colcon_core.shell:Creating package script '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/package.ps1'
+[38.721s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/package.dsv'
+[38.722s] INFO:colcon.colcon_core.shell:Creating package script '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/package.sh'
+[38.725s] INFO:colcon.colcon_core.shell:Creating package script '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/package.bash'
+[38.726s] INFO:colcon.colcon_core.shell:Creating package script '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/scion_types/package.zsh'
+[38.727s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/scion_types/share/colcon-core/packages/scion_types)
+[38.728s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[38.730s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[38.730s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[38.731s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[38.830s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.notify_send': Could not find 'notify-send'
+[38.830s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[38.831s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[38.831s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[38.839s] DEBUG:colcon.colcon_notification.desktop_notification.notify2:Failed to initialize notify2: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.Notifications was not provided by any .service files
+[38.840s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[38.843s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/local_setup.ps1'
+[38.844s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/_local_setup_util_ps1.py'
+[38.846s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/setup.ps1'
+[38.850s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/local_setup.sh'
+[38.851s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/_local_setup_util_sh.py'
+[38.851s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/setup.sh'
+[38.853s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/local_setup.bash'
+[38.854s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/setup.bash'
+[38.856s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/local_setup.zsh'
+[38.856s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/install/setup.zsh'
