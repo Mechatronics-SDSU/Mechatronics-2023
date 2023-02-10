@@ -1,9 +1,0 @@
-{
-  "package_name": "scion_types",
-  "non_idl_tuples": [
-    "/home/conner/nodes/Mechatronics-2023/ros2_ws/src/scion_types:msg/CanFrame.msg",
-    "/home/conner/nodes/Mechatronics-2023/ros2_ws/src/scion_types:msg/Orientation.msg",
-    "/home/conner/nodes/Mechatronics-2023/ros2_ws/src/scion_types:msg/Position.msg",
-    "/home/conner/nodes/Mechatronics-2023/ros2_ws/src/scion_types:srv/SendFrame.srv"
-  ]
-}
