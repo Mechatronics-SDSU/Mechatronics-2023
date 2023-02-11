@@ -122,46 +122,57 @@ void dreq_res( CAN_message_t &msg){
 // 0x0002 WAYFDVL  Wayfinder DVL
 
   // 0x0000 NOP
- void wayfdvl_velocity_3( CAN_message_t &msg){
-  
+void wayfdvl_velocity_3( CAN_message_t &msg){
+  // do this later  
 }
 
- void wayfdvl_velocity_x( CAN_message_t &msg){
-  
+void wayfdvl_velocity_x( CAN_message_t &msg){
+  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.velocity.X);  
 }
 
- void wayfdvl_velocity_y( CAN_message_t &msg){
-  
+void wayfdvl_velocity_y( CAN_message_t &msg){
+  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.velocity.Y);
 }
 
- void wayfdvl_velocity_z( CAN_message_t &msg){
-  
+void wayfdvl_velocity_z( CAN_message_t &msg){
+  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.velocity.Z);
 }
 
- void wayfdvl_velocity_e( CAN_message_t &msg){
-  
+void wayfdvl_velocity_e( CAN_message_t &msg){
+  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.velocity.error);
 }
   // 4x res
- void wayfdvl_dist_mean( CAN_message_t &msg){
-  
+void wayfdvl_dist_mean( CAN_message_t &msg){
+  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.range.mean);
 }
 
- void wayfdvl_dist_1( CAN_message_t &msg){
-
+void wayfdvl_dist_1( CAN_message_t &msg){
+  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.range.beam0);
 }
 
- void wayfdvl_dist_2( CAN_message_t &msg){
-  
+void wayfdvl_dist_2( CAN_message_t &msg){
+  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.range.beam1);
 }
 
- void wayfdvl_dist_3( CAN_message_t &msg){
-  
+void wayfdvl_dist_3( CAN_message_t &msg){
+  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.range.beam2);
 }
 
- void wayfdvl_dist_4( CAN_message_t &msg){
-  
+void wayfdvl_dist_4( CAN_message_t &msg){
+  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.range.beam3);
 }
   // 1x res
+void wayfdvl_input_v( CAN_message_t &msg){          // 0x0010
+  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.power.input_voltage);
+}
+
+void wayfdvl_tx_v( CAN_message_t &msg){             // 0x0011
+  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.power.tx_voltage);
+}
+
+void wayfdvl_tx_i( CAN_message_t &msg){             // 0x0012
+  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.power.tx_current);
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0003 MS5837  MS5837 Pressure and Temp Sensor
@@ -272,6 +283,13 @@ void dreq_access(uint16_t device, uint16_t topic,  CAN_message_t &msg){
 
   // Valid in C++, pure pointer math was nuked by g++ with optimizations turned on for some reason :(
   (*(*(dreq_device[device])[topic]))(msg);
+}
+
+void fill_msg_buffer_w_float(CAN_message_t &msg, float *d_in){
+  msg.buf[4] = *((uint8_t *)(d_in));
+  msg.buf[5] = *((uint8_t *)(d_in) + 1u);
+  msg.buf[6] = *((uint8_t *)(d_in) + 2u);
+  msg.buf[7] = *((uint8_t *)(d_in) + 3u);
 }
 
 void fill_msg_buffer_w_float_buffer(CAN_message_t &msg, uint8_t *buf){
