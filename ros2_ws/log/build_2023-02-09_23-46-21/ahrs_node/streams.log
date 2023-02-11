@@ -1,0 +1,37 @@
+[0.667s] Invoking command in '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/ahrs_node': PYTHONPATH=/home/conner/nodes/Mechatronics-2023/ros2_ws/build/ahrs_node/prefix_override:/home/conner/nodes/Mechatronics-2023/ros2_ws/install/ahrs_node/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/ahrs_node build --build-base /home/conner/nodes/Mechatronics-2023/ros2_ws/build/ahrs_node/build install --record /home/conner/nodes/Mechatronics-2023/ros2_ws/build/ahrs_node/install.log --install-scripts $base/lib/ahrs_node --single-version-externally-managed
+[0.875s] running egg_info
+[0.875s] creating ../../build/ahrs_node/ahrs_node.egg-info
+[0.876s] writing ../../build/ahrs_node/ahrs_node.egg-info/PKG-INFO
+[0.876s] writing dependency_links to ../../build/ahrs_node/ahrs_node.egg-info/dependency_links.txt
+[0.877s] writing entry points to ../../build/ahrs_node/ahrs_node.egg-info/entry_points.txt
+[0.877s] writing requirements to ../../build/ahrs_node/ahrs_node.egg-info/requires.txt
+[0.877s] writing top-level names to ../../build/ahrs_node/ahrs_node.egg-info/top_level.txt
+[0.878s] writing manifest file '../../build/ahrs_node/ahrs_node.egg-info/SOURCES.txt'
+[0.914s] reading manifest file '../../build/ahrs_node/ahrs_node.egg-info/SOURCES.txt'
+[0.915s] writing manifest file '../../build/ahrs_node/ahrs_node.egg-info/SOURCES.txt'
+[0.919s] running build
+[0.919s] running build_py
+[0.919s] creating /home/conner/nodes/Mechatronics-2023/ros2_ws/build/ahrs_node/build
+[0.919s] creating /home/conner/nodes/Mechatronics-2023/ros2_ws/build/ahrs_node/build/lib
+[0.919s] creating /home/conner/nodes/Mechatronics-2023/ros2_ws/build/ahrs_node/build/lib/ahrs_node
+[0.919s] copying ahrs_node/ahrs_publisher.py -> /home/conner/nodes/Mechatronics-2023/ros2_ws/build/ahrs_node/build/lib/ahrs_node
+[0.919s] copying ahrs_node/__init__.py -> /home/conner/nodes/Mechatronics-2023/ros2_ws/build/ahrs_node/build/lib/ahrs_node
+[0.920s] running install
+[0.920s] running install_lib
+[0.920s] creating /home/conner/nodes/Mechatronics-2023/ros2_ws/install/ahrs_node/lib/python3.8/site-packages/ahrs_node
+[0.920s] copying /home/conner/nodes/Mechatronics-2023/ros2_ws/build/ahrs_node/build/lib/ahrs_node/ahrs_publisher.py -> /home/conner/nodes/Mechatronics-2023/ros2_ws/install/ahrs_node/lib/python3.8/site-packages/ahrs_node
+[0.920s] copying /home/conner/nodes/Mechatronics-2023/ros2_ws/build/ahrs_node/build/lib/ahrs_node/__init__.py -> /home/conner/nodes/Mechatronics-2023/ros2_ws/install/ahrs_node/lib/python3.8/site-packages/ahrs_node
+[0.921s] byte-compiling /home/conner/nodes/Mechatronics-2023/ros2_ws/install/ahrs_node/lib/python3.8/site-packages/ahrs_node/ahrs_publisher.py to ahrs_publisher.cpython-38.pyc
+[0.923s] byte-compiling /home/conner/nodes/Mechatronics-2023/ros2_ws/install/ahrs_node/lib/python3.8/site-packages/ahrs_node/__init__.py to __init__.cpython-38.pyc
+[0.923s] running install_data
+[0.924s] creating /home/conner/nodes/Mechatronics-2023/ros2_ws/install/ahrs_node/share/ament_index
+[0.924s] creating /home/conner/nodes/Mechatronics-2023/ros2_ws/install/ahrs_node/share/ament_index/resource_index
+[0.925s] creating /home/conner/nodes/Mechatronics-2023/ros2_ws/install/ahrs_node/share/ament_index/resource_index/packages
+[0.925s] copying resource/ahrs_node -> /home/conner/nodes/Mechatronics-2023/ros2_ws/install/ahrs_node/share/ament_index/resource_index/packages
+[0.925s] copying package.xml -> /home/conner/nodes/Mechatronics-2023/ros2_ws/install/ahrs_node/share/ahrs_node
+[0.925s] running install_egg_info
+[0.926s] Copying ../../build/ahrs_node/ahrs_node.egg-info to /home/conner/nodes/Mechatronics-2023/ros2_ws/install/ahrs_node/lib/python3.8/site-packages/ahrs_node-0.0.0-py3.8.egg-info
+[0.928s] running install_scripts
+[0.944s] Installing ahrs script to /home/conner/nodes/Mechatronics-2023/ros2_ws/install/ahrs_node/lib/ahrs_node
+[0.944s] writing list of installed files to '/home/conner/nodes/Mechatronics-2023/ros2_ws/build/ahrs_node/install.log'
+[0.969s] Invoked command in '/home/conner/nodes/Mechatronics-2023/ros2_ws/src/ahrs_node' returned '0': PYTHONPATH=/home/conner/nodes/Mechatronics-2023/ros2_ws/build/ahrs_node/prefix_override:/home/conner/nodes/Mechatronics-2023/ros2_ws/install/ahrs_node/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/ahrs_node build --build-base /home/conner/nodes/Mechatronics-2023/ros2_ws/build/ahrs_node/build install --record /home/conner/nodes/Mechatronics-2023/ros2_ws/build/ahrs_node/install.log --install-scripts $base/lib/ahrs_node --single-version-externally-managed
