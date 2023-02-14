@@ -5,8 +5,8 @@
  */
 #ifndef CAN_MAILBOX_PUB_H
 #define CAN_MAILBOX_PUB_H
-#include "scion_types/srv/send_frame.hpp"
-#include "scion_types/msg/can_frame.hpp"
+#include "can_msg_interfaces/srv/send_frame.hpp"
+#include "can_msg_interfaces/msg/can_frame.hpp"
 
 
 /*

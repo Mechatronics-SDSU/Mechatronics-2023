@@ -3,7 +3,7 @@
  * ####CAN data publisher node####
  * This program uses the mbox_can library to create multiple filtered mailboxes, then directs any frames that arrive
  * in those mailboxes to corresponding Ros2 topics (i.e. "emergency_mb_pub", "motor_mb_pub", etc.). Frames are published
- * as custom messages found in the "scion_types" Ros2 package. Currently, frames are published based on a
+ * as custom messages found in the "can_msg_interfaces" Ros2 package. Currently, frames are published based on a
  * callback timer-- this is subject to change. If a process needs to send a CAN frame to the embedded system, the /send_frame
  * ROS2 service exists to do precisely that.
  */
@@ -17,8 +17,8 @@
 #include <vector>
 
 #include "rclcpp/rclcpp.hpp"
-#include "scion_types/msg/can_frame.hpp"
-#include "scion_types/srv/send_frame.hpp"
+#include "can_msg_interfaces/msg/can_frame.hpp"
+#include "can_msg_interfaces/srv/send_frame.hpp"
 #include "mbox_can.hpp"
 #include "can_mbox_pub.hpp"
 
