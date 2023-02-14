@@ -79,7 +79,7 @@ private:
         RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data:");
         // printVector(msg->orientation);
         this->current_orientation_ = msg->orientation;
-        this->controller.update(current_state_, current_desired_state_, .010);
+        this->controller_.update(current_state_, current_desired_state_, .010);
         update_current_state();
     }
 
@@ -102,7 +102,7 @@ private:
     {
          RCLCPP_INFO(this->get_logger(), "Received Desired Position Data:");
          printVector(msg->position);
-         this->current_desired_state_sub_ = msg->position; 
+         this->current_desired_state_= msg->position; 
     }
 
     void printVector(vector<float> floatVector)
