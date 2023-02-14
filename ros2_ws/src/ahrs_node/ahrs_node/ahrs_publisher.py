@@ -29,7 +29,7 @@ sys.path.append('/home/mechatronics/Mechatronics-2023/classes/ahrs_driver_lg')
 import rclpy
 from rclpy.node import Node
 from ahrs import SpartonAHRSDataPackets
-from scion_types.msg import Position                                            #ToDo: rename to orientation
+from scion_types.msg import Orientation                                            #ToDo: rename to orientation
 
 
 class AHRS_Node(Node):
@@ -37,18 +37,18 @@ class AHRS_Node(Node):
 
     def __init__(self):
         super().__init__('ahrs_node')
-        self.publisher_ = self.create_publisher(Position, 'ahrs_orientation', 10)     #transmits on 'ahrs_orientation' topic
+        self.publisher_ = self.create_publisher(Orientation, 'ahrs_orientation', 10)     #transmits on 'ahrs_orientation' topic
         timer_period = 0.6  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.ahrs = SpartonAHRSDataPackets()
-        
-        
-    def format_orientation(yaw, pitch, roll):
-    '''
-    Yaw, pitch and roll are all returned as NoneType, must convert to str and then to float
-        We can use a formatted float to determine how many decimal places of accuracy we want
-        If you want to change precision change all the 2's to whatever precision you want
-    '''
+
+
+    def format_orientation(self, yaw, pitch, roll):
+        '''
+        Yaw, pitch and roll are all returned as NoneType, must convert to str and then to float
+            We can use a formatted float to determine how many decimal places of accuracy we want
+            If you want to change precision change all the 2's to whatever precision you want
+        '''
         yaw_formatted = yaw
         pitch_formatted = pitch
         roll_formatted = roll
@@ -61,27 +61,24 @@ class AHRS_Node(Node):
             roll_formatted = round(float(str(roll_formatted)), 2)
             
         return yaw_formatted, pitch_formatted, roll_formatted
-
-
+        
     def timer_callback(self):
         yaw = self.ahrs.get_true_heading()
         pitch, roll = self.ahrs.get_pitch_roll()
         
-        yaw, pitch, roll = format_orientation(yaw, pitch, roll)
+        yaw, pitch, roll = self.format_orientation(yaw, pitch, roll)
 
+        print(yaw, pitch, roll)
         '''
-        Now that we have our data types converted, we can throw the floats into an array which is the format needed for our custom position
+        Now that we have our data types converted, we can throw the floats into an array which is the format needed for our custom Orientation
         (ToDo: Change this to orientation) message. Then we publish our message using the formatted string below
         '''
+        
         if (yaw != None and pitch != None and roll != None):
-            msg = Position()
-            msg.position = [yaw, pitch, roll]
+            msg = Orientation()
+            msg.orientation = [yaw, pitch, roll]
             self.publisher_.publish(msg)
-            self.get_logger().info
-            (
-                'Publishing Orientation Data: "\nyaw: %f\npitch: %f\nroll: %f\n"' % 
-                (msg.position[0], msg.position[1], msg.position[2])
-            )
+            self.get_logger().info('Publishing Orientation Data: "\nyaw: %f\npitch: %f\nroll: %f\n"' % (msg.orientation[0], msg.orientation[1], msg.orientation[2]))
 
 
 def main(args=None):

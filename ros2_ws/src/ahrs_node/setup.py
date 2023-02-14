@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-                'ahrs = ahrs_node.ahrs_publisher:main'
+                'ahrs_exec = ahrs_node.ahrs_publisher:main'
         ],
     },
 )
