@@ -29,6 +29,7 @@ Please Note: Tab/file names that match CAN message types
 #ifdef ENABLE_DVL
 // Wayfinder DVL Library, Joseph De Vico
 #include <T4_DVL.h>
+DVL_ WAYFDVL = init_DVL_data_struct();
 #endif
 
 // Include Devices and Topics Jump Tables
