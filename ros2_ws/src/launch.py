@@ -4,7 +4,7 @@ import launch_ros.actions
 def generate_launch_description():
     return LaunchDescription([
         launch_ros.actions.Node(
-            package='pid_node', executable='pid_controller', 
+            package='pid_node', executable='pid_exec', 
             ),        
         launch_ros.actions.Node(
             package='ahrs_node', executable='ahrs_exec',
