@@ -1,10 +1,14 @@
 cmake_minimum_required(VERSION 3.5)
 project(pid_node)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/home/mechatronics/nodes/Mechatronics-2023/ros2_ws")
+
+
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
 endif()
+
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
@@ -27,7 +31,8 @@ add_executable(pid_controller src/pid_controller_node.cpp
 
 ament_target_dependencies(pid_controller rclcpp scion_types)
 
-target_include_directories(pid_controller PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(pid_controller PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+          /home/mechatronics/nodes/Mechatronics-2023/classes/pid_controller/include)
 
 install(TARGETS
   pid_controller

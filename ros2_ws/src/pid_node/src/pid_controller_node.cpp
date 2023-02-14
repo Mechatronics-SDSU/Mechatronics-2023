@@ -29,53 +29,53 @@ public:
      **/
     Controller(): Node("pid_controller")
     {
-        position_sensor_ = this->create_subscription<robot_types::msg::Position>
+        position_sensor_ = this->create_subscription<scion_types::msg::Position>
         ("position_data", 10, std::bind(&Controller::position_sensor_callback, this, _1));
-        desired_position_ = this->create_subscription<robot_types::msg::Position>
+        desired_position_ = this->create_subscription<scion_types::msg::Position>
         ("desired_position", 10, std::bind(&Controller::desired_position_callback, this, _1));
     }
 
 private:
 
-    rclcpp::Subscription<robot_types::msg::Position>::SharedPtr position_sensor_;
-    rclcpp::Subscription<robot_types::msg::Position>::SharedPtr desired_position_;
-    vector<double> current_position_{0.0,0.0,0.0,0.0,0.0,0.0};
-    vector<double> current_desired_position_{0.0,0.0,0.0,0.0,0.0,0.0};
+    rclcpp::Subscription<scion_types::msg::Position>::SharedPtr position_sensor_;
+    rclcpp::Subscription<scion_types::msg::Position>::SharedPtr desired_position_;
+    vector<float> current_position_{0.0,0.0,0.0,0.0,0.0,0.0};
+    vector<float> current_desired_position_{0.0,0.0,0.0,0.0,0.0,0.0};
 
-    void position_sensor_callback(const robot_types::msg::Position::SharedPtr msg)
+    void position_sensor_callback(const scion_types::msg::Position::SharedPtr msg)
     /** 
      * Subscriber binded function prints the unixTime whenever the publisher from Node1 sends it.
      **/ 
     {
          RCLCPP_INFO(this->get_logger(), "Received Sensor Data:");
-         printVector(msg->position_vector);
+         printVector(msg->position);
          RCLCPP_INFO(this->get_logger(), "Error:");
-         printVector(getError(this->current_desired_position_, msg->position_vector));
-         this->current_position_ = msg->position_vector;
+         printVector(getError(this->current_desired_position_, msg->position));
+         this->current_position_ = msg->position;
     }
 
-    void desired_position_callback(const robot_types::msg::Position::SharedPtr msg)
+    void desired_position_callback(const scion_types::msg::Position::SharedPtr msg)
     /** 
      * Subscriber binded function prints the unixTime whenever the publisher from Node1 sends it.
      **/ 
     {
          RCLCPP_INFO(this->get_logger(), "Received Desired Position Data:");
-         printVector(msg->position_vector);
-         this->current_desired_position_ = msg->position_vector; 
+         printVector(msg->position);
+         this->current_desired_position_ = msg->position; 
     }
 
-    void printVector(vector<double> doubleVector)
+    void printVector(vector<float> floatVector)
     {
-        for (double number : doubleVector)
+        for (float number : floatVector)
         {
             std::cout << number << " " << endl;
         }
     }
 
-    vector<double> getError(vector<double> desired_position, vector<double> current_position) 
+    vector<float> getError(vector<float> desired_position, vector<float> current_position) 
     {
-        vector<double> errorVector{0.0,0.0,0.0,0.0,0.0,0.0};
-        for (auto i = 0; i < (double)desired_position.size(); i++) 
+        vector<float> errorVector{0.0,0.0,0.0,0.0,0.0,0.0};
+        for (auto i = 0; i < (float)desired_position.size(); i++) 
         {
             errorVector[i] = desired_position[i] - current_position[i];
         }
