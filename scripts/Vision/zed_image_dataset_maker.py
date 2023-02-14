@@ -2,8 +2,6 @@
 Joshua Van Doren
 2/14/2023
 Display video data from zed with opencv and save images to a user defined folder
-If you're running the script multiple times using number ordering to the same folder location, make sure to change the
-image label starting value to ensure you're not writing over previously saved images
 Have ZED SDK and its python-api installed
 pip install opencv-python
 '''
