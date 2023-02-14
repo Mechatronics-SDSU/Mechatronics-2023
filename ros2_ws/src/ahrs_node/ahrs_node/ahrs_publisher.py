@@ -68,7 +68,6 @@ class AHRS_Node(Node):
         
         yaw, pitch, roll = self.format_orientation(yaw, pitch, roll)
 
-        print(yaw, pitch, roll)
         '''
         Now that we have our data types converted, we can throw the floats into an array which is the format needed for our custom Orientation
         (ToDo: Change this to orientation) message. Then we publish our message using the formatted string below
