@@ -114,21 +114,24 @@ topic_ptr_array_t dreq_PWRSYS[PWRSYS_TOPIC_CT] =
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0002 WAYFDVL  Wayfinder DVL
-#define WAYFDVL_TOPIC_CT    16
+#define WAYFDVL_TOPIC_CT    19
 
   // 0x0000 NOP
- void wayfdvl_velocity_3( CAN_message_t &msg);
- void wayfdvl_velocity_x( CAN_message_t &msg);
- void wayfdvl_velocity_y( CAN_message_t &msg);
- void wayfdvl_velocity_z( CAN_message_t &msg);
- void wayfdvl_velocity_e( CAN_message_t &msg);
-  // 4x res
- void wayfdvl_dist_mean( CAN_message_t &msg);
- void wayfdvl_dist_1( CAN_message_t &msg);
- void wayfdvl_dist_2( CAN_message_t &msg);
- void wayfdvl_dist_3( CAN_message_t &msg);
- void wayfdvl_dist_4( CAN_message_t &msg);
-  // 1x res
+ void wayfdvl_velocity_3( CAN_message_t &msg);    // 0x0001
+ void wayfdvl_velocity_x( CAN_message_t &msg);    // 0x0002
+ void wayfdvl_velocity_y( CAN_message_t &msg);    // 0x0003
+ void wayfdvl_velocity_z( CAN_message_t &msg);    // 0x0004
+ void wayfdvl_velocity_e( CAN_message_t &msg);    // 0x0005
+  // 4x res                                       // 0x0006 - 0x0009
+ void wayfdvl_dist_mean( CAN_message_t &msg);     // 0x000A
+ void wayfdvl_dist_1( CAN_message_t &msg);        // 0x000B
+ void wayfdvl_dist_2( CAN_message_t &msg);        // 0x000C
+ void wayfdvl_dist_3( CAN_message_t &msg);        // 0x000D
+ void wayfdvl_dist_4( CAN_message_t &msg);        // 0x000E
+  // 1x res                                       // 0x000F
+ void wayfdvl_input_v( CAN_message_t &msg);       // 0x0010
+ void wayfdvl_tx_v( CAN_message_t &msg);          // 0x0011
+ void wayfdvl_tx_i( CAN_message_t &msg);          // 0x0012
 
 
 topic_ptr_array_t dreq_WAYFDVL[WAYFDVL_TOPIC_CT] =
@@ -148,7 +151,10 @@ topic_ptr_array_t dreq_WAYFDVL[WAYFDVL_TOPIC_CT] =
     wayfdvl_dist_2,
     wayfdvl_dist_3,
     wayfdvl_dist_4,
-    dreq_res
+    dreq_res,
+    wayfdvl_input_v,
+    wayfdvl_tx_v,
+    wayfdvl_tx_i
   };
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -184,8 +190,9 @@ device_ptr_array_t dreq_device[INSTALLED_DEVICE_CT] =
 
 
 // Super important wrapper macro for easy nested array access
- void dreq_access(uint16_t device, uint16_t topic,  CAN_message_t &msg);
+void dreq_access(uint16_t device, uint16_t topic,  CAN_message_t &msg);
 
+void fill_msg_buffer_w_float(CAN_message_t &msg, float *d_in);
 void fill_msg_buffer_w_float_buffer(CAN_message_t &msg,  uint8_t *buf);
 void float_2_char_array(uint8_t *arr_out, float d_in);
 #endif
