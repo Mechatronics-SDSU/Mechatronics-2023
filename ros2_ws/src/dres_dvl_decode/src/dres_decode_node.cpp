@@ -16,13 +16,19 @@ using namespace std;
  * 	node name, and decoder class.
  *
  */
-DresDecodeNode::DresDecodeNode() : rclcpp::Node("ms5837_data")
+DresDecodeNode::DresDecodeNode() : rclcpp::Node("dvl_data")
 {
 	/* create subscription to dres mailbox and bind it to our callback */
 	_dres_mb = this->create_subscription<scion_types::msg::CanFrame>(
 		"dres_mb_pub", 10, std::bind(&DresDecodeNode::decode_cb, this, std::placeholders::_1));
-
-	ms5837_decoder = new MS5837::MS5837Decode( (rclcpp::Node*)this);
+	_dreq_timer = this-> create_wall_timer(
+		25ms,
+		std::bind(&DresDecodeNode::_data_request, this));
+	);
+	
+	dvl_decoder = new DVL::DVLDecode( (rclcpp::Node*)this);
+	_poll_mb = new Mailbox::MboxCan(&ifr, "poll_mb");
+	
 	RCLCPP_INFO(this->get_logger(), "[DresDecodeNode] Node Initialized.");
 }
 
@@ -44,15 +50,28 @@ void DresDecodeNode::decode_cb(
 		std::begin(frame.data));
 	
 	memcpy(&device, frame.data, sizeof(char)*2);
-	if(device == ms5837_decoder->device_id)
+	if(device == dvl_decoder->device_id)
 	{
 		RCLCPP_INFO(this->get_logger(),
-			"[DresDecodeNode::decode_cb] MS5837 DRES is being processed.");
-		ms5837_decoder->dres_handler(&frame);
+			"[DresDecodeNode::decode_cb] DVL DRES is being processed.");
+		dvl_decoder->dres_handler(&frame);
 	}
 
 }
 
+/* 
+ * _data_request:
+ * We poll the DVL for frequently needed data. Instead of making a ros2
+ * service call, we publish data directly to the CAN bus for speed/simplicity
+ */
+void DresDecodeNode::_data_request()
+{
+	struct can_frame poll_frame {0x020, 4, {WAYFDVL_DEV_ID, 0x00, 0x07, 0x00}};
+	for(int i = 0; i < 6; i++)
+	{
+		Mailbox::MboxCan::write_mbox(_poll_mb, poll_frame);
+	}
+}
 
 int main(int argc, char* argv[])
 {
