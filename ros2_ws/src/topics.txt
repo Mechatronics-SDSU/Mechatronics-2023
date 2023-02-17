@@ -1,0 +1,28 @@
+ahrs_orientation_data:
+    contains orientation data in the form yaw, pitch, roll
+    @type float32[]
+    @time every .6 seconds
+    @details grab data with array [yaw, pitch, roll]
+
+ms5837_depth_data:
+    depth data calculated by pressure placed on ms5837 sensor
+    @type float32
+    @time on request
+
+pid_ctrl_data:
+    control signals needed by the thrusters to determine output strength
+    @type float64[]
+    @time every second
+    @details six control signals output in the form [yaw, pitch, roll, x_pos, y_pos, z_pos]
+
+zed_pos_data:
+    point in space given by x, y, and z coordinate
+    @type float32[]
+    @time ***
+
+zed_vision_data:
+    object detection and current image broadcasting of zed camera
+    @type ***
+    @time *** 
+
+    

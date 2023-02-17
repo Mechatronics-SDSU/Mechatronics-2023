@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #include "rclcpp/rclcpp.hpp"
-#include "can_msg_interfaces/srv/send_frame.hpp"
+#include "scion_types/srv/send_frame.hpp"
 #include "mbox_can.hpp"
 #include "can_mbox_pub.hpp"
 
@@ -29,7 +29,7 @@ CanSendService::CanSendService(
 {
 	node_context = context;
 	out_box = new Mailbox::MboxCan(ifr, "orin_output");
-	send_service = node_context->create_service<can_msg_interfaces::srv::SendFrame>(
+	send_service = node_context->create_service<scion_types::srv::SendFrame>(
 	"send_can",
 	std::bind(&CanSendService::service_handler,
 		this,
@@ -45,8 +45,8 @@ CanSendService::CanSendService(
  * 		in code- only by Ros2 through a callback.
  */
 void CanSendService::service_handler(
-	const std::shared_ptr<can_msg_interfaces::srv::SendFrame::Request> request,
-	std::shared_ptr<can_msg_interfaces::srv::SendFrame::Response> response)
+	const std::shared_ptr<scion_types::srv::SendFrame::Request> request,
+	std::shared_ptr<scion_types::srv::SendFrame::Response> response)
 {
 	int status = 0;
 	if(out_box->can_sock)
