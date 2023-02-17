@@ -84,4 +84,31 @@ struct CONTROL{
   THRUSTER thruster[ACTIVE_THRUSTERS];
 };
 
+
+
+// Leak Detection pins, trigger on HI
+#define LEAK_DET_PIN_0  30
+#define LEAK_DET_PIN_1  31
+#define LEAK_DET_PIN_2  32
+#define LEAK_DET_PIN_3  33
+
+// No Reponse ISR and Timer
+#define NO_RESPONSE_TIMEOUT_US    1000000
+#define NO_RESPONSE_ISR_PRIORITY  64
+
+
+// State Machine States, OA_STATE
+/*    0   Hard Kill
+ *    1   RES
+ *    2   Soft Kill
+ *    3
+ *    4   All Good, clear to run
+ *    5
+ *    6
+ *    7
+ */
+ #define HARD_KILL_STATE    0
+ #define SOFT_KILL_STATE    2
+ #define ALL_GOOD_STATE     4
+
 #endif // T4_NODECONSTANTS_h

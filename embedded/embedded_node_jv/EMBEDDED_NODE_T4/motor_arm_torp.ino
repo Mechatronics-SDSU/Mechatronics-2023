@@ -4,16 +4,18 @@ void motor_impulse_handler(const CAN_message_t &msg){
 #ifdef DEBUG_DECODE
   canDecode(msg);
 #endif
-  switch(msg.id){
-    case 0x010:
-      thruster_driver(msg);
-    break;
-    case 0x011:
-      thruster_slew_driver(msg);
-    break;
-    case 0x12:
-      // Direct set motor val
-    break;
+  if(OA_STATE == ALL_GOOD_STATE){
+    switch(msg.id){
+      case 0x010:
+        thruster_driver(msg);
+      break;
+      case 0x011:
+        thruster_slew_driver(msg);
+      break;
+      case 0x12:
+        // Direct set motor val
+      break;
+    }
   }
 }
 

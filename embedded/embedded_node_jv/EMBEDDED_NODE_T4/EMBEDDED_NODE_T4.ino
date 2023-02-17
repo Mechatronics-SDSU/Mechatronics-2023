@@ -14,6 +14,9 @@ Please Note: Tab/file names that match CAN message types
 #include "T4_nodeConstants.h"
 #include "device_data_structs.h"
 
+// Interval Timer
+#include <IntervalTimer.h>
+
 #ifdef ENABLE_PRES_SENS
 
 // Richard Gemmell T4 i2C Library, for MS5837 Mostly
@@ -29,14 +32,14 @@ Please Note: Tab/file names that match CAN message types
 #ifdef ENABLE_DVL
 // Wayfinder DVL Library, Joseph De Vico
 #include <T4_DVL.h>
-DVL_ WAYFDVL = init_DVL_data_struct();
+DVL_ *WAYFDVL;
 #endif
 
 // Include Devices and Topics Jump Tables
 //  this is done automatically, don't re include!!!!!
 //#include "T4_installed_devices_and_topics.h"
 
-
+// Definitions
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can0;
 
 CONTROL control;
@@ -47,6 +50,12 @@ pressure_sensor_t installed_MS5837;
 #ifdef ENABLE_PRES_SENS
 pressure_sensor_t pressure_sensor;
 #endif
+
+// Timer for no response on emergency
+//IntervalTimer noResponseTimer;          // Will take over control and shutdown motors if no response to a leak detect
+
+
+uint32_t OA_STATE = SOFT_KILL_STATE;      // Overall State Variable
 
 void setup() {
 #ifdef DEBUG_MODE
@@ -62,6 +71,8 @@ void setup() {
     // Error!
   }
 
+  // Enable leak detection
+  setup_leak_detection_pins_and_isr();
 
 #ifdef ENABLE_PRES_SENS
   // Start i2C 0 at 400kHz, initiate pressure sensor
@@ -70,8 +81,10 @@ void setup() {
 
 #ifdef ENABLE_DVL
   init_DVL_serial();
+  WAYFDVL = init_DVL_data_struct();
 #ifdef DEBUG_MODE
   Serial.printf("Serial 1\nTX Capacity:\t%d bytes\nRX Capacity:\t%d bytes\n", DVLSERIAL.availableForWrite(), DVLSERIAL.available());
+  Serial.printf("DVL Struct: %08X\n", WAYFDVL);
 #endif
 #endif
 
@@ -96,7 +109,8 @@ void loop() {
 #ifdef ENABLE_DVL
   DVL_DATA_UPDATE();    // Returns status of DVL serial data update
 #endif
-
+  
+  
 #ifdef ENABLE_PRES_SENS
   if(ms5873_Data_ready() && !pressure_sensor.health){
     

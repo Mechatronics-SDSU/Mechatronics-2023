@@ -121,57 +121,78 @@ void dreq_res( CAN_message_t &msg){
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0002 WAYFDVL  Wayfinder DVL
 
+#define WAYFDVL_DEVICE_ID  0x0003
+
+  // Macro support still sucks
   // 0x0000 NOP
-void wayfdvl_velocity_3( CAN_message_t &msg){
-  // do this later  
+void wayfdvl_velocity_3( CAN_message_t &msg){                                   // 0x0001
+  msg.buf[2] = 0x02;
+  dreq_access(WAYFDVL_DEVICE_ID, 0x0002, msg);    // X
+  Can0.write(msg);
+  
+  msg.buf[2] = 0x03;
+  dreq_access(WAYFDVL_DEVICE_ID, 0x0003, msg);    // Y
+  Can0.write(msg);
+  
+  msg.buf[2] = 0x04;
+  dreq_access(WAYFDVL_DEVICE_ID, 0x0004, msg);    // Z, implicit send
 }
 
-void wayfdvl_velocity_x( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.velocity.X);  
+void wayfdvl_velocity_x( CAN_message_t &msg){                                   // 0x0002
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.velocity.X);  
 }
 
-void wayfdvl_velocity_y( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.velocity.Y);
+void wayfdvl_velocity_y( CAN_message_t &msg){                                   // 0x0003
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.velocity.Y);
 }
 
-void wayfdvl_velocity_z( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.velocity.Z);
+void wayfdvl_velocity_z( CAN_message_t &msg){                                   // 0x0004
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.velocity.Z);
 }
 
-void wayfdvl_velocity_e( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.velocity.error);
+void wayfdvl_velocity_e( CAN_message_t &msg){                                   // 0x0005
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.velocity.error);
 }
-  // 4x res
-void wayfdvl_dist_mean( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.range.mean);
+  // 1x res
+void wayfdvl_velocity_and_mean_depth( CAN_message_t &msg){                      // 0x0007
+  wayfdvl_velocity_3(msg);      // X, Y, Z velocity
+  Can0.write(msg);              // Make up for missing implicit send
+  msg.buf[2] = 0x0A;
+  wayfdvl_dist_mean(msg);       // Mean dist, implicit send
+}
+
+  // 2x res
+  
+void wayfdvl_dist_mean( CAN_message_t &msg){                                    // 0x000A
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.range.mean);
 }
 
 void wayfdvl_dist_1( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.range.beam0);
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.range.beam0);
 }
 
 void wayfdvl_dist_2( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.range.beam1);
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.range.beam1);
 }
 
 void wayfdvl_dist_3( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.range.beam2);
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.range.beam2);
 }
 
 void wayfdvl_dist_4( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.range.beam3);
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.range.beam3);
 }
   // 1x res
 void wayfdvl_input_v( CAN_message_t &msg){          // 0x0010
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.power.input_voltage);
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.power.input_voltage);
 }
 
 void wayfdvl_tx_v( CAN_message_t &msg){             // 0x0011
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.power.tx_voltage);
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.power.tx_voltage);
 }
 
 void wayfdvl_tx_i( CAN_message_t &msg){             // 0x0012
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.power.tx_current);
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.power.tx_current);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

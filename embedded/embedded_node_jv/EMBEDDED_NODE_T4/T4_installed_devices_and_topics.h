@@ -122,7 +122,9 @@ topic_ptr_array_t dreq_PWRSYS[PWRSYS_TOPIC_CT] =
  void wayfdvl_velocity_y( CAN_message_t &msg);    // 0x0003
  void wayfdvl_velocity_z( CAN_message_t &msg);    // 0x0004
  void wayfdvl_velocity_e( CAN_message_t &msg);    // 0x0005
-  // 4x res                                       // 0x0006 - 0x0009
+  // 1x res                                       // 0x0006
+ void wayfdvl_velocity_and_mean_depth( CAN_message_t &msg); // 0x0007
+  // 2x res 0x0008 - 0x0009
  void wayfdvl_dist_mean( CAN_message_t &msg);     // 0x000A
  void wayfdvl_dist_1( CAN_message_t &msg);        // 0x000B
  void wayfdvl_dist_2( CAN_message_t &msg);        // 0x000C
@@ -143,7 +145,7 @@ topic_ptr_array_t dreq_WAYFDVL[WAYFDVL_TOPIC_CT] =
     wayfdvl_velocity_z,
     wayfdvl_velocity_e,
     dreq_res,
-    dreq_res,
+    wayfdvl_velocity_and_mean_depth,
     dreq_res,
     dreq_res,
     wayfdvl_dist_mean,
