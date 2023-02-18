@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>dres_ms5837_decode</name>
+  <name>dres_dvl_decode</name>
   <version>0.0.1</version>
-  <description>Node to decode data sent from the ms5837 into ros2</description>
+  <description>Node to decode data sent from the DVL into ros2</description>
   <maintainer email="mechatronics@todo.todo">mechatronics</maintainer>
   <license>TODO: License declaration</license>
 
@@ -15,7 +15,7 @@
   <export>
     <build_type>ament_cmake</build_type>
     <depend>rclcpp</depend>
-    <depend>can_msg_interfaces</depend>
+    <depend>scion_types</depend>
     <depend>can2ros_driver</depend>
   </export>
 </package>

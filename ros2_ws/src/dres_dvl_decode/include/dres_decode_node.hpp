@@ -19,6 +19,7 @@ class DresDecodeNode : public rclcpp::Node
 		void decode_cb(const scion_types::msg::CanFrame::SharedPtr) const;
 		rclcpp::TimerBase::SharedPtr _dreq_timer;
 		Mailbox::MboxCan* _poll_mb;
+		struct ifreq ifr;
 };
 
 #endif

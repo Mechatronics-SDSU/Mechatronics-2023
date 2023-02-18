@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(dres_ms5837_decode)
+project(dres_dvl_decode)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -18,20 +18,21 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(can_msg_interfaces REQUIRED)
+find_package(scion_types REQUIRED)
 find_package(can2ros_driver REQUIRED)
 
 include_directories(include)
 
 add_executable(
-	dres_ms5837_decode
+	dres_dvl_decode
 	src/dres_decode_node.cpp
-	src/ms5837_handler.cpp
+	src/dvl_handler.cpp
+	src/mbox_can.cpp
 )
-ament_target_dependencies(dres_ms5837_decode rclcpp can_msg_interfaces can2ros_driver)
+ament_target_dependencies(dres_dvl_decode rclcpp scion_types can2ros_driver)
 
 install(TARGETS
-	dres_ms5837_decode
+	dres_dvl_decode
 	DESTINATION lib/${PROJECT_NAME})
 
 ament_package()

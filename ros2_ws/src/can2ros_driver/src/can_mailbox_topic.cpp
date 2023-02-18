@@ -8,7 +8,7 @@
 
 #include <net/if.h>
 #include "rclcpp/rclcpp.hpp"
-#include "can_msg_interfaces/msg/can_frame.hpp"
+#include "scion_types/msg/can_frame.hpp"
 #include "mbox_can.hpp"
 #include "can_mbox_pub.hpp"
 
@@ -35,7 +35,7 @@ MailboxTopic::MailboxTopic(
 	topic_name = name+"_mb_pub";
 	Mailbox::MboxCan::set_filter(mailbox, filter);
 
-	mailbox_pub = node_context->create_publisher<can_msg_interfaces::msg::CanFrame>(
+	mailbox_pub = node_context->create_publisher<scion_types::msg::CanFrame>(
 		topic_name,
 		10);
 	
@@ -53,7 +53,7 @@ MailboxTopic::MailboxTopic(
  */
 void MailboxTopic::mailbox_cb()
 {
-	auto mailbox_msg = can_msg_interfaces::msg::CanFrame();
+	auto mailbox_msg = scion_types::msg::CanFrame();
 	if(Mailbox::MboxCan::read_mbox(mailbox, &in_frame) == 0 )
 	{
 		mailbox_msg.can_id = in_frame.can_id;

@@ -8,6 +8,8 @@
 #include "scion_types/msg/can_frame.hpp"
 #include "dres_decode_node.hpp"
 
+#define MBOX_INTERFACE "can0"
+
 using namespace std;
 
 /* DresDecodeNode class:
@@ -23,6 +25,15 @@ DresDecodeNode::DresDecodeNode() : rclcpp::Node("ms5837_data")
 		"dres_mb_pub", 10, std::bind(&DresDecodeNode::decode_cb, this, std::placeholders::_1));
 
 	ms5837_decoder = new MS5837::MS5837Decode( (rclcpp::Node*)this);
+
+	/* Polling stuff */
+	strncpy(ifr.ifr_name, MBOX_INTERFACE, sizeof(&MBOX_INTERFACE));
+	_poll_mb = new Mailbox::MboxCan(&ifr, "poll_mb");
+	_dreq_timer = this->create_wall_timer(
+		40ms,
+		std::bind(&DresDecodeNode::_data_request, this)	
+	);
+	
 	RCLCPP_INFO(this->get_logger(), "[DresDecodeNode] Node Initialized.");
 }
 
@@ -46,13 +57,26 @@ void DresDecodeNode::decode_cb(
 	memcpy(&device, frame.data, sizeof(char)*2);
 	if(device == ms5837_decoder->device_id)
 	{
-		RCLCPP_INFO(this->get_logger(),
-			"[DresDecodeNode::decode_cb] MS5837 DRES is being processed.");
 		ms5837_decoder->dres_handler(&frame);
 	}
 
 }
 
+void DresDecodeNode::_data_request()
+{
+	char ms5837_dreq_frame[4] = {0x03, 0x00, 0x01, 0x00};
+	struct can_frame poll_frame;
+	poll_frame.can_id = 0x020;
+	poll_frame.can_dlc = 4;
+	std::copy(std::begin(ms5837_dreq_frame),
+			std::end(ms5837_dreq_frame),
+			std::begin(poll_frame.data));
+	if(Mailbox::MboxCan::write_mbox(_poll_mb, &poll_frame) == -1)
+	{
+		RCLCPP_INFO(this->get_logger(),
+			"[DresDecodeNode::_data_request] Failed to write DREQ.");
+	}
+}
 
 int main(int argc, char* argv[])
 {

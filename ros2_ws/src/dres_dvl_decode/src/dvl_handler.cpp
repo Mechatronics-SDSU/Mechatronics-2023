@@ -1,5 +1,5 @@
 #include "dvl_handler.hpp"
-
+#include "device_macros.hpp"
 using namespace DVL;
 
 /* Constructor method for MS5837 DRES decoder class;
@@ -30,15 +30,15 @@ DVLDecode:: DVLDecode(rclcpp::Node* context)
 	device_id = WAYFDVL_DEV_ID; 		/* public device ID (used by dres_decoder_node) */
 
 	/* initialize topics*/
-	dvl_vel_x = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_vel_x", 10);
-	dvl_vel_y = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_vel_y", 10);
-	dvl_vel_z = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_vel_z", 10);
-	dvl_vel_e = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_vel_e", 10);
-	dvl_dist_bottom = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_dist_bottom", 10);
-	dvl_dist_1 = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_dist_1", 10);
-	dvl_dist_2 = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_dist_2", 10);
-	dvl_dist_3 = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_dist_3", 10);
-	dvl_dist_4 = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_dist_4", 10);
+	dvl_vel_x_topic = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_vel_x", 10);
+	dvl_vel_y_topic = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_vel_y", 10);
+	dvl_vel_z_topic = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_vel_z", 10);
+	dvl_vel_e_topic = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_vel_e", 10);
+	dvl_dist_bottom_topic = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_dist_bottom", 10);
+	dvl_dist_1_topic = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_dist_1", 10);
+	dvl_dist_2_topic = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_dist_2", 10);
+	dvl_dist_3_topic = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_dist_3", 10);
+	dvl_dist_4_topic = node_context->create_publisher<std_msgs::msg::Float32> ("dvl_dist_4", 10);
 
 	RCLCPP_INFO(node_context->get_logger(), "[DVLDecode] Decoder Initialized.");
 }
@@ -62,7 +62,7 @@ void DVLDecode::dres_handler(struct can_frame* frame)
 
 void DVLDecode::dvl_nop() { /* NO OPERATION */}
 
-void DVLDecode::dvl_vel_3()	{ /* Just a macro */}
+void DVLDecode::dvl_vel_3()	{ /* Just a macro :: Delete Me! */}
 
 void DVLDecode::dvl_vel_x() 
 {
@@ -70,7 +70,7 @@ void DVLDecode::dvl_vel_x()
 	memcpy(&value, dres_frame->data+(sizeof(char)*4), sizeof(float) );
 	auto topic_msg = std_msgs::msg::Float32();
 	topic_msg.data = value;
-	dvl_vel_x->publish(topic_msg);
+	dvl_vel_x_topic->publish(topic_msg);
 	RCLCPP_INFO(node_context->get_logger(),
 		"[DVLDecode::dvl_vel_x] Published data : %f.",value);
 }
@@ -81,7 +81,7 @@ void DVLDecode::dvl_vel_y()
 	memcpy(&value, dres_frame->data+(sizeof(char)*4), sizeof(float) );
 	auto topic_msg = std_msgs::msg::Float32();
 	topic_msg.data = value;
-	dvl_vel_y->publish(topic_msg);
+	dvl_vel_y_topic->publish(topic_msg);
 	RCLCPP_INFO(node_context->get_logger(),
 		"[DVLDecode::dvl_vel_y] Published data : %f.",value);
 }
@@ -92,7 +92,7 @@ void DVLDecode::dvl_vel_z()
 	memcpy(&value, dres_frame->data+(sizeof(char)*4), sizeof(float) );
 	auto topic_msg = std_msgs::msg::Float32();
 	topic_msg.data = value;
-	dvl_vel_z->publish(topic_msg);
+	dvl_vel_z_topic->publish(topic_msg);
 	RCLCPP_INFO(node_context->get_logger(),
 		"[DVLDecode::dvl_vel_z] Published data : %f.",value);
 }
@@ -103,7 +103,7 @@ void DVLDecode::dvl_vel_e()
 	memcpy(&value, dres_frame->data+(sizeof(char)*4), sizeof(float) );
 	auto topic_msg = std_msgs::msg::Float32();
 	topic_msg.data = value;
-	dvl_vel_e->publish(topic_msg);
+	dvl_vel_e_topic->publish(topic_msg);
 	RCLCPP_INFO(node_context->get_logger(),
 		"[DVLDecode::dvl_vel_e] Published data : %f.",value);
 }
@@ -114,7 +114,7 @@ void DVLDecode::dvl_dist_bottom()
 	memcpy(&value, dres_frame->data+(sizeof(char)*4), sizeof(float) );
 	auto topic_msg = std_msgs::msg::Float32();
 	topic_msg.data = value;
-	dvl_dist_bottom->publish(topic_msg);
+	dvl_dist_bottom_topic->publish(topic_msg);
 	RCLCPP_INFO(node_context->get_logger(),
 		"[DVLDecode::dvl_dist_bottom] Published data : %f.",value);
 }
@@ -125,7 +125,7 @@ void DVLDecode::dvl_dist_1()
 	memcpy(&value, dres_frame->data+(sizeof(char)*4), sizeof(float) );
 	auto topic_msg = std_msgs::msg::Float32();
 	topic_msg.data = value;
-	dvl_dist_1->publish(topic_msg);
+	dvl_dist_1_topic->publish(topic_msg);
 	RCLCPP_INFO(node_context->get_logger(),
 		"[DVLDecode::dvl_dist_1] Published data : %f.",value);
 }
@@ -136,7 +136,7 @@ void DVLDecode::dvl_dist_2()
 	memcpy(&value, dres_frame->data+(sizeof(char)*4), sizeof(float) );
 	auto topic_msg = std_msgs::msg::Float32();
 	topic_msg.data = value;
-	dvl_dist_2->publish(topic_msg);
+	dvl_dist_2_topic->publish(topic_msg);
 	RCLCPP_INFO(node_context->get_logger(),
 		"[DVLDecode::dvl_dist_2] Published data : %f.",value);
 }
@@ -147,7 +147,7 @@ void DVLDecode::dvl_dist_3()
 	memcpy(&value, dres_frame->data+(sizeof(char)*4), sizeof(float) );
 	auto topic_msg = std_msgs::msg::Float32();
 	topic_msg.data = value;
-	dvl_dist_3->publish(topic_msg);
+	dvl_dist_3_topic->publish(topic_msg);
 	RCLCPP_INFO(node_context->get_logger(),
 		"[DVLDecode::dvl_dist_3] Published data : %f.",value);
 }
@@ -158,7 +158,7 @@ void DVLDecode::dvl_dist_4()
 	memcpy(&value, dres_frame->data+(sizeof(char)*4), sizeof(float) );
 	auto topic_msg = std_msgs::msg::Float32();
 	topic_msg.data = value;
-	dvl_dist_4->publish(topic_msg);
+	dvl_dist_4_topic->publish(topic_msg);
 	RCLCPP_INFO(node_context->get_logger(),
 		"[DVLDecode::dvl_dist_4] Published data : %f.",value);
 }

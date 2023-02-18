@@ -7,6 +7,9 @@
 #include "rclcpp/rclcpp.hpp"
 #include "scion_types/msg/can_frame.hpp"
 #include "dres_decode_node.hpp"
+#include <net/if.h>
+
+#define MBOX_INTERFACE "can0"
 
 using namespace std;
 
@@ -24,9 +27,10 @@ DresDecodeNode::DresDecodeNode() : rclcpp::Node("dvl_data")
 	_dreq_timer = this-> create_wall_timer(
 		25ms,
 		std::bind(&DresDecodeNode::_data_request, this));
-	);
 	
 	dvl_decoder = new DVL::DVLDecode( (rclcpp::Node*)this);
+
+	strncpy(ifr.ifr_name, MBOX_INTERFACE, sizeof(&MBOX_INTERFACE));
 	_poll_mb = new Mailbox::MboxCan(&ifr, "poll_mb");
 	
 	RCLCPP_INFO(this->get_logger(), "[DresDecodeNode] Node Initialized.");
@@ -52,8 +56,7 @@ void DresDecodeNode::decode_cb(
 	memcpy(&device, frame.data, sizeof(char)*2);
 	if(device == dvl_decoder->device_id)
 	{
-		RCLCPP_INFO(this->get_logger(),
-			"[DresDecodeNode::decode_cb] DVL DRES is being processed.");
+		//RCLCPP_INFO(this->get_logger(), "[DresDecodeNode::decode_cb] DVL DRES is being processed.");
 		dvl_decoder->dres_handler(&frame);
 	}
 
@@ -66,10 +69,17 @@ void DresDecodeNode::decode_cb(
  */
 void DresDecodeNode::_data_request()
 {
-	struct can_frame poll_frame {0x020, 4, {WAYFDVL_DEV_ID, 0x00, 0x07, 0x00}};
-	for(int i = 0; i < 6; i++)
+	char dvl_dreq_frame[4] = {0x02, 0x00, 0x07, 0x00};
+	struct can_frame poll_frame;
+	poll_frame.can_id = 0x020;
+	poll_frame.can_dlc = 4;
+	std::copy(std::begin(dvl_dreq_frame),
+			std::end(dvl_dreq_frame),
+			std::begin(poll_frame.data));
+	if(Mailbox::MboxCan::write_mbox(_poll_mb, &poll_frame) == -1)
 	{
-		Mailbox::MboxCan::write_mbox(_poll_mb, poll_frame);
+		RCLCPP_INFO(this->get_logger(),
+			"[DresDecodeNode::_data_request] Failed to write DREQ.");
 	}
 }
 

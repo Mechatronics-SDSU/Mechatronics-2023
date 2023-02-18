@@ -21,18 +21,18 @@ namespace DVL
 			struct can_frame* dres_frame;
 
 			/* Ros2 Topics */
-			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_vel_x;
-			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_vel_y;
-			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_vel_z;
-			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_vel_e;
-			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_dist_bottom;
-			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_dist_1;
-			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_dist_2;
-			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_dist_3;
-			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_dist_4;
-			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_pwr_input;		/* Currently unused */
-			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_pwr_volt;		/* Currently unused */
-			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_pwr_curr;		/* Currently unused */
+			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_vel_x_topic;
+			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_vel_y_topic;
+			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_vel_z_topic;
+			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_vel_e_topic;
+			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_dist_bottom_topic;
+			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_dist_1_topic;
+			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_dist_2_topic;
+			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_dist_3_topic;
+			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_dist_4_topic;
+			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_pwr_input_topic;		/* Currently unused */
+			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_pwr_volt_topic;		/* Currently unused */
+			rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dvl_pwr_curr_topic;		/* Currently unused */
 			
 			void dvl_nop();
 			/* Velocity */
