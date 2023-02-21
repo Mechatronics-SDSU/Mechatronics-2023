@@ -74,6 +74,9 @@ void setup() {
   // Enable leak detection
   setup_leak_detection_pins_and_isr();
 
+  // Enable soft kill button input
+  setup_soft_kill_button();
+
 #ifdef ENABLE_PRES_SENS
   // Start i2C 0 at 400kHz, initiate pressure sensor
   startup_pressure_sensor( &pressure_sensor);
