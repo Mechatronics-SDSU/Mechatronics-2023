@@ -14,6 +14,19 @@ void setup_leak_detection_pins_and_isr(){
   
 }
 
+void setup_soft_kill_button(){
+  pinMode(SOFT_KILL_PIN, INPUT_PULLDOWN);
+  attachInterrupt(digitalPinToInterrupt(SOFT_KILL_PIN), soft_kill_system, RISING);
+}
+
+void soft_kill_system(){
+  CAN_message_t msg;
+  msg.id = 0x000;
+  msg.len = 0;
+  Can0.write(msg);
+  shutdownSystem();
+}
+
 void leak_detected_0(){
   CAN_message_t msg;
   msg.id = 0x001;

@@ -92,6 +92,9 @@ struct CONTROL{
 #define LEAK_DET_PIN_2  32
 #define LEAK_DET_PIN_3  33
 
+// Soft Kill Button input, trigger on HI
+#define SOFT_KILL_PIN   38
+
 // No Reponse ISR and Timer
 #define NO_RESPONSE_TIMEOUT_US    1000000
 #define NO_RESPONSE_ISR_PRIORITY  64
