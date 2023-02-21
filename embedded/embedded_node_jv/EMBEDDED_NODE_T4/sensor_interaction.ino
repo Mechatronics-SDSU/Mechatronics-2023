@@ -10,13 +10,15 @@ void sensor_interaction_handler(const CAN_message_t &msg){
   if(msg.len != 4) return;
 
   switch(msg.id){
-    case 0x020:           // Main sensor DREQ and DRES mechanism
+    case DREQ_ID:           // Main sensor DREQ and DRES mechanism
       handle_dreq(msg);
     break;
 
+    case STOW_ID:
+      CAN_message_t msg2 = msg;
+      handle_stow(msg2);
+    break;
 
-
-    
   }
 
   if(err_val){
@@ -45,4 +47,10 @@ void handle_dreq(const CAN_message_t &msg){
 
   // Send 021# DRES message back
   Can0.write(res_msg);
+}
+
+void handle_stow(CAN_message_t &msg){
+  uint16_t device_queried = ((msg.buf[1] << 8) | (msg.buf[0]));
+  uint16_t topic_queried = ((msg.buf[3] << 8) | (msg.buf[2]));
+  dreq_access(device_queried, topic_queried, msg);  
 }

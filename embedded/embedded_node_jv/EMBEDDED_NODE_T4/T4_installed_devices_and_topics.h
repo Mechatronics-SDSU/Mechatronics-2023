@@ -116,7 +116,7 @@ topic_ptr_array_t dreq_PWRSYS[PWRSYS_TOPIC_CT] =
 // 0x0002 WAYFDVL  Wayfinder DVL
 #define WAYFDVL_TOPIC_CT    19
 
-  // 0x0000 NOP
+ void wayfdvl_info( CAN_message_t &msg);          // 0x0000
  void wayfdvl_velocity_3( CAN_message_t &msg);    // 0x0001
  void wayfdvl_velocity_x( CAN_message_t &msg);    // 0x0002
  void wayfdvl_velocity_y( CAN_message_t &msg);    // 0x0003
@@ -138,7 +138,7 @@ topic_ptr_array_t dreq_PWRSYS[PWRSYS_TOPIC_CT] =
 
 topic_ptr_array_t dreq_WAYFDVL[WAYFDVL_TOPIC_CT] =
   {
-    dreq_nop,
+    wayfdvl_info,
     wayfdvl_velocity_3,
     wayfdvl_velocity_x,
     wayfdvl_velocity_y,
@@ -163,14 +163,14 @@ topic_ptr_array_t dreq_WAYFDVL[WAYFDVL_TOPIC_CT] =
 // 0x0003 MS5837  MS5837 Pressure and Temp Sensor
 #define MS5837_TOPIC_CT     4
 
-  // 0x0000 NOP
- void ms5837_data( CAN_message_t &msg);
- void ms5837_depth( CAN_message_t &msg);
- void ms5837_temp( CAN_message_t &msg);
+ void ms5837_info( CAN_message_t &msg);           // 0x0000
+ void ms5837_data( CAN_message_t &msg);           // 0x0001
+ void ms5837_depth( CAN_message_t &msg);          // 0x0002
+ void ms5837_temp( CAN_message_t &msg);           // 0x0003
 
 topic_ptr_array_t dreq_MS5837[MS5837_TOPIC_CT] =
   {
-    dreq_nop,
+    ms5837_info,
     ms5837_data,
     ms5837_depth,
     ms5837_temp

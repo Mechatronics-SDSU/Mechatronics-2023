@@ -77,19 +77,8 @@ void setup() {
   // Enable soft kill button input
   setup_soft_kill_button();
 
-#ifdef ENABLE_PRES_SENS
-  // Start i2C 0 at 400kHz, initiate pressure sensor
-  startup_pressure_sensor( &pressure_sensor);
-#endif
 
-#ifdef ENABLE_DVL
-  init_DVL_serial();
-  WAYFDVL = init_DVL_data_struct();
-#ifdef DEBUG_MODE
-  Serial.printf("Serial 1\nTX Capacity:\t%d bytes\nRX Capacity:\t%d bytes\n", DVLSERIAL.availableForWrite(), DVLSERIAL.available());
-  Serial.printf("DVL Struct: %08X\n", WAYFDVL);
-#endif
-#endif
+
 
   pinMode(DEBUG_LED, OUTPUT);
   pinMode(TEENSY_BOARD_LED, OUTPUT);

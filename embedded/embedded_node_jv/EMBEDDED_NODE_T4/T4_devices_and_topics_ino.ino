@@ -1,5 +1,9 @@
 #include "T4_installed_devices_and_topics.h"
 
+////////////////////////////////////////////////////////////////////////////////////////////
+//                      READING ADDRESS SPACE
+////////////////////////////////////////////////////////////////////////////////////////////
+
 void dreq_nop( CAN_message_t &msg){
 #ifdef DEBUG_DECODE
   Serial.printf("DREQ_NOP\n");
@@ -124,7 +128,23 @@ void dreq_res( CAN_message_t &msg){
 #define WAYFDVL_DEVICE_ID  0x0003
 
   // Macro support still sucks
-  // 0x0000 NOP
+void wayfdvl_info( CAN_message_t &msg){                                         // 0x0000
+  if(msg.id == STOW_ID){
+    if(msg.buf[0]) {
+      #ifdef ENABLE_DVL
+      init_DVL_serial();
+      WAYFDVL = init_DVL_data_struct();
+      #ifdef DEBUG_MODE
+      Serial.printf("Serial 1\nTX Capacity:\t%d bytes\nRX Capacity:\t%d bytes\n", DVLSERIAL.availableForWrite(), DVLSERIAL.available());
+      Serial.printf("DVL Struct: %08X\n", WAYFDVL);
+      #endif
+      #endif
+    }
+  } else {
+    // Return Device info
+  }
+}
+
 void wayfdvl_velocity_3( CAN_message_t &msg){                                   // 0x0001
   msg.buf[2] = 0x02;
   dreq_access(WAYFDVL_DEVICE_ID, 0x0002, msg);    // X
@@ -199,6 +219,17 @@ void wayfdvl_tx_i( CAN_message_t &msg){             // 0x0012
 // 0x0003 MS5837  MS5837 Pressure and Temp Sensor
 
 #define MS5837_DEVICE_ID  0x0003
+
+void ms5837_info( CAN_message_t &msg){                 // 0x0000
+  if(msg.id == STOW_ID){
+    if(msg.buf[0]){
+      #ifdef ENABLE_PRES_SENS
+      // Start i2C 0 at 400kHz, initiate pressure sensor
+      startup_pressure_sensor( &pressure_sensor);
+      #endif
+    }
+  }
+}
 
 void ms5837_data( CAN_message_t &msg){                // 0x00 01
 #ifdef DEBUG_DREQ_PTR
@@ -326,3 +357,8 @@ void float_2_char_array(uint8_t *arr_out, float d_in){
   arr_out[2] = *((uint8_t *)(&d_in) + 2u);
   arr_out[3] = *((uint8_t *)(&d_in) + 3u); 
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+//                      WRITING ADDRESS SPACE
+////////////////////////////////////////////////////////////////////////////////////////////

@@ -95,6 +95,10 @@ struct CONTROL{
 // Soft Kill Button input, trigger on HI
 #define SOFT_KILL_PIN   38
 
+// Light PWM pins
+#define LIGHT_0_PIN     28
+#define LIGHT_1_PIN     29
+
 // No Reponse ISR and Timer
 #define NO_RESPONSE_TIMEOUT_US    1000000
 #define NO_RESPONSE_ISR_PRIORITY  64
@@ -113,5 +117,10 @@ struct CONTROL{
  #define HARD_KILL_STATE    0
  #define SOFT_KILL_STATE    2
  #define ALL_GOOD_STATE     4
+
+
+#define DREQ_ID   0x20
+#define DRES_ID   0x21
+#define STOW_ID   0x22
 
 #endif // T4_NODECONSTANTS_h
