@@ -208,7 +208,7 @@ As well as parser.add_argument('--img_size', type=int, default=416, help='infere
 
 
 
-Run detector.py script in ~/junebug-2023/src/yolov5_zedsdk/
+Run detector.py script in ~/yolov5_zedsdk/
 
 python3 detector.py
 
