@@ -3,7 +3,7 @@
 
 #include <FlexCAN_T4.h>
  
-#define INSTALLED_DEVICE_CT 4
+#define INSTALLED_DEVICE_CT 5
 
 typedef void (**device_ptr_array_t)( CAN_message_t &msg);
 typedef void (*topic_ptr_array_t)( CAN_message_t &msg);
@@ -176,7 +176,21 @@ topic_ptr_array_t dreq_MS5837[MS5837_TOPIC_CT] =
     ms5837_temp
   };
 
+////////////////////////////////////////////////////////////////////////////////////////
+// 0x0004 BRLIGHT  MS5837 Pressure and Temp Sensor
+#define BRLIGHT_TOPIC_CT    6
 
+ void brlight_info( CAN_message_t &msg);
+ void brlight_front_brightness( CAN_message_t &msg);
+
+topic_ptr_array_t data_BRLIGHT[BRLIGHT_TOPIC_CT] = 
+  {
+    brlight_info,
+    dreq_res,
+    dreq_res,
+    dreq_res,
+    brlight_front_brightness
+  };
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // Device Array
@@ -185,8 +199,8 @@ device_ptr_array_t dreq_device[INSTALLED_DEVICE_CT] =
     dreq_EMBSYS,
     dreq_PWRSYS,
     dreq_WAYFDVL,
-    dreq_MS5837
-    
+    dreq_MS5837,
+    data_BRLIGHT
   };
 
 

@@ -68,9 +68,9 @@
 // For Junebug ONLY
 //#define ACTIVE_THRUSTERS  2
 // For Sub ONLY
-#define ACTIVE_THRUSTERS 8
+#define ACTIVE_THRUSTERS  8
 
-
+#define MAX_BRLIGHTS      4
 
 #define DEFAULT_SOFT_SHUTDOWN_TIME_MS   250
 
@@ -98,6 +98,8 @@ struct CONTROL{
 // Light PWM pins
 #define LIGHT_0_PIN     28
 #define LIGHT_1_PIN     29
+#define LIGHT_2_PIN     37
+#define LIGHT_3_PIN     36
 
 // No Reponse ISR and Timer
 #define NO_RESPONSE_TIMEOUT_US    1000000

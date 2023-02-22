@@ -42,14 +42,20 @@ DVL_ *WAYFDVL;
 // Definitions
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can0;
 
+///////////////////////////////////////////////////////////////
+//            Datastructures for Devices
+///////////////////////////////////////////////////////////////
 CONTROL control;
-
-// Pressure Sensor Data Struct
-pressure_sensor_t installed_MS5837;
 
 #ifdef ENABLE_PRES_SENS
 pressure_sensor_t pressure_sensor;
 #endif
+
+bright_lights_t lights;
+
+///////////////////////////////////////////////////////////////
+//            State Variables and Timers
+///////////////////////////////////////////////////////////////
 
 // Timer for no response on emergency
 //IntervalTimer noResponseTimer;          // Will take over control and shutdown motors if no response to a leak detect

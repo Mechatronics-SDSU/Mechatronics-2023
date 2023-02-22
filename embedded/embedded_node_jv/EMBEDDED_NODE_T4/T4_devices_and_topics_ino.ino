@@ -130,7 +130,7 @@ void dreq_res( CAN_message_t &msg){
   // Macro support still sucks
 void wayfdvl_info( CAN_message_t &msg){                                         // 0x0000
   if(msg.id == STOW_ID){
-    if(msg.buf[0]) {
+    if(msg.buf[4]) {
       #ifdef ENABLE_DVL
       init_DVL_serial();
       WAYFDVL = init_DVL_data_struct();
@@ -222,7 +222,7 @@ void wayfdvl_tx_i( CAN_message_t &msg){             // 0x0012
 
 void ms5837_info( CAN_message_t &msg){                 // 0x0000
   if(msg.id == STOW_ID){
-    if(msg.buf[0]){
+    if(msg.buf[4]){
       #ifdef ENABLE_PRES_SENS
       // Start i2C 0 at 400kHz, initiate pressure sensor
       startup_pressure_sensor( &pressure_sensor);
@@ -258,7 +258,25 @@ void ms5837_temp(CAN_message_t &msg){                 // 0x00 03
 }
 
 #undef MS5837_DEVICE_ID
+
 ////////////////////////////////////////////////////////////////////////////////////////
+// 0x0004 BRLIGHT External LED Lights for illumination
+void brlight_info( CAN_message_t &msg){
+  if(msg.id == STOW_ID){
+    if(msg.buf[4]){
+      startup_light_system( &lights );  
+    }
+    set_num_enabled_lights( &lights , msg.buf[4]);
+    
+  }
+}
+ // 3x res
+void brlight_front_brightness( CAN_message_t &msg){
+  
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+
 // Addressing function to find correct jump table address
 /*  
  * IMPORTANT APP NOTE!!! - Joseph De Vico, 01/30/2023 09:15

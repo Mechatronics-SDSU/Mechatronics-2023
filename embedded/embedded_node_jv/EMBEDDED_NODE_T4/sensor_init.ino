@@ -38,3 +38,28 @@ void startup_pressure_sensor(pressure_sensor_t *pres_sense_struct){
   
 }
 #endif
+
+void startup_light_system(bright_lights_t *light_struct){
+  light_struct->pin[0] = LIGHT_0_PIN;
+  light_struct->pin[1] = LIGHT_1_PIN;
+  light_struct->pin[2] = LIGHT_2_PIN;
+  light_struct->pin[3] = LIGHT_3_PIN;
+
+  for(int n = 0; n < MAX_BRLIGHTS; n++){
+    light_struct->level[n] = 0x00;
+    pinMode(light_struct->pin[n], OUTPUT);
+    analogWrite(light_struct->pin[n], map2Motor(-100 + 0x00));
+  }
+}
+
+void set_num_enabled_lights(bright_lights_t *light_struct, uint8_t num_en){
+  light_struct->num_enabled = num_en;
+}
+
+/*
+void set_light_levels(bright_lights_t *light_struct){
+  for(int n = 0; n < light_struct->num_enabled; n++){
+    analogWrite(light_struct->[n], map2Motor(-100 + 0x00));
+  }
+}
+*/
