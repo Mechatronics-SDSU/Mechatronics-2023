@@ -61,21 +61,19 @@ bright_lights_t lights;
 //IntervalTimer noResponseTimer;          // Will take over control and shutdown motors if no response to a leak detect
 
 
-uint32_t OA_STATE = SOFT_KILL_STATE;      // Overall State Variable
+volatile uint32_t OA_STATE = SOFT_KILL_STATE;      // Overall State Variable
 
 void setup() {
 #ifdef DEBUG_MODE
   Serial.begin(115200);
 #endif
 ///////////////////////////////////////////////////////////////
-//            INITIALIZE PWM AND CAN0
+//            INITIALIZE PWM
 ///////////////////////////////////////////////////////////////
   if(setupMainDrives()){
     // Error!
   }
-  if(canSetup()){
-    // Error!
-  }
+  
 
   // Enable leak detection
   setup_leak_detection_pins_and_isr();
@@ -83,12 +81,30 @@ void setup() {
   // Enable soft kill button input
   setup_soft_kill_button();
 
+  startup_pressure_sensor( &pressure_sensor);
 
+  #ifdef ENABLE_DVL
+  init_DVL_serial();
+  WAYFDVL = init_DVL_data_struct();
+  DVLSERIAL.clear();
+      #ifdef DEBUG_MODE
+      Serial.printf("Serial 1\nTX Capacity:\t%d bytes\nRX Capacity:\t%d bytes\n", DVLSERIAL.availableForWrite(), DVLSERIAL.available());
+      Serial.printf("DVL Struct: %08X\n", WAYFDVL);
+      #endif
+  #endif
 
 
   pinMode(DEBUG_LED, OUTPUT);
   pinMode(TEENSY_BOARD_LED, OUTPUT);
   analogWrite(TEENSY_BOARD_LED, 1024);  
+
+  // Setup CAN fairly late
+  //  to reduce collisions
+  //  on ISRs and normal
+  //  initialization steps
+  if(canSetup()){
+    // Error!
+  }
 
   // Initialization ready, blinky light time!
   for(uint32_t n = 0; n < 5; n++){
@@ -110,12 +126,12 @@ void loop() {
   
   
 #ifdef ENABLE_PRES_SENS
-  if(ms5873_Data_ready() && !pressure_sensor.health){
+  if(ms5837_Data_ready() && !pressure_sensor.health){
     
-    float_2_char_array(pressure_sensor.depth, ms5873_Read_Depth());
-    float_2_char_array(pressure_sensor.average_depth, ms5873_Avg_Depth());
-    float_2_char_array(pressure_sensor.temperature, ms5873_Read_Temp());
-    float_2_char_array(pressure_sensor.average_temperature, ms5873_Avg_Temp());
+    float_2_char_array(pressure_sensor.depth, ms5837_Read_Depth());
+    float_2_char_array(pressure_sensor.average_depth, ms5837_Avg_Depth());
+    float_2_char_array(pressure_sensor.temperature, ms5837_Read_Temp());
+    float_2_char_array(pressure_sensor.average_temperature, ms5837_Avg_Temp());
   }
  
 #endif

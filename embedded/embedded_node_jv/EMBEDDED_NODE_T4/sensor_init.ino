@@ -48,7 +48,7 @@ void startup_light_system(bright_lights_t *light_struct){
   for(int n = 0; n < MAX_BRLIGHTS; n++){
     light_struct->level[n] = 0x00;
     pinMode(light_struct->pin[n], OUTPUT);
-    analogWrite(light_struct->pin[n], map2Motor(-100 + 0x00));
+    analogWrite(light_struct->pin[n], map2Motor(BRLIGHT_MAP_OFFSET));
   }
 }
 

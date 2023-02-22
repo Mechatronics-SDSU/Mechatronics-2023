@@ -5,8 +5,8 @@
 
 
   // Define USB Serial Print Debug Messaging
-#define DEBUG_MODE
-#define DEBUG_DECODE
+//#define DEBUG_MODE
+//#define DEBUG_DECODE
 //#define DEBUG_DREQ_PTR
 
 
@@ -69,6 +69,7 @@
 //#define ACTIVE_THRUSTERS  2
 // For Sub ONLY
 #define ACTIVE_THRUSTERS  8
+#define THRUSTER_PWM_FREQ 400
 
 #define MAX_BRLIGHTS      4
 
@@ -96,6 +97,7 @@ struct CONTROL{
 #define SOFT_KILL_PIN   38
 
 // Light PWM pins
+#define BRLIGHT_MAP_OFFSET  -100
 #define LIGHT_0_PIN     28
 #define LIGHT_1_PIN     29
 #define LIGHT_2_PIN     37

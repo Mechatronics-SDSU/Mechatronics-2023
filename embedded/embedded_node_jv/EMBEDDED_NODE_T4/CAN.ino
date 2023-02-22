@@ -2,8 +2,9 @@
 
 #define CANBAUD     500000
 // Using their standard numbers here, these are variable
-#define NUM_TX_MAILBOXES  2
-#define NUM_RX_MAILBOXES  16
+//  CHECK HERE IF WEIRD STUFF IS HAPPENING
+#define NUM_TX_MAILBOXES  8       // used to be 2
+#define NUM_RX_MAILBOXES  8       // used to be 16
 
 int canSetup(){
   Can0.begin();
@@ -29,7 +30,7 @@ int canSetup(){
   // Filter [low ID, high ID]
   Can0.onReceive(MB0, emergency_CFGS_handler);       Can0.setMBFilter(MB0, 0x000, 0x00F);  // Emergency messaging and configuration/control  // Highest Priority
   Can0.onReceive(MB1, motor_impulse_handler);        Can0.setMBFilter(MB1, 0x010, 0x01F);  // Motor, Arm, and Torpedo Controls
-  Can0.onReceive(MB2, sensor_interaction_handler);   Can0.setMBFilter(MB2, 0x020, 0x02F);  // Handle Sensor DREQ and DRES
+  Can0.onReceive(MB2, sensor_interaction_handler);   Can0.setMBFilter(MB2, 0x020, 0x02F);  // Handle Sensor DREQ and DRES and STOW
   
 
   Can0.onReceive(MB15, aux_function_handler);       Can0.setMBFilter(MB15, 0x100, 0x1FF);  // Data streams, readback, etc
