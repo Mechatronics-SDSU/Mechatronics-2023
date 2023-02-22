@@ -3,37 +3,55 @@
 3) Make our environment:
 	-Starting in home Directory:
 	**clone the repository that contains the yolov5_zedsdk folder
- 	cd ~/yolov5_zedsdk
-	git clone https://github.com/ultralytics/yolov5 cd yolov5 pip install -U -r requirements.txt
+ 	
+	$cd ~/yolov5_zedsdk
+	
+	$git clone https://github.com/ultralytics/yolov5 
+	
+	$cd yolov5 
+
+	$pip install -U -r requirements.txt
 
 
 4) Uninstall all versions of torch and torchvision
-	sudo pip uninstall torch
-	sudo pip uninstall torchvision
-Installing correct torch. IMPORTANT FOLLOW INSTRUCTIONS BEFORE moving forward
+	
+	$sudo pip uninstall torch
+	
+	$sudo pip uninstall torchvision
+
+5) Installing correct torch. IMPORTANT FOLLOW INSTRUCTIONS BEFORE moving forward
 Go to https://forums.developer.nvidia.com/t/pytorch-for-jetson/72048
 
 Click PyTorch v1.11.0 and download wheel. Or simply follow this link: https://nvidia.box.com/shared/static/ssf2v7pf5i245fk4i0q926hy4imzs2ph.whl
 
-Open terminal and in the downloaded folder of wheel run: $pip3 install torch-1.11.0-cp38-cp38-linux_aarch64.whl
+Open terminal and in the downloaded folder of wheel run: 
+
+$pip3 install torch-1.11.0-cp38-cp38-linux_aarch64.whl
 
 Check if installed correctly with cuda support by starting python3 instance in terminal
 
 $ python3
 
-import torch
-print(torch.__version__)
-torch.cuda.is_available()
+>>>import torch
+
+>>>print(torch.__version__)
+
+>>>torch.cuda.is_available()
+
+
 
 If TRUE torch with cuda support was properly downloaded.
 
-Install torchvision compatible with nvidia jetson torch.
+6) Install torchvision compatible with nvidia jetson torch.
 
 Install from source in home (or any) directory
 
 $ git clone https://github.com/pytorch/vision
+
 $ cd vision
+
 $ sudo -E python3 setup.py install
+
 $ cd 
 
 check if installed correctly by opening python3 instance in terminal
@@ -49,7 +67,7 @@ To make sure we have Opencv module for detector.py
 pip install open-cv-contrib-python
 
 
-5) Now to create your own Custom Model
+7) Now to create your own Custom Model
 
 Follow the steps in this video to Box and label your data (ROBOFLOW)
 
@@ -86,39 +104,60 @@ As the size goes up the complexity goes up taking longer but has more confidence
 THESE YAML FILES NEED TO BE EDITED
 
 THE VARIABLE “nc” ARE THE NUMBER OF CLASSES ( NUMBER OF OBJECTS WE ARE TRYING TO DETECT)
+
 EX:MY MODEL IS DETECTING “PERSON, PHONE, CHAIR” THEN THE FILE SHOULD READ nc: 3
 
 The best way to edit these files is to make a copy of each and rename them
+
 custom_yolov5n.yaml
+
 custom_yolov5s.yaml
+
 custom_yolov5m.yaml
+
 custom_yolov5l.yaml
+
 custom_yolov5x.yaml
+
 
 Now to Train our Model
 While in the yolov5 directory
 MAKE SURE data.yaml FILE IS EDITED TO CORRECT PATHS
+
 >data.yaml
-	train: ./path/to/train/images
+
+train: ./path/to/train/images
+
 val: ./path/to/valid/images
+
 test: ./path/to/test/images
 
 Run the command:
-Python3 train.py --img 640  --batch 16  --epochs 400  --data data.yaml --cfg ./models/custom_yolov5s.yaml --weights ‘’ 
+
+Python3 train.py --img 640  --batch 16  --epochs 400  --data data.yaml --cfg ./models/custom_yolov5s.yaml --weights ‘’
+ 
 --img = size of images when generated in roboflow
+
 --batch = number of training samples it runs through the network before updating the weights and moving to the next batch of samples
+
 --epochs = the number of times it tests all the samples through the network
+
 --data = the yaml file that was created from ROBOFLOW (OUR MODEL DATA)
+
 --cfg = the provided yolov5(n,s,m,l,x).yaml files (decide complexity based on needs)
-– weights = could use a provided pytorch weight (not required)
+
+–- weights = could use a provided pytorch weight (not required)
 
 TRAINING COULD END EARLY: DON'T WORRY, SYSTEM IS DESIGNED TO STOP TRAINING IF NO IMPROVEMENT TO THE MODEL IS MADE IN THE LAST TRAINED 100 EPOCHS
 
 WEIGHT FILEs WILL BE CREATED IN: yolov5/runs/train/exp/weights
+
 These files are best.pt and last.pt
+
 Usually be implementing best.pt
 
 Once training is complete:
+
 INFERENCE TESTING Can be done in the yolov5 directory running the following commands
 
 
