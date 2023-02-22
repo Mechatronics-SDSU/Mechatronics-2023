@@ -247,14 +247,18 @@ void ms5837_depth(CAN_message_t &msg){                // 0x00 02
 #ifdef DEBUG_DREQ_PTR
   Serial.println("Depth Requested!\n");
 #endif
-  fill_msg_buffer_w_float_buffer(msg, pressure_sensor.depth);
+  //fill_msg_buffer_w_float_buffer(msg, pressure_sensor.depth);
+  float t__ = ms5837_Read_Depth();
+  fill_msg_buffer_w_float(msg, &t__);
 }
 
 void ms5837_temp(CAN_message_t &msg){                 // 0x00 03
 #ifdef DEBUG_DREQ_PTR
   Serial.printf("Temp Requested!\n");
 #endif
-  fill_msg_buffer_w_float_buffer(msg, pressure_sensor.temperature);
+  //fill_msg_buffer_w_float_buffer(msg, pressure_sensor.temperature);
+  float t__ = ms5837_Read_Temp();
+  fill_msg_buffer_w_float(msg, &t__);
 }
 
 #undef MS5837_DEVICE_ID

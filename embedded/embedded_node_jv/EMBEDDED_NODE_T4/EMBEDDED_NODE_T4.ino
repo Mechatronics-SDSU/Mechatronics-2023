@@ -126,6 +126,7 @@ void loop() {
   
   
 #ifdef ENABLE_PRES_SENS
+/*
   if(ms5837_Data_ready() && !pressure_sensor.health){
     
     float_2_char_array(pressure_sensor.depth, ms5837_Read_Depth());
@@ -133,7 +134,7 @@ void loop() {
     float_2_char_array(pressure_sensor.temperature, ms5837_Read_Temp());
     float_2_char_array(pressure_sensor.average_temperature, ms5837_Avg_Temp());
   }
- 
+ */
 #endif
 
 }
