@@ -53,6 +53,9 @@ pressure_sensor_t pressure_sensor;
 
 bright_lights_t lights;
 
+IntervalTimer killButtonISRTimeout;
+IntervalTimer leakDetectionISRTimeout;
+
 ///////////////////////////////////////////////////////////////
 //            State Variables and Timers
 ///////////////////////////////////////////////////////////////
@@ -79,7 +82,7 @@ void setup() {
   setup_leak_detection_pins_and_isr();
 
   // Enable soft kill button input
-  setup_soft_kill_button();
+  startup_kill_button();
 
   startup_pressure_sensor( &pressure_sensor);
 
@@ -107,11 +110,15 @@ void setup() {
   }
 
   // Initialization ready, blinky light time!
-  for(uint32_t n = 0; n < 5; n++){
-    digitalWriteFast(DEBUG_LED, 1);
+  for(uint32_t n = 0; n < 6; n++){
+    digitalToggle(DEBUG_LED);
     delay(500);
-    digitalWriteFast(DEBUG_LED, 0);
+    
   }
+
+#ifdef DEBUG_MODE
+  Serial.printf("Initiation Complete!\n");
+#endif
 
 }
 

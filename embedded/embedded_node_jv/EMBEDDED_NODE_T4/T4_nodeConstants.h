@@ -5,7 +5,7 @@
 
 
   // Define USB Serial Print Debug Messaging
-//#define DEBUG_MODE
+#define DEBUG_MODE
 //#define DEBUG_DECODE
 //#define DEBUG_DREQ_PTR
 
@@ -71,7 +71,7 @@
 #define ACTIVE_THRUSTERS  8
 #define THRUSTER_PWM_FREQ 400
 
-#define MAX_BRLIGHTS      4
+#define MAX_BRLIGHTS      2
 
 #define DEFAULT_SOFT_SHUTDOWN_TIME_MS   250
 
@@ -88,20 +88,25 @@ struct CONTROL{
 
 
 // Leak Detection pins, trigger on HI
+#define LEAK_DET_DEBOUNCE_TIMEOUT 1000000ul
 #define LEAK_DET_PIN_0  30
 #define LEAK_DET_PIN_1  31
 #define LEAK_DET_PIN_2  32
 #define LEAK_DET_PIN_3  33
 
 // Soft Kill Button input, trigger on HI
-#define SOFT_KILL_PIN   38
+#define KILL_BUTTON_PIN   38
+#define KILL_BUTTON_DEBOUNCE_TIMEOUT  500000
 
 // Light PWM pins
 #define BRLIGHT_MAP_OFFSET  -100
 #define LIGHT_0_PIN     28
 #define LIGHT_1_PIN     29
-#define LIGHT_2_PIN     37
-#define LIGHT_3_PIN     36
+
+// LED Button Light Pins (Same Timer)
+#define BUTTON_LED_BLINK_RATE   1
+#define KILL_BUTTON_GRN_LED     37
+#define KILL_BUTTON_BLU_LED     36
 
 // No Reponse ISR and Timer
 #define NO_RESPONSE_TIMEOUT_US    1000000

@@ -26,16 +26,19 @@ void emergency_CFGS_handler(const CAN_message_t &msg){
 }
 
 void shutdownSystem(){      // Immediate shutdown of motors, release claw
+  cli();                    // Control ISRs
 #ifdef DEBUG_MODE
   Serial.println("Shutdown!!");
 #endif
+  
   OA_STATE = SOFT_KILL_STATE;
+  
   for(int n = 0; n < ACTIVE_THRUSTERS; n++){
     // motorGo(uint8_t motor__, uint8_t percent)
     control.thruster[n].value = motorGo(control.thruster[n].pin, 0);
   }
 
-  //while(1){};
+  sei();
 }
 
 void softShutdown(const CAN_message_t &msg){        // Slowly shutdown motors and release claw
