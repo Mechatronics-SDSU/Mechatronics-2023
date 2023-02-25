@@ -106,13 +106,17 @@ void re_enable_kill_button_irq(){ // Allow button IRQs again
 
 void kill_button_triggered(){
   __disable_irq();                // Maintain control over ISRs
-  NVIC_CLEAR_PENDING(IRQ_ACMP2);  // Clear ISR Queue for button
+  CMP2_SCR |= (1 << 2);           // Clear COMP2 trig flag
+  //cli();
   NVIC_DISABLE_IRQ(IRQ_ACMP2);    // Disable button IRQ for debounce
+  NVIC_CLEAR_PENDING(IRQ_ACMP2);  // Clear ISR Queue for button
+  
   shutdownSystem();               // Kill Motors
   __enable_irq();                 // Allow other IRQs
+  //sei();
   digitalToggle(DEBUG_LED);       // Blink Debug LED
   soft_kill_system_message();     // Send CAN0 Message indicating shutdown button press
-  CMP2_SCR |= (1 << 2);           // Clear COMP2 trig flag
+  //CMP2_SCR |= (1 << 2);           // Clear COMP2 trig flag
 
   
 

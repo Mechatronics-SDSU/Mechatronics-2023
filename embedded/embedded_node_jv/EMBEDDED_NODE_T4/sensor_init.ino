@@ -51,6 +51,7 @@ void startup_light_system(bright_lights_t *light_struct){
     light_struct->level[n] = 0x00;
     pinMode(light_struct->pin[n], OUTPUT);
     analogWrite(light_struct->pin[n], map2Motor(BRLIGHT_MAP_OFFSET));
+    analogWriteFrequency(light_struct->pin[n], BRLIGHT_PWM_FREQ);
   }
 }
 
@@ -58,13 +59,13 @@ void set_num_enabled_lights(bright_lights_t *light_struct, uint8_t num_en){
   light_struct->num_enabled = num_en;
 }
 
-/*
-void set_light_levels(bright_lights_t *light_struct){
+
+void set_light_levels(bright_lights_t *light_struct, uint8_t vals){
   for(int n = 0; n < light_struct->num_enabled; n++){
-    analogWrite(light_struct->[n], map2Motor(-100 + 0x00));
+    analogWrite(light_struct->pin[n], map2Motor(BRLIGHT_MAP_OFFSET + (vals << 1)));
   }
 }
-*/
+
 
 //////////////////////////////////////////////////////
 //          LED Button 

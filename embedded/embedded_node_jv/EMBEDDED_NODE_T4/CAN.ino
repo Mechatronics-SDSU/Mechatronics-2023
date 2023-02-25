@@ -3,8 +3,8 @@
 #define CANBAUD     500000
 // Using their standard numbers here, these are variable
 //  CHECK HERE IF WEIRD STUFF IS HAPPENING
-#define NUM_TX_MAILBOXES  8       // used to be 2
-#define NUM_RX_MAILBOXES  8       // used to be 16
+#define NUM_TX_MAILBOXES  32       // used to be 2
+#define NUM_RX_MAILBOXES  32       // used to be 16
 
 int canSetup(){
   Can0.begin();

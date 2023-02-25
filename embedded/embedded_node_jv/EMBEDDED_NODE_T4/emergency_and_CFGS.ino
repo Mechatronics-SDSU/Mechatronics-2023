@@ -19,6 +19,9 @@ void emergency_CFGS_handler(const CAN_message_t &msg){
       break;
 
       case 0x00A:
+#ifdef DEBUG_MODE
+        Serial.printf("\nState Errors Clear, All Good!\n");
+#endif
         OA_STATE = ALL_GOOD_STATE;
       break;
     }

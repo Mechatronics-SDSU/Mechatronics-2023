@@ -117,7 +117,15 @@ void setup() {
   }
 
 #ifdef DEBUG_MODE
-  Serial.printf("Initiation Complete!\n");
+  Serial.printf("Initiation Complete.\n\tDebug Mode Enabled\n");
+#endif
+
+#ifdef DEBUG_DECODE
+  Serial.printf("\tCAN Message Decode Enabled\n");
+#endif
+
+#ifdef DEBUG_DREQ_PTR
+  Serial.printf("\tDREQ, DRES, STOW Debug Enabled\n");
 #endif
 
 }

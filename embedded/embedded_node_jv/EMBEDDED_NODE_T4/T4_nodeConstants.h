@@ -6,8 +6,9 @@
 
   // Define USB Serial Print Debug Messaging
 #define DEBUG_MODE
-//#define DEBUG_DECODE
-//#define DEBUG_DREQ_PTR
+#define NO_DVL_DEBUG
+#define DEBUG_DECODE
+#define DEBUG_DREQ_PTR
 
 
 
@@ -99,6 +100,7 @@ struct CONTROL{
 #define KILL_BUTTON_DEBOUNCE_TIMEOUT  500000
 
 // Light PWM pins
+#define BRLIGHT_PWM_FREQ    400
 #define BRLIGHT_MAP_OFFSET  -100
 #define LIGHT_0_PIN     28
 #define LIGHT_1_PIN     29

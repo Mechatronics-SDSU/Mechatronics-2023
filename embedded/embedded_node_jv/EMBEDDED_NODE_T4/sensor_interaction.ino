@@ -2,19 +2,27 @@
 
 void sensor_interaction_handler(const CAN_message_t &msg){
   uint16_t err_val = 0;
+#ifdef DEBUG_DREQ_PTR
+  Serial.println("\nSensor Interaction handler!");
+#endif
 #ifdef DEBUG_DECODE
-  Serial.println("Sensor Interaction handler!");
   canDecode(msg);
 #endif
 
-  if(msg.len != 4) return;
+  if(msg.len < 4) return;
 
   switch(msg.id){
     case DREQ_ID:           // Main sensor DREQ and DRES mechanism
+#ifdef DEBUG_DREQ_PTR
+      Serial.printf("DREQ!\n");
+#endif
       handle_dreq(msg);
     break;
 
     case STOW_ID:
+#ifdef DEBUG_DREQ_PTR
+      Serial.printf("STOW!\n");
+#endif
       CAN_message_t msg2 = msg;
       handle_stow(msg2);
     break;
@@ -27,6 +35,9 @@ void sensor_interaction_handler(const CAN_message_t &msg){
     }  
   }
 }
+
+
+
 
 void handle_dreq(const CAN_message_t &msg){
   // Pre Structure Return Message

@@ -189,7 +189,8 @@ topic_ptr_array_t data_BRLIGHT[BRLIGHT_TOPIC_CT] =
     dreq_res,
     dreq_res,
     dreq_res,
-    brlight_front_brightness
+    brlight_front_brightness,
+    dreq_res
   };
 
 ////////////////////////////////////////////////////////////////////////////////////////

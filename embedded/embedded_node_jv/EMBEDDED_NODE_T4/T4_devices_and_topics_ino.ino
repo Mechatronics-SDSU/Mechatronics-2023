@@ -266,16 +266,29 @@ void ms5837_temp(CAN_message_t &msg){                 // 0x00 03
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0004 BRLIGHT External LED Lights for illumination
 void brlight_info( CAN_message_t &msg){
+#ifdef DEBUG_DREQ_PTR
+  Serial.printf("BRLIGHT Info Access ID: %02X\n", msg.id);
+#endif
   if(msg.id == STOW_ID){
-    if(msg.buf[4]){
-      startup_light_system( &lights );  
-    }
-    set_num_enabled_lights( &lights , msg.buf[4]);
+    startup_light_system( &lights );  
+    set_num_enabled_lights( &lights , MAX_BRLIGHTS);
     
+  } else {
+    msg.id = DRES_ID;
+    Can0.write(msg);
   }
 }
  // 3x res
 void brlight_front_brightness( CAN_message_t &msg){
+  //set_light_levels(bright_lights_t *light_struct, uint8_t *vals)
+#ifdef DEBUG_DREQ_PTR  
+  Serial.printf("Set Light Levels: %3u percent\n", msg.buf[4]);
+#endif
+  if(msg.len > 4){
+    set_light_levels( &lights , msg.buf[4]);
+  } else {
+    set_light_levels( &lights , 0x00);
+  }
   
 }
 
