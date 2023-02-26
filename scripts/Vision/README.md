@@ -21,8 +21,8 @@ The Script will print messages acknowledging if your folders exist or not.
 Functionality while script is running:
 
 Pressing 'c':
-key to capture the current image and save it with an ordered label (starting from 0) in the specified folder.
-The captured images are saved as JPEG files with filenames that match their respective ordered labels (e.g., "0.jpg", "1.jpg", "2.jpg", etc.).
+key to capture the current image and save it with an ordered label in the specified folder.
+The captured images are saved as JPEG files with filenames that match their respective ordered labels (e.g., "1.jpg", "2.jpg", etc.).
 
 pressing 't':
 generates an image label using the current date and time, in the format "YYYYMMDD_HHMMSS.jpg". 
