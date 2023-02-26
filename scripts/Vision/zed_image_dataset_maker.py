@@ -1,6 +1,6 @@
 '''
 Joshua Van Doren
-2/14/2023
+2/26/2023
 Display video data from zed with opencv and save images to a user defined folder
 Have ZED SDK and its python-api installed
 pip install opencv-python
@@ -28,11 +28,28 @@ init_params.camera_resolution = sl.RESOLUTION.HD720  # Comes in HD1080 , HD2K, H
 init_params.camera_fps = 60  # FPS of 15, 30, 60, or 100
 
 # set up image label starting number
-img_label = 0
 
+images = 0
 # set up folder path to save images
-numbered_folder_path = "path/to/number/ordered/folder/"
-date_folder_path = "path/to/date/organized/folder/"
+numbered_folder_path = "C:/Users/j4vdo/Desktop/Games"  # these folder placeholder formats are correct
+date_folder_path = "/path/to/date/organized/folder"
+
+def exist(folder_path):
+    if not os.path.exists(folder_path):
+        print(f"The folder path {folder_path} does not exist.")
+    else:
+        print(f"The folder path {folder_path} exists.")
+
+
+exist(numbered_folder_path)
+exist(date_folder_path)
+
+
+contents = os.listdir(numbered_folder_path)
+for item in contents:
+    images += 1
+img_label = images
+print(f"There are {img_label} images currently in {numbered_folder_path}.")
 
 # open camera
 camera_state = zed.open(init_params)
@@ -55,16 +72,17 @@ while True:
 
         cv.imshow("Zed-Cam", image_ocv)
 
-        # wait for user to press 'c' key to capture image or 'q' key to quit
+        # wait for user to press 'c' or 't' key to capture image or 'q' key to quit
         key = cv.waitKey(1) & 0xFF
         if key == ord('c'):
+            # increment image label for next capture
+            img_label += 1
             # save captured image with ordered label in specified folder
             img_path = os.path.join(numbered_folder_path, str(img_label) + ".jpg")
             cv.imwrite(img_path, image_ocv)
+            print(f"Image number {img_label} is now stored in {numbered_folder_path}")
 
-            # increment image label for next capture
-            img_label += 1
-
+        # take timestamped image
         if key == ord('t'):
             # generate image label with timestamp
             now = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -73,9 +91,10 @@ while True:
             # save captured image with ordered label in specified folder
             img_path = os.path.join(date_folder_path, date_img_label)
             cv.imwrite(img_path, image_ocv)
-
-
+            print(f"Image taken at {now} is now stored in {date_folder_path}")
+        # quit
         elif key == ord('q'):
+            print("Closing window")
             # user has quit, release camera and close display window
             cv.destroyAllWindows()
             zed.close()

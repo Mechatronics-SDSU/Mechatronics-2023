@@ -8,18 +8,20 @@ User Configuration of File:
 
 Set numbered_folder_path to the folder which you want to store images in a number ordered list
 
-If using numbered_folder_path organizational method of storage and you are running this script multiple times to the same folder:
-Change the img_label value to a value greater than the value of your last image already stored in that folder
-
 
 Set date_folder_path to the folder in which you want the images to be stored in order of date and time they were taken
 
 
 
+Run Script: 
+
+The Script will print messages acknowledging if your folders exist or not.
+
+
 Functionality while script is running:
 
 Pressing 'c':
-key to capture the current image and save it with an ordered label (starting from 0) in the specified folder. The user can press the 'q' key to quit the script.
+key to capture the current image and save it with an ordered label (starting from 0) in the specified folder.
 The captured images are saved as JPEG files with filenames that match their respective ordered labels (e.g., "0.jpg", "1.jpg", "2.jpg", etc.).
 
 pressing 't':
