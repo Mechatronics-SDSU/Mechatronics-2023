@@ -1,8 +1,7 @@
 # EMBEDDED NODE RP2040
 The RP2040 fills the role of the slow speed subsystem of the  
 core embedded systems. This entails driving slow speed motion,  
-lighting, collecting long term data, and interfacing with  
-leak detection.  
+lighting, and current sensing for non-drive motor motors.  
 Utilization of both cores is crucial, where one core must  
 run at full speed with no blocking outside of communication  
 handling, and the other must handle slow speed motion.  
@@ -17,6 +16,7 @@ required `pico_sdk_import.cmake`, nor any built binaries.
   
 ## System Primary Tasks
 - Smooth closure of actuators
+- Current sensing of actuators
 - Torpedo firing
 - Status Lighting
 - Analog Data Collection
