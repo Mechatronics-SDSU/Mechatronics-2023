@@ -22,6 +22,8 @@
     Takes in objects from 2D camera input, and outputs distance of nearest object.
     If within .5 m, outputs "stop" and exits.
     If no object detected, outputs "no objects".
+    
+    Uses ZED SDK.
 """
 import sys
 import ogl_viewer.viewer as gl
