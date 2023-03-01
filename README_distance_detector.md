@@ -13,7 +13,7 @@ If the ZED camera detects an object to be within .5 m from the camera, the progr
 and exits.
 
 The minimum distance be edited by modifying line 100, but I found that .5 m was the lowest reliable distance:
-# Print stop if detected object within .5 m
+\# Print stop if detected object within .5 m
             if leastDistance <= .5:
 
 If the ZED camera doesn't detect any object in a frame, the program outputs "no object" and continues.
