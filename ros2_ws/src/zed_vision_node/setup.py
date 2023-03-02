@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'vision_exec = zed_vision_node.zed_vision_node:main'
+            'zed_vision_exec = zed_vision_node.zed_vision_node:main'
         ],
     },
 )

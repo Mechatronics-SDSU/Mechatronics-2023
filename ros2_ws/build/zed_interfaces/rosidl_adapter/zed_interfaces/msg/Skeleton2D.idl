@@ -1,0 +1,62 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from zed_interfaces/msg/Skeleton2D.msg
+// generated code does not contain a copyright notice
+
+#include "zed_interfaces/msg/Keypoint2Df.idl"
+
+module zed_interfaces {
+  module msg {
+    typedef zed_interfaces::msg::Keypoint2Df zed_interfaces__msg__Keypoint2Df;
+    typedef zed_interfaces__msg__Keypoint2Df zed_interfaces__msg__Keypoint2Df__34[34];
+    @verbatim (language="comment", text=
+      " Skeleton joints indices for BODY_FORMAT::POSE_18" "\n"
+      "        16-14   15-17" "\n"
+      "             \ /" "\n"
+      "              0" "\n"
+      "              |" "\n"
+      "       2------1------5" "\n"
+      "       |    |   |    |" "\n"
+      "     |    |   |    |" "\n"
+      "       3    |   |    6" "\n"
+      "       |    |   |    |" "\n"
+      "       |    |   |    |" "\n"
+      "       4    8   11   7" "\n"
+      "            |   |" "\n"
+      "            |   |" "\n"
+      "            |   |" "\n"
+      "            9   12" "\n"
+      "            |   |" "\n"
+      "            |   |" "\n"
+      "            |   |" "\n"
+      "           10   13")
+    struct Skeleton2D {
+      @verbatim (language="comment", text=
+        " Skeleton joints indices for BODY_FORMAT::POSE_34" "\n"
+        "                     30  28" "\n"
+        "                       \/" "\n"
+        "                   31  27  29" "\n"
+        "                    \  |  /" "\n"
+        "                       26" "\n"
+        "                       |" "\n"
+        " 16-15-14---13--12-11  03  04-05--06---07-08-09" "\n"
+        "       /             \ | /              \        #" "\n"
+        "      17               02                10" "\n"
+        "                       |" "\n"
+        "                       01" "\n"
+        "                       |" "\n"
+        "                       |" "\n"
+        "                    22-00-18" "\n"
+        "                     |    |" "\n"
+        "                     |    |" "\n"
+        "                     |    |" "\n"
+        "                    23    19" "\n"
+        "                     |    |" "\n"
+        "                     |    |" "\n"
+        "                     |    |" "\n"
+        "                    24    20" "\n"
+        "                     |    |" "\n"
+        "                    25    21")
+      zed_interfaces__msg__Keypoint2Df__34 keypoints;
+    };
+  };
+};

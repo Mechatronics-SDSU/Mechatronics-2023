@@ -1,0 +1,43 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from zed_interfaces/srv/StartSvoRec.srv
+// generated code does not contain a copyright notice
+
+
+module zed_interfaces {
+  module srv {
+    @verbatim (language="comment", text=
+      " Start SVO Recording")
+    struct StartSvoRec_Request {
+      @verbatim (language="comment", text=
+        " Bitrate - 0 or [1000,60000]")
+      uint32 bitrate;
+
+      @verbatim (language="comment", text=
+        " Compression Mode - [0,2]")
+      uint8 compression_mode;
+
+      @verbatim (language="comment", text=
+        " Target Framerate" "\n"
+        " Allowed framerates are 0,15,30, 60 or 100." "\n"
+        " Any other values will be discarded and camera FPS will be taken.")
+      uint32 target_framerate;
+
+      @verbatim (language="comment", text=
+        " Input Transcode")
+      boolean input_transcode;
+
+      @verbatim (language="comment", text=
+        " Filename")
+      string svo_filename;
+    };
+    struct StartSvoRec_Response {
+      @verbatim (language="comment", text=
+        " indicate successful run of service")
+      boolean success;
+
+      @verbatim (language="comment", text=
+        " informational, e.g. for error messages")
+      string message;
+    };
+  };
+};

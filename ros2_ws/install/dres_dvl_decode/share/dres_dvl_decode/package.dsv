@@ -1,0 +1,8 @@
+source;share/dres_dvl_decode/hook/cmake_prefix_path.ps1
+source;share/dres_dvl_decode/hook/cmake_prefix_path.dsv
+source;share/dres_dvl_decode/hook/cmake_prefix_path.sh
+source;share/dres_dvl_decode/local_setup.bash
+source;share/dres_dvl_decode/local_setup.dsv
+source;share/dres_dvl_decode/local_setup.ps1
+source;share/dres_dvl_decode/local_setup.sh
+source;share/dres_dvl_decode/local_setup.zsh

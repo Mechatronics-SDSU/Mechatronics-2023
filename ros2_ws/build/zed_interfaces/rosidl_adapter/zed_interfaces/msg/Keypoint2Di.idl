@@ -1,0 +1,13 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from zed_interfaces/msg/Keypoint2Di.msg
+// generated code does not contain a copyright notice
+
+
+module zed_interfaces {
+  module msg {
+    typedef uint32 uint32__2[2];
+    struct Keypoint2Di {
+      uint32__2 kp;
+    };
+  };
+};

@@ -1,0 +1,15 @@
+/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_interfaces/rosidl_adapter/zed_interfaces:msg/Object.idl
+/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_interfaces/rosidl_adapter/zed_interfaces:msg/ObjectsStamped.idl
+/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_interfaces/rosidl_adapter/zed_interfaces:msg/Keypoint2Di.idl
+/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_interfaces/rosidl_adapter/zed_interfaces:msg/Keypoint2Df.idl
+/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_interfaces/rosidl_adapter/zed_interfaces:msg/Keypoint3D.idl
+/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_interfaces/rosidl_adapter/zed_interfaces:msg/BoundingBox2Di.idl
+/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_interfaces/rosidl_adapter/zed_interfaces:msg/BoundingBox2Df.idl
+/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_interfaces/rosidl_adapter/zed_interfaces:msg/BoundingBox3D.idl
+/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_interfaces/rosidl_adapter/zed_interfaces:msg/Skeleton2D.idl
+/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_interfaces/rosidl_adapter/zed_interfaces:msg/Skeleton3D.idl
+/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_interfaces/rosidl_adapter/zed_interfaces:msg/DepthInfoStamped.idl
+/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_interfaces/rosidl_adapter/zed_interfaces:msg/PlaneStamped.idl
+/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_interfaces/rosidl_adapter/zed_interfaces:srv/SetPose.idl
+/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_interfaces/rosidl_adapter/zed_interfaces:srv/StartSvoRec.idl
+/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_interfaces/rosidl_adapter/zed_interfaces:srv/SetROI.idl

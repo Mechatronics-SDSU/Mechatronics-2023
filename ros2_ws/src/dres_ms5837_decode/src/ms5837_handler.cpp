@@ -17,8 +17,8 @@ MS5837Decode:: MS5837Decode(rclcpp::Node* context)
 
 	device_id = 0x0003; 		/* public device ID (used by dres_decoder_node) */
 
-	sensor_depth = node_context->create_publisher<std_msgs::msg::Float32> ("ms5837_depth", 10);
-	sensor_temp  = node_context->create_publisher<std_msgs::msg::Float32> ("ms5837_temp", 10);
+	sensor_depth = node_context->create_publisher<std_msgs::msg::Float32> ("ms5837_depth_data", 10);
+	sensor_temp  = node_context->create_publisher<std_msgs::msg::Float32> ("ms5837_temp_data", 10);
 
 	RCLCPP_INFO(node_context->get_logger(), "[MS5837Decode] Decoder Initialized.");
 }

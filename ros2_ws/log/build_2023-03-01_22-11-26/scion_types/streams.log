@@ -1,0 +1,459 @@
+[0.050s] Invoking command in '/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/scion_types': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/mechatronics/test/Mechatronics-2023/ros2_ws/install/zed_vision_node:/home/mechatronics/test/Mechatronics-2023/ros2_ws/install/ahrs_node:/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_vision_node:/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/ahrs_node:/home/mechatronics/junebug_workspace/install/zed_temp:/home/mechatronics/junebug_workspace/install/zed_imu2:/home/mechatronics/junebug_workspace/install/zed_imu:/home/mechatronics/junebug_workspace/install/top_view_package:/home/mechatronics/junebug_workspace/install/py_pubsub:/home/mechatronics/junebug_workspace/install/object_detection_package:/home/mechatronics/junebug_workspace/install/mapping_package:/home/mechatronics/junebug_workspace/install/depth_package:/home/mechatronics/junebug_workspace/install/controller_translator:/home/mechatronics/junebug_workspace/install/cam_track_package:/home/mechatronics/junebug_workspace/install/body_track_package:/home/mechatronics/junebug_workspace/install/ahr:/opt/ros/foxy /usr/bin/cmake --build /home/mechatronics/master/Mechatronics-2023/ros2_ws/build/scion_types -- -j12 -l12
+[0.110s] -- Found ament_cmake: 0.9.11 (/opt/ros/foxy/share/ament_cmake/cmake)
+[0.169s] -- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3") 
+[0.169s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[0.539s] -- Found rclcpp: 2.4.2 (/opt/ros/foxy/share/rclcpp/cmake)
+[0.608s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.612s] -- Found rosidl_adapter: 1.3.0 (/opt/ros/foxy/share/rosidl_adapter/cmake)
+[0.809s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.871s] -- Found rmw_implementation_cmake: 1.0.3 (/opt/ros/foxy/share/rmw_implementation_cmake/cmake)
+[0.877s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.053s] -- Found geometry_msgs: 2.0.5 (/opt/ros/foxy/share/geometry_msgs/cmake)
+[1.093s] -- Found shape_msgs: 2.0.5 (/opt/ros/foxy/share/shape_msgs/cmake)
+[1.170s] -- Found rosidl_default_generators: 1.0.1 (/opt/ros/foxy/share/rosidl_default_generators/cmake)
+[1.254s] -- Found PythonInterp: /usr/bin/python3 (found version "3.8.10") 
+[1.522s] -- Found ament_cmake_ros: 0.9.2 (/opt/ros/foxy/share/ament_cmake_ros/cmake)
+[1.716s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.734s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.799s] -- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3.5") 
+[1.800s] -- Found python_cmake_module: 0.8.1 (/opt/ros/foxy/share/python_cmake_module/cmake)
+[1.860s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[1.861s] -- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.8
+[1.861s] -- Using PYTHON_LIBRARIES: /usr/lib/aarch64-linux-gnu/libpython3.8.so
+[1.921s] -- Configuring done
+[1.971s] -- Generating done
+[1.976s] -- Build files have been written to: /home/mechatronics/master/Mechatronics-2023/ros2_ws/build/scion_types
+[2.032s] [35m[1mScanning dependencies of target scion_types__cpp[0m
+[2.036s] [35m[1mScanning dependencies of target scion_types__rosidl_generator_c[0m
+[2.054s] [  1%] Built target scion_types__cpp
+[2.059s] [  3%] [32m[1mLinking C shared library libscion_types__rosidl_generator_c.so[0m
+[2.076s] [35m[1mScanning dependencies of target scion_types__rosidl_typesupport_cpp[0m
+[2.077s] [35m[1mScanning dependencies of target scion_types__rosidl_typesupport_fastrtps_cpp[0m
+[2.077s] [35m[1mScanning dependencies of target scion_types__rosidl_typesupport_introspection_cpp[0m
+[2.100s] [  7%] [32m[1mLinking CXX shared library libscion_types__rosidl_typesupport_cpp.so[0m
+[2.100s] [  7%] [32m[1mLinking CXX shared library libscion_types__rosidl_typesupport_introspection_cpp.so[0m
+[2.105s] [  9%] [32m[1mLinking CXX shared library libscion_types__rosidl_typesupport_fastrtps_cpp.so[0m
+[2.116s] [ 18%] Built target scion_types__rosidl_generator_c
+[2.140s] [35m[1mScanning dependencies of target scion_types__rosidl_typesupport_c[0m
+[2.140s] [35m[1mScanning dependencies of target scion_types__rosidl_typesupport_introspection_c[0m
+[2.163s] [ 23%] [32m[1mLinking CXX shared library libscion_types__rosidl_typesupport_c.so[0m
+[2.163s] [ 29%] Built target scion_types__rosidl_typesupport_cpp
+[2.167s] [ 30%] [32m[1mLinking C shared library libscion_types__rosidl_typesupport_introspection_c.so[0m
+[2.219s] [ 40%] Built target scion_types__rosidl_typesupport_introspection_c
+[2.221s] [ 49%] Built target scion_types__rosidl_typesupport_introspection_cpp
+[2.231s] [ 58%] Built target scion_types__rosidl_typesupport_c
+[2.245s] [ 67%] Built target scion_types__rosidl_typesupport_fastrtps_cpp
+[2.271s] [35m[1mScanning dependencies of target scion_types__rosidl_typesupport_fastrtps_c[0m
+[2.298s] [ 69%] [32m[1mLinking CXX shared library libscion_types__rosidl_typesupport_fastrtps_c.so[0m
+[2.428s] [ 78%] Built target scion_types__rosidl_typesupport_fastrtps_c
+[2.476s] [ 78%] Built target scion_types
+[2.499s] [35m[1mScanning dependencies of target scion_types__py[0m
+[2.529s] [ 80%] Built target scion_types__py
+[2.561s] [35m[1mScanning dependencies of target scion_types__python[0m
+[2.598s] [ 81%] [32m[1mLinking C shared library rosidl_generator_py/scion_types/libscion_types__python.so[0m
+[2.664s] [ 89%] Built target scion_types__python
+[2.714s] [ 90%] [32m[1mLinking CXX shared library rosidl_generator_py/scion_types/scion_types_s__rosidl_typesupport_fastrtps_c.cpython-38-aarch64-linux-gnu.so[0m
+[2.714s] [ 92%] [32m[1mLinking C shared library rosidl_generator_py/scion_types/scion_types_s__rosidl_typesupport_introspection_c.cpython-38-aarch64-linux-gnu.so[0m
+[2.714s] [ 94%] [32m[1mLinking C shared library rosidl_generator_py/scion_types/scion_types_s__rosidl_typesupport_c.cpython-38-aarch64-linux-gnu.so[0m
+[2.775s] [ 98%] Built target scion_types__rosidl_typesupport_introspection_c__pyext
+[2.775s] [ 98%] Built target scion_types__rosidl_typesupport_c__pyext
+[2.810s] [100%] Built target scion_types__rosidl_typesupport_fastrtps_c__pyext
+[2.837s] Invoked command in '/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/scion_types' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/mechatronics/test/Mechatronics-2023/ros2_ws/install/zed_vision_node:/home/mechatronics/test/Mechatronics-2023/ros2_ws/install/ahrs_node:/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_vision_node:/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/ahrs_node:/home/mechatronics/junebug_workspace/install/zed_temp:/home/mechatronics/junebug_workspace/install/zed_imu2:/home/mechatronics/junebug_workspace/install/zed_imu:/home/mechatronics/junebug_workspace/install/top_view_package:/home/mechatronics/junebug_workspace/install/py_pubsub:/home/mechatronics/junebug_workspace/install/object_detection_package:/home/mechatronics/junebug_workspace/install/mapping_package:/home/mechatronics/junebug_workspace/install/depth_package:/home/mechatronics/junebug_workspace/install/controller_translator:/home/mechatronics/junebug_workspace/install/cam_track_package:/home/mechatronics/junebug_workspace/install/body_track_package:/home/mechatronics/junebug_workspace/install/ahr:/opt/ros/foxy /usr/bin/cmake --build /home/mechatronics/master/Mechatronics-2023/ros2_ws/build/scion_types -- -j12 -l12
+[3.103s] Invoking command in '/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/scion_types': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/mechatronics/test/Mechatronics-2023/ros2_ws/install/zed_vision_node:/home/mechatronics/test/Mechatronics-2023/ros2_ws/install/ahrs_node:/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_vision_node:/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/ahrs_node:/home/mechatronics/junebug_workspace/install/zed_temp:/home/mechatronics/junebug_workspace/install/zed_imu2:/home/mechatronics/junebug_workspace/install/zed_imu:/home/mechatronics/junebug_workspace/install/top_view_package:/home/mechatronics/junebug_workspace/install/py_pubsub:/home/mechatronics/junebug_workspace/install/object_detection_package:/home/mechatronics/junebug_workspace/install/mapping_package:/home/mechatronics/junebug_workspace/install/depth_package:/home/mechatronics/junebug_workspace/install/controller_translator:/home/mechatronics/junebug_workspace/install/cam_track_package:/home/mechatronics/junebug_workspace/install/body_track_package:/home/mechatronics/junebug_workspace/install/ahr:/opt/ros/foxy /usr/bin/cmake --install /home/mechatronics/master/Mechatronics-2023/ros2_ws/build/scion_types
+[3.125s] -- Install configuration: ""
+[3.125s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/ament_index/resource_index/rosidl_interfaces/scion_types
+[3.126s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types
+[3.126s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv
+[3.127s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/send_frame.h
+[3.127s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail
+[3.128s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__functions.c
+[3.128s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__struct.h
+[3.129s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__functions.h
+[3.129s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__type_support.h
+[3.129s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg
+[3.129s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/can_frame.h
+[3.130s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/bounding_box3_d.h
+[3.130s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/rosidl_generator_c__visibility_control.h
+[3.130s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/depth_info_stamped.h
+[3.130s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/keypoint2_di.h
+[3.131s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/keypoint2_df.h
+[3.131s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/object.h
+[3.131s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail
+[3.131s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint3_d__type_support.h
+[3.131s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint3_d__functions.c
+[3.132s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box3_d__type_support.h
+[3.132s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__functions.h
+[3.133s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__functions.h
+[3.133s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/object__type_support.h
+[3.133s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box3_d__functions.c
+[3.134s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/objects_stamped__functions.h
+[3.134s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_df__type_support.h
+[3.134s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_df__functions.c
+[3.135s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_df__type_support.h
+[3.135s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__struct.h
+[3.136s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_df__functions.h
+[3.136s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__type_support.h
+[3.136s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__struct.h
+[3.136s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton3_d__functions.c
+[3.137s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_di__struct.h
+[3.137s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/object__functions.c
+[3.137s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton2_d__functions.c
+[3.138s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__functions.c
+[3.138s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_di__type_support.h
+[3.139s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton2_d__struct.h
+[3.139s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/plane_stamped__type_support.h
+[3.139s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/object__struct.h
+[3.139s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint3_d__functions.h
+[3.140s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/plane_stamped__struct.h
+[3.140s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__type_support.h
+[3.140s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__struct.h
+[3.140s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_di__functions.h
+[3.141s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__struct.h
+[3.142s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_df__functions.c
+[3.142s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/object__functions.h
+[3.143s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton2_d__functions.h
+[3.143s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_df__struct.h
+[3.144s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton2_d__type_support.h
+[3.145s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box3_d__functions.h
+[3.145s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_di__struct.h
+[3.146s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_di__functions.c
+[3.146s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__functions.c
+[3.146s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__type_support.h
+[3.146s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton3_d__functions.h
+[3.147s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton3_d__struct.h
+[3.147s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_di__functions.c
+[3.148s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/depth_info_stamped__functions.h
+[3.148s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__functions.h
+[3.148s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/depth_info_stamped__struct.h
+[3.148s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_di__type_support.h
+[3.148s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box3_d__struct.h
+[3.149s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton3_d__type_support.h
+[3.149s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/depth_info_stamped__functions.c
+[3.149s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint3_d__struct.h
+[3.149s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/objects_stamped__struct.h
+[3.150s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/plane_stamped__functions.h
+[3.150s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__functions.c
+[3.150s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_di__functions.h
+[3.150s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__functions.h
+[3.151s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__functions.c
+[3.151s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_df__functions.h
+[3.151s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/objects_stamped__type_support.h
+[3.151s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/objects_stamped__functions.c
+[3.151s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_df__struct.h
+[3.152s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__type_support.h
+[3.152s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/plane_stamped__functions.c
+[3.152s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/depth_info_stamped__type_support.h
+[3.152s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/keypoint3_d.h
+[3.152s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/objects_stamped.h
+[3.153s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/orientation.h
+[3.153s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/bounding_box2_di.h
+[3.153s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/position.h
+[3.153s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/desired_state.h
+[3.154s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/skeleton2_d.h
+[3.154s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/skeleton3_d.h
+[3.154s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/bounding_box2_df.h
+[3.154s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/plane_stamped.h
+[3.154s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/environment/library_path.sh
+[3.155s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/environment/library_path.dsv
+[3.155s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_generator_c.so
+[3.155s] -- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_generator_c.so" to ""
+[3.155s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types
+[3.155s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv
+[3.156s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail
+[3.156s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__rosidl_typesupport_fastrtps_c.h
+[3.156s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg
+[3.156s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/rosidl_typesupport_fastrtps_c__visibility_control.h
+[3.156s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail
+[3.157s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__rosidl_typesupport_fastrtps_c.h
+[3.157s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton2_d__rosidl_typesupport_fastrtps_c.h
+[3.157s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box3_d__rosidl_typesupport_fastrtps_c.h
+[3.157s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/plane_stamped__rosidl_typesupport_fastrtps_c.h
+[3.157s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__rosidl_typesupport_fastrtps_c.h
+[3.158s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/object__rosidl_typesupport_fastrtps_c.h
+[3.158s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_di__rosidl_typesupport_fastrtps_c.h
+[3.158s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_df__rosidl_typesupport_fastrtps_c.h
+[3.158s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_di__rosidl_typesupport_fastrtps_c.h
+[3.158s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__rosidl_typesupport_fastrtps_c.h
+[3.159s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/depth_info_stamped__rosidl_typesupport_fastrtps_c.h
+[3.159s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton3_d__rosidl_typesupport_fastrtps_c.h
+[3.159s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_df__rosidl_typesupport_fastrtps_c.h
+[3.159s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__rosidl_typesupport_fastrtps_c.h
+[3.159s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/objects_stamped__rosidl_typesupport_fastrtps_c.h
+[3.159s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint3_d__rosidl_typesupport_fastrtps_c.h
+[3.160s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_fastrtps_c.so
+[3.160s] -- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_fastrtps_c.so" to ""
+[3.160s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types
+[3.160s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv
+[3.160s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail
+[3.160s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__rosidl_typesupport_fastrtps_cpp.hpp
+[3.161s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/dds_fastrtps
+[3.161s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg
+[3.161s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail
+[3.161s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/object__rosidl_typesupport_fastrtps_cpp.hpp
+[3.161s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_di__rosidl_typesupport_fastrtps_cpp.hpp
+[3.162s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint3_d__rosidl_typesupport_fastrtps_cpp.hpp
+[3.162s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton2_d__rosidl_typesupport_fastrtps_cpp.hpp
+[3.162s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/plane_stamped__rosidl_typesupport_fastrtps_cpp.hpp
+[3.162s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__rosidl_typesupport_fastrtps_cpp.hpp
+[3.162s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/dds_fastrtps
+[3.162s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton3_d__rosidl_typesupport_fastrtps_cpp.hpp
+[3.163s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__rosidl_typesupport_fastrtps_cpp.hpp
+[3.163s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_df__rosidl_typesupport_fastrtps_cpp.hpp
+[3.163s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__rosidl_typesupport_fastrtps_cpp.hpp
+[3.163s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_di__rosidl_typesupport_fastrtps_cpp.hpp
+[3.163s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__rosidl_typesupport_fastrtps_cpp.hpp
+[3.163s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box3_d__rosidl_typesupport_fastrtps_cpp.hpp
+[3.164s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_df__rosidl_typesupport_fastrtps_cpp.hpp
+[3.164s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/depth_info_stamped__rosidl_typesupport_fastrtps_cpp.hpp
+[3.164s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/objects_stamped__rosidl_typesupport_fastrtps_cpp.hpp
+[3.164s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+[3.164s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_fastrtps_cpp.so
+[3.164s] -- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_fastrtps_cpp.so" to ""
+[3.164s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types
+[3.165s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv
+[3.165s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail
+[3.165s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__type_support.c
+[3.165s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__rosidl_typesupport_introspection_c.h
+[3.165s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg
+[3.165s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail
+[3.166s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_di__rosidl_typesupport_introspection_c.h
+[3.166s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/objects_stamped__type_support.c
+[3.166s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/object__type_support.c
+[3.166s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__type_support.c
+[3.166s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__type_support.c
+[3.166s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box3_d__type_support.c
+[3.166s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__type_support.c
+[3.167s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/object__rosidl_typesupport_introspection_c.h
+[3.167s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_df__type_support.c
+[3.167s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_df__type_support.c
+[3.167s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__rosidl_typesupport_introspection_c.h
+[3.167s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box3_d__rosidl_typesupport_introspection_c.h
+[3.167s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton3_d__type_support.c
+[3.167s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__type_support.c
+[3.168s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton3_d__rosidl_typesupport_introspection_c.h
+[3.168s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint3_d__rosidl_typesupport_introspection_c.h
+[3.168s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_di__type_support.c
+[3.168s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton2_d__type_support.c
+[3.168s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_df__rosidl_typesupport_introspection_c.h
+[3.168s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__rosidl_typesupport_introspection_c.h
+[3.168s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/depth_info_stamped__rosidl_typesupport_introspection_c.h
+[3.168s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__rosidl_typesupport_introspection_c.h
+[3.169s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/objects_stamped__rosidl_typesupport_introspection_c.h
+[3.169s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/plane_stamped__rosidl_typesupport_introspection_c.h
+[3.169s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_df__rosidl_typesupport_introspection_c.h
+[3.169s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_di__type_support.c
+[3.169s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__rosidl_typesupport_introspection_c.h
+[3.169s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton2_d__rosidl_typesupport_introspection_c.h
+[3.169s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint3_d__type_support.c
+[3.170s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/depth_info_stamped__type_support.c
+[3.170s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/plane_stamped__type_support.c
+[3.170s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_di__rosidl_typesupport_introspection_c.h
+[3.170s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/rosidl_typesupport_introspection_c__visibility_control.h
+[3.170s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_introspection_c.so
+[3.170s] -- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_introspection_c.so" to ""
+[3.170s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_c.so
+[3.171s] -- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_c.so" to ""
+[3.171s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types
+[3.171s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv
+[3.171s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/send_frame.hpp
+[3.171s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail
+[3.171s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__struct.hpp
+[3.171s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__builder.hpp
+[3.171s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__traits.hpp
+[3.172s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg
+[3.172s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/objects_stamped.hpp
+[3.172s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/bounding_box3_d.hpp
+[3.172s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/desired_state.hpp
+[3.172s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/depth_info_stamped.hpp
+[3.172s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/bounding_box2_df.hpp
+[3.172s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/bounding_box2_di.hpp
+[3.173s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/can_frame.hpp
+[3.173s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail
+[3.173s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_df__builder.hpp
+[3.173s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box3_d__builder.hpp
+[3.173s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__traits.hpp
+[3.173s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__struct.hpp
+[3.173s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_di__traits.hpp
+[3.173s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton3_d__traits.hpp
+[3.174s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__traits.hpp
+[3.174s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_di__traits.hpp
+[3.174s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__builder.hpp
+[3.174s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton3_d__builder.hpp
+[3.174s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/objects_stamped__builder.hpp
+[3.174s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_df__builder.hpp
+[3.174s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton2_d__traits.hpp
+[3.174s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/plane_stamped__builder.hpp
+[3.175s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_di__struct.hpp
+[3.175s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint3_d__struct.hpp
+[3.175s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__builder.hpp
+[3.175s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/objects_stamped__struct.hpp
+[3.175s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_df__struct.hpp
+[3.175s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__builder.hpp
+[3.175s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/objects_stamped__traits.hpp
+[3.175s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/object__builder.hpp
+[3.175s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_di__builder.hpp
+[3.176s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__traits.hpp
+[3.176s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_df__traits.hpp
+[3.176s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/depth_info_stamped__struct.hpp
+[3.176s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box3_d__struct.hpp
+[3.176s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box3_d__traits.hpp
+[3.176s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__traits.hpp
+[3.176s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/object__struct.hpp
+[3.176s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__struct.hpp
+[3.177s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_df__traits.hpp
+[3.177s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_di__builder.hpp
+[3.177s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/object__traits.hpp
+[3.177s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__builder.hpp
+[3.177s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__struct.hpp
+[3.177s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/depth_info_stamped__traits.hpp
+[3.177s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton2_d__struct.hpp
+[3.177s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/plane_stamped__traits.hpp
+[3.178s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_df__struct.hpp
+[3.178s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__struct.hpp
+[3.178s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton2_d__builder.hpp
+[3.178s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_di__struct.hpp
+[3.178s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/plane_stamped__struct.hpp
+[3.178s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint3_d__traits.hpp
+[3.178s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/depth_info_stamped__builder.hpp
+[3.178s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint3_d__builder.hpp
+[3.178s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton3_d__struct.hpp
+[3.179s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/object.hpp
+[3.179s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/skeleton2_d.hpp
+[3.179s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/keypoint2_di.hpp
+[3.179s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/keypoint3_d.hpp
+[3.179s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/position.hpp
+[3.179s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/plane_stamped.hpp
+[3.179s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/skeleton3_d.hpp
+[3.179s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/keypoint2_df.hpp
+[3.179s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/orientation.hpp
+[3.180s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types
+[3.180s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv
+[3.180s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail
+[3.180s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__rosidl_typesupport_introspection_cpp.hpp
+[3.180s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__type_support.cpp
+[3.180s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg
+[3.180s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail
+[3.180s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_df__rosidl_typesupport_introspection_cpp.hpp
+[3.180s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__rosidl_typesupport_introspection_cpp.hpp
+[3.181s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_di__rosidl_typesupport_introspection_cpp.hpp
+[3.181s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_di__type_support.cpp
+[3.181s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton3_d__rosidl_typesupport_introspection_cpp.hpp
+[3.181s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton2_d__type_support.cpp
+[3.181s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_di__type_support.cpp
+[3.181s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/plane_stamped__type_support.cpp
+[3.181s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box3_d__rosidl_typesupport_introspection_cpp.hpp
+[3.181s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/depth_info_stamped__type_support.cpp
+[3.181s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_df__type_support.cpp
+[3.182s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/object__type_support.cpp
+[3.182s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_di__rosidl_typesupport_introspection_cpp.hpp
+[3.182s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/objects_stamped__rosidl_typesupport_introspection_cpp.hpp
+[3.182s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box2_df__rosidl_typesupport_introspection_cpp.hpp
+[3.182s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__type_support.cpp
+[3.182s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton3_d__type_support.cpp
+[3.182s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__rosidl_typesupport_introspection_cpp.hpp
+[3.182s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/objects_stamped__type_support.cpp
+[3.182s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/bounding_box3_d__type_support.cpp
+[3.182s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/depth_info_stamped__rosidl_typesupport_introspection_cpp.hpp
+[3.183s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint3_d__rosidl_typesupport_introspection_cpp.hpp
+[3.183s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint2_df__type_support.cpp
+[3.183s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__type_support.cpp
+[3.183s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/skeleton2_d__rosidl_typesupport_introspection_cpp.hpp
+[3.183s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/object__rosidl_typesupport_introspection_cpp.hpp
+[3.183s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__rosidl_typesupport_introspection_cpp.hpp
+[3.183s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__type_support.cpp
+[3.183s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__type_support.cpp
+[3.183s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__rosidl_typesupport_introspection_cpp.hpp
+[3.183s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/plane_stamped__rosidl_typesupport_introspection_cpp.hpp
+[3.183s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/keypoint3_d__type_support.cpp
+[3.184s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_introspection_cpp.so
+[3.184s] -- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_introspection_cpp.so" to ""
+[3.184s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_cpp.so
+[3.184s] -- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_cpp.so" to ""
+[3.184s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/environment/pythonpath.sh
+[3.184s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/environment/pythonpath.dsv
+[3.184s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/__init__.py
+[3.217s] Compiling '/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/__init__.py'...
+[3.225s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg
+[3.226s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_skeleton2_d.py
+[3.226s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_position_s.c
+[3.226s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_orientation_s.c
+[3.227s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_bounding_box2_di.py
+[3.227s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_desired_state_s.c
+[3.227s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_plane_stamped_s.c
+[3.227s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_can_frame.py
+[3.227s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/__init__.py
+[3.228s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_objects_stamped_s.c
+[3.228s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_bounding_box3_d_s.c
+[3.228s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_desired_state.py
+[3.228s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_position.py
+[3.228s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_skeleton3_d.py
+[3.228s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_keypoint3_d_s.c
+[3.229s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_depth_info_stamped_s.c
+[3.229s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_bounding_box3_d.py
+[3.229s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_can_frame_s.c
+[3.229s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_objects_stamped.py
+[3.229s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_bounding_box2_df_s.c
+[3.230s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_keypoint2_di_s.c
+[3.230s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_object_s.c
+[3.230s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_skeleton2_d_s.c
+[3.230s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_depth_info_stamped.py
+[3.230s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_plane_stamped.py
+[3.231s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_skeleton3_d_s.c
+[3.231s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_bounding_box2_df.py
+[3.231s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_orientation.py
+[3.231s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_keypoint2_di.py
+[3.232s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_keypoint3_d.py
+[3.232s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_object.py
+[3.232s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_keypoint2_df_s.c
+[3.233s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_bounding_box2_di_s.c
+[3.233s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_keypoint2_df.py
+[3.233s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/scion_types_s__rosidl_typesupport_fastrtps_c.cpython-38-aarch64-linux-gnu.so
+[3.233s] -- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/scion_types_s__rosidl_typesupport_fastrtps_c.cpython-38-aarch64-linux-gnu.so" to ""
+[3.234s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/scion_types_s__rosidl_typesupport_introspection_c.cpython-38-aarch64-linux-gnu.so
+[3.234s] -- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/scion_types_s__rosidl_typesupport_introspection_c.cpython-38-aarch64-linux-gnu.so" to ""
+[3.234s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/scion_types_s__rosidl_typesupport_c.cpython-38-aarch64-linux-gnu.so
+[3.234s] -- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/scion_types_s__rosidl_typesupport_c.cpython-38-aarch64-linux-gnu.so" to ""
+[3.235s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__python.so
+[3.235s] -- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__python.so" to ""
+[3.235s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/msg/CanFrame.idl
+[3.235s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/msg/Orientation.idl
+[3.236s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/msg/DesiredState.idl
+[3.236s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/msg/Position.idl
+[3.236s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/msg/CanFrame.msg
+[3.236s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/msg/Orientation.msg
+[3.236s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/msg/DesiredState.msg
+[3.237s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/msg/Position.msg
+[3.237s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/ament_index/resource_index/package_run_dependencies/scion_types
+[3.237s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/ament_index/resource_index/parent_prefix_path/scion_types
+[3.237s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/environment/ament_prefix_path.sh
+[3.238s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/environment/ament_prefix_path.dsv
+[3.238s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/environment/path.sh
+[3.238s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/environment/path.dsv
+[3.238s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/local_setup.bash
+[3.239s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/local_setup.sh
+[3.239s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/local_setup.zsh
+[3.239s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/local_setup.dsv
+[3.239s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/package.dsv
+[3.240s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/ament_index/resource_index/packages/scion_types
+[3.240s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_generator_cExport.cmake
+[3.240s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_generator_cExport-noconfig.cmake
+[3.240s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_typesupport_introspection_cExport.cmake
+[3.240s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_typesupport_introspection_cExport-noconfig.cmake
+[3.240s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_typesupport_cExport.cmake
+[3.241s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_typesupport_cExport-noconfig.cmake
+[3.241s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_generator_cppExport.cmake
+[3.241s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_typesupport_introspection_cppExport.cmake
+[3.241s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_typesupport_introspection_cppExport-noconfig.cmake
+[3.241s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_typesupport_cppExport.cmake
+[3.242s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_typesupport_cppExport-noconfig.cmake
+[3.242s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/rosidl_cmake-extras.cmake
+[3.243s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/ament_cmake_export_dependencies-extras.cmake
+[3.244s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/ament_cmake_export_libraries-extras.cmake
+[3.246s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/ament_cmake_export_targets-extras.cmake
+[3.249s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/ament_cmake_export_include_directories-extras.cmake
+[3.249s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake
+[3.250s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake
+[3.250s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_typesConfig.cmake
+[3.250s] -- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_typesConfig-version.cmake
+[3.251s] -- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/package.xml
+[3.251s] Invoked command in '/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/scion_types' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/mechatronics/test/Mechatronics-2023/ros2_ws/install/zed_vision_node:/home/mechatronics/test/Mechatronics-2023/ros2_ws/install/ahrs_node:/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_vision_node:/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/ahrs_node:/home/mechatronics/junebug_workspace/install/zed_temp:/home/mechatronics/junebug_workspace/install/zed_imu2:/home/mechatronics/junebug_workspace/install/zed_imu:/home/mechatronics/junebug_workspace/install/top_view_package:/home/mechatronics/junebug_workspace/install/py_pubsub:/home/mechatronics/junebug_workspace/install/object_detection_package:/home/mechatronics/junebug_workspace/install/mapping_package:/home/mechatronics/junebug_workspace/install/depth_package:/home/mechatronics/junebug_workspace/install/controller_translator:/home/mechatronics/junebug_workspace/install/cam_track_package:/home/mechatronics/junebug_workspace/install/body_track_package:/home/mechatronics/junebug_workspace/install/ahr:/opt/ros/foxy /usr/bin/cmake --install /home/mechatronics/master/Mechatronics-2023/ros2_ws/build/scion_types

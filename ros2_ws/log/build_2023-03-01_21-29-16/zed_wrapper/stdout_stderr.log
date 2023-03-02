@@ -1,0 +1,98 @@
+-- The C compiler identification is GNU 9.4.0
+-- The CXX compiler identification is GNU 9.4.0
+-- Check for working C compiler: /usr/bin/cc
+-- Check for working C compiler: /usr/bin/cc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Looking for sgemm_
+-- Looking for sgemm_ - not found
+-- Looking for pthread.h
+-- Looking for pthread.h - found
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Looking for pthread_create in pthreads
+-- Looking for pthread_create in pthreads - not found
+-- Looking for pthread_create in pthread
+-- Looking for pthread_create in pthread - found
+-- Found Threads: TRUE  
+-- Looking for sgemm_
+-- Looking for sgemm_ - found
+-- Found BLAS: /usr/lib/aarch64-linux-gnu/libopenblas.so  
+-- Found CUDA: /usr/local/cuda-11.4 (found suitable version "11.4", minimum required is "11.4") 
+-- Found CUDA: /usr/local/cuda-11.4 (found version "11.4") 
+-- Found ament_cmake: 0.9.11 (/opt/ros/foxy/share/ament_cmake/cmake)
+-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3") 
+-- Using PYTHON_EXECUTABLE: /usr/bin/python3
+-- Found rclcpp: 2.4.2 (/opt/ros/foxy/share/rclcpp/cmake)
+-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+-- Found rosidl_adapter: 1.3.0 (/opt/ros/foxy/share/rosidl_adapter/cmake)
+-- Found OpenSSL: /usr/lib/aarch64-linux-gnu/libcrypto.so (found version "1.1.1f")  
+-- Found FastRTPS: /opt/ros/foxy/include  
+-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+-- Found rmw_implementation_cmake: 1.0.3 (/opt/ros/foxy/share/rmw_implementation_cmake/cmake)
+-- Using RMW implementation 'rmw_fastrtps_cpp' as default
+-- Found rclcpp_components: 2.4.2 (/opt/ros/foxy/share/rclcpp_components/cmake)
+-- Found zed_components: 0.2.0 (/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/cmake)
+-- Found eigen3_cmake_module: 0.1.1 (/opt/ros/foxy/share/eigen3_cmake_module/cmake)
+-- Found Eigen3: TRUE (found version "3.3.7") 
+-- Found ament_lint_auto: 0.9.7 (/opt/ros/foxy/share/ament_lint_auto/cmake)
+-- Added test 'copyright' to check source files copyright and LICENSE
+-- Added test 'cppcheck' to perform static code analysis on C / C++ code
+-- Configured cppcheck include dirs: /home/mechatronics/master/Mechatronics-2023/ros2_ws/src/zed-ros2-wrapper/zed_wrapper/src
+-- Configured cppcheck exclude dirs and/or files: 
+-- Added test 'lint_cmake' to check CMake code style
+-- Added test 'pep257' to check Python code against some of the style conventions in PEP 257
+-- Added test 'uncrustify' to check C / C++ code style
+-- Configured uncrustify additional arguments: 
+-- Added test 'xmllint' to check XML markup files
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_wrapper
+[35m[1mScanning dependencies of target zed_wrapper[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/zed_wrapper.dir/src/zed_wrapper.cpp.o[0m
+[100%] [32m[1mLinking CXX executable zed_wrapper[0m
+[100%] Built target zed_wrapper
+-- Install configuration: "Release"
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/lib/zed_wrapper/zed_wrapper
+-- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/lib/zed_wrapper/zed_wrapper" to ""
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/config
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/config/zedm.yaml
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/config/common.yaml
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/config/zed2i.yaml
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/config/zed2.yaml
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/config/zed.yaml
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/urdf
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/urdf/zed_macro.urdf.xacro
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/urdf/zed_descr.urdf.xacro
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/urdf/include
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/urdf/include/materials.urdf.xacro
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/launch
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/launch/include
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/launch/include/zed_camera.launch.py
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/launch/zed2i.launch.py
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/launch/zed2.launch.py
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/launch/zedm.launch.py
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/launch/zed.launch.py
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/ament_index/resource_index/package_run_dependencies/zed_wrapper
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/ament_index/resource_index/parent_prefix_path/zed_wrapper
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/environment/ament_prefix_path.sh
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/environment/ament_prefix_path.dsv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/environment/path.sh
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/environment/path.dsv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/local_setup.bash
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/local_setup.sh
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/local_setup.zsh
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/local_setup.dsv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/package.dsv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/ament_index/resource_index/packages/zed_wrapper
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/cmake/zed_wrapperConfig.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/cmake/zed_wrapperConfig-version.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_wrapper/share/zed_wrapper/package.xml

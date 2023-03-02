@@ -1,0 +1,32 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from zed_interfaces/srv/SetPose.srv
+// generated code does not contain a copyright notice
+
+
+module zed_interfaces {
+  module srv {
+    typedef float float__3[3];
+    @verbatim (language="comment", text=
+      " Restart positional tracking to a new pose in base_link frame")
+    struct SetPose_Request {
+      @verbatim (language="comment", text=
+        " Translation XYZ")
+      @unit (value="meters")
+      float__3 pos;
+
+      @verbatim (language="comment", text=
+        " Orientation RPY")
+      @unit (value="radians")
+      float__3 orient;
+    };
+    struct SetPose_Response {
+      @verbatim (language="comment", text=
+        " indicate successful run of service")
+      boolean success;
+
+      @verbatim (language="comment", text=
+        " informational, e.g. for error messages")
+      string message;
+    };
+  };
+};

@@ -1,0 +1,342 @@
+-- The C compiler identification is GNU 9.4.0
+-- The CXX compiler identification is GNU 9.4.0
+-- Check for working C compiler: /usr/bin/cc
+-- Check for working C compiler: /usr/bin/cc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found ament_cmake: 0.9.11 (/opt/ros/foxy/share/ament_cmake/cmake)
+-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3") 
+-- Using PYTHON_EXECUTABLE: /usr/bin/python3
+-- Found rclcpp: 2.4.2 (/opt/ros/foxy/share/rclcpp/cmake)
+-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+-- Found rosidl_adapter: 1.3.0 (/opt/ros/foxy/share/rosidl_adapter/cmake)
+-- Found OpenSSL: /usr/lib/aarch64-linux-gnu/libcrypto.so (found version "1.1.1f")  
+-- Found FastRTPS: /opt/ros/foxy/include  
+-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+-- Found rmw_implementation_cmake: 1.0.3 (/opt/ros/foxy/share/rmw_implementation_cmake/cmake)
+-- Using RMW implementation 'rmw_fastrtps_cpp' as default
+-- Looking for pthread.h
+-- Looking for pthread.h - found
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Looking for pthread_create in pthreads
+-- Looking for pthread_create in pthreads - not found
+-- Looking for pthread_create in pthread
+-- Looking for pthread_create in pthread - found
+-- Found Threads: TRUE  
+-- Found geometry_msgs: 2.0.5 (/opt/ros/foxy/share/geometry_msgs/cmake)
+-- Found shape_msgs: 2.0.5 (/opt/ros/foxy/share/shape_msgs/cmake)
+-- Found rosidl_default_generators: 1.0.1 (/opt/ros/foxy/share/rosidl_default_generators/cmake)
+-- Found PythonInterp: /usr/bin/python3 (found version "3.8.10") 
+-- Found ament_cmake_ros: 0.9.2 (/opt/ros/foxy/share/ament_cmake_ros/cmake)
+-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3.5") 
+-- Found python_cmake_module: 0.8.1 (/opt/ros/foxy/share/python_cmake_module/cmake)
+-- Found PythonLibs: /usr/lib/aarch64-linux-gnu/libpython3.8.so (found suitable version "3.8.10", minimum required is "3.5") 
+-- Using PYTHON_EXECUTABLE: /usr/bin/python3
+-- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.8
+-- Using PYTHON_LIBRARIES: /usr/lib/aarch64-linux-gnu/libpython3.8.so
+-- Found PythonExtra: .so  
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/mechatronics/master/Mechatronics-2023/ros2_ws/build/scion_types
+[  1%] [34m[1mGenerating C code for ROS interfaces[0m
+[35m[1mScanning dependencies of target scion_types__cpp[0m
+[  3%] [34m[1mGenerating C++ code for ROS interfaces[0m
+[  3%] Built target scion_types__cpp
+[  4%] [34m[1mGenerating C++ type support for eProsima Fast-RTPS[0m
+[  6%] [34m[1mGenerating C++ type support dispatch for ROS interfaces[0m
+[  7%] [34m[1mGenerating C++ introspection for ROS interfaces[0m
+[35m[1mScanning dependencies of target scion_types__rosidl_generator_c[0m
+[ 14%] [32mBuilding C object CMakeFiles/scion_types__rosidl_generator_c.dir/rosidl_generator_c/scion_types/msg/detail/can_frame__functions.c.o[0m
+[ 14%] [32mBuilding C object CMakeFiles/scion_types__rosidl_generator_c.dir/rosidl_generator_c/scion_types/msg/detail/desired_state__functions.c.o[0m
+[ 15%] [32mBuilding C object CMakeFiles/scion_types__rosidl_generator_c.dir/rosidl_generator_c/scion_types/srv/detail/send_frame__functions.c.o[0m
+[ 15%] [32mBuilding C object CMakeFiles/scion_types__rosidl_generator_c.dir/rosidl_generator_c/scion_types/msg/detail/orientation__functions.c.o[0m
+[ 15%] [32mBuilding C object CMakeFiles/scion_types__rosidl_generator_c.dir/rosidl_generator_c/scion_types/msg/detail/position__functions.c.o[0m
+[ 17%] [32m[1mLinking C shared library libscion_types__rosidl_generator_c.so[0m
+[ 17%] Built target scion_types__rosidl_generator_c
+[ 20%] [34m[1mGenerating C type support dispatch for ROS interfaces[0m
+[ 20%] [34m[1mGenerating C introspection for ROS interfaces[0m
+[35m[1mScanning dependencies of target scion_types__rosidl_typesupport_cpp[0m
+[ 25%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/scion_types/msg/desired_state__type_support.cpp.o[0m
+[ 25%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/scion_types/srv/send_frame__type_support.cpp.o[0m
+[ 26%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/scion_types/msg/orientation__type_support.cpp.o[0m
+[ 28%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/scion_types/msg/can_frame__type_support.cpp.o[0m
+[ 28%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/scion_types/msg/position__type_support.cpp.o[0m
+[35m[1mScanning dependencies of target scion_types__rosidl_typesupport_introspection_cpp[0m
+[ 30%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/scion_types/msg/detail/can_frame__type_support.cpp.o[0m
+[ 33%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/scion_types/msg/detail/orientation__type_support.cpp.o[0m
+[ 33%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/scion_types/msg/detail/desired_state__type_support.cpp.o[0m
+[ 34%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/scion_types/msg/detail/position__type_support.cpp.o[0m
+[35m[1mScanning dependencies of target scion_types__rosidl_typesupport_fastrtps_cpp[0m
+[ 36%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/scion_types/msg/detail/dds_fastrtps/can_frame__type_support.cpp.o[0m
+[35m[1mScanning dependencies of target scion_types__rosidl_typesupport_c[0m
+[ 38%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_c.dir/rosidl_typesupport_c/scion_types/msg/can_frame__type_support.cpp.o[0m
+[ 39%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_c.dir/rosidl_typesupport_c/scion_types/msg/orientation__type_support.cpp.o[0m
+[ 41%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_c.dir/rosidl_typesupport_c/scion_types/msg/desired_state__type_support.cpp.o[0m
+[ 42%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_c.dir/rosidl_typesupport_c/scion_types/msg/position__type_support.cpp.o[0m
+[ 44%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/scion_types/srv/detail/send_frame__type_support.cpp.o[0m
+[ 46%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_c.dir/rosidl_typesupport_c/scion_types/srv/send_frame__type_support.cpp.o[0m
+[ 47%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/scion_types/msg/detail/dds_fastrtps/orientation__type_support.cpp.o[0m
+[ 49%] [32m[1mLinking CXX shared library libscion_types__rosidl_typesupport_cpp.so[0m
+[35m[1mScanning dependencies of target scion_types__rosidl_typesupport_introspection_c[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/scion_types/msg/detail/dds_fastrtps/desired_state__type_support.cpp.o[0m
+[ 52%] [32mBuilding C object CMakeFiles/scion_types__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/scion_types/msg/detail/can_frame__type_support.c.o[0m
+[ 53%] [32mBuilding C object CMakeFiles/scion_types__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/scion_types/msg/detail/orientation__type_support.c.o[0m
+[ 55%] [32m[1mLinking CXX shared library libscion_types__rosidl_typesupport_c.so[0m
+[ 55%] Built target scion_types__rosidl_typesupport_cpp
+[ 57%] [32mBuilding C object CMakeFiles/scion_types__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/scion_types/msg/detail/desired_state__type_support.c.o[0m
+[ 58%] [32mBuilding C object CMakeFiles/scion_types__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/scion_types/msg/detail/position__type_support.c.o[0m
+[ 60%] [32mBuilding C object CMakeFiles/scion_types__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/scion_types/srv/detail/send_frame__type_support.c.o[0m
+[ 61%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/scion_types/msg/detail/dds_fastrtps/position__type_support.cpp.o[0m
+[ 61%] Built target scion_types__rosidl_typesupport_c
+[ 63%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/scion_types/srv/detail/dds_fastrtps/send_frame__type_support.cpp.o[0m
+[ 65%] [32m[1mLinking C shared library libscion_types__rosidl_typesupport_introspection_c.so[0m
+[ 65%] Built target scion_types__rosidl_typesupport_introspection_c
+[ 66%] [32m[1mLinking CXX shared library libscion_types__rosidl_typesupport_introspection_cpp.so[0m
+[ 66%] Built target scion_types__rosidl_typesupport_introspection_cpp
+[ 68%] [32m[1mLinking CXX shared library libscion_types__rosidl_typesupport_fastrtps_cpp.so[0m
+[ 68%] Built target scion_types__rosidl_typesupport_fastrtps_cpp
+[ 69%] [34m[1mGenerating C type support for eProsima Fast-RTPS[0m
+[35m[1mScanning dependencies of target scion_types__rosidl_typesupport_fastrtps_c[0m
+[ 77%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/scion_types/msg/detail/can_frame__type_support_c.cpp.o[0m
+[ 77%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/scion_types/msg/detail/desired_state__type_support_c.cpp.o[0m
+[ 77%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/scion_types/msg/detail/position__type_support_c.cpp.o[0m
+[ 77%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/scion_types/msg/detail/orientation__type_support_c.cpp.o[0m
+[ 77%] [32mBuilding CXX object CMakeFiles/scion_types__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/scion_types/srv/detail/send_frame__type_support_c.cpp.o[0m
+[ 79%] [32m[1mLinking CXX shared library libscion_types__rosidl_typesupport_fastrtps_c.so[0m
+[ 79%] Built target scion_types__rosidl_typesupport_fastrtps_c
+[35m[1mScanning dependencies of target scion_types[0m
+[ 79%] Built target scion_types
+[35m[1mScanning dependencies of target scion_types__py[0m
+[ 80%] [34m[1mGenerating Python code for ROS interfaces[0m
+[ 80%] Built target scion_types__py
+[35m[1mScanning dependencies of target scion_types__python[0m
+[ 85%] [32mBuilding C object CMakeFiles/scion_types__python.dir/rosidl_generator_py/scion_types/msg/_desired_state_s.c.o[0m
+[ 85%] [32mBuilding C object CMakeFiles/scion_types__python.dir/rosidl_generator_py/scion_types/msg/_can_frame_s.c.o[0m
+[ 85%] [32mBuilding C object CMakeFiles/scion_types__python.dir/rosidl_generator_py/scion_types/msg/_orientation_s.c.o[0m
+[ 88%] [32mBuilding C object CMakeFiles/scion_types__python.dir/rosidl_generator_py/scion_types/srv/_send_frame_s.c.o[0m
+[ 88%] [32mBuilding C object CMakeFiles/scion_types__python.dir/rosidl_generator_py/scion_types/msg/_position_s.c.o[0m
+[ 90%] [32m[1mLinking C shared library rosidl_generator_py/scion_types/libscion_types__python.so[0m
+[ 90%] Built target scion_types__python
+[35m[1mScanning dependencies of target scion_types__rosidl_typesupport_fastrtps_c__pyext[0m
+[35m[1mScanning dependencies of target scion_types__rosidl_typesupport_c__pyext[0m
+[35m[1mScanning dependencies of target scion_types__rosidl_typesupport_introspection_c__pyext[0m
+[ 93%] [32mBuilding C object CMakeFiles/scion_types__rosidl_typesupport_fastrtps_c__pyext.dir/rosidl_generator_py/scion_types/_scion_types_s.ep.rosidl_typesupport_fastrtps_c.c.o[0m
+[ 93%] [32mBuilding C object CMakeFiles/scion_types__rosidl_typesupport_introspection_c__pyext.dir/rosidl_generator_py/scion_types/_scion_types_s.ep.rosidl_typesupport_introspection_c.c.o[0m
+[ 95%] [32mBuilding C object CMakeFiles/scion_types__rosidl_typesupport_c__pyext.dir/rosidl_generator_py/scion_types/_scion_types_s.ep.rosidl_typesupport_c.c.o[0m
+[ 98%] [32m[1mLinking C shared library rosidl_generator_py/scion_types/scion_types_s__rosidl_typesupport_c.cpython-38-aarch64-linux-gnu.so[0m
+[ 98%] [32m[1mLinking C shared library rosidl_generator_py/scion_types/scion_types_s__rosidl_typesupport_introspection_c.cpython-38-aarch64-linux-gnu.so[0m
+[100%] [32m[1mLinking CXX shared library rosidl_generator_py/scion_types/scion_types_s__rosidl_typesupport_fastrtps_c.cpython-38-aarch64-linux-gnu.so[0m
+[100%] Built target scion_types__rosidl_typesupport_c__pyext
+[100%] Built target scion_types__rosidl_typesupport_introspection_c__pyext
+[100%] Built target scion_types__rosidl_typesupport_fastrtps_c__pyext
+-- Install configuration: ""
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/ament_index/resource_index/rosidl_interfaces/scion_types
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/send_frame.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__functions.c
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__struct.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__functions.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__type_support.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/can_frame.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/rosidl_generator_c__visibility_control.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__functions.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__functions.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__struct.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__type_support.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__struct.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__functions.c
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__type_support.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__struct.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__struct.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__functions.c
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__type_support.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__functions.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__functions.c
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__functions.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__functions.c
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__type_support.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/orientation.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/position.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/desired_state.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/environment/library_path.sh
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/environment/library_path.dsv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_generator_c.so
+-- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_generator_c.so" to ""
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__rosidl_typesupport_fastrtps_c.h
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/rosidl_typesupport_fastrtps_c__visibility_control.h
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__rosidl_typesupport_fastrtps_c.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__rosidl_typesupport_fastrtps_c.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__rosidl_typesupport_fastrtps_c.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__rosidl_typesupport_fastrtps_c.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_fastrtps_c.so
+-- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_fastrtps_c.so" to ""
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__rosidl_typesupport_fastrtps_cpp.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/dds_fastrtps
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__rosidl_typesupport_fastrtps_cpp.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/dds_fastrtps
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__rosidl_typesupport_fastrtps_cpp.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__rosidl_typesupport_fastrtps_cpp.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__rosidl_typesupport_fastrtps_cpp.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_fastrtps_cpp.so
+-- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_fastrtps_cpp.so" to ""
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__type_support.c
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__rosidl_typesupport_introspection_c.h
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__type_support.c
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__type_support.c
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__type_support.c
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__rosidl_typesupport_introspection_c.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__type_support.c
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__rosidl_typesupport_introspection_c.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__rosidl_typesupport_introspection_c.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__rosidl_typesupport_introspection_c.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/rosidl_typesupport_introspection_c__visibility_control.h
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_introspection_c.so
+-- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_introspection_c.so" to ""
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_c.so
+-- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_c.so" to ""
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/send_frame.hpp
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__struct.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__builder.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__traits.hpp
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/desired_state.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/can_frame.hpp
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__traits.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__struct.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__traits.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__builder.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__builder.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__builder.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__traits.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__traits.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__struct.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__builder.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__struct.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__struct.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/position.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/orientation.hpp
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__rosidl_typesupport_introspection_cpp.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/srv/detail/send_frame__type_support.cpp
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__rosidl_typesupport_introspection_cpp.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__type_support.cpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__rosidl_typesupport_introspection_cpp.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/position__type_support.cpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__rosidl_typesupport_introspection_cpp.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/desired_state__type_support.cpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/orientation__type_support.cpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/include/scion_types/msg/detail/can_frame__rosidl_typesupport_introspection_cpp.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_introspection_cpp.so
+-- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_introspection_cpp.so" to ""
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_cpp.so
+-- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__rosidl_typesupport_cpp.so" to ""
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/environment/pythonpath.sh
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/environment/pythonpath.dsv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/__init__.py
+Compiling '/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/__init__.py'...
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_position_s.c
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_orientation_s.c
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_desired_state_s.c
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_can_frame.py
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/__init__.py
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_desired_state.py
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_position.py
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_can_frame_s.c
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/msg/_orientation.py
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/srv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/srv/__init__.py
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/srv/_send_frame.py
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/srv/_send_frame_s.c
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/scion_types_s__rosidl_typesupport_fastrtps_c.cpython-38-aarch64-linux-gnu.so
+-- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/scion_types_s__rosidl_typesupport_fastrtps_c.cpython-38-aarch64-linux-gnu.so" to ""
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/scion_types_s__rosidl_typesupport_introspection_c.cpython-38-aarch64-linux-gnu.so
+-- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/scion_types_s__rosidl_typesupport_introspection_c.cpython-38-aarch64-linux-gnu.so" to ""
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/scion_types_s__rosidl_typesupport_c.cpython-38-aarch64-linux-gnu.so
+-- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/python3.8/site-packages/scion_types/scion_types_s__rosidl_typesupport_c.cpython-38-aarch64-linux-gnu.so" to ""
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__python.so
+-- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/lib/libscion_types__python.so" to ""
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/msg/CanFrame.idl
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/msg/Orientation.idl
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/msg/DesiredState.idl
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/msg/Position.idl
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/srv/SendFrame.idl
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/msg/CanFrame.msg
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/msg/Orientation.msg
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/msg/DesiredState.msg
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/msg/Position.msg
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/srv/SendFrame.srv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/srv/SendFrame_Request.msg
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/srv/SendFrame_Response.msg
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/ament_index/resource_index/package_run_dependencies/scion_types
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/ament_index/resource_index/parent_prefix_path/scion_types
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/environment/ament_prefix_path.sh
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/environment/ament_prefix_path.dsv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/environment/path.sh
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/environment/path.dsv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/local_setup.bash
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/local_setup.sh
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/local_setup.zsh
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/local_setup.dsv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/package.dsv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/ament_index/resource_index/packages/scion_types
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_generator_cExport.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_generator_cExport-noconfig.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_typesupport_introspection_cExport.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_typesupport_introspection_cExport-noconfig.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_typesupport_cExport.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_typesupport_cExport-noconfig.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_generator_cppExport.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_typesupport_introspection_cppExport.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_typesupport_introspection_cppExport-noconfig.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_typesupport_cppExport.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_types__rosidl_typesupport_cppExport-noconfig.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/rosidl_cmake-extras.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/ament_cmake_export_dependencies-extras.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/ament_cmake_export_libraries-extras.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/ament_cmake_export_targets-extras.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/ament_cmake_export_include_directories-extras.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_typesConfig.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/cmake/scion_typesConfig-version.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/scion_types/share/scion_types/package.xml

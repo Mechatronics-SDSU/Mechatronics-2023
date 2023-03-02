@@ -1,0 +1,10 @@
+{
+  "package_name": "scion_types",
+  "non_idl_tuples": [
+    "/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/scion_types:msg/CanFrame.msg",
+    "/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/scion_types:msg/Orientation.msg",
+    "/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/scion_types:msg/DesiredState.msg",
+    "/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/scion_types:msg/Position.msg",
+    "/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/scion_types:srv/SendFrame.srv"
+  ]
+}

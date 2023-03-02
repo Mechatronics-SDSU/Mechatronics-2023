@@ -24,21 +24,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Orientation.msg"
   "msg/DesiredState.msg"
   "msg/Position.msg"
-  
-  "msg/BoundingBox2Df.msg"
-  "msg/BoundingBox2Di.msg"
-  "msg/BoundingBox3D.msg"
-  "msg/Keypoint2Df.msg"
-  "msg/Keypoint2Di.msg"
-  "msg/Keypoint3D.msg"
-  "msg/Object.msg"
-  "msg/ObjectsStamped.msg"
-  "msg/PlaneStamped.msg"
-  "msg/DepthInfoStamped.msg"
-  "msg/Skeleton2D.msg"
-  "msg/Skeleton3D.msg"
   "srv/SendFrame.srv"
-  
   )
 
 ament_package()

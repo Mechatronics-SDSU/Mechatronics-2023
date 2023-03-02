@@ -1,0 +1,106 @@
+-- The C compiler identification is GNU 9.4.0
+-- The CXX compiler identification is GNU 9.4.0
+-- Check for working C compiler: /usr/bin/cc
+-- Check for working C compiler: /usr/bin/cc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Check for working CXX compiler: /usr/bin/c++
+-- Check for working CXX compiler: /usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Looking for sgemm_
+-- Looking for sgemm_ - not found
+-- Looking for pthread.h
+-- Looking for pthread.h - found
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Looking for pthread_create in pthreads
+-- Looking for pthread_create in pthreads - not found
+-- Looking for pthread_create in pthread
+-- Looking for pthread_create in pthread - found
+-- Found Threads: TRUE  
+-- Looking for sgemm_
+-- Looking for sgemm_ - found
+-- Found BLAS: /usr/lib/aarch64-linux-gnu/libopenblas.so  
+-- Found CUDA: /usr/local/cuda-11.4 (found suitable version "11.4", minimum required is "11.4") 
+-- Found CUDA: /usr/local/cuda-11.4 (found version "11.4") 
+-- Found ament_cmake: 0.9.11 (/opt/ros/foxy/share/ament_cmake/cmake)
+-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3") 
+-- Using PYTHON_EXECUTABLE: /usr/bin/python3
+-- Found rcutils: 1.1.4 (/opt/ros/foxy/share/rcutils/cmake)
+-- Found zed_interfaces: 0.3.0 (/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_interfaces/share/zed_interfaces/cmake)
+-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+-- Found rosidl_adapter: 1.3.0 (/opt/ros/foxy/share/rosidl_adapter/cmake)
+-- Found OpenSSL: /usr/lib/aarch64-linux-gnu/libcrypto.so (found version "1.1.1f")  
+-- Found FastRTPS: /opt/ros/foxy/include  
+-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+-- Found rclcpp: 2.4.2 (/opt/ros/foxy/share/rclcpp/cmake)
+-- Found rmw_implementation_cmake: 1.0.3 (/opt/ros/foxy/share/rmw_implementation_cmake/cmake)
+-- Using RMW implementation 'rmw_fastrtps_cpp' as default
+-- Found rclcpp_components: 2.4.2 (/opt/ros/foxy/share/rclcpp_components/cmake)
+-- Found tf2: 0.13.13 (/opt/ros/foxy/share/tf2/cmake)
+-- Found tf2_ros: 0.13.13 (/opt/ros/foxy/share/tf2_ros/cmake)
+-- Found tf2_geometry_msgs: 0.13.13 (/opt/ros/foxy/share/tf2_geometry_msgs/cmake)
+-- Found eigen3_cmake_module: 0.1.1 (/opt/ros/foxy/share/eigen3_cmake_module/cmake)
+-- Found Eigen3: TRUE (found version "3.3.7") 
+-- Found nav_msgs: 2.0.5 (/opt/ros/foxy/share/nav_msgs/cmake)
+-- Found sensor_msgs: 2.0.5 (/opt/ros/foxy/share/sensor_msgs/cmake)
+-- Found stereo_msgs: 2.0.5 (/opt/ros/foxy/share/stereo_msgs/cmake)
+-- Found image_transport: 2.4.0 (/opt/ros/foxy/share/image_transport/cmake)
+-- Found std_srvs: 2.0.5 (/opt/ros/foxy/share/std_srvs/cmake)
+-- Found diagnostic_msgs: 2.0.5 (/opt/ros/foxy/share/diagnostic_msgs/cmake)
+-- Found diagnostic_updater: 2.0.8 (/opt/ros/foxy/share/diagnostic_updater/cmake)
+-- Found visualization_msgs: 2.0.5 (/opt/ros/foxy/share/visualization_msgs/cmake)
+-- Found ament_lint_auto: 0.9.7 (/opt/ros/foxy/share/ament_lint_auto/cmake)
+-- Added test 'copyright' to check source files copyright and LICENSE
+-- Added test 'cppcheck' to perform static code analysis on C / C++ code
+-- Configured cppcheck include dirs: /home/mechatronics/master/Mechatronics-2023/ros2_ws/src/zed-ros2-wrapper/zed_components/src/include;/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/zed-ros2-wrapper/zed_components/src/zed_camera/include;/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/zed-ros2-wrapper/zed_components/src/tools/include
+-- Configured cppcheck exclude dirs and/or files: 
+-- Added test 'lint_cmake' to check CMake code style
+-- Added test 'uncrustify' to check C / C++ code style
+-- Configured uncrustify additional arguments: 
+-- Added test 'xmllint' to check XML markup files
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_components
+[35m[1mScanning dependencies of target zed_camera_component[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/zed_camera_component.dir/src/tools/src/sl_tools.cpp.o[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/zed_camera_component.dir/src/tools/src/sl_win_avg.cpp.o[0m
+[ 75%] [32mBuilding CXX object CMakeFiles/zed_camera_component.dir/src/zed_camera/src/zed_camera_component.cpp.o[0m
+[100%] [32m[1mLinking CXX shared library libzed_camera_component.so[0m
+[100%] Built target zed_camera_component
+-- Install configuration: "Release"
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/lib/libzed_camera_component.so
+-- Set runtime path of "/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/lib/libzed_camera_component.so" to ""
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/include/zed_components/
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/include/zed_components//zed_camera_component.hpp
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/include/zed_components/
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/include/zed_components//sl_win_avg.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/include/zed_components//sl_tools.hpp
+-- Up-to-date: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/include/zed_components/
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/include/zed_components//visibility_control.hpp
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/environment/library_path.sh
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/environment/library_path.dsv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/ament_index/resource_index/package_run_dependencies/zed_components
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/ament_index/resource_index/parent_prefix_path/zed_components
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/environment/ament_prefix_path.sh
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/environment/ament_prefix_path.dsv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/environment/path.sh
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/environment/path.dsv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/local_setup.bash
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/local_setup.sh
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/local_setup.zsh
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/local_setup.dsv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/package.dsv
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/ament_index/resource_index/packages/zed_components
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/ament_index/resource_index/rclcpp_components/zed_components
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/cmake/ament_cmake_export_include_directories-extras.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/cmake/ament_cmake_export_libraries-extras.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/cmake/ament_cmake_export_dependencies-extras.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/cmake/zed_componentsConfig.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/cmake/zed_componentsConfig-version.cmake
+-- Installing: /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/share/zed_components/package.xml

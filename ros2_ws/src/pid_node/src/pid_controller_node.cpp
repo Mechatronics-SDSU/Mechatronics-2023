@@ -62,13 +62,17 @@ public:
         ("zed_position_data", 10, std::bind(&Controller::position_sub_callback, this, _1));
     
         depth_sub_ = this->create_subscription<std_msgs::msg::Float32>
-        ("ms5837_depth", 10, std::bind(&Controller::depth_sub_callback, this, _1));
+        ("ms5837_depth_data", 10, std::bind(&Controller::depth_sub_callback, this, _1));
 
         desired_state_sub_ = this->create_subscription<scion_types::msg::DesiredState>
-        ("desired_position", 10, std::bind(&Controller::desired_state_callback, this, _1));
+        ("desired_state_data", 10, std::bind(&Controller::desired_state_callback, this, _1));
 
         orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
-        ("ahrs_orientation", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
+        ("ahrs_orientation_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
+
+        // velocity_sub_ = this->create_subscription<scion_types::msg::Orientation>
+        // ("dvl_velocity_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
+
 
         controller_ = Scion_Position_PID_Controller(pid_params_object_.get_pid_params());
         controller_.getStatus();
@@ -82,6 +86,7 @@ private:
     rclcpp::Subscription<scion_types::msg::DesiredState>::SharedPtr desired_state_sub_;
     rclcpp::Subscription<scion_types::msg::Orientation>::SharedPtr orientation_sub_;
     rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr depth_sub_;
+    rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr velocity_sub_;
     rclcpp::TimerBase::SharedPtr timer_;
     rclcpp::TimerBase::SharedPtr print_timer_;
     Mailbox::MboxCan* poll_mb_;

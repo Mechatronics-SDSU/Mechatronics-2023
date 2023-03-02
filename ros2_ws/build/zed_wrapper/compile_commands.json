@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/zed_wrapper",
+  "command": "/usr/bin/c++  -DDEFAULT_RMW_IMPLEMENTATION=rmw_fastrtps_cpp -DFOUND_FOXY -DRCUTILS_ENABLE_FAULT_INJECTION -DSPDLOG_COMPILED_LIB -I/usr/local/cuda-11.4/include -I/usr/local/zed/include -I/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/zed-ros2-wrapper/zed_wrapper/src -I/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_components/include -isystem /opt/ros/foxy/include -isystem /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/zed_interfaces/include -isystem /usr/include/eigen3  -O3 -DNDEBUG   -Wno-deprecated-declarations -std=gnu++14 -o CMakeFiles/zed_wrapper.dir/src/zed_wrapper.cpp.o -c /home/mechatronics/master/Mechatronics-2023/ros2_ws/src/zed-ros2-wrapper/zed_wrapper/src/zed_wrapper.cpp",
+  "file": "/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/zed-ros2-wrapper/zed_wrapper/src/zed_wrapper.cpp"
+}
+]

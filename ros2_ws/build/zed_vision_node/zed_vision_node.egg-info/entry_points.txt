@@ -1,0 +1,3 @@
+[console_scripts]
+zed_vision_exec = zed_vision_node.zed_vision_node:main
+

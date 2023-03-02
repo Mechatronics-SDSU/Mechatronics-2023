@@ -1,0 +1,24 @@
+/home/mechatronics/.local/lib/python3.8/site-packages/setuptools/dist.py:717: UserWarning: Usage of dash-separated 'script-dir' will not be supported in future versions. Please use the underscore name 'script_dir' instead
+  warnings.warn(
+running egg_info
+writing ../../build/ahrs_node/ahrs_node.egg-info/PKG-INFO
+writing dependency_links to ../../build/ahrs_node/ahrs_node.egg-info/dependency_links.txt
+writing entry points to ../../build/ahrs_node/ahrs_node.egg-info/entry_points.txt
+writing requirements to ../../build/ahrs_node/ahrs_node.egg-info/requires.txt
+writing top-level names to ../../build/ahrs_node/ahrs_node.egg-info/top_level.txt
+reading manifest file '../../build/ahrs_node/ahrs_node.egg-info/SOURCES.txt'
+writing manifest file '../../build/ahrs_node/ahrs_node.egg-info/SOURCES.txt'
+running build
+running build_py
+running install
+/home/mechatronics/.local/lib/python3.8/site-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+  warnings.warn(
+running install_lib
+running install_data
+copying package.xml -> /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/ahrs_node/share/ahrs_node
+running install_egg_info
+removing '/home/mechatronics/master/Mechatronics-2023/ros2_ws/install/ahrs_node/lib/python3.8/site-packages/ahrs_node-0.0.0-py3.8.egg-info' (and everything under it)
+Copying ../../build/ahrs_node/ahrs_node.egg-info to /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/ahrs_node/lib/python3.8/site-packages/ahrs_node-0.0.0-py3.8.egg-info
+running install_scripts
+Installing ahrs_exec script to /home/mechatronics/master/Mechatronics-2023/ros2_ws/install/ahrs_node/lib/ahrs_node
+writing list of installed files to '/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/ahrs_node/install.log'

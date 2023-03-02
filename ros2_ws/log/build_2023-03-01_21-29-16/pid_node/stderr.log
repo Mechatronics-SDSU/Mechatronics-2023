@@ -1,0 +1,28 @@
+[01m[K/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/pid_node/src/pid_controller_node.cpp:187:1:[m[K [01;35m[Kwarning: [m[K"/*" within comment [[01;35m[K-Wcomment[m[K]
+  187 | /**
+      |  
+[01m[K/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/pid_node/src/pid_controller_node.cpp:[m[K In member function ‘[01m[Kvoid Controller::make_CAN_request(std::vector<float>)[m[K’:
+[01m[K/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/pid_node/src/pid_controller_node.cpp:171:46:[m[K [01;35m[Kwarning: [m[Knarrowing conversion of ‘[01m[K(thrust0 & 255)[m[K’ from ‘[01m[Kint[m[K’ to ‘[01m[Kunsigned char[m[K’ [[01;35m[K-Wnarrowing[m[K]
+  171 |                                     [01;35m[K(thrust0 & 0xFF)[m[K,
+      |                                     [01;35m[K~~~~~~~~~^~~~~~~[m[K
+[01m[K/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/pid_node/src/pid_controller_node.cpp:172:46:[m[K [01;35m[Kwarning: [m[Knarrowing conversion of ‘[01m[K(thrust1 & 255)[m[K’ from ‘[01m[Kint[m[K’ to ‘[01m[Kunsigned char[m[K’ [[01;35m[K-Wnarrowing[m[K]
+  172 |                                     [01;35m[K(thrust1 & 0xFF)[m[K,
+      |                                     [01;35m[K~~~~~~~~~^~~~~~~[m[K
+[01m[K/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/pid_node/src/pid_controller_node.cpp:173:46:[m[K [01;35m[Kwarning: [m[Knarrowing conversion of ‘[01m[K(thrust2 & 255)[m[K’ from ‘[01m[Kint[m[K’ to ‘[01m[Kunsigned char[m[K’ [[01;35m[K-Wnarrowing[m[K]
+  173 |                                     [01;35m[K(thrust2 & 0xFF)[m[K,
+      |                                     [01;35m[K~~~~~~~~~^~~~~~~[m[K
+[01m[K/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/pid_node/src/pid_controller_node.cpp:174:46:[m[K [01;35m[Kwarning: [m[Knarrowing conversion of ‘[01m[K(thrust3 & 255)[m[K’ from ‘[01m[Kint[m[K’ to ‘[01m[Kunsigned char[m[K’ [[01;35m[K-Wnarrowing[m[K]
+  174 |                                     [01;35m[K(thrust3 & 0xFF)[m[K,
+      |                                     [01;35m[K~~~~~~~~~^~~~~~~[m[K
+[01m[K/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/pid_node/src/pid_controller_node.cpp:175:46:[m[K [01;35m[Kwarning: [m[Knarrowing conversion of ‘[01m[K(thrust4 & 255)[m[K’ from ‘[01m[Kint[m[K’ to ‘[01m[Kunsigned char[m[K’ [[01;35m[K-Wnarrowing[m[K]
+  175 |                                     [01;35m[K(thrust4 & 0xFF)[m[K,
+      |                                     [01;35m[K~~~~~~~~~^~~~~~~[m[K
+[01m[K/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/pid_node/src/pid_controller_node.cpp:176:46:[m[K [01;35m[Kwarning: [m[Knarrowing conversion of ‘[01m[K(thrust5 & 255)[m[K’ from ‘[01m[Kint[m[K’ to ‘[01m[Kunsigned char[m[K’ [[01;35m[K-Wnarrowing[m[K]
+  176 |                                     [01;35m[K(thrust5 & 0xFF)[m[K,
+      |                                     [01;35m[K~~~~~~~~~^~~~~~~[m[K
+[01m[K/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/pid_node/src/pid_controller_node.cpp:177:46:[m[K [01;35m[Kwarning: [m[Knarrowing conversion of ‘[01m[K(thrust6 & 255)[m[K’ from ‘[01m[Kint[m[K’ to ‘[01m[Kunsigned char[m[K’ [[01;35m[K-Wnarrowing[m[K]
+  177 |                                     [01;35m[K(thrust6 & 0xFF)[m[K,
+      |                                     [01;35m[K~~~~~~~~~^~~~~~~[m[K
+[01m[K/home/mechatronics/master/Mechatronics-2023/ros2_ws/src/pid_node/src/pid_controller_node.cpp:178:46:[m[K [01;35m[Kwarning: [m[Knarrowing conversion of ‘[01m[K(thrust7 & 255)[m[K’ from ‘[01m[Kint[m[K’ to ‘[01m[Kunsigned char[m[K’ [[01;35m[K-Wnarrowing[m[K]
+  178 |                                     [01;35m[K(thrust7 & 0xFF)[m[K
+      |                                     [01;35m[K~~~~~~~~~^~~~~~~[m[K
