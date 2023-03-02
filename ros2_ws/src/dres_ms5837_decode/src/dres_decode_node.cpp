@@ -30,8 +30,15 @@ DresDecodeNode::DresDecodeNode() : rclcpp::Node("ms5837_data")
 	
 	ms5837_decoder = new MS5837::MS5837Decode( (rclcpp::Node*)this);
 
+
+	/* Polling stuff */
 	strncpy(ifr.ifr_name, MBOX_INTERFACE, sizeof(&MBOX_INTERFACE));
 	_poll_mb = new Mailbox::MboxCan(&ifr, "poll_mb");
+	_dreq_timer = this->create_wall_timer(
+		40ms,
+		std::bind(&DresDecodeNode::_data_request, this)	
+	);
+
 	
 	RCLCPP_INFO(this->get_logger(), "[DresDecodeNode] Node Initialized.");
 }
@@ -80,6 +87,7 @@ void DresDecodeNode::_data_request()
 	poll_frame.can_dlc = 4;
 	std::copy(std::begin(depth_dreq_frame),
 			std::end(depth_dreq_frame),
+
 			std::begin(poll_frame.data));
 	if(Mailbox::MboxCan::write_mbox(_poll_mb, &poll_frame) == -1)
 	{
