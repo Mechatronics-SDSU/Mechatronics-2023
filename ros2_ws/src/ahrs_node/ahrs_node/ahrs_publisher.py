@@ -1,8 +1,8 @@
 '''
     @author Conner Sommerfield
     For questions @Zix on Mechatronics Discord
-    AHRS Node calls AHRS class to publish a float32[] array that contains orientation of the scion bot.
-    Published every .6 seconds as AHRS DocSheet mentions an accuracy for reporting 100 times a second (60/100 = .6)
+    AHRS Node calls AHRS class (not written by me) to publish a float32[] array that contains orientation 
+    of the scion bot. Orientation is published every time period as specified by the programmer. 
     Subscribe to 'ahrs_orientation' topic to grab orientation info. This wil be in the form of an array:
         Element 0 - yaw
         Element 1 - pitch
@@ -24,7 +24,7 @@
 # limitations under the License.
 
 import sys
-sys.path.append('/home/mechatronics/Mechatronics-2023/classes/ahrs_driver_lg')
+sys.path.append('/home/mechatronics/nodes/Mechatronics-2023/classes/ahrs_driver_lg')
 
 import rclpy
 from rclpy.node import Node
@@ -38,7 +38,7 @@ class AHRS_Node(Node):
     def __init__(self):
         super().__init__('ahrs_node')
         self.publisher_ = self.create_publisher(Orientation, 'ahrs_orientation', 10)     #transmits on 'ahrs_orientation' topic
-        timer_period = 0.6  # seconds
+        timer_period = .001  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.ahrs = SpartonAHRSDataPackets()
 
@@ -46,8 +46,8 @@ class AHRS_Node(Node):
     def format_orientation(self, yaw, pitch, roll):
         '''
         Yaw, pitch and roll are all returned as NoneType, must convert to str and then to float
-            We can use a formatted float to determine how many decimal places of accuracy we want
-            If you want to change precision change all the 2's to whatever precision you want
+        We can use a formatted float to determine how many decimal places of accuracy we want
+        If you want to change precision change all the 2's to whatever precision you want
         '''
         yaw_formatted = yaw
         pitch_formatted = pitch
@@ -61,7 +61,8 @@ class AHRS_Node(Node):
             roll_formatted = round(float(str(roll_formatted)), 2)
             
         return yaw_formatted, pitch_formatted, roll_formatted
-        
+    
+
     def timer_callback(self):
         yaw = self.ahrs.get_true_heading()
         pitch, roll = self.ahrs.get_pitch_roll()

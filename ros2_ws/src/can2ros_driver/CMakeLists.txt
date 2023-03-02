@@ -18,7 +18,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(can_msg_interfaces REQUIRED)
+find_package(scion_types REQUIRED)
 
 include_directories(include)
 
@@ -29,7 +29,7 @@ add_executable(
 	src/mbox_can.cpp
 	src/can_mailbox_topic.cpp
 )
-ament_target_dependencies(can2ros_driver rclcpp can_msg_interfaces)
+ament_target_dependencies(can2ros_driver rclcpp scion_types)
 
 install(TARGETS
 	can2ros_driver

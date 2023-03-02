@@ -36,7 +36,7 @@ class MailboxTopic
 		Mailbox::MboxCan* mailbox;
 		struct can_frame in_frame;
 		std::string topic_name;
-		rclcpp::Publisher<can_msg_interfaces::msg::CanFrame>::SharedPtr mailbox_pub;
+		rclcpp::Publisher<scion_types::msg::CanFrame>::SharedPtr mailbox_pub;
 };
 
 /*
@@ -52,12 +52,12 @@ class CanSendService
 		CanSendService(rclcpp::Node*, struct ifreq*);
 	private:
 		void service_handler(
-			const std::shared_ptr<can_msg_interfaces::srv::SendFrame::Request>,
-			std::shared_ptr<can_msg_interfaces::srv::SendFrame::Response>);
+			const std::shared_ptr<scion_types::srv::SendFrame::Request>,
+			std::shared_ptr<scion_types::srv::SendFrame::Response>);
 
 		rclcpp::Node* node_context;
 		Mailbox::MboxCan* out_box;
-		rclcpp::Service<can_msg_interfaces::srv::SendFrame>::SharedPtr send_service;	
+		rclcpp::Service<scion_types::srv::SendFrame>::SharedPtr send_service;	
 };
 
 /*

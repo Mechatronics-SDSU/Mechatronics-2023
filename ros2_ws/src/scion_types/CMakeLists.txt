@@ -18,6 +18,7 @@ find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/CanFrame.msg"
   "msg/Orientation.msg"
+  "msg/DesiredState.msg"
   "msg/Position.msg"
   "srv/SendFrame.srv"
   )

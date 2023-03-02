@@ -15,7 +15,7 @@ MS5837Decode:: MS5837Decode(rclcpp::Node* context)
 	ms5837_topics[2] = &MS5837Decode::ms5837_depth;			/* 0002 DEPTH */
 	ms5837_topics[3] = &MS5837Decode::ms5837_temp;			/* 0003 TEMPERATURE */
 
-	device_id = 0x0002; 		/* public device ID (used by dres_decoder_node) */
+	device_id = 0x0003; 		/* public device ID (used by dres_decoder_node) */
 
 	sensor_depth = node_context->create_publisher<std_msgs::msg::Float32> ("ms5837_depth", 10);
 	sensor_temp  = node_context->create_publisher<std_msgs::msg::Float32> ("ms5837_temp", 10);

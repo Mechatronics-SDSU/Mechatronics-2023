@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>can2ros_driver</name>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <description>A driver to handle the in-between of Ros2 and the embedded subsystem</description>
   <maintainer email="mechatronics@todo.todo">mechatronics</maintainer>
   <license>TODO: License declaration</license>
@@ -15,7 +15,7 @@
   <export>
     <build_type>ament_cmake</build_type>
     <depend>rclcpp</depend>
-    <depend>can_msg_interfaces</depend>
+    <depend>scion_types</depend>
     <depend>mbox_can</depend>
   </export>
 </package>

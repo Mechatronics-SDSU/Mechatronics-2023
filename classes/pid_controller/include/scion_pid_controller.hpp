@@ -24,28 +24,29 @@ class Scion_Position_PID_Controller
     private:
 
     public:
-        shared_ptr<PID_Controller> roll_pid;
-        shared_ptr<PID_Controller> pitch_pid;
         shared_ptr<PID_Controller> yaw_pid;
+        shared_ptr<PID_Controller> pitch_pid;
+        shared_ptr<PID_Controller> roll_pid;
         shared_ptr<PID_Controller> x_pos_pid;
         shared_ptr<PID_Controller> y_pos_pid;
         shared_ptr<PID_Controller> z_pos_pid;
         std::map<string, shared_ptr<PID_Controller>> controllers;
-        vector<double> last_generated_ctrl_vals;
-        vector<vector<double>> pid_thrust_mapper;
+        vector<float> current_ctrl_vals;
+        vector<float> current_thrust_values;
+        vector<vector<float>> pid_thrust_mapper;
 
         // Default constructor to tune PID manually
         Scion_Position_PID_Controller();
 
         // Or put tuning values into pid_params.cpp and call from here
-        Scion_Position_PID_Controller(map<string, map<string, double>> pid_params);
+        Scion_Position_PID_Controller(map<string, map<string, float>> pid_params);
     
         // Request control values from each PID
-        pair<vector<double>, vector<double>> update
+        pair<vector<float>, vector<float>> update
             (
-                vector<double> set_pos_point=    vector<double>{0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
-                vector<double> process_pos_point=vector<double>{0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, 
-                double dt=0.010
+                vector<float> current_point=    vector<float>{0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+                vector<float> desired_point=vector<float>{0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, 
+                float dt=0.010
             );
 
         // Print status of all PIDs to console

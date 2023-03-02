@@ -52,7 +52,6 @@ CanMailboxPublisher::CanMailboxPublisher()
 	can_service = new CanSendService((rclcpp::Node*)this, &ifr);
 	emergency_mb = new MailboxTopic((rclcpp::Node*)this, &ifr, "emergency", {0x000,0xff0});
 	heartbeat_mb = new MailboxTopic((rclcpp::Node*)this, &ifr, "heartbeat", {0x010,0xff0});
-	// sensors_mb = new MailboxTopic((rclcpp::Node*)this, &ifr, "sensors", {0x020,0xff0});
 	dres_mb = new MailboxTopic((rclcpp::Node*)this, &ifr, "dres", {0x021,0xff1});
 
 }
@@ -66,7 +65,6 @@ void CanMailboxPublisher::timer_callback()
 {
 	emergency_mb->mailbox_cb();
 	heartbeat_mb->mailbox_cb();
-	// sensors_mb->mailbox_cb();
 	dres_mb->mailbox_cb();
 }
 
@@ -80,7 +78,6 @@ void CanMailboxPublisher::shutdown_node()
 {
 	emergency_mb->shutdown_cb();
 	heartbeat_mb->shutdown_cb();
-	// sensors_mb->shutdown_cb();
 	dres_mb->shutdown_cb();
 
 }

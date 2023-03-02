@@ -16,36 +16,36 @@ class PID_Controller
     private:
 
     public:
-        double k_p;
-        double k_i;
-        double k_d;
-        double i_min;
-        double i_max;
-        double ctrl_val_min;
-        double ctrl_val_max;
-        double ctrl_val_offset;
+        float k_p;
+        float k_i;
+        float k_d;
+        float i_min;
+        float i_max;
+        float ctrl_val_min;
+        float ctrl_val_max;
+        float ctrl_val_offset;
         bool angle_wrap;
-        double integral = 0.0;
-        double previous_error = 0.0;
+        float integral = 0.0;
+        float previous_error = 0.0;
         
         PID_Controller() {};
 
         PID_Controller
         (
-            double k_p, 
-            double k_i, 
-            double k_d, 
+            float k_p, 
+            float k_i, 
+            float k_d, 
             bool angle_wrap=false,
-            double i_min=-1.0, 
-            double i_max=1.0, 
-            double ctrl_val_min=-1.0, 
-            double ctrl_val_max=1.0, 
-            double ctrl_val_offset=0.0
+            float i_min=-1.0, 
+            float i_max=1.0, 
+            float ctrl_val_min=-1.0, 
+            float ctrl_val_max=1.0, 
+            float ctrl_val_offset=0.0
         );
    
-        void set_gains(double k_p, double k_i, double k_d);
+        void set_gains(float k_p, float k_i, float k_d);
 
-        pair<double, double> update(double set_point, double process_point, double dt);
+        pair<float, float> update(float current_point, float desired_point, float dt);
 
         void getStatus();
 };

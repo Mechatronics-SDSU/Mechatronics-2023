@@ -9,21 +9,21 @@ using namespace std;
 class PID_Params
 {
     private:
-        map<string, map<string, double>> pid_params;
-        map<string, double> roll;
-        map<string, double> pitch;
-        map<string, double> yaw;
-        map<string, double> x_pos;
-        map<string, double> y_pos;
-        map<string, double> z_pos;
-        map<string, double> x_vel;
-        map<string, double> y_vel;
-        map<string, double> z_vel;
+        map<string, map<string, float>> pid_params;
+        map<string, float> roll;
+        map<string, float> pitch;
+        map<string, float> yaw;
+        map<string, float> x_pos;
+        map<string, float> y_pos;
+        map<string, float> z_pos;
+        map<string, float> x_vel;
+        map<string, float> y_vel;
+        map<string, float> z_vel;
 
     public:
         PID_Params();
 
-        map<string, map<string, double>> get_pid_params();
+        map<string, map<string, float>> get_pid_params();
 
 };
 
