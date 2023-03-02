@@ -6,8 +6,9 @@
 
   // Define USB Serial Print Debug Messaging
 #define DEBUG_MODE
+#define NO_DVL_DEBUG
 #define DEBUG_DECODE
-//#define DEBUG_DREQ_PTR
+#define DEBUG_DREQ_PTR
 
 
 
@@ -68,9 +69,10 @@
 // For Junebug ONLY
 //#define ACTIVE_THRUSTERS  2
 // For Sub ONLY
-#define ACTIVE_THRUSTERS 8
+#define ACTIVE_THRUSTERS  8
+#define THRUSTER_PWM_FREQ 400
 
-
+#define MAX_BRLIGHTS      2
 
 #define DEFAULT_SOFT_SHUTDOWN_TIME_MS   250
 
@@ -83,5 +85,53 @@ struct CONTROL{
   //uint8_t thruster[ACTIVE_THRUSTERS];
   THRUSTER thruster[ACTIVE_THRUSTERS];
 };
+
+
+
+// Leak Detection pins, trigger on HI
+#define LEAK_DET_DEBOUNCE_TIMEOUT 1000000ul
+#define LEAK_DET_PIN_0  30
+#define LEAK_DET_PIN_1  31
+#define LEAK_DET_PIN_2  32
+#define LEAK_DET_PIN_3  33
+
+// Soft Kill Button input, trigger on HI
+#define KILL_BUTTON_PIN   38
+#define KILL_BUTTON_DEBOUNCE_TIMEOUT  500000
+
+// Light PWM pins
+#define BRLIGHT_PWM_FREQ    400
+#define BRLIGHT_MAP_OFFSET  -100
+#define LIGHT_0_PIN     28
+#define LIGHT_1_PIN     29
+
+// LED Button Light Pins (Same Timer)
+#define BUTTON_LED_BLINK_RATE   1
+#define KILL_BUTTON_GRN_LED     37
+#define KILL_BUTTON_BLU_LED     36
+
+// No Reponse ISR and Timer
+#define NO_RESPONSE_TIMEOUT_US    1000000
+#define NO_RESPONSE_ISR_PRIORITY  64
+
+
+// State Machine States, OA_STATE
+/*    0   Hard Kill
+ *    1   RES
+ *    2   Soft Kill
+ *    3
+ *    4   All Good, clear to run
+ *    5
+ *    6
+ *    7
+ */
+ #define HARD_KILL_STATE    0
+ #define SOFT_KILL_STATE    2
+ #define ALL_GOOD_STATE     4
+
+
+#define DREQ_ID   0x20
+#define DRES_ID   0x21
+#define STOW_ID   0x22
 
 #endif // T4_NODECONSTANTS_h

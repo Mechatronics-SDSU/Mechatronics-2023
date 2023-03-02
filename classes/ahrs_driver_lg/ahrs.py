@@ -159,7 +159,7 @@ def main(com_port):
         pitch, roll = ahrs.get_pitch_roll()
         if yaw is not None:
             print(f"Pitch: {pitch}, Roll: {roll}, Yaw: {yaw}")
-        time.sleep(0.1)
+        time.sleep(.01)
 
 
 if __name__ == "__main__":

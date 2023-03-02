@@ -1,5 +1,9 @@
 #include "T4_installed_devices_and_topics.h"
 
+////////////////////////////////////////////////////////////////////////////////////////////
+//                      READING ADDRESS SPACE
+////////////////////////////////////////////////////////////////////////////////////////////
+
 void dreq_nop( CAN_message_t &msg){
 #ifdef DEBUG_DECODE
   Serial.printf("DREQ_NOP\n");
@@ -121,63 +125,111 @@ void dreq_res( CAN_message_t &msg){
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0002 WAYFDVL  Wayfinder DVL
 
-  // 0x0000 NOP
-void wayfdvl_velocity_3( CAN_message_t &msg){
-  // do this later  
+#define WAYFDVL_DEVICE_ID  0x0003
+
+  // Macro support still sucks
+void wayfdvl_info( CAN_message_t &msg){                                         // 0x0000
+  if(msg.id == STOW_ID){
+    if(msg.buf[4]) {
+      #ifdef ENABLE_DVL
+      init_DVL_serial();
+      WAYFDVL = init_DVL_data_struct();
+      #ifdef DEBUG_MODE
+      Serial.printf("Serial 1\nTX Capacity:\t%d bytes\nRX Capacity:\t%d bytes\n", DVLSERIAL.availableForWrite(), DVLSERIAL.available());
+      Serial.printf("DVL Struct: %08X\n", WAYFDVL);
+      #endif
+      #endif
+    }
+  } else {
+    // Return Device info
+  }
 }
 
-void wayfdvl_velocity_x( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.velocity.X);  
+void wayfdvl_velocity_3( CAN_message_t &msg){                                   // 0x0001
+  msg.buf[2] = 0x02;
+  dreq_access(WAYFDVL_DEVICE_ID, 0x0002, msg);    // X
+  Can0.write(msg);
+  
+  msg.buf[2] = 0x03;
+  dreq_access(WAYFDVL_DEVICE_ID, 0x0003, msg);    // Y
+  Can0.write(msg);
+  
+  msg.buf[2] = 0x04;
+  dreq_access(WAYFDVL_DEVICE_ID, 0x0004, msg);    // Z, implicit send
 }
 
-void wayfdvl_velocity_y( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.velocity.Y);
+void wayfdvl_velocity_x( CAN_message_t &msg){                                   // 0x0002
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.velocity.X);  
 }
 
-void wayfdvl_velocity_z( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.velocity.Z);
+void wayfdvl_velocity_y( CAN_message_t &msg){                                   // 0x0003
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.velocity.Y);
 }
 
-void wayfdvl_velocity_e( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.velocity.error);
+void wayfdvl_velocity_z( CAN_message_t &msg){                                   // 0x0004
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.velocity.Z);
 }
-  // 4x res
-void wayfdvl_dist_mean( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.range.mean);
+
+void wayfdvl_velocity_e( CAN_message_t &msg){                                   // 0x0005
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.velocity.error);
+}
+  // 1x res
+void wayfdvl_velocity_and_mean_depth( CAN_message_t &msg){                      // 0x0007
+  wayfdvl_velocity_3(msg);      // X, Y, Z velocity
+  Can0.write(msg);              // Make up for missing implicit send
+  msg.buf[2] = 0x0A;
+  wayfdvl_dist_mean(msg);       // Mean dist, implicit send
+}
+
+  // 2x res
+  
+void wayfdvl_dist_mean( CAN_message_t &msg){                                    // 0x000A
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.range.mean);
 }
 
 void wayfdvl_dist_1( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.range.beam0);
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.range.beam0);
 }
 
 void wayfdvl_dist_2( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.range.beam1);
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.range.beam1);
 }
 
 void wayfdvl_dist_3( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.range.beam2);
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.range.beam2);
 }
 
 void wayfdvl_dist_4( CAN_message_t &msg){
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.range.beam3);
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.range.beam3);
 }
   // 1x res
 void wayfdvl_input_v( CAN_message_t &msg){          // 0x0010
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.power.input_voltage);
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.power.input_voltage);
 }
 
 void wayfdvl_tx_v( CAN_message_t &msg){             // 0x0011
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.power.tx_voltage);
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.power.tx_voltage);
 }
 
 void wayfdvl_tx_i( CAN_message_t &msg){             // 0x0012
-  fill_msg_buffer_w_float(msg, &WAYFDVL.responseData.binaryData.power.tx_current);
+  fill_msg_buffer_w_float(msg, &WAYFDVL->responseData.binaryData.power.tx_current);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0003 MS5837  MS5837 Pressure and Temp Sensor
 
 #define MS5837_DEVICE_ID  0x0003
+
+void ms5837_info( CAN_message_t &msg){                 // 0x0000
+  if(msg.id == STOW_ID){
+    if(msg.buf[4]){
+      #ifdef ENABLE_PRES_SENS
+      // Start i2C 0 at 400kHz, initiate pressure sensor
+      startup_pressure_sensor( &pressure_sensor);
+      #endif
+    }
+  }
+}
 
 void ms5837_data( CAN_message_t &msg){                // 0x00 01
 #ifdef DEBUG_DREQ_PTR
@@ -195,18 +247,53 @@ void ms5837_depth(CAN_message_t &msg){                // 0x00 02
 #ifdef DEBUG_DREQ_PTR
   Serial.println("Depth Requested!\n");
 #endif
-  fill_msg_buffer_w_float_buffer(msg, pressure_sensor.depth);
+  //fill_msg_buffer_w_float_buffer(msg, pressure_sensor.depth);
+  float t__ = ms5837_Read_Depth();
+  fill_msg_buffer_w_float(msg, &t__);
 }
 
 void ms5837_temp(CAN_message_t &msg){                 // 0x00 03
 #ifdef DEBUG_DREQ_PTR
   Serial.printf("Temp Requested!\n");
 #endif
-  fill_msg_buffer_w_float_buffer(msg, pressure_sensor.temperature);
+  //fill_msg_buffer_w_float_buffer(msg, pressure_sensor.temperature);
+  float t__ = ms5837_Read_Temp();
+  fill_msg_buffer_w_float(msg, &t__);
 }
 
 #undef MS5837_DEVICE_ID
+
 ////////////////////////////////////////////////////////////////////////////////////////
+// 0x0004 BRLIGHT External LED Lights for illumination
+void brlight_info( CAN_message_t &msg){
+#ifdef DEBUG_DREQ_PTR
+  Serial.printf("BRLIGHT Info Access ID: %02X\n", msg.id);
+#endif
+  if(msg.id == STOW_ID){
+    startup_light_system( &lights );  
+    set_num_enabled_lights( &lights , MAX_BRLIGHTS);
+    
+  } else {
+    msg.id = DRES_ID;
+    Can0.write(msg);
+  }
+}
+ // 3x res
+void brlight_front_brightness( CAN_message_t &msg){
+  //set_light_levels(bright_lights_t *light_struct, uint8_t *vals)
+#ifdef DEBUG_DREQ_PTR  
+  Serial.printf("Set Light Levels: %3u percent\n", msg.buf[4]);
+#endif
+  if(msg.len > 4){
+    set_light_levels( &lights , msg.buf[4]);
+  } else {
+    set_light_levels( &lights , 0x00);
+  }
+  
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+
 // Addressing function to find correct jump table address
 /*  
  * IMPORTANT APP NOTE!!! - Joseph De Vico, 01/30/2023 09:15
@@ -305,3 +392,8 @@ void float_2_char_array(uint8_t *arr_out, float d_in){
   arr_out[2] = *((uint8_t *)(&d_in) + 2u);
   arr_out[3] = *((uint8_t *)(&d_in) + 3u); 
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+//                      WRITING ADDRESS SPACE
+////////////////////////////////////////////////////////////////////////////////////////////

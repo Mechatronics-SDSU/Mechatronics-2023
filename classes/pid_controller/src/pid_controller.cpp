@@ -1,3 +1,9 @@
+/* 
+ * @author Conner Sommerfield - Zix on Discord for questions
+ * This PID algorithm was written before but I adapted it a little
+ * bit for what we need and rewrote it in C++
+ */
+
 #include "pid_controller.hpp"
 
 /** PID controller typically used in control feed back systems. */
@@ -22,15 +28,15 @@ PID_Controller::PID_Controller
     */
    
     (
-        double k_p, 
-        double k_i, 
-        double k_d, 
+        float k_p, 
+        float k_i, 
+        float k_d, 
         bool angle_wrap,
-        double i_min, 
-        double i_max, 
-        double ctrl_val_min, 
-        double ctrl_val_max, 
-        double ctrl_val_offset
+        float i_min, 
+        float i_max, 
+        float ctrl_val_min, 
+        float ctrl_val_max, 
+        float ctrl_val_offset
     )
 
     {
@@ -47,7 +53,7 @@ PID_Controller::PID_Controller
         this->previous_error = 0.0;                 // Helps in derivative calculation
     }
 
-void PID_Controller::set_gains(double k_p, double k_i, double k_d)
+void PID_Controller::set_gains(float k_p, float k_i, float k_d)
 {
     /*
     Reset the gain parameters. These are constants that have to be tuned to fit the system.
@@ -74,14 +80,14 @@ void PID_Controller::set_gains(double k_p, double k_i, double k_d)
 }
 
 
-pair<double, double> PID_Controller::update(double set_point, double process_point, double dt)
+pair<float, float> PID_Controller::update(float current_point, float desired_point, float dt)
 {
     /*
     Perfrom a control step to correct for error in control system.
 
     Parameters:
-        set_point: The current state of the system
-        process_point: The desired state of the system
+        current_point: The current state of the system
+        desired_point: The desired state of the system
         dt: The interval between update steps.
     Returns:
         ctrl_val: A PID output control value to correct for error in system
@@ -90,23 +96,23 @@ pair<double, double> PID_Controller::update(double set_point, double process_poi
 
     /* compute error which is important in determining our proportional, integral, derivative */
 
-    double error = process_point - set_point;
+    float error = desired_point - current_point;
 
     /* if error is for angular inputs (roll, pitch, yaw), perform angle wrapping. */
     if (this->angle_wrap)
     {
-        if (error > M_PI)
+        if (error > 180)
         {
-            error = error - 2 * M_PI;
+            error = error - (2 * 180);
         }
-        else if (error < -1 * M_PI)
+        else if (error < -180)
         {
-            error = error + 2 * M_PI;
+            error = error + (2 * 180);
         }
     }
         
     /* Create our P-I-D based on error */
-    double proportional = (this->k_p * error);  // Directly proportional to error based on k_p constant
+    float proportional = (this->k_p * error);  // Directly proportional to error based on k_p constant
 
     this->integral = this->integral + (error * dt);     // Integral builds over time
     if (this->i_min < this->i_max)                      // Clamp integral if necessary
@@ -120,17 +126,21 @@ pair<double, double> PID_Controller::update(double set_point, double process_poi
             this->integral = this->i_max;
         }
     }
-    double integral = this->k_i * this->integral;
+    float integral = this->k_i * this->integral;
 
-    double derivative = this->k_d * (error - this->previous_error) / dt; // Derivative takes into account previous error
+    float derivative = this->k_d * (error - this->previous_error); // Derivative takes into account previous error
 
     this->previous_error = error;            // reset error for next cycle
 
 
-    /* Get our control value and clamp it if necessary */
-    double pre_ctrl_val = proportional + integral + derivative;
+    // std::cout << "proportional: " << proportional << endl;    //Just for testing
+    // std::cout << "integral: " << integral << endl;
+    // std::cout << "derivative: " << derivative << endl;
 
-    double ctrl_val;
+    /* Get our control value and clamp it if necessary */
+    float pre_ctrl_val = proportional + integral + derivative;
+
+    float ctrl_val;
 
     if (pre_ctrl_val >= 0)
     {
@@ -153,7 +163,7 @@ pair<double, double> PID_Controller::update(double set_point, double process_poi
         }
     }
 
-    pair<double, double> ctrl_and_error(ctrl_val, error);
+    pair<float, float> ctrl_and_error(ctrl_val, error);
 
     return ctrl_and_error;
 }
@@ -161,15 +171,9 @@ pair<double, double> PID_Controller::update(double set_point, double process_poi
 /* Print all PIDs fields */
 void PID_Controller::getStatus()
 {
-    cout << "k_p: " << this->k_p << endl;
-    cout << "k_i: " << this->k_i << endl;
-    cout << "k_d: " << this->k_d << endl;
-    cout << "i_min: " << this->i_min << endl;
-    cout << "i_max: " << this->i_max << endl;
-    cout << "ctrl_val_min: " << this->ctrl_val_min << endl;
-    cout << "ctrl_val_max: " << this->ctrl_val_max << endl;
-    cout << "ctrl_val_offset: " << this->ctrl_val_offset << endl;
-    cout << "angle_wrap: " << this->angle_wrap << endl;
+    // cout << "k_p: " << this->k_p << endl;
+    // cout << "k_i: " << this->k_i << endl;
+    // cout << "k_d: " << this->k_d << endl;
     cout << "integral: " << this->integral << endl;
     cout << "previous_error: " << this->previous_error << endl;
 }
@@ -180,7 +184,7 @@ void PID_Controller::getStatus()
 // {
 //     PID_Controller controller = PID_Controller(0.0F, 0.0F, 0.0F);
 
-//     pair<double, double> ctrl_val_error = controller.update(5.0F, 3.0F, .5);
+//     pair<float, float> ctrl_val_error = controller.update(5.0F, 3.0F, .5);
 
 //     std::cout << ctrl_val_error.first;
 //     std::cout << ctrl_val_error.second;

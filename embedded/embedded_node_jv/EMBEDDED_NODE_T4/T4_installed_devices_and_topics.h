@@ -3,7 +3,7 @@
 
 #include <FlexCAN_T4.h>
  
-#define INSTALLED_DEVICE_CT 4
+#define INSTALLED_DEVICE_CT 5
 
 typedef void (**device_ptr_array_t)( CAN_message_t &msg);
 typedef void (*topic_ptr_array_t)( CAN_message_t &msg);
@@ -116,13 +116,15 @@ topic_ptr_array_t dreq_PWRSYS[PWRSYS_TOPIC_CT] =
 // 0x0002 WAYFDVL  Wayfinder DVL
 #define WAYFDVL_TOPIC_CT    19
 
-  // 0x0000 NOP
+ void wayfdvl_info( CAN_message_t &msg);          // 0x0000
  void wayfdvl_velocity_3( CAN_message_t &msg);    // 0x0001
  void wayfdvl_velocity_x( CAN_message_t &msg);    // 0x0002
  void wayfdvl_velocity_y( CAN_message_t &msg);    // 0x0003
  void wayfdvl_velocity_z( CAN_message_t &msg);    // 0x0004
  void wayfdvl_velocity_e( CAN_message_t &msg);    // 0x0005
-  // 4x res                                       // 0x0006 - 0x0009
+  // 1x res                                       // 0x0006
+ void wayfdvl_velocity_and_mean_depth( CAN_message_t &msg); // 0x0007
+  // 2x res 0x0008 - 0x0009
  void wayfdvl_dist_mean( CAN_message_t &msg);     // 0x000A
  void wayfdvl_dist_1( CAN_message_t &msg);        // 0x000B
  void wayfdvl_dist_2( CAN_message_t &msg);        // 0x000C
@@ -136,14 +138,14 @@ topic_ptr_array_t dreq_PWRSYS[PWRSYS_TOPIC_CT] =
 
 topic_ptr_array_t dreq_WAYFDVL[WAYFDVL_TOPIC_CT] =
   {
-    dreq_nop,
+    wayfdvl_info,
     wayfdvl_velocity_3,
     wayfdvl_velocity_x,
     wayfdvl_velocity_y,
     wayfdvl_velocity_z,
     wayfdvl_velocity_e,
     dreq_res,
-    dreq_res,
+    wayfdvl_velocity_and_mean_depth,
     dreq_res,
     dreq_res,
     wayfdvl_dist_mean,
@@ -161,20 +163,35 @@ topic_ptr_array_t dreq_WAYFDVL[WAYFDVL_TOPIC_CT] =
 // 0x0003 MS5837  MS5837 Pressure and Temp Sensor
 #define MS5837_TOPIC_CT     4
 
-  // 0x0000 NOP
- void ms5837_data( CAN_message_t &msg);
- void ms5837_depth( CAN_message_t &msg);
- void ms5837_temp( CAN_message_t &msg);
+ void ms5837_info( CAN_message_t &msg);           // 0x0000
+ void ms5837_data( CAN_message_t &msg);           // 0x0001
+ void ms5837_depth( CAN_message_t &msg);          // 0x0002
+ void ms5837_temp( CAN_message_t &msg);           // 0x0003
 
 topic_ptr_array_t dreq_MS5837[MS5837_TOPIC_CT] =
   {
-    dreq_nop,
+    ms5837_info,
     ms5837_data,
     ms5837_depth,
     ms5837_temp
   };
 
+////////////////////////////////////////////////////////////////////////////////////////
+// 0x0004 BRLIGHT  MS5837 Pressure and Temp Sensor
+#define BRLIGHT_TOPIC_CT    6
 
+ void brlight_info( CAN_message_t &msg);
+ void brlight_front_brightness( CAN_message_t &msg);
+
+topic_ptr_array_t data_BRLIGHT[BRLIGHT_TOPIC_CT] = 
+  {
+    brlight_info,
+    dreq_res,
+    dreq_res,
+    dreq_res,
+    brlight_front_brightness,
+    dreq_res
+  };
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // Device Array
@@ -183,8 +200,8 @@ device_ptr_array_t dreq_device[INSTALLED_DEVICE_CT] =
     dreq_EMBSYS,
     dreq_PWRSYS,
     dreq_WAYFDVL,
-    dreq_MS5837
-    
+    dreq_MS5837,
+    data_BRLIGHT
   };
 
 

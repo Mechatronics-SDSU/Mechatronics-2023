@@ -17,20 +17,31 @@ void emergency_CFGS_handler(const CAN_message_t &msg){
       case 0x005:
         softShutdown(msg);
       break;
+
+      case 0x00A:
+#ifdef DEBUG_MODE
+        Serial.printf("\nState Errors Clear, All Good!\n");
+#endif
+        OA_STATE = ALL_GOOD_STATE;
+      break;
     }
   }
 }
 
 void shutdownSystem(){      // Immediate shutdown of motors, release claw
+  cli();                    // Control ISRs
 #ifdef DEBUG_MODE
   Serial.println("Shutdown!!");
 #endif
+  
+  OA_STATE = SOFT_KILL_STATE;
+  
   for(int n = 0; n < ACTIVE_THRUSTERS; n++){
     // motorGo(uint8_t motor__, uint8_t percent)
     control.thruster[n].value = motorGo(control.thruster[n].pin, 0);
   }
 
-  //while(1){};
+  sei();
 }
 
 void softShutdown(const CAN_message_t &msg){        // Slowly shutdown motors and release claw

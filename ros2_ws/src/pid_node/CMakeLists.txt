@@ -23,13 +23,18 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(scion_types REQUIRED)
+find_package(std_msgs REQUIRED)
+
+include_directories(include)
 
 add_executable(pid_exec src/pid_controller_node.cpp
                               /home/mechatronics/nodes/Mechatronics-2023/classes/pid_controller/src/pid_controller.cpp
                               /home/mechatronics/nodes/Mechatronics-2023/classes/pid_controller/src/scion_pid_controller.cpp
-                              /home/mechatronics/nodes/Mechatronics-2023/classes/pid_controller/src/pid_params.cpp)
+                              /home/mechatronics/nodes/Mechatronics-2023/classes/pid_controller/src/pid_params.cpp
+                              src/mbox_can.cpp)
+                              
 
-ament_target_dependencies(pid_exec rclcpp scion_types)
+ament_target_dependencies(pid_exec rclcpp scion_types std_msgs)
 
 target_include_directories(pid_exec PUBLIC /home/mechatronics/nodes/Mechatronics-2023/classes/pid_controller/include/)
 

@@ -25,7 +25,7 @@ DresDecodeNode::DresDecodeNode() : rclcpp::Node("dvl_data")
 	_dres_mb = this->create_subscription<scion_types::msg::CanFrame>(
 		"dres_mb_pub", 10, std::bind(&DresDecodeNode::decode_cb, this, std::placeholders::_1));
 	_dreq_timer = this-> create_wall_timer(
-		25ms,
+		250ms,
 		std::bind(&DresDecodeNode::_data_request, this));
 	
 	dvl_decoder = new DVL::DVLDecode( (rclcpp::Node*)this);

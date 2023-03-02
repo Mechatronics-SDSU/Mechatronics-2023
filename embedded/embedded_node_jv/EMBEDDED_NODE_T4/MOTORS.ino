@@ -86,11 +86,16 @@ int setupMainDrives(){
 
 #ifdef DEBUG_MODE
   Serial.println("Thrusters on pins:");
-  Serial.println(control.thruster[0].pin);
-  Serial.println(control.thruster[1].pin);
+  for(int n = 0; n < ACTIVE_THRUSTERS; n++){
+    Serial.printf("Thruster %d on pin %d\n", n, control.thruster[n].pin);
+  }
   Serial.println('\n');
 #endif
- 
+
+  for(int n = 0; n < ACTIVE_THRUSTERS; n++){
+    analogWriteFrequency(control.thruster[n].pin, THRUSTER_PWM_FREQ);
+  }
+  /*
   analogWriteFrequency(control.thruster[0].pin, 400);       // 400 Hz hardcoded. Do not change.
   analogWriteFrequency(control.thruster[1].pin, 400);       // 400 Hz hardcoded. Do not change.
 
@@ -102,7 +107,7 @@ int setupMainDrives(){
 
   analogWriteFrequency(control.thruster[6].pin, 400);       // 400 Hz hardcoded. Do not change.
   analogWriteFrequency(control.thruster[7].pin, 400);       // 400 Hz hardcoded. Do not change.
-
+*/
   analogWriteResolution(PWM_RES);                       // Full hardware resolution avail at these slow speeds. Do not change.
   
   for(int n = 0; n < ACTIVE_THRUSTERS; n++){            // Initialize all motors to 0

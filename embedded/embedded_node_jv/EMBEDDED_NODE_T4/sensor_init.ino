@@ -38,3 +38,62 @@ void startup_pressure_sensor(pressure_sensor_t *pres_sense_struct){
   
 }
 #endif
+
+//////////////////////////////////////////////////////
+//            Illumination Lights (BRLIGHT)
+//////////////////////////////////////////////////////
+void startup_light_system(bright_lights_t *light_struct){
+  light_struct->pin[0] = LIGHT_0_PIN;
+  light_struct->pin[1] = LIGHT_1_PIN;
+
+
+  for(int n = 0; n < MAX_BRLIGHTS; n++){
+    light_struct->level[n] = 0x00;
+    pinMode(light_struct->pin[n], OUTPUT);
+    analogWrite(light_struct->pin[n], map2Motor(BRLIGHT_MAP_OFFSET));
+    analogWriteFrequency(light_struct->pin[n], BRLIGHT_PWM_FREQ);
+  }
+}
+
+void set_num_enabled_lights(bright_lights_t *light_struct, uint8_t num_en){
+  light_struct->num_enabled = num_en;
+}
+
+
+void set_light_levels(bright_lights_t *light_struct, uint8_t vals){
+  for(int n = 0; n < light_struct->num_enabled; n++){
+    analogWrite(light_struct->pin[n], map2Motor(BRLIGHT_MAP_OFFSET + (vals << 1)));
+  }
+}
+
+
+//////////////////////////////////////////////////////
+//          LED Button 
+//////////////////////////////////////////////////////
+void startup_kill_button(){               // Button on A14 with 4k7, 100n RCLP
+  CCM_CCGR3 |= CCM_CCGR3_ACMP2(CCM_CCGR_ON);  // Enable ACMP2 Clock
+
+  // CMP2 Setup for A14 Input vs. Internal DAC
+  CMP2_CR0 = 0b01000011; // Set Filter count and Hysteresis controls
+  CMP2_CR1 = 0b00000001; // Mode 4B
+  CMP2_FPR = 64;         // Divide periph clock to COMP sample
+  //CMP2_DACCR = (1 << 7) | (0 << 6) | 31; // Enable DAC, set threshold
+  set_comp2_dac(2);
+  CMP2_SCR = 0b00010000;  // Enable ISR
+  CMP2_MUXCR = 0b00110111;  // +in = A14, -in = DAC
+
+  pinMode(KILL_BUTTON_PIN, INPUT_PULLDOWN);
+
+  // Setup IRQ, ACMP2 ISR -> 124
+  attachInterruptVector(IRQ_ACMP2, &kill_button_triggered);
+  NVIC_CLEAR_PENDING(IRQ_ACMP2);
+  NVIC_ENABLE_IRQ(IRQ_ACMP2);
+
+  killButtonISRTimeout.priority(100);
+
+  __enable_irq();
+}
+
+void set_comp2_dac(uint8_t val){  // Set DAC, max 64
+  CMP2_DACCR = (uint8_t)((1 << 7) | (val & 0b111111));
+}
