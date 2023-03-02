@@ -13,6 +13,10 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+
+find_package(geometry_msgs REQUIRED)
+find_package(shape_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
@@ -20,7 +24,21 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Orientation.msg"
   "msg/DesiredState.msg"
   "msg/Position.msg"
+  
+  "msg/BoundingBox2Df.msg"
+  "msg/BoundingBox2Di.msg"
+  "msg/BoundingBox3D.msg"
+  "msg/Keypoint2Df.msg"
+  "msg/Keypoint2Di.msg"
+  "msg/Keypoint3D.msg"
+  "msg/Object.msg"
+  "msg/ObjectsStamped.msg"
+  "msg/PlaneStamped.msg"
+  "msg/DepthInfoStamped.msg"
+  "msg/Skeleton2D.msg"
+  "msg/Skeleton3D.msg"
   "srv/SendFrame.srv"
+  
   )
 
 ament_package()

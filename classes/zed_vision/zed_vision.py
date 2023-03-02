@@ -9,12 +9,21 @@ import cv2
 import pyzed.sl as sl
 import torch.backends.cudnn as cudnn
 
-sys.path.append("/home/mechatronics/nodes/Mechatronics-2023/classes/zed_vision/yolov5")
-from models.experimental import attempt_load
+
+from ultralytics import YOLO
+from ultralytics.nn.tasks import attempt_load_weights
+from ultralytics.yolo.utils.ops import non_max_suppression, scale_segments, xyxy2xywh
+from ultralytics.yolo.utils.torch_utils import select_device
+from ultralytics.yolo.data.dataloaders.v5augmentations import letterbox
+#from ultralytics.yolo.data.augment import LetterBox
+from ultralytics.yolo.utils.checks import check_imgsz
+
+#sys.path.append("/home/mechatronics/vision_nodes/Mechatronics-2023/classes/zed_vision/yolov5")
+#from models.experimental import attempt_load
 #from utils.general import check_img_size, non_max_suppression, scale_coords, xyxy2xywh
-from utils.general import check_img_size, non_max_suppression, scale_segments, xyxy2xywh
-from utils.torch_utils import select_device
-from utils.augmentations import letterbox
+#from utils.general import check_img_size, non_max_suppression, scale_segments, xyxy2xywh
+#from utils.torch_utils import select_device
+#from utils.augmentations import letterbox
 
 from threading import Lock, Thread
 from time import sleep
@@ -100,10 +109,11 @@ class Zed_Vision():
         imgsz = img_size
 
         # Load model
-        model = attempt_load(weights, device=device)  # load FP32
+        model = attempt_load_weights(weights, device=device)
+                                        
         #model = attempt_load(weights, map_location=lambda storage, loc: storage)
-        stride = int(model.stride.max())  # model stride
-        imgsz = check_img_size(imgsz, s=stride)  # check img_size
+        stride = max(int(model.stride.max()), 32)  # model stride
+        imgsz = check_imgsz(imgsz, stride=stride)  # check img_size
         if half:
             model.half()  # to FP16
         cudnn.benchmark = True
@@ -129,7 +139,7 @@ class Zed_Vision():
 
     def initCamera(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument('--weights', nargs='+', type=str, default='yolov5m.pt', help='model.pt path(s)') #where we put weights at
+        parser.add_argument('--weights', nargs='+', type=str, default='yolov8m.pt', help='model.pt path(s)') #where we put weights at
         parser.add_argument('--svo', type=str, default=None, help='optional svo file')
         parser.add_argument('--img_size', type=int, default=416, help='inference size (pixels)')
         parser.add_argument('--conf_thres', type=float, default=0.4, help='object confidence threshold')
