@@ -1,3 +1,7 @@
+#Classes Folder: This is where you place all classes and modules to call from ROS#
+
+
+
 # Some Help With CMake Files and Builds In C++ #
 
 I personally plan on writing my classes in C++ and calling them from the ROS2 nodes to integrate their functionaility into the communication of the Robot.
