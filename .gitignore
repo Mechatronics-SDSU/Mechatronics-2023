@@ -1,0 +1,7 @@
+#comments for gitignore
+# * for wildcard match
+#/" to ignore paths
+.vscode
+/build
+/log
+/install
