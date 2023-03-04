@@ -69,14 +69,14 @@ if __name__ == "__main__":
 
     # Configure object detection runtime parameters
     obj_runtime_param = sl.ObjectDetectionRuntimeParameters()
-    #obj_runtime_param.detection_confidence_threshold = 0                # Set minimum confidence to recognize object here.
-    #obj_runtime_param.object_class_filter = [sl.OBJECT_CLASS.PERSON]    # Only detect Persons
+    #obj_runtime_param.detection_confidence_threshold = 0                # Set minimum confidence to recognize object here, default is 50 (percent)
+    #obj_runtime_param.object_class_filter = [sl.OBJECT_CLASS.PERSON]    # Set which objects to recognize here, default is all. // Only detect Persons
 
     # Create ZED objects filled in the main loop
     objects = sl.Objects()
     image = sl.Mat()
 
-    while True:
+   while True:
         # Grab an image, a RuntimeParameters object must be given to grab()
         if zed.grab(runtime_parameters) == sl.ERROR_CODE.SUCCESS:
             # Retrieve left image
@@ -86,24 +86,24 @@ if __name__ == "__main__":
 
             # Loop through objects, and set least distance.
             i = 0
-            leastDistance = -1
+            closestDistance = -1
             for currentObject in objects.object_list:
                 distance = pow(pow(currentObject.position[0],2) + pow(currentObject.position[1],2) + pow(currentObject.position[2],2),.5)
                 # If first object, set least distance to first object.
-                if leastDistance == -1:
-                    leastDistance = distance
-                elif leastDistance > distance:
-                    leastDistance = distance
+                if closestDistance == -1:
+                    closestDistance = distance
+                elif closestDistance > distance:
+                    closestDistance = distance
             # If no objects
-            if leastDistance == -1:
+            if closestDistance == -1:
                 print("no objects")
                 continue
             # Print stop if detected object within .5 m
-            if leastDistance <= .5:
+            if closestDistance <= .6:
                 print("stop")
                 continue
             # Output distance.
-            print(leastDistance)
+            print(closestDistance)
 
     image.free(memory_type=sl.MEM.CPU)
     # Disable modules and close camera
