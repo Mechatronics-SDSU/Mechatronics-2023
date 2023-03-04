@@ -9,8 +9,7 @@ objects in an image viewer.
 "distance_detector.py" modifies this code to calculate the distance from the camera of each object,
 and only outputs the distance of the nearest object to standard output.
 
-If the ZED camera detects an object to be within .5 m from the camera, the program outputs "stop"
-and exits.
+If the ZED camera detects an object to be within .5 m from the camera, the program outputs "stop".
 
 The minimum distance be edited by modifying line 100, but I found that .5 m was the lowest reliable distance:
 
