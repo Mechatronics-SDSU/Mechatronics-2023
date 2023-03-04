@@ -20,7 +20,7 @@
 
 """
     Takes in objects from 2D camera input, and outputs distance of nearest object.
-    If within .5 m, outputs "stop" and exits.
+    If within .5 m, outputs "stop".
     If no object detected, outputs "no objects".
     
     Uses ZED SDK.
