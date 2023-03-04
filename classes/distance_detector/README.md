@@ -14,9 +14,9 @@ and exits.
 
 The minimum distance be edited by modifying line 100, but I found that .5 m was the lowest reliable distance:
 
-\# Print stop if detected object within .5 m
+\# Print stop if detected object within .6 m
 
-            if leastDistance <= .5:
+            if leastDistance <= .6:
 
 If the ZED camera doesn't detect any object in a frame, the program outputs "no object" and continues.
 
@@ -25,11 +25,11 @@ camera, and the distance is calculated from the coordinates.
 
 The ZED SDK by defaults only detects objects that it's at least 50% confident of, but this setting
 can be changed by uncommenting line 70:
-#obj_runtime_param.detection_confidence_threshold = 0                # Set minimum confidence to recognize object here.
+#obj_runtime_param.detection_confidence_threshold = 0                # Set minimum confidence to recognize object here, default is 50 (percent)
 
 The ZED SDK by defaults tries to detect objects of any of its built in classes (listed just below),
 and this setting can be changed by uncommenting line 70:
-#obj_runtime_param.object_class_filter = [sl.OBJECT_CLASS.PERSON]    # Only detect Persons
+#obj_runtime_param.object_class_filter = [sl.OBJECT_CLASS.PERSON]    # Set which objects to recognize here, default is all. // Only detect Persons
 
 Other than the .PERSON object class, ZED SDK also can be set to determine the following classes of objects:
   PERSON
