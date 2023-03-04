@@ -101,7 +101,7 @@ if __name__ == "__main__":
             # Print stop if detected object within .5 m
             if leastDistance <= .5:
                 print("stop")
-                break
+                continue
             # Output distance.
             print(leastDistance)
 
