@@ -23,6 +23,7 @@ and guaranteed to follow the core design requirements of the embedded subsystem.
 - [T4_WAYFINDER_DVL](https://github.com/4n3m4i1/T4_WAYFINDER_DVL) Provides asynchronous handling and bindings to read from and write to the Wayfinder DVL
 - [T4_MS5837](https://github.com/4n3m4i1/T4_MS5837) Provides asynchronous bindings and optimizations to the Blue Robotics MS5837 library
 - `IntervalTimer` Provides ISR triggering interval timer bindings
+- [WDT_T4](https://github.com/tonton81/WDT_T4) Provides Watchdog Timer interfaces
 
 
 ## T4 Design Requirements
