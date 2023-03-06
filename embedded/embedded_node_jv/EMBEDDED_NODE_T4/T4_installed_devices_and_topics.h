@@ -19,14 +19,14 @@ typedef void (*topic_ptr_array_t)( CAN_message_t &msg);
 #define EMBSYS_TOPIC_CT     18
 
 // EMBDSYS Topics
-  // 0x0000 NOP
+ void embsys_statectl( CAN_message_t &msg);
   // 0x0001- 0x000F RES
  void embsys_subsysct( CAN_message_t &msg);
  void embsys_conndevct( CAN_message_t &msg);
 
 topic_ptr_array_t dreq_EMBSYS[EMBSYS_TOPIC_CT] =
   {
-    dreq_nop,         // 0x0000
+    embsys_statectl,  // 0x0000
     dreq_res,         // 0x0001
     dreq_res,         // 0x0002
     dreq_res,         // 0x0003

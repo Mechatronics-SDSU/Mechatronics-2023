@@ -28,6 +28,16 @@ void emergency_CFGS_handler(const CAN_message_t &msg){
   }
 }
 
+// Called on failure to feed watchdog
+//  WDT2, fed by valid CAN messaging regarding the motors
+void loss_of_valid_control(){
+#ifdef DEBUG_MODE
+  Serial.printf("\nWDT2: Loss of Valid Control Detected, Shutting Motors Down.\n");
+#endif
+  shutdownSystem();
+  soft_kill_system_message();
+}
+
 void shutdownSystem(){      // Immediate shutdown of motors, release claw
   cli();                    // Control ISRs
 #ifdef DEBUG_MODE

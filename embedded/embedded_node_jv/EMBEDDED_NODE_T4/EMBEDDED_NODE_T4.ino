@@ -17,16 +17,20 @@ Please Note: Tab/file names that match CAN message types
 // Interval Timer
 #include <IntervalTimer.h>
 
-#ifdef ENABLE_PRES_SENS
+// Watchdog Timer
+#include "Watchdog_t4.h"
+WDT_T4<WDT2> commsTimeoutWDT;
 
-// Richard Gemmell T4 i2C Library, for MS5837 Mostly
+
+// Richard Gemmell T4 i2C Library
 #include <i2c_driver.h>
 #include <i2c_driver_wire.h>
 
+
+#ifdef ENABLE_PRES_SENS
 // MS5837 Library, Joseph De Vico
 #include <T4_MS5837_CONSTANTS.h>
 #include <T4_MS5837.h>
-
 #endif
 
 #ifdef ENABLE_DVL
@@ -65,6 +69,7 @@ IntervalTimer leakDetectionISRTimeout;
 
 
 volatile uint32_t OA_STATE = SOFT_KILL_STATE;      // Overall State Variable
+//uint32_t LAST_GOOD_STATE = ALL_GOOD_STATE;         // Maintains the last good state, default ALL_GOOD_STATE
 
 void setup() {
 #ifdef DEBUG_MODE
@@ -113,7 +118,6 @@ void setup() {
   for(uint32_t n = 0; n < 6; n++){
     digitalToggle(DEBUG_LED);
     delay(500);
-    
   }
 
 #ifdef DEBUG_MODE
@@ -128,6 +132,21 @@ void setup() {
   Serial.printf("\tDREQ, DRES, STOW Debug Enabled\n");
 #endif
 
+  // Initialize and begin watchdog timer for loss of
+  //  CAN communications.
+  //  After some time with no valid inputs the timer will
+  //  shutdown the motors
+  WDT_timings_t control_loss_wdt;
+  control_loss_wdt.trigger = CAN_LOSS_OF_CONTROL_WDT_TIMEOUT;       // WDT Timeout trigger
+  control_loss_wdt.timeout = 2.0 * CAN_LOSS_OF_CONTROL_WDT_TIMEOUT; // WDT Timeout limit
+  control_loss_wdt.callback = loss_of_valid_control;                // Function Located: Emergency and Config
+  commsTimeoutWDT.begin(control_loss_wdt);
+//  commsTimeoutWDT.reset();
+
+#ifdef DEBUG_MODE
+  Serial.printf("\tCAN Watchdog Started, %.4f s timeout.\n", control_loss_wdt.trigger);
+#endif
+
 }
 
 
@@ -138,18 +157,9 @@ void loop() {
 #ifdef ENABLE_DVL
   DVL_DATA_UPDATE();    // Returns status of DVL serial data update
 #endif
-  
-  
-#ifdef ENABLE_PRES_SENS
-/*
-  if(ms5837_Data_ready() && !pressure_sensor.health){
-    
-    float_2_char_array(pressure_sensor.depth, ms5837_Read_Depth());
-    float_2_char_array(pressure_sensor.average_depth, ms5837_Avg_Depth());
-    float_2_char_array(pressure_sensor.temperature, ms5837_Read_Temp());
-    float_2_char_array(pressure_sensor.average_temperature, ms5837_Avg_Temp());
-  }
- */
-#endif
 
+
+  if(OA_STATE < ALL_GOOD_STATE){    
+    commsTimeoutWDT.feed();     // Feed watchdog once a shutdown has occured, or if in TEST_IA_STATE 
+  }
 }
