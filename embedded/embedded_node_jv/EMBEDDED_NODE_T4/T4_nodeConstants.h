@@ -9,6 +9,7 @@
 #define NO_DVL_DEBUG
 //#define DEBUG_DECODE
 //#define DEBUG_DREQ_PTR
+#define DEBUG_STOW_ACCESS
 
 
 #define CAN_LOSS_OF_CONTROL_WDT_TIMEOUT   1.0

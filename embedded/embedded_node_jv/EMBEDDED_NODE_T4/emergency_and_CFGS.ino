@@ -18,7 +18,7 @@ void emergency_CFGS_handler(const CAN_message_t &msg){
         softShutdown(msg);
       break;
 
-      case 0x00A:
+      case 0x00A:                 // All good flag
 #ifdef DEBUG_MODE
         Serial.printf("\nState Errors Clear, All Good!\n");
 #endif
@@ -30,6 +30,7 @@ void emergency_CFGS_handler(const CAN_message_t &msg){
   }
 }
 
+
 // Called on failure to feed watchdog
 //  WDT2, fed by valid CAN messaging regarding the motors
 void loss_of_valid_control(){
@@ -40,6 +41,8 @@ void loss_of_valid_control(){
   soft_kill_system_message();
 }
 
+
+// Turn all motors to 0%, block further motor commands from being read
 void shutdownSystem(){      // Immediate shutdown of motors, release claw
   cli();                    // Control ISRs
 #ifdef DEBUG_MODE
@@ -59,12 +62,15 @@ void shutdownSystem(){      // Immediate shutdown of motors, release claw
   sei();
 }
 
+
+// Disable power to ESCs
 void hardShutdown(){
   cli();
   set_hard_kill_relay_state(RELAY_OFF);
   sei();
 }
 
+// Don't use this
 void softShutdown(const CAN_message_t &msg){        // Slowly shutdown motors and release claw
   uint16_t soft_delay = (msg.buf[0]) ? msg.buf[0] : DEFAULT_SOFT_SHUTDOWN_TIME_MS;  // Select how many ms to shutdown over
   for(int q = 0; q < soft_delay; q++){
@@ -75,4 +81,12 @@ void softShutdown(const CAN_message_t &msg){        // Slowly shutdown motors an
     }
     delayMicroseconds(1000);
   }
+}
+
+
+void soft_kill_system_message(){
+  CAN_message_t msg;
+  msg.id = 0x000;
+  msg.len = 0;
+  Can0.write(msg);
 }

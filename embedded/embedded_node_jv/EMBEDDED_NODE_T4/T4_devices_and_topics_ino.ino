@@ -19,11 +19,20 @@ void dreq_res( CAN_message_t &msg){
 // EMBDSYS Topics
 void embsys_statectl( CAN_message_t &msg){        // 0x0000
   if(msg.id == STOW_ID){    // Set State
+#ifdef DEBUG_STOW_ACCESS
+    Serial.printf("STATECTL Accessed for Write\n");
+#endif
     if(msg.buf[DEV_DATA_0] > SOFT_KILL_STATE){
       LAST_GOOD_STATE = msg.buf[DEV_DATA_0];       
-      //OA_STATE = msg.buf[DEV_DATA_0];     
+      OA_STATE = msg.buf[DEV_DATA_0];     
+#ifdef DEBUG_MODE
+      Serial.printf("\tState from %2X to %2X\n", LAST_GOOD_STATE, OA_STATE);
+#endif
     }                                   
   } else {                  // Read State
+#ifdef DEBUG_STOW_ACCESS
+    Serial.printf("STATECTL Accessed for Read\n");
+#endif
     msg.buf[DEV_DATA_0] = OA_STATE;
     msg.len = DEV_PAY_LEN_1;
   }
