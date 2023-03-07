@@ -24,6 +24,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Orientation.msg"
   "msg/DesiredState.msg"
   "msg/Position.msg"
+  "msg/ZedObject.msg"
   "srv/SendFrame.srv"
   )
 

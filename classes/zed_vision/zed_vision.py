@@ -215,19 +215,24 @@ class Zed_Vision():
             lock.release()
             zed.retrieve_objects(objects, obj_runtime_param)
 
+            return objects.object_list
+
             # object.id
             #object.position
 
             # for object in objects.object_list:
             #     print("{} {} {}".format(object.id, object.position, object.dimensions))
-
-            for object in objects.object_list:
+            """
+             for object in objects.object_list:
                 # print("{} {} {}".format(object.id, object.position, object.dimensions))
                 vector = []
                 for coordinate in object.position:
                     vector.append(float(coordinate))
                 print("VECTOR: ", vector)
                 return vector
+            
+            """
+           
 
 
         #     object = sl.ObjectData()
