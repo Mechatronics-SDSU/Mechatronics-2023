@@ -41,7 +41,9 @@ DVL_ *WAYFDVL;
 
 // Include Devices and Topics Jump Tables
 //  this is done automatically, don't re include!!!!!
-//#include "T4_installed_devices_and_topics.h"
+
+// Acually nvm we do it here to have shared constants globally
+#include "T4_installed_devices_and_topics.h"
 
 // Definitions
 FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can0;
@@ -71,6 +73,9 @@ IntervalTimer leakDetectionISRTimeout;
 volatile uint32_t OA_STATE = HARD_KILL_STATE;      // Overall State Variable
 volatile uint32_t LAST_GOOD_STATE = ALL_GOOD_STATE; // Maintains the last good state, default ALL_GOOD_STATE
 
+// Device Status Banks
+volatile uint32_t bank0_device_status = 0;
+
 void setup() {
 #ifdef DEBUG_MODE
   Serial.begin(115200);
@@ -90,18 +95,7 @@ void setup() {
   // Enable soft kill button input
   startup_kill_button();
 
-  startup_pressure_sensor( &pressure_sensor);
-
-  #ifdef ENABLE_DVL
-  init_DVL_serial();
-  WAYFDVL = init_DVL_data_struct();
-  DVLSERIAL.clear();
-      #ifdef DEBUG_MODE
-      Serial.printf("Serial 1\nTX Capacity:\t%d bytes\nRX Capacity:\t%d bytes\n", DVLSERIAL.availableForWrite(), DVLSERIAL.available());
-      Serial.printf("DVL Struct: %08X\n", WAYFDVL);
-      #endif
-  #endif
-
+  // Startup moved to per device messaging
 
   pinMode(DEBUG_LED, OUTPUT);
   pinMode(TEENSY_BOARD_LED, OUTPUT);
@@ -133,6 +127,9 @@ void setup() {
   Serial.printf("\tDREQ, DRES, STOW Debug Enabled\n");
 #endif
 
+  // Indicate EMBSYS has booted
+  SET_STATUS_BIT(bank0_device_status, EMBSYS_BIT);
+
   // Initialize and begin watchdog timer for loss of
   //  CAN communications.
   //  After some time with no valid motor drive inputs the timer will
@@ -156,7 +153,7 @@ void loop() {
   Can0.events();
   
 #ifdef ENABLE_DVL
-  DVL_DATA_UPDATE();    // Returns status of DVL serial data update
+  if(CHK_STATUS_BIT(bank0_device_status, WAYFDVL_BIT)) DVL_DATA_UPDATE();    // Returns status of DVL serial data update
 #endif
 
 

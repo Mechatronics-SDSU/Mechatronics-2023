@@ -1,4 +1,4 @@
-#include "T4_installed_devices_and_topics.h"
+//#include "T4_installed_devices_and_topics.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 //                      READING ADDRESS SPACE
@@ -149,7 +149,10 @@ void embsys_statectl( CAN_message_t &msg){        // 0x0000
   // Macro support still sucks
 void wayfdvl_info( CAN_message_t &msg){                                         // 0x0000
   if(msg.id == STOW_ID){
-    if(msg.buf[DEV_DATA_0]) {
+    if((msg.buf[DEV_DATA_0]) && !(CHK_STATUS_BIT(bank0_device_status, WAYFDVL_BIT))) {
+#ifdef DEBUG_STOW_ACCESS
+      Serial.printf("DVL Initiation Started\n");
+#endif
       #ifdef ENABLE_DVL
       init_DVL_serial();
       WAYFDVL = init_DVL_data_struct();
@@ -158,9 +161,13 @@ void wayfdvl_info( CAN_message_t &msg){                                         
       Serial.printf("DVL Struct: %08X\n", WAYFDVL);
       #endif
       #endif
+
+      SET_STATUS_BIT(bank0_device_status, WAYFDVL_BIT);
     }
   } else {
     // Return Device info
+    msg.buf[DEV_DATA_0] = CHK_STATUS_BIT(bank0_device_status, WAYFDVL_BIT);
+    msg.len = DEV_PAY_LEN_1;
   }
 }
 
@@ -241,12 +248,21 @@ void wayfdvl_tx_i( CAN_message_t &msg){             // 0x0012
 
 void ms5837_info( CAN_message_t &msg){                 // 0x0000
   if(msg.id == STOW_ID){
-    if(msg.buf[DEV_DATA_0]){
+    if((msg.buf[DEV_DATA_0]) && !(CHK_STATUS_BIT(bank0_device_status, MS5837_BIT))){
+#ifdef DEBUG_STOW_ACCESS
+      Serial.printf("MS5837 Initiation Started\n");
+#endif
       #ifdef ENABLE_PRES_SENS
       // Start i2C 0 at 400kHz, initiate pressure sensor
       startup_pressure_sensor( &pressure_sensor);
       #endif
+
+      SET_STATUS_BIT(bank0_device_status, MS5837_BIT);
     }
+  } else {
+    // DREQ
+    msg.buf[DEV_DATA_0] = CHK_STATUS_BIT(bank0_device_status, MS5837_BIT);
+    msg.len = DEV_PAY_LEN_1;
   }
 }
 
