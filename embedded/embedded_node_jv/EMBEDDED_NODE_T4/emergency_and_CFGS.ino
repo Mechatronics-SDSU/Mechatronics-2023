@@ -22,7 +22,9 @@ void emergency_CFGS_handler(const CAN_message_t &msg){
 #ifdef DEBUG_MODE
         Serial.printf("\nState Errors Clear, All Good!\n");
 #endif
-        OA_STATE = ALL_GOOD_STATE;
+        //OA_STATE = ALL_GOOD_STATE;
+        OA_STATE = LAST_GOOD_STATE;
+        set_hard_kill_relay_state(RELAY_ON);
       break;
     }
   }
@@ -44,13 +46,22 @@ void shutdownSystem(){      // Immediate shutdown of motors, release claw
   Serial.println("Shutdown!!");
 #endif
   
-  OA_STATE = SOFT_KILL_STATE;
   
   for(int n = 0; n < ACTIVE_THRUSTERS; n++){
     // motorGo(uint8_t motor__, uint8_t percent)
     control.thruster[n].value = motorGo(control.thruster[n].pin, 0);
   }
 
+  if(OA_STATE > SOFT_KILL_STATE) LAST_GOOD_STATE = OA_STATE;
+
+  OA_STATE = SOFT_KILL_STATE;
+
+  sei();
+}
+
+void hardShutdown(){
+  cli();
+  set_hard_kill_relay_state(RELAY_OFF);
   sei();
 }
 

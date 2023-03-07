@@ -86,7 +86,10 @@ struct CONTROL{
   THRUSTER thruster[ACTIVE_THRUSTERS];
 };
 
-
+// Hard Kill Output
+#define HARD_KILL_RELAY 24
+#define RELAY_ON    1
+#define RELAY_OFF   0
 
 // Leak Detection pins, trigger on HI
 #define LEAK_DET_DEBOUNCE_TIMEOUT 1000000ul
@@ -135,6 +138,13 @@ struct CONTROL{
 #define DEV_DATA_1  5
 #define DEV_DATA_2  6
 #define DEV_DATA_3  7
+
+// length in bytes of a standard DRES per payload len in bytes
+#define DEV_PAY_LEN_0   4
+#define DEV_PAY_LEN_1   5
+#define DEV_PAY_LEN_2   6
+#define DEV_PAY_LEN_3   7
+#define DEV_PAY_LEN_4   8
 
 #define DREQ_ID   0x20
 #define DRES_ID   0x21

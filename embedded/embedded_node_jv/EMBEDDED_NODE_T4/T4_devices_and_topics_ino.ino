@@ -19,11 +19,13 @@ void dreq_res( CAN_message_t &msg){
 // EMBDSYS Topics
 void embsys_statectl( CAN_message_t &msg){        // 0x0000
   if(msg.id == STOW_ID){    // Set State
-    if(OA_STATE > SOFT_KILL_STATE){
-      OA_STATE = msg.buf[DEV_DATA_0];
-    }
+    if(msg.buf[DEV_DATA_0] > SOFT_KILL_STATE){
+      LAST_GOOD_STATE = msg.buf[DEV_DATA_0];       
+      //OA_STATE = msg.buf[DEV_DATA_0];     
+    }                                   
   } else {                  // Read State
     msg.buf[DEV_DATA_0] = OA_STATE;
+    msg.len = DEV_PAY_LEN_1;
   }
 }
   // 0x0001- 0x000F RES

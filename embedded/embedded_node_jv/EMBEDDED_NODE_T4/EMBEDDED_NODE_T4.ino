@@ -68,8 +68,8 @@ IntervalTimer leakDetectionISRTimeout;
 //IntervalTimer noResponseTimer;          // Will take over control and shutdown motors if no response to a leak detect
 
 
-volatile uint32_t OA_STATE = SOFT_KILL_STATE;      // Overall State Variable
-//uint32_t LAST_GOOD_STATE = ALL_GOOD_STATE;         // Maintains the last good state, default ALL_GOOD_STATE
+volatile uint32_t OA_STATE = HARD_KILL_STATE;      // Overall State Variable
+volatile uint32_t LAST_GOOD_STATE = ALL_GOOD_STATE; // Maintains the last good state, default ALL_GOOD_STATE
 
 void setup() {
 #ifdef DEBUG_MODE
@@ -81,7 +81,8 @@ void setup() {
   if(setupMainDrives()){
     // Error!
   }
-  
+
+  setup_hard_kill_relay();
 
   // Enable leak detection
   setup_leak_detection_pins_and_isr();
@@ -134,7 +135,7 @@ void setup() {
 
   // Initialize and begin watchdog timer for loss of
   //  CAN communications.
-  //  After some time with no valid inputs the timer will
+  //  After some time with no valid motor drive inputs the timer will
   //  shutdown the motors
   WDT_timings_t control_loss_wdt;
   control_loss_wdt.trigger = CAN_LOSS_OF_CONTROL_WDT_TIMEOUT;       // WDT Timeout trigger

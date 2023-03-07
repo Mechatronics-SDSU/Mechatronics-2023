@@ -112,6 +112,8 @@ void kill_button_triggered(){
   NVIC_CLEAR_PENDING(IRQ_ACMP2);  // Clear ISR Queue for button
   
   shutdownSystem();               // Kill Motors
+  hardShutdown();                 // Cut power to motors
+  
   __enable_irq();                 // Allow other IRQs
   //sei();
   digitalToggle(DEBUG_LED);       // Blink Debug LED
