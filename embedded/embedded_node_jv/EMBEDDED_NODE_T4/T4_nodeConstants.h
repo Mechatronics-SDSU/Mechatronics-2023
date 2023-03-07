@@ -88,7 +88,7 @@ struct CONTROL{
 };
 
 // Hard Kill Output
-#define HARD_KILL_RELAY 24
+#define HARD_KILL_RELAY 26
 #define RELAY_ON    1
 #define RELAY_OFF   0
 
