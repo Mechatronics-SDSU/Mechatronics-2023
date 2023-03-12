@@ -1,11 +1,17 @@
 import sys
-sys.path.append("/home/mechatronics/master/Mechatronics-2023/classes/zed_vision")
+# Python syntax is garbage and I appended these for the relative imports
+sys.path.append(".")
+sys.path.append("..")
+sys.path.append("...")
+sys.path.append("....")
+sys.path.append(".....")
+sys.path.append("......")
 
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 from threading import Thread
-from zed_vision import Zed_Vision
+from classes.zed_vision.zed_vision import Zed_Vision
 from scion_types.msg import Position
 
 
