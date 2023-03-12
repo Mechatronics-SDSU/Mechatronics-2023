@@ -227,6 +227,7 @@ class Zed_Vision():
             return objects.object_list, depth_map
 
 
+
 def main():
     global image_net, exit_signal, run_signal, detections
 
