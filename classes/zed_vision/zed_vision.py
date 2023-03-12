@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
-
-import sys
 import numpy as np
 
 import argparse
 import torch
 import cv2
 import sys
-import ogl_viewer.viewer as gl
+# import ogl_viewer.viewer as gl
 import pyzed.sl as sl
 import torch.backends.cudnn as cudnn
 import math
