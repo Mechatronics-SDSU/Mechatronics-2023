@@ -104,6 +104,8 @@ void re_enable_kill_button_irq(){ // Allow button IRQs again
   NVIC_ENABLE_IRQ(IRQ_ACMP2);
 }
 
+
+
 void kill_button_triggered(){
   __disable_irq();                // Maintain control over ISRs
   CMP2_SCR |= (1 << 2);           // Clear COMP2 trig flag
@@ -112,6 +114,8 @@ void kill_button_triggered(){
   NVIC_CLEAR_PENDING(IRQ_ACMP2);  // Clear ISR Queue for button
   
   shutdownSystem();               // Kill Motors
+  hardShutdown();                 // Cut power to motors
+  
   __enable_irq();                 // Allow other IRQs
   //sei();
   digitalToggle(DEBUG_LED);       // Blink Debug LED
@@ -121,12 +125,4 @@ void kill_button_triggered(){
   
 
   killButtonISRTimeout.begin(re_enable_kill_button_irq, KILL_BUTTON_DEBOUNCE_TIMEOUT);
-}
-
-
-void soft_kill_system_message(){
-  CAN_message_t msg;
-  msg.id = 0x000;
-  msg.len = 0;
-  Can0.write(msg);
 }

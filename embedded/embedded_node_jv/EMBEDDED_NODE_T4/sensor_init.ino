@@ -97,3 +97,16 @@ void startup_kill_button(){               // Button on A14 with 4k7, 100n RCLP
 void set_comp2_dac(uint8_t val){  // Set DAC, max 64
   CMP2_DACCR = (uint8_t)((1 << 7) | (val & 0b111111));
 }
+
+
+//////////////////////////////////////////////////////
+//          Hard Kill Relay Output, Active High 
+//////////////////////////////////////////////////////
+void setup_hard_kill_relay(){
+  pinMode(HARD_KILL_RELAY, OUTPUT);
+  digitalWriteFast(HARD_KILL_RELAY, 0);
+}
+
+void set_hard_kill_relay_state(bool s8__){
+  digitalWriteFast(HARD_KILL_RELAY, s8__);
+}

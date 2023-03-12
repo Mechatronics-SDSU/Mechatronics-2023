@@ -1,4 +1,4 @@
-#include "T4_installed_devices_and_topics.h"
+//#include "T4_installed_devices_and_topics.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 //                      READING ADDRESS SPACE
@@ -17,7 +17,26 @@ void dreq_res( CAN_message_t &msg){
 // 0x0000 EMBDSYS  Embedded System Info
 
 // EMBDSYS Topics
-  // 0x0000 NOP
+void embsys_statectl( CAN_message_t &msg){        // 0x0000
+  if(msg.id == STOW_ID){    // Set State
+#ifdef DEBUG_STOW_ACCESS
+    Serial.printf("STATECTL Accessed for Write\n");
+#endif
+    if(msg.buf[DEV_DATA_0] > SOFT_KILL_STATE){
+      LAST_GOOD_STATE = msg.buf[DEV_DATA_0];       
+      OA_STATE = msg.buf[DEV_DATA_0];     
+#ifdef DEBUG_MODE
+      Serial.printf("\tState from %2X to %2X\n", LAST_GOOD_STATE, OA_STATE);
+#endif
+    }                                   
+  } else {                  // Read State
+#ifdef DEBUG_STOW_ACCESS
+    Serial.printf("STATECTL Accessed for Read\n");
+#endif
+    msg.buf[DEV_DATA_0] = OA_STATE;
+    msg.len = DEV_PAY_LEN_1;
+  }
+}
   // 0x0001- 0x000F RES
  void embsys_subsysct( CAN_message_t &msg){
   
@@ -130,7 +149,10 @@ void dreq_res( CAN_message_t &msg){
   // Macro support still sucks
 void wayfdvl_info( CAN_message_t &msg){                                         // 0x0000
   if(msg.id == STOW_ID){
-    if(msg.buf[4]) {
+    if((msg.buf[DEV_DATA_0]) && !(CHK_STATUS_BIT(bank0_device_status, WAYFDVL_BIT))) {
+#ifdef DEBUG_STOW_ACCESS
+      Serial.printf("DVL Initiation Started\n");
+#endif
       #ifdef ENABLE_DVL
       init_DVL_serial();
       WAYFDVL = init_DVL_data_struct();
@@ -139,9 +161,13 @@ void wayfdvl_info( CAN_message_t &msg){                                         
       Serial.printf("DVL Struct: %08X\n", WAYFDVL);
       #endif
       #endif
+
+      SET_STATUS_BIT(bank0_device_status, WAYFDVL_BIT);
     }
   } else {
     // Return Device info
+    msg.buf[DEV_DATA_0] = CHK_STATUS_BIT(bank0_device_status, WAYFDVL_BIT);
+    msg.len = DEV_PAY_LEN_1;
   }
 }
 
@@ -222,12 +248,21 @@ void wayfdvl_tx_i( CAN_message_t &msg){             // 0x0012
 
 void ms5837_info( CAN_message_t &msg){                 // 0x0000
   if(msg.id == STOW_ID){
-    if(msg.buf[4]){
+    if((msg.buf[DEV_DATA_0]) && !(CHK_STATUS_BIT(bank0_device_status, MS5837_BIT))){
+#ifdef DEBUG_STOW_ACCESS
+      Serial.printf("MS5837 Initiation Started\n");
+#endif
       #ifdef ENABLE_PRES_SENS
       // Start i2C 0 at 400kHz, initiate pressure sensor
       startup_pressure_sensor( &pressure_sensor);
       #endif
+
+      SET_STATUS_BIT(bank0_device_status, MS5837_BIT);
     }
+  } else {
+    // DREQ
+    msg.buf[DEV_DATA_0] = CHK_STATUS_BIT(bank0_device_status, MS5837_BIT);
+    msg.len = DEV_PAY_LEN_1;
   }
 }
 
@@ -282,10 +317,10 @@ void brlight_info( CAN_message_t &msg){
 void brlight_front_brightness( CAN_message_t &msg){
   //set_light_levels(bright_lights_t *light_struct, uint8_t *vals)
 #ifdef DEBUG_DREQ_PTR  
-  Serial.printf("Set Light Levels: %3u percent\n", msg.buf[4]);
+  Serial.printf("Set Light Levels: %3u percent\n", msg.buf[DEV_DATA_0]);
 #endif
   if(msg.len > 4){
-    set_light_levels( &lights , msg.buf[4]);
+    set_light_levels( &lights , msg.buf[DEV_DATA_0]);   // Set lights to the first data byte value%
   } else {
     set_light_levels( &lights , 0x00);
   }
@@ -373,17 +408,17 @@ void dreq_access(uint16_t device, uint16_t topic,  CAN_message_t &msg){
 }
 
 void fill_msg_buffer_w_float(CAN_message_t &msg, float *d_in){
-  msg.buf[4] = *((uint8_t *)(d_in));
-  msg.buf[5] = *((uint8_t *)(d_in) + 1u);
-  msg.buf[6] = *((uint8_t *)(d_in) + 2u);
-  msg.buf[7] = *((uint8_t *)(d_in) + 3u);
+  msg.buf[DEV_DATA_0] = *((uint8_t *)(d_in));
+  msg.buf[DEV_DATA_1] = *((uint8_t *)(d_in) + 1u);
+  msg.buf[DEV_DATA_2] = *((uint8_t *)(d_in) + 2u);
+  msg.buf[DEV_DATA_3] = *((uint8_t *)(d_in) + 3u);
 }
 
 void fill_msg_buffer_w_float_buffer(CAN_message_t &msg, uint8_t *buf){
-  msg.buf[4] = buf[0];
-  msg.buf[5] = buf[1];
-  msg.buf[6] = buf[2];
-  msg.buf[7] = buf[3];
+  msg.buf[DEV_DATA_0] = buf[0];
+  msg.buf[DEV_DATA_1] = buf[1];
+  msg.buf[DEV_DATA_2] = buf[2];
+  msg.buf[DEV_DATA_3] = buf[3];
 }
 
 void float_2_char_array(uint8_t *arr_out, float d_in){
