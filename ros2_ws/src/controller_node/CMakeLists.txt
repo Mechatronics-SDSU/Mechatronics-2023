@@ -23,14 +23,17 @@ find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
 include_directories(include)
-include_directories(/home/mechatronics/master/Mechatronics-2023/classes/pid_controller/include)
 
 add_executable(controller_exec src/controller_node.cpp
-                               src/mbox_can.cpp)
-                              
+                               ../can2ros_driver/src/mbox_can.cpp)
+
 
 ament_target_dependencies(controller_exec rclcpp scion_types std_msgs sensor_msgs)
 
+target_include_directories(controller_exec PUBLIC ../../../classes/pid_controller/include
+                                                  ../can2ros_driver/include)
+
+                                           
 install(TARGETS
   controller_exec
   DESTINATION lib/${PROJECT_NAME})

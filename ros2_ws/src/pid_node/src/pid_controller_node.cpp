@@ -173,7 +173,7 @@ private:
                                     (thrust3 & 0xFF),
                                     (thrust4 & 0xFF),
                                     (thrust5 & 0xFF),
-                                    (thrust6 & 0xFF),*
+                                    (thrust6 & 0xFF),
                                     (thrust7 & 0xFF)
                                 };             
 
