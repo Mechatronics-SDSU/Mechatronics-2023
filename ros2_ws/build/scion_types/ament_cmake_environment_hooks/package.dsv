@@ -1,4 +1,0 @@
-source;share/scion_types/local_setup.bash
-source;share/scion_types/local_setup.dsv
-source;share/scion_types/local_setup.sh
-source;share/scion_types/local_setup.zsh

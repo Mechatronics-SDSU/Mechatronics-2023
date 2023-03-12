@@ -6,9 +6,11 @@ import numpy as np
 import argparse
 import torch
 import cv2
+import sys
+import ogl_viewer.viewer as gl
 import pyzed.sl as sl
 import torch.backends.cudnn as cudnn
-
+import math
 
 from ultralytics import YOLO
 from ultralytics.nn.tasks import attempt_load_weights
@@ -156,7 +158,7 @@ class Zed_Vision():
         init_params = sl.InitParameters(input_t=input_type, svo_real_time_mode=True)
         init_params.camera_resolution = sl.RESOLUTION.HD720
         init_params.coordinate_units = sl.UNIT.METER
-        init_params.depth_mode = sl.DEPTH_MODE.PERFORMANCE  # QUALITY
+        init_params.depth_mode = sl.DEPTH_MODE.ULTRA  # QUALITY
         init_params.coordinate_system = sl.COORDINATE_SYSTEM.RIGHT_HANDED_Y_UP
         init_params.depth_maximum_distance = 50
 
@@ -186,19 +188,19 @@ class Zed_Vision():
     def updateCamera(self, zed):
         global image_net, exit_signal, run_signal, detections
 
-        runtime_params = sl.RuntimeParameters()
-
         image_left_tmp = sl.Mat()
-
+        depth_map = sl.Mat()
+        objects = sl.Objects()
+        runtime_params = sl.RuntimeParameters()
         obj_runtime_param = sl.ObjectDetectionRuntimeParameters()
 
-        objects = sl.Objects()
 
         
         if zed.grab(runtime_params) == sl.ERROR_CODE.SUCCESS:
             # -- Get the image
             lock.acquire()
             zed.retrieve_image(image_left_tmp, sl.VIEW.LEFT)
+            zed.retrieve_measure(depth_map, sl.MEASURE.DEPTH)
             image_net = image_left_tmp.get_data()
             lock.release()
             run_signal = True
@@ -221,13 +223,37 @@ class Zed_Vision():
             # for object in objects.object_list:
             #     print("{} {} {}".format(object.id, object.position, object.dimensions))
 
-            for object in objects.object_list:
-                # print("{} {} {}".format(object.id, object.position, object.dimensions))
-                vector = []
-                for coordinate in object.position:
-                    vector.append(float(coordinate))
-                print("VECTOR: ", vector)
-                return vector
+            # f = open("test.txt", "a")
+            inf = 0
+            x = 0
+            while x < 720:
+                y = 0
+                while y < 720:
+                    depth_value = depth_map.get_value(x,y)
+                    if math.isinf(depth_value[1]):
+                        inf += 1
+                    # print(str(x) + "," + str(y) + " " + str(depth_value) + "\n")
+                    # f.write(str(x) + "," + str(y) + " " + str(depth_value) + "\n")
+                    y += 30
+                x += 30
+            # f.close()
+
+            if inf > 25:
+                return 0
+            else:
+                return 1
+            
+            sleep(.5)
+                    
+            # return objects.object_list
+        
+            # for object in objects.object_list:
+            #     # print("{} {} {}".format(object.id, object.position, object.dimensions))
+            #     vector = []
+            #     for coordinate in object.position:
+            #         vector.append(float(coordinate))
+            #     print("VECTOR: ", vector)
+            #     return vector
 
 
         #     object = sl.ObjectData()
