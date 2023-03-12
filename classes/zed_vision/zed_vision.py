@@ -193,9 +193,93 @@ class Zed_Vision():
         objects = sl.Objects()
         runtime_params = sl.RuntimeParameters()
         obj_runtime_param = sl.ObjectDetectionRuntimeParameters()
-
-
         
+
+        from time import sleep
+        import matplotlib
+        matplotlib.use('TkAgg')
+        import matplotlib.pyplot as plt
+
+
+        # replace chars by reserved numbers
+        
+
+
+        # while 1:
+        #     zed.retrieve_measure(depth_map, sl.MEASURE.DEPTH)
+        #     print(depth_map)
+
+        #      # Load depth data into a numpy array
+        #     depth_ocv = depth_map.get_data()
+        #     # Print the depth value at the center of the image
+            
+        #     # print(depth_ocv[int(len(depth_ocv)/2)][int(len(depth_ocv[0])/2)])
+
+        #     # try:
+        #     #     print(depth_ocv)
+        #     # except:
+        #     #     pass
+
+        #     for items in depth_ocv:
+        #         print(items)
+        #         for item in items:
+        #             print(item)
+
+        #     # change dtype from object to float
+        #     # try:
+        #     #     depth_ocv = depth_ocv.astype(np.float32)
+        #     # except:
+        #     #     pass
+
+        #     # sanity check
+        #     # try:
+        #     #     print(depth_ocv)
+        #     # except:
+        #     #     pass
+        #     # plot
+        #     # plt.imshow(depth_ocv)
+        #     # plt.show()
+            
+        #     # try:
+        #     #     print(depth_map.get_data())
+        #     # except:
+        #     #     pass
+        #     # try:
+        #     #     print(depth_map.get_infos())
+        #     # except:
+        #     #     pass
+        #     # try:
+        #     #     print(depth_map.get_height())
+        #     # except:
+        #     #     pass
+        #     # try:
+        #     #     print(depth_map.get_width())
+        #     # except:
+        #     #     pass
+
+        #     # import inspect
+        #     # try:
+        #     #     inspect.getmembers(sl.Mat, lambda a:not(inspect.isroutine(a)))
+        #     # except:
+        #     #     pass
+
+        #     # try:
+        #     #     print(depth_map.__dict__)
+        #     # except:
+        #     #     pass
+
+            
+        #     # try:
+        #     #     print(dir(depth_map))
+        #     # except:
+        #     #     pass
+            
+        #     sleep(2)
+
+
+
+
+
         if zed.grab(runtime_params) == sl.ERROR_CODE.SUCCESS:
             """
             End point for ROS node, here we'll grab our frame and return the desired information, for example objects and depth_map 
