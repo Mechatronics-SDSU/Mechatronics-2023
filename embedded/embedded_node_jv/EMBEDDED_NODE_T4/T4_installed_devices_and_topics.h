@@ -5,6 +5,10 @@
  
 #define INSTALLED_DEVICE_CT 5
 
+#define SET_STATUS_BIT(A, B)  A = A | (1 << B)
+#define CLR_STATUS_BIT(A, B)  A = A & ~(1 << B)
+#define CHK_STATUS_BIT(A, B)  ((A & (1 << B))) ? 1 : 0
+
 typedef void (**device_ptr_array_t)( CAN_message_t &msg);
 typedef void (*topic_ptr_array_t)( CAN_message_t &msg);
 
@@ -16,17 +20,19 @@ typedef void (*topic_ptr_array_t)( CAN_message_t &msg);
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0000 EMBDSYS  Embedded System Info
+#define EMBSYS_DEVICE_ID    0
+#define EMBSYS_BIT          0
 #define EMBSYS_TOPIC_CT     18
 
 // EMBDSYS Topics
-  // 0x0000 NOP
+ void embsys_statectl( CAN_message_t &msg);
   // 0x0001- 0x000F RES
  void embsys_subsysct( CAN_message_t &msg);
  void embsys_conndevct( CAN_message_t &msg);
 
 topic_ptr_array_t dreq_EMBSYS[EMBSYS_TOPIC_CT] =
   {
-    dreq_nop,         // 0x0000
+    embsys_statectl,  // 0x0000
     dreq_res,         // 0x0001
     dreq_res,         // 0x0002
     dreq_res,         // 0x0003
@@ -48,6 +54,8 @@ topic_ptr_array_t dreq_EMBSYS[EMBSYS_TOPIC_CT] =
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0001 PWRSYS  Power System
+#define PWRSYS_DEVICE_ID    1
+#define PWRSYS_BIT          1
 #define PWRSYS_TOPIC_CT     30
 
 // PWRSYS Topics
@@ -114,6 +122,8 @@ topic_ptr_array_t dreq_PWRSYS[PWRSYS_TOPIC_CT] =
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0002 WAYFDVL  Wayfinder DVL
+#define WAYFDVL_DEVICE_ID    2
+#define WAYFDVL_BIT          2
 #define WAYFDVL_TOPIC_CT    19
 
  void wayfdvl_info( CAN_message_t &msg);          // 0x0000
@@ -161,6 +171,8 @@ topic_ptr_array_t dreq_WAYFDVL[WAYFDVL_TOPIC_CT] =
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0003 MS5837  MS5837 Pressure and Temp Sensor
+#define MS5837_DEVICE_ID    3
+#define MS5837_BIT          3
 #define MS5837_TOPIC_CT     4
 
  void ms5837_info( CAN_message_t &msg);           // 0x0000
@@ -178,6 +190,8 @@ topic_ptr_array_t dreq_MS5837[MS5837_TOPIC_CT] =
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0004 BRLIGHT  MS5837 Pressure and Temp Sensor
+#define BRLIGHT_DEVICE_ID    4
+#define BRLIGHT_BIT          4
 #define BRLIGHT_TOPIC_CT    6
 
  void brlight_info( CAN_message_t &msg);

@@ -4,7 +4,10 @@ void motor_impulse_handler(const CAN_message_t &msg){
 #ifdef DEBUG_DECODE
   canDecode(msg);
 #endif
-  if(OA_STATE == ALL_GOOD_STATE){
+  if(OA_STATE > SOFT_KILL_STATE){
+    
+    commsTimeoutWDT.feed();     // Indicate valid motor control messaging has been sent
+    
     switch(msg.id){
       case 0x010:
         thruster_driver(msg);

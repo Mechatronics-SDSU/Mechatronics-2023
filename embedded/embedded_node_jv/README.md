@@ -23,7 +23,8 @@ and guaranteed to follow the core design requirements of the embedded subsystem.
 - [T4_WAYFINDER_DVL](https://github.com/4n3m4i1/T4_WAYFINDER_DVL) Provides asynchronous handling and bindings to read from and write to the Wayfinder DVL
 - [T4_MS5837](https://github.com/4n3m4i1/T4_MS5837) Provides asynchronous bindings and optimizations to the Blue Robotics MS5837 library
 - `IntervalTimer` Provides ISR triggering interval timer bindings
-
+- [WDT_T4](https://github.com/tonton81/WDT_T4) Provides Watchdog Timer interfaces
+- [teensy4_i2c](https://github.com/Richard-Gemmell/teensy4_i2c) Teensy i2c library, Richard Gemmel
 
 ## T4 Design Requirements
 - No polling or blocking. All processes should leverage the asynchronous nature of peripherals and priority driven interrupts
@@ -32,6 +33,12 @@ and guaranteed to follow the core design requirements of the embedded subsystem.
 - Timer + ISR driven events if periodic queries are requested. (Interval Timer)
 - Slow Speed tasks should be avoided entirely, instead these should be offloaded to subsystems
   
+## T4 Pinout
+The T4 Pinout described in the attached PNG (T4_Pinout.png) is representative  
+of the current on-board pinout that is being used at any given time.  
+Many pin assignments are subject to change over time and future plans for  
+boards should only be done after consulting Joseph to ensure the most  
+current pinout is posted.
   
 ## RP2040 Dependencies
 - RP2040 C SDK

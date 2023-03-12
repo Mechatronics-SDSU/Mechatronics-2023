@@ -93,21 +93,9 @@ int setupMainDrives(){
 #endif
 
   for(int n = 0; n < ACTIVE_THRUSTERS; n++){
-    analogWriteFrequency(control.thruster[n].pin, THRUSTER_PWM_FREQ);
+    analogWriteFrequency(control.thruster[n].pin, THRUSTER_PWM_FREQ); // 400Hz Hardcoded. Do not change.
   }
-  /*
-  analogWriteFrequency(control.thruster[0].pin, 400);       // 400 Hz hardcoded. Do not change.
-  analogWriteFrequency(control.thruster[1].pin, 400);       // 400 Hz hardcoded. Do not change.
 
-  analogWriteFrequency(control.thruster[2].pin, 400);       // 400 Hz hardcoded. Do not change.
-  analogWriteFrequency(control.thruster[3].pin, 400);       // 400 Hz hardcoded. Do not change.
-
-  analogWriteFrequency(control.thruster[4].pin, 400);       // 400 Hz hardcoded. Do not change.
-  analogWriteFrequency(control.thruster[5].pin, 400);       // 400 Hz hardcoded. Do not change.
-
-  analogWriteFrequency(control.thruster[6].pin, 400);       // 400 Hz hardcoded. Do not change.
-  analogWriteFrequency(control.thruster[7].pin, 400);       // 400 Hz hardcoded. Do not change.
-*/
   analogWriteResolution(PWM_RES);                       // Full hardware resolution avail at these slow speeds. Do not change.
   
   for(int n = 0; n < ACTIVE_THRUSTERS; n++){            // Initialize all motors to 0

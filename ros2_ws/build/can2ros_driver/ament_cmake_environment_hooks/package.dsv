@@ -1,4 +1,0 @@
-source;share/can2ros_driver/local_setup.bash
-source;share/can2ros_driver/local_setup.dsv
-source;share/can2ros_driver/local_setup.sh
-source;share/can2ros_driver/local_setup.zsh
