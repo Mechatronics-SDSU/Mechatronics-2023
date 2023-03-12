@@ -1,3 +1,15 @@
+/*  
+ *  @author Conner Sommerfield
+ *  For questions - Zix on Discord
+ *  Controller node for transmitting controller commands on PS4 controller as PID alternative
+ *  Uses code very similar to PID such as the thrust_mapper matrix
+ *  
+ *  To run make sure you source properly and:
+ *  1. enable the bluetooth device ds4drv
+ *  2. ros2 run joy joy_node
+ *  3. ros2 run controller_node controller_exec
+ */
+
 #include <vector>
 #include <iostream>
 
@@ -12,6 +24,13 @@
 using namespace std;
 using std::placeholders::_1;
 
+
+/* Require:
+ * Subscription to ROS built in Joy node
+ * CAN Mailbox for CAN Requests
+ * Thrust_mapper matrix to take the 6 axis yaw, pitch, roll, x, y, z, and map them to physical movements of
+ * the robot that can be implemented using 8 motor thrust values from -100 to 100 
+ */
 class Controller : public rclcpp::Node
 {
   public:
@@ -49,6 +68,7 @@ class Controller : public rclcpp::Node
         vector<float> axes = msg->axes;
         vector<int> buttons = msg->buttons;
 
+        /* These map to the actual controller sticks and buttons */
         float left_x = msg->axes[0]; // yaw
         float right_trigger = msg->axes[5] - 1; // pitch
         float left_trigger = msg->axes[2] - 1; // roll
@@ -56,6 +76,7 @@ class Controller : public rclcpp::Node
         float right_y = msg->axes[4]; // y
         float left_y = msg->axes[1]; // z
 
+        /* Multiply our 8 x 6 mapper matrix by our 6 x 1 ctrl_vals to get an 8 x 1 vector of thrust values (a vector with 8 values) */
         vector<float> ctrl_vals = vector<float>{left_x, right_trigger, left_trigger, right_x, right_y, left_y};
         vector<float> thrust_vals = this->thrust_mapper_ * ctrl_vals;
 
@@ -65,7 +86,7 @@ class Controller : public rclcpp::Node
 
     void make_CAN_request(vector<float> thrusts)
     {
-        /* Thrusts come out of PID as a float between -1 and 1; motors need int value from -100 to 100 */
+        /* Thrusts come out of PID as a float between -1 and 1; motors need int value from -100 to 100 and scale */
         int thrust0 = (int)(thrusts[0]*100/3);
         int thrust1 = (int)(thrusts[1]*100/3);
         int thrust2 = (int)(thrusts[2]*100/3);
