@@ -5,7 +5,9 @@ import argparse
 import torch
 import cv2
 import sys
+
 # import ogl_viewer.viewer as gl
+
 import pyzed.sl as sl
 import torch.backends.cudnn as cudnn
 import math
@@ -195,6 +197,10 @@ class Zed_Vision():
 
         
         if zed.grab(runtime_params) == sl.ERROR_CODE.SUCCESS:
+            """
+            End point for ROS node, here we'll grab our frame and return the desired information, for example objects and depth_map 
+            """
+            
             # -- Get the image
             lock.acquire()
             zed.retrieve_image(image_left_tmp, sl.VIEW.LEFT)
@@ -215,58 +221,10 @@ class Zed_Vision():
             lock.release()
             zed.retrieve_objects(objects, obj_runtime_param)
 
-            # object.id
-            #object.position
-
             # for object in objects.object_list:
             #     print("{} {} {}".format(object.id, object.position, object.dimensions))
 
-            # f = open("test.txt", "a")
-            inf = 0
-            x = 0
-            while x < 720:
-                y = 0
-                while y < 720:
-                    depth_value = depth_map.get_value(x,y)
-                    if math.isinf(depth_value[1]):
-                        inf += 1
-                    # print(str(x) + "," + str(y) + " " + str(depth_value) + "\n")
-                    # f.write(str(x) + "," + str(y) + " " + str(depth_value) + "\n")
-                    y += 30
-                x += 30
-            # f.close()
-
-            if inf > 25:
-                return 0
-            else:
-                return 1
-            
-            sleep(.5)
-                    
-            # return objects.object_list
-        
-            # for object in objects.object_list:
-            #     # print("{} {} {}".format(object.id, object.position, object.dimensions))
-            #     vector = []
-            #     for coordinate in object.position:
-            #         vector.append(float(coordinate))
-            #     print("VECTOR: ", vector)
-            #     return vector
-
-
-        #     object = sl.ObjectData()
-        #     objects.get_object_data_from_id(object, 0); # Get the object with ID = O
-
-
-        #     key = cv2.waitKey(10)
-        #     if key == 27:
-        #         exit_signal = True
-        # else:
-        #     exit_signal = True
-
-        # # viewer.exit()
-        # exit_signal = True
-        # zed.close()
+            return objects.object_list, depth_map
 
 
 def main():
