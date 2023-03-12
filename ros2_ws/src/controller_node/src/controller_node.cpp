@@ -15,7 +15,7 @@ using std::placeholders::_1;
 class Controller : public rclcpp::Node
 {
   public:
-    Controller()
+    Controller() 
     : Node("controller")
     {
         controller_sub_ = this->create_subscription<sensor_msgs::msg::Joy>
