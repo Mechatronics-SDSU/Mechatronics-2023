@@ -20,9 +20,9 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 from threading import Thread
-from zed_vision import Zed_Vision
+from classes.zed_vision.zed_vision import Zed_Vision
 from scion_types.msg import ZedObject
-
+import math
 
 class ZedVision(Node):
 
@@ -48,17 +48,36 @@ class ZedVision(Node):
         Here we'll query the zed_vision class for the info using updateCamera function and then publish what we need in ROS messages 
         """
         
-        
-        object_list = self.vision.updateCamera(self.zed)
-        if object_list:
-            for object in object_list:
-                msg = ZedObject()
-                #msg.label = object.label
-                msg.velocity = [object.velocity[0]. object.velocity[1], object.velocity[2]]
-                msg.position = [object.position[0], object.position[1], object.position[2]]
-                self.publisher_.publish(msg)
-                self.get_logger().info('Publishing Position Data: "x: %f\ny: %f\nz: %f\n"' % (msg.position[0], msg.position[1], msg.position[2]))
-                self.get_logger().info('Publishing Velocity Data: "x: %f\ny: %f\nz: %f\n"' % (msg.velocity[0], msg.velocity[1], msg.velocity[2]))
+        object_list, depth_map = self.vision.updateCamera(self.zed)
+        # if object_list:
+        #     for object in object_list:
+        #         msg = ZedObject()
+        #         #msg.label = object.label
+        #         msg.velocity = [object.velocity[0]. object.velocity[1], object.velocity[2]]
+        #         msg.position = [object.position[0], object.p
+        #         position[1], object.position[2]]
+        #         self.publisher_.publish(msg)
+        #         self.get_logger().info('Publishing Position Data: "x: %f\ny: %f\nz: %f\n"' % (msg.position[0], msg.position[1], msg.position[2]))
+        #         self.get_logger().info('Publishing Velocity Data: "x: %f\ny: %f\nz: %f\n"' % (msg.velocity[0], msg.velocity[1], msg.velocity[2]))
+
+        inf = 0
+        x = 0
+        while x < 720:
+            y = 0
+            while y < 720:
+                depth_value = depth_map.get_value(x,y)
+                if math.isinf(depth_value[1]):
+                    inf += 1
+                # print(str(x) + "," + str(y) + " " + str(depth_value) + "\n")
+                # f.write(str(x) + "," + str(y) + " " + str(depth_value) + "\n")
+                y += 30
+            x += 30
+        # f.close()
+
+        if inf > 25:
+            return 0
+        else:
+            return 1
 
         """
          if position is not None:
