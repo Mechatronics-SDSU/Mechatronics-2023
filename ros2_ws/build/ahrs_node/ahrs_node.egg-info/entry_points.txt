@@ -1,3 +1,0 @@
-[console_scripts]
-ahrs_exec = ahrs_node.ahrs_publisher:main
-
