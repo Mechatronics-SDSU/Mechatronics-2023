@@ -122,7 +122,7 @@ topic_ptr_array_t dreq_PWRSYS[PWRSYS_TOPIC_CT] =
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0002 WAYFDVL  Wayfinder DVL
-#define WAYFDVL_DEVICE_ID    2
+#define WAYFDVL_DEVICE_ID    0x02
 #define WAYFDVL_BIT          2
 #define WAYFDVL_TOPIC_CT    19
 
@@ -171,7 +171,7 @@ topic_ptr_array_t dreq_WAYFDVL[WAYFDVL_TOPIC_CT] =
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0003 MS5837  MS5837 Pressure and Temp Sensor
-#define MS5837_DEVICE_ID    3
+#define MS5837_DEVICE_ID    0x03
 #define MS5837_BIT          3
 #define MS5837_TOPIC_CT     4
 
@@ -189,8 +189,8 @@ topic_ptr_array_t dreq_MS5837[MS5837_TOPIC_CT] =
   };
 
 ////////////////////////////////////////////////////////////////////////////////////////
-// 0x0004 BRLIGHT  MS5837 Pressure and Temp Sensor
-#define BRLIGHT_DEVICE_ID    4
+// 0x0004 BRLIGHT  Blue Robotics Lights
+#define BRLIGHT_DEVICE_ID    0x04
 #define BRLIGHT_BIT          4
 #define BRLIGHT_TOPIC_CT    6
 
@@ -208,7 +208,33 @@ topic_ptr_array_t data_BRLIGHT[BRLIGHT_TOPIC_CT] =
   };
 
 ////////////////////////////////////////////////////////////////////////////////////////
-// Device Array
+// 0x0012 BRPING1  Blue Robotics Ping 1 SONAR
+#define BRPING1_DEVICE_ID    0x12
+#define BRPING1_BIT           0x12
+#define BRPING1_TOPIC_CT      5
+
+ void brping1_info( CAN_message_t &msg);
+ void brping1_distance_simple( CAN_message_t &msg);
+
+topic_ptr_array_t data_BRPING1[BRPING1_TOPIC_CT] = 
+  {
+    brping1_info,
+    dreq_res,
+    dreq_res,
+    dreq_res,
+    brping1_distance_simple
+  };
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+#define RESERVED_TOPIC_COUNT  0x01
+
+topic_ptr_array_t data_RESERVED[RESERVED_TOPIC_COUNT] =
+  {
+    dreq_res
+  };
+////////////////////////////////////////////////////////////////////////////////////////
+// Device Array // Add RES and brping into this !!
 device_ptr_array_t dreq_device[INSTALLED_DEVICE_CT] =
   {
     dreq_EMBSYS,
