@@ -14,8 +14,40 @@ sudo modprobe mttcan
 sudo ip link set can0 type can bitrate 500000 berr-reporting on loopback off
 sudo ip link set up can0
 
+
+# ENABLE SENSORS BASED ON ARGS ----------------------------------------------------------->
+gnome-terminal --geometry 80x25+0+0 -- bash -c "timeout 8 candump can0; exec bash"
+
+sleep .5
+
+# ENABLE SENSORS BASED ON ARGS ----------------------------------------------------------->
+while getopts 'dvl:' OPTION; do
+  case "$OPTION" in
+    d)
+      cansend can0 022#0300000001
+      cansend can0 020#03000000
+      sleep .5
+      ;;
+    v)
+      cansend can0 022#0200000001
+      cansend can0 020#02000000
+      sleep .5
+      ;;
+    l)
+      cansend can0 022#0400000001
+      cansend can0 020#04000000
+      ;;
+    ?)
+      exit 1       
+      ;;
+  esac
+done
+shift "$(($OPTIND -1))"
+
+sleep 8
+
 # RUN MOTOR TEST ------------------------------------------------------------------------->
-/bin/bash motor_tests/motor_test.sh
+# /bin/bash motor_tests/motor_test.sh
 
 # RUN DEEP MOTOR TEST -------------------------------------------------------------------->
 # /bin/bash motor_tests/deep_motor_test.sh

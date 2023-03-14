@@ -223,27 +223,27 @@ def generate_launch_description():
             default_value='[0.0,0.0,0.0,0.0,0.0,0.0]',
             description='Pose of the camera with respect to the base frame (i.e. `base_link`): [x,y,z,r,p,y]. Note: Orientation in rad.)'),
         # ******************* EVERYTHING BELOW HERE ARE OUR NODES ************** #
-        launch_ros.actions.Node(
-            package='ahrs_node', executable='ahrs_exec',
-            ),
-        launch_ros.actions.Node(
-            package='pid_node', executable='pid_exec', output='screen' 
-            ),    
-        launch_ros.actions.Node(
-            package='can2ros_driver', executable='can2ros_driver'
-            ),
-        launch_ros.actions.Node(
-            package='dres_dvl_decode', executable='dres_dvl_decode' 
-            ),
-        launch_ros.actions.Node(
-            package='dres_ms5837_decode', executable='dres_ms5837_decode'
-            ),
-        launch_ros.actions.Node(
-            package='zed_pos_node', executable='zed_pos_exec' 
-            ),   
-        launch_ros.actions.Node(
-            package='zed_vision_node', executable='zed_vision_exec' 
-            ),   
+        # launch_ros.actions.Node(
+        #     package='ahrs_node', executable='ahrs_exec',
+        #     ),
+        # launch_ros.actions.Node(
+        #     package='pid_node', executable='pid_exec', output='screen' 
+        #     ),    
+        # launch_ros.actions.Node(
+        #     package='can2ros_driver', executable='can2ros_driver'
+        #     ),
+        # # launch_ros.actions.Node(
+        # #     package='dres_dvl_decode', executable='dres_dvl_decode' 
+        # #     ),
+        # launch_ros.actions.Node(
+        #     package='dres_ms5837_decode', executable='dres_ms5837_decode'
+        #     ),
+        # launch_ros.actions.Node(
+        #     package='zed_pos_node', executable='zed_pos_exec' 
+        #     ),   
+        # launch_ros.actions.Node(
+        #     package='zed_vision_node', executable='zed_vision_exec' 
+        #     ),   
         OpaqueFunction(function=launch_setup)
     ])# This includes all the parameters from launch_setup function            
     

@@ -1,5 +1,0 @@
-/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/scion_types/rosidl_adapter/scion_types:msg/CanFrame.idl
-/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/scion_types/rosidl_adapter/scion_types:msg/Orientation.idl
-/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/scion_types/rosidl_adapter/scion_types:msg/DesiredState.idl
-/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/scion_types/rosidl_adapter/scion_types:msg/Position.idl
-/home/mechatronics/master/Mechatronics-2023/ros2_ws/build/scion_types/rosidl_adapter/scion_types:srv/SendFrame.idl

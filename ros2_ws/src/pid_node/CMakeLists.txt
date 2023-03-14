@@ -27,16 +27,22 @@ find_package(std_msgs REQUIRED)
 
 include_directories(include)
 
+#../ - src
+#../../ - ros2_ws
+#../../../ - Project directory
+
+# Must include headers and source files from pid_controller class in classses/
 add_executable(pid_exec src/pid_controller_node.cpp
-                              /home/mechatronics/master/Mechatronics-2023/classes/pid_controller/src/pid_controller.cpp
-                              /home/mechatronics/master/Mechatronics-2023/classes/pid_controller/src/scion_pid_controller.cpp
-                              /home/mechatronics/master/Mechatronics-2023/classes/pid_controller/src/pid_params.cpp
-                              src/mbox_can.cpp)
+                        ../can2ros_driver/src/mbox_can.cpp
+                        ../../../classes/pid_controller/src/pid_controller.cpp
+                        ../../../classes/pid_controller/src/scion_pid_controller.cpp
+                        ../../../classes/pid_controller/src/pid_params.cpp)
                               
 
 ament_target_dependencies(pid_exec rclcpp scion_types std_msgs)
 
-target_include_directories(pid_exec PUBLIC /home/mechatronics/nodes/Mechatronics-2023/classes/pid_controller/include/)
+target_include_directories(pid_exec PUBLIC ../../../classes/pid_controller/include
+                                           ../can2ros_driver/include)
 
 install(TARGETS
   pid_exec

@@ -124,7 +124,6 @@ private:
      * STEP 1: Build current state from current information 
      * that has been updated from the sensors. As of now
      * we are using orientation as first 3 values, position as next 3
-     * 
      */
 
         this->current_state_[0] = this->current_orientation_[0];
@@ -184,7 +183,6 @@ private:
     /********************************************* BUILD REQUEST ********************************************/
         /* 
          * Our frame will send CAN request 
-/** 
          * one byte for each value -100 to 100 
          */
 

@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
-
-import sys
 import numpy as np
 
 import argparse
 import torch
 import cv2
+import sys
+
+# import ogl_viewer.viewer as gl
+
 import pyzed.sl as sl
 import torch.backends.cudnn as cudnn
-
+import math
 
 from ultralytics import YOLO
 from ultralytics.nn.tasks import attempt_load_weights
@@ -156,7 +158,7 @@ class Zed_Vision():
         init_params = sl.InitParameters(input_t=input_type, svo_real_time_mode=True)
         init_params.camera_resolution = sl.RESOLUTION.HD720
         init_params.coordinate_units = sl.UNIT.METER
-        init_params.depth_mode = sl.DEPTH_MODE.PERFORMANCE  # QUALITY
+        init_params.depth_mode = sl.DEPTH_MODE.ULTRA  # QUALITY
         init_params.coordinate_system = sl.COORDINATE_SYSTEM.RIGHT_HANDED_Y_UP
         init_params.depth_maximum_distance = 50
 
@@ -186,19 +188,23 @@ class Zed_Vision():
     def updateCamera(self, zed):
         global image_net, exit_signal, run_signal, detections
 
-        runtime_params = sl.RuntimeParameters()
-
         image_left_tmp = sl.Mat()
-
+        depth_map = sl.Mat()
+        objects = sl.Objects()
+        runtime_params = sl.RuntimeParameters()
         obj_runtime_param = sl.ObjectDetectionRuntimeParameters()
 
-        objects = sl.Objects()
 
         
         if zed.grab(runtime_params) == sl.ERROR_CODE.SUCCESS:
+            """
+            End point for ROS node, here we'll grab our frame and return the desired information, for example objects and depth_map 
+            """
+            
             # -- Get the image
             lock.acquire()
             zed.retrieve_image(image_left_tmp, sl.VIEW.LEFT)
+            zed.retrieve_measure(depth_map, sl.MEASURE.DEPTH)
             image_net = image_left_tmp.get_data()
             lock.release()
             run_signal = True
@@ -215,34 +221,11 @@ class Zed_Vision():
             lock.release()
             zed.retrieve_objects(objects, obj_runtime_param)
 
-            # object.id
-            #object.position
-
             # for object in objects.object_list:
             #     print("{} {} {}".format(object.id, object.position, object.dimensions))
 
-            for object in objects.object_list:
-                # print("{} {} {}".format(object.id, object.position, object.dimensions))
-                vector = []
-                for coordinate in object.position:
-                    vector.append(float(coordinate))
-                print("VECTOR: ", vector)
-                return vector
+            return objects.object_list, depth_map
 
-
-        #     object = sl.ObjectData()
-        #     objects.get_object_data_from_id(object, 0); # Get the object with ID = O
-
-
-        #     key = cv2.waitKey(10)
-        #     if key == 27:
-        #         exit_signal = True
-        # else:
-        #     exit_signal = True
-
-        # # viewer.exit()
-        # exit_signal = True
-        # zed.close()
 
 
 def main():
