@@ -1,5 +1,5 @@
 # Unified CAN Driver notes
-## currently no official documentation
+## (There is currently no official documentation, however this may provide some insight into how the driver works)
 ********************************************************************************
 ```
 	Hierarchy
@@ -14,7 +14,6 @@
 			brlight			conditional		00010000 	(Subject to change)
 			brping1			conditional		00100000	(Subject to change)
 			...
-
 ```
 EX: ros2 run unified_can_driver unified_can_driver --ros-args [ arguements (see below) ]
  - `-p module_bitfield:=[bitfield]` Used to determine which modules to load when the driver starts 
@@ -40,9 +39,9 @@ EX: ros2 run unified_can_driver unified_can_driver --ros-args [ arguements (see 
 ### Module Template:
 ```
 	Methods:
-		mod_init: 					whatever initialization the hardware needs
-		dres_handle: 				handles addressed Dres frames, outputs them to ros2 topics
-		timer_callback: 			whatever code should execute at a certain interval
+		mod_init:					whatever initialization the hardware needs
+		dres_handle:				handles addressed Dres frames, outputs them to ros2 topics
+		timer_callback:				whatever code should execute at a certain interval
 		dres_info:					Whatever info/enable data received from embedded
 	Variables:
 		node_context				pointer to parent node
@@ -52,7 +51,7 @@ EX: ros2 run unified_can_driver unified_can_driver --ros-args [ arguements (see 
 		module_enable_dres 			flag to enable dres handling
 		module_device_id 			static int to hold device id
 		module_topic_ct 	 		static int to hold topic count
-		module_topic_ptr_array 		array of topic pointers (jump table)
+		module_topic_ptr_array		array of topic pointers (jump table)
 		module_hw_info				uint32_t containing received info/status from device
 	Constructor
 		node_context
