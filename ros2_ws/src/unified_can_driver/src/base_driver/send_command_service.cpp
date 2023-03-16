@@ -14,7 +14,7 @@ SendCommandService::SendCommandService(
 			std::placeholders::_2,
 			std::placeholders::_3,
 			std::placeholders::_4));
-	RCLCPP_INFO(node_context->get_logger(), "[SendCommandService] Command service started.");
+	RCLCPP_INFO(node_context->get_logger(), "[SendCommandService] CAN command service started.");
 }
 
 

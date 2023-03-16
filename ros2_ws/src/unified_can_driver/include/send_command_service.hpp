@@ -1,3 +1,6 @@
+#ifndef CAN_COMMAND_H
+#define CAN_COMMAND_H
+
 #include "rclcpp/rclcpp.hpp"
 #include "scion_types.hpp"
 #include "mbox_can.hpp"
@@ -14,3 +17,5 @@ class SendCommandService
 		Mailbox::MboxCan* out_mb;
 		rclcpp::Service<scion_types::srv::CanCommand>::SharedPtr service;
 };
+
+#endif

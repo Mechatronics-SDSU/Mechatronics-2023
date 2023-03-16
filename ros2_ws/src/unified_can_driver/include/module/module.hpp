@@ -13,7 +13,7 @@
 #include "scion_types/msg/datapoint.hpp"
 #include "config.hpp"
 #include "rclcpp/rclcpp.hpp"
- 
+ #include "can_commands.hpp"
 namespace Module
 {
 	class DeviceModule

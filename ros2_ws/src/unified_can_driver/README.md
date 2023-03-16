@@ -1,7 +1,7 @@
 # Unified CAN Driver notes
 ## currently no official documentation
 ********************************************************************************
-
+```
 	Hierarchy
 		base_driver				always start
 		can_send_service		always start
@@ -15,7 +15,12 @@
 			brping1			conditional		00100000	(Subject to change)
 			...
 
-	EX: ros2 run unified_can_driver unified_can_driver --ros-args -m[value from above]
+```
+EX: ros2 run unified_can_driver unified_can_driver --ros-args [ arguements (see below) ]
+ - `-p module_bitfield:=[bitfield]` Used to determine which modules to load when the driver starts 
+ - `-p do_module_polling:=[true|false]` Disables continous CAN polling
+ - `-p can_bus_interface:=interface]` Specify the interface
+ 
 ********************************************************************************
 
 ### TODO:	
@@ -26,13 +31,14 @@
 - [x] Implement master can macro header
 - [x] Implement formatted CanSend service
 - [x] Restructure to Module based format
-- [ ] Implement Command-line arguments launch
-- [ ] Refactor to use Macro header
-- [ ] Delete unused/old files
+- [X] Implement Command-line arguments launch
+- [X] Refactor to use Macro header
+- [X] Delete unused/old files
 - [ ] Rename services to better match function
 
 ********************************************************************************
 ### Module Template:
+```
 	Methods:
 		mod_init: 					whatever initialization the hardware needs
 		dres_handle: 				handles addressed Dres frames, outputs them to ros2 topics
@@ -51,11 +57,9 @@
 	Constructor
 		node_context
 		mailbox_ptr
+```
 ********************************************************************************
-### GlobalSettings
-	dreq_id
-	dres_id
-	stow_id
-	can_bus_interface
-	do_device_polling
-	module_enable_field
+### GlobalSettings [Defined in include/config.hpp and set by --ros-args]
+	can_bus_interface 		: String, holds	Interface name
+	do_device_polling		: Boolean, determines whether modules should poll the embedded system
+	module_enable_field		: uint16_t, Not to be modified outside of main() function

@@ -29,12 +29,12 @@ CanSendService::CanSendService(
 	node_context = context;
 	out_box = new Mailbox::MboxCan(ifr, "orin_output");
 	send_service = node_context->create_service<scion_types::srv::SendFrame>(
-	"send_can",
+	"send_can_raw",
 	std::bind(&CanSendService::service_handler,
 		this,
 		std::placeholders::_1,
 		std::placeholders::_2));
-	RCLCPP_INFO(node_context->get_logger(), "[CanSendService] CAN Output service started.");
+	RCLCPP_INFO(node_context->get_logger(), "[CanSendService] CAN raw service started.");
 }
 
 /*

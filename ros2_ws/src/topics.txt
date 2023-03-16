@@ -61,6 +61,8 @@ ALL TOPICS
 /heartbeat_mb_pub
 /ms5837_depth
 /ms5837_temp
+/brping1_dist
+/brping1_confidence
 /parameter_events
 /rosout
 /tf
