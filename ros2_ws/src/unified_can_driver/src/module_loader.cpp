@@ -33,10 +33,10 @@ ModuleLoader::ModuleLoader(rclcpp::Node* ctx, struct ifreq* ifr)
 		// module_list[ms5837->module_device_id] = ms5837;
 	// }
 
-	load_module<DVLModule>(dvl, MODULE_DVL_ENABLED);
-	load_module<MS5837Module>(ms5837, MODULE_MS5837_ENABLED);
-	load_module<BRLIGHTModule>(brlight, MODULE_BRLIGHT_ENABLED);
-	load_module<BRPING1Module>(brping1, MODULE_BRPING1_ENABLED);
+	load_module<DVLModule>(dvl, MODULE_DVL_ENABLE);
+	load_module<MS5837Module>(ms5837, MODULE_MS5837_ENABLE);
+	load_module<BRLIGHTModule>(brlight, MODULE_BRLIGHT_ENABLE);
+	load_module<BRPING1Module>(brping1, MODULE_BRPING1_ENABLE);
 	
 	RCLCPP_INFO(node_context->get_logger(),"[ModuleLoader] Initialized.");
 
@@ -48,7 +48,8 @@ ModuleLoader::~ModuleLoader()
 	delete module_mb;
 }
 
-void ModuleLoader::load_module(Module* mod, uint8_t enable_bit)
+template <typename module_type>
+void ModuleLoader::load_module(DeviceModule* mod, uint8_t enable_bit)
 {
 	if(GlobalSettings::module_enabled_field & enable_bit)
 	{

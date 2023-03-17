@@ -3,7 +3,7 @@
 using namespace Module;
 
 MS5837Module::MS5837Module(rclcpp::Node* ctx, Mailbox::MboxCan* mb)
-	: DeviceModule(ctx, mb, 40, CanDriver::Device::MS5837::ID, true, true, 4)
+	: DeviceModule(ctx, mb, 40, static_cast<uint8_t>(CanDriver::Device::MS5837::ID), true, true, 4)
 {
 	/* pointer-to-member-function weirdness dictates that each topic function is manually added*/
 	module_topic_ptr_array[0] = static_cast<topic_ptr_t>(&MS5837Module::dres_info);			/* 0000 INFO */
@@ -18,7 +18,7 @@ MS5837Module::MS5837Module(rclcpp::Node* ctx, Mailbox::MboxCan* mb)
 	struct can_frame init_frame;
 	memset(&init_frame, 0, sizeof(struct can_frame));
 	init_frame.can_dlc = 4;
-	init_frame.can_id = CanDriver::Command::STOW;
+	init_frame.can_id = static_cast<uint8_t>(CanDriver::Command::STOW);
 	init_frame.data[0] = this->module_device_id;
 	Mailbox::MboxCan::write_mbox(this->mailbox_ptr, &init_frame);
 
@@ -31,10 +31,10 @@ void MS5837Module::timer_callback()
 	{
 		struct can_frame poll_frame;
 		memset(&poll_frame, 0, sizeof(struct can_frame));
-		poll_frame.can_id = CanDriver::Command::DREQ;
+		poll_frame.can_id = static_cast<uint8_t>(CanDriver::Command::DREQ);
 		poll_frame.can_dlc = 4;
 		poll_frame.data[0] = this->module_device_id;
-		poll_frame.data[2] = CanDriver::Device::MS5837::TOPIC_DATA;
+		poll_frame.data[2] = static_cast<uint8_t>(CanDriver::Device::MS5837::TOPIC_DATA);
 		Mailbox::MboxCan::write_mbox(mailbox_ptr, &poll_frame);
 	}
 }

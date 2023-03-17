@@ -35,8 +35,8 @@ namespace Module
 			BRLIGHTModule* brlight;
 			BRPING1Module* brping1;
 
-			Template <module_type>;
-			void load_module(Module*, uint8_t);
+			template <typename module_type>
+			void load_module(DeviceModule*, uint8_t);
 	};
 }
 

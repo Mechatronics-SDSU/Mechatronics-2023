@@ -2,7 +2,7 @@
 #define CAN_COMMAND_H
 
 #include "rclcpp/rclcpp.hpp"
-#include "scion_types.hpp"
+#include "scion_types/srv/can_command.hpp"
 #include "mbox_can.hpp"
 class SendCommandService
 {

@@ -11,9 +11,7 @@ SendCommandService::SendCommandService(
 		std::bind(&SendCommandService::service_handler,
 			this,
 			std::placeholders::_1,
-			std::placeholders::_2,
-			std::placeholders::_3,
-			std::placeholders::_4));
+			std::placeholders::_2));
 	RCLCPP_INFO(node_context->get_logger(), "[SendCommandService] CAN command service started.");
 }
 
@@ -29,12 +27,16 @@ void SendCommandService::service_handler(
 		uint16_t device = (uint16_t)request->device;
 		uint16_t topic = (uint16_t)request->topic;
 		memset(&send_frame, 0, sizeof(struct can_frame));
-		send_frame.can_id = request->can_id;
+		send_frame.can_id = (uint16_t)request->command;
 		send_frame.can_dlc = 8;
 
-		memcpy(&send_frame->data[0], &device, sizeof(char)*2 );
-		memcpy(&send_frame->data[2], &topic, sizeof(char)*2 );
-		memcpy(&send_frame->data[4], request->data, sizeof(char)*4 );
+		memcpy(&send_frame.data[0], &device, sizeof(char)*2 );
+		memcpy(&send_frame.data[2], &topic, sizeof(char)*2 );
+//		memcpy(&send_frame.data[4], (char)request->data, sizeof(char)*4 );
+
+		std::copy(std::begin(request->data),
+						std::end(request->data),
+						send_frame.data[4]);
 
 		if(Mailbox::MboxCan::write_mbox(out_mb, &send_frame) < 0 )
 		{
@@ -44,10 +46,10 @@ void SendCommandService::service_handler(
 		{
 			RCLCPP_INFO(node_context->get_logger(), "[SendCommandService::service_handler] Service request fulfilled.");
 		}
+	}
 	else
 	{
 		status = -1;
 	}
-	respnse->status = status;	
-	}
+	response->status = status;	
 }

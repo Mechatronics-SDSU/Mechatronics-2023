@@ -21,7 +21,7 @@ find_package(rclcpp REQUIRED)
 find_package(scion_types REQUIRED)
 
 include_directories(include)
-include_directories(include/modules)
+include_directories(include/module)
 
 # target executable
 add_executable(
@@ -33,6 +33,8 @@ add_executable(
 	src/mbox_can.cpp
 	src/module/dvl.cpp
 	src/module/ms5837.cpp
+	src/module/brlight.cpp
+	src/module/brping1.cpp
 	src/module/module.cpp
 	src/module_loader.cpp
 #	src/dres_decoder/dres_decoder.cpp

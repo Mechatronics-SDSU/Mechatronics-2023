@@ -3,7 +3,7 @@
 using namespace Module;
 
 BRLIGHTModule::BRLIGHTModule(rclcpp::Node* ctx, Mailbox::MboxCan* mb)
-	: DeviceModule(ctx, mb, 0, CanDriver::Device::BRLIGHT::ID, false, true, 5)
+	: DeviceModule(ctx, mb, 0, static_cast<uint8_t>(CanDriver::Device::BRLIGHT::ID), false, true, 5)
 {
 	/* Member function jump table*/
 	module_topic_ptr_array[0] = static_cast<topic_ptr_t>(&BRLIGHTModule::dres_info);
@@ -16,9 +16,9 @@ BRLIGHTModule::BRLIGHTModule(rclcpp::Node* ctx, Mailbox::MboxCan* mb)
 	struct can_frame init_frame;
 	memset(&init_frame, 0, sizeof(struct can_frame));
 	init_frame.can_dlc = 4;
-	init_frame.can_id = CanDriver::Command::STOW;
+	init_frame.can_id = static_cast<uint8_t>(CanDriver::Command::STOW);
 	init_frame.data[0] = this->module_device_id;
-	Mailbox::MboxCan::write_mbox(this->mailbox_ptr);	
+	Mailbox::MboxCan::write_mbox(this->mailbox_ptr, &init_frame);	
 
 	RCLCPP_INFO(node_context->get_logger(), "[BRLIGHTModule] Initialized.");
 }
@@ -50,4 +50,4 @@ void BRLIGHTModule::dres_info()
 
 }
 
-void BRLIGHTModule::brligt_nop() { /* NO OPERATION */ }
+void BRLIGHTModule::brlight_nop() { /* NO OPERATION */ }

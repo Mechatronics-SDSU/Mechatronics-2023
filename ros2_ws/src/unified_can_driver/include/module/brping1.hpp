@@ -1,10 +1,10 @@
-#ifndef MOD_BRLIGHT_H
-#define MOD_BRLIGHT_H
+#ifndef MOD_BRPING1_H
+#define MOD_BRPING1_H
 #include "module.hpp"
 
 namespace Module
 {
-	class BRPING1Module : public Module
+	class BRPING1Module : public DeviceModule
 	{
 		public:
 			BRPING1Module(rclcpp::Node*, Mailbox::MboxCan*);

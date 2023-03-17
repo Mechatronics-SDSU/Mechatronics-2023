@@ -4,7 +4,7 @@
 
 namespace Module
 {
-	class BRLIGHTModule : public Module
+	class BRLIGHTModule : public DeviceModule
 	{
 		public:
 			BRLIGHTModule(rclcpp::Node*, Mailbox::MboxCan*);

@@ -13,7 +13,7 @@
 /* Global settings */
 namespace GlobalSettings
 {
-	const static char can_bus_interface[] = "vcan0";
+	static std::string can_bus_interface = "vcan0";
 	static uint8_t module_enabled_field = 0xFF;
 	static bool do_device_polling = true;
 }

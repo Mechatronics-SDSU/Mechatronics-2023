@@ -3,7 +3,7 @@
 using namespace Module;
 
 BRPING1Module::BRPING1Module(rclcpp::Node* ctx, Mailbox::MboxCan* mb)
-	: Module(ctx, mb, 50, CanDriver::Device::BRPING1::ID, true, true, 5)
+	: DeviceModule(ctx, mb, 50, static_cast<uint8_t>(CanDriver::Device::BRPING1::ID), true, true, 5)
 {
 	module_topic_ptr_array[0] = static_cast<topic_ptr_t>(&BRPING1Module::dres_info);
 	module_topic_ptr_array[0] = static_cast<topic_ptr_t>(&BRPING1Module::brping1_nop);
@@ -11,14 +11,14 @@ BRPING1Module::BRPING1Module(rclcpp::Node* ctx, Mailbox::MboxCan* mb)
 	module_topic_ptr_array[0] = static_cast<topic_ptr_t>(&BRPING1Module::brping1_nop);
 	module_topic_ptr_array[0] = static_cast<topic_ptr_t>(&BRPING1Module::brping1_dist_short);
 
-	topic_dist_short = node_context->create_publisher<scion_types::msg::Datapoint> ("brping1_dist");
-	topic_confidence = node_context->create_publisher<scion_types::msg::Datapoint> ("brping1_confidence");
+	topic_dist_short = node_context->create_publisher<scion_types::msg::Datapoint> ("brping1_dist", 10);
+	topic_confidence = node_context->create_publisher<scion_types::msg::Datapoint> ("brping1_confidence", 10);
 
 	/* Send Wakeup Frame */
 	struct can_frame init_frame;
 	memset(&init_frame, 0, sizeof(struct can_frame));
 	init_frame.can_dlc = 4;
-	init_frame.can_id = CanDriver::Command::STOW;
+	init_frame.can_id = static_cast<uint8_t>(CanDriver::Command::STOW);
 	init_frame.data[0] = this->module_device_id;
 	Mailbox::MboxCan::write_mbox(this->mailbox_ptr, &init_frame);
 
@@ -48,10 +48,10 @@ void BRPING1Module::timer_callback()
 	{
 		struct can_frame poll_frame;
 		memset(&poll_frame, 0, sizeof(struct can_frame));
-		poll_frame.can_id = CanDriver::Command::DREQ;
+		poll_frame.can_id = static_cast<uint8_t>(CanDriver::Command::DREQ);
 		poll_frame.can_dlc = 4;
 		poll_frame.data[0] = this->module_device_id;
-		poll_frame.data[2] = CanDriver::Device::BRPING1::P1D_DIST_SHORT;
+		poll_frame.data[2] = static_cast<uint8_t>(CanDriver::Device::BRPING1::P1D_DIST_SHORT);
 		Mailbox::MboxCan::write_mbox(mailbox_ptr, &poll_frame);
 	}
 	

@@ -44,11 +44,11 @@ UnifiedCanDriver::UnifiedCanDriver()
 	this->declare_parameter("module_bitfield", 0xFFFF);
 
 	GlobalSettings::module_enabled_field = this->get_parameter(
-		"module_bitfield").get_parameter_value().get<std::uint16_t>();
+		"module_bitfield").get_parameter_value().get<uint16_t>();
 	GlobalSettings::can_bus_interface = this->get_parameter(
 		"can_bus_interface").get_parameter_value().get<std::string>();
-	GlobalSettings::module_enabled_field = this->get_parameter(
-		"do_module_polling").get_parameter_value().get<std::boolean>();
+	GlobalSettings::do_device_polling = this->get_parameter(
+		"do_module_polling").get_parameter_value().get<bool>();
 
 	RCLCPP_INFO(this->get_logger(), "################################################");
 	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] Unified CAN Driver ver. 0.0.4");
@@ -56,8 +56,10 @@ UnifiedCanDriver::UnifiedCanDriver()
 	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] [Config] Module Enable Field: %d", GlobalSettings::module_enabled_field);
 	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] [Config] POLLING ENABLED: %s", GlobalSettings::do_device_polling ? "true":"false" );
 	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] Starting can_driver node.");
-	strncpy(ifr.ifr_name, GlobalSettings::can_bus_interface,
-		sizeof(&GlobalSettings::can_bus_interface));
+
+	char interface = GlobalSettings::can_bus_interface.c_str();
+	strncpy(ifr.ifr_name, interface,
+		sizeof(&interface));
 	_can_timer = this->create_wall_timer(
 		10ms, std::bind(&UnifiedCanDriver::can_timer_callback, this));	
 	rclcpp::on_shutdown(std::bind(&UnifiedCanDriver::shutdown_node, this));
