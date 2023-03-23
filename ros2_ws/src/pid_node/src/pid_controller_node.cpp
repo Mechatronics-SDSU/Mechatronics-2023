@@ -61,14 +61,14 @@ public:
         position_sub_ = this->create_subscription<scion_types::msg::Position>
         ("zed_position_data", 10, std::bind(&Controller::position_sub_callback, this, _1));
     
-        depth_sub_ = this->create_subscription<std_msgs::msg::Float32>
-        ("ms5837_depth_data", 10, std::bind(&Controller::depth_sub_callback, this, _1));
+        // depth_sub_ = this->create_subscription<std_msgs::msg::Float32>
+        // ("ms5837_depth_data", 10, std::bind(&Controller::depth_sub_callback, this, _1));
 
         desired_state_sub_ = this->create_subscription<scion_types::msg::DesiredState>
         ("desired_state_data", 10, std::bind(&Controller::desired_state_callback, this, _1));
 
-        orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
-        ("ahrs_orientation_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
+        // orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
+        // ("ahrs_orientation_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
 
         // velocity_sub_ = this->create_subscription<scion_types::msg::Orientation>
         // ("dvl_velocity_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
@@ -126,9 +126,9 @@ private:
      * we are using orientation as first 3 values, position as next 3
      */
 
-        this->current_state_[0] = this->current_orientation_[0];
-        this->current_state_[1] = this->current_orientation_[1];
-        this->current_state_[2] = this->current_orientation_[2];
+        // this->current_state_[0] = this->current_orientation_[0];
+        // this->current_state_[1] = this->current_orientation_[1];
+        // this->current_state_[2] = this->current_orientation_[2];
         this->current_state_[3] = this->current_position_[0];
         this->current_state_[4] = this->current_position_[1];
         this->current_state_[5] = this->current_position_[2];
@@ -140,7 +140,7 @@ private:
                                     // Refer to classes/pid_controller/scion_pid_controller.hpp for this function
 
     /* STEP 3: Send those generated values to the motors */
-        make_CAN_request(this->controller_.current_thrust_values);
+        // make_CAN_request(this->controller_.current_thrust_values);
     }
 
     void make_CAN_request(vector<float> thrusts)
@@ -148,16 +148,9 @@ private:
         /* Thrusts come out of PID as a float between -1 and 1; motors need int value from -100 to 100 */
         int thrust0 = (int)(thrusts[0]*100);
         int thrust1 = (int)(thrusts[1]*100);
-        int thrust2 = (int)(thrusts[2]*100);
-        int thrust3 = (int)(thrusts[3]*100);
-        int thrust4 = (int)(thrusts[4]*100);
-        int thrust5 = (int)(thrusts[5]*100);
-        int thrust6 = (int)(thrusts[6]*100);
-        int thrust7 = (int)(thrusts[7]*100);
-
+    
         /* See exactly our 8 thrust values sent to motors */
-        std::cout << " " << thrust0 << " " << thrust1 << " " << thrust2 << " " << thrust3;
-        std::cout << " " << thrust4 << " " << thrust5 << " " << thrust6 << " " << thrust7;
+        std::cout << " " << thrust0 << " " << thrust1 << " ";
         std::cout << std::endl;
 
         /* 
@@ -169,12 +162,6 @@ private:
                                 {
                                     (thrust0 & 0xFF),
                                     (thrust1 & 0xFF),
-                                    (thrust2 & 0xFF),
-                                    (thrust3 & 0xFF),
-                                    (thrust4 & 0xFF),
-                                    (thrust5 & 0xFF),
-                                    (thrust6 & 0xFF),
-                                    (thrust7 & 0xFF)
                                 };             
 
         // This is a manual motor test can frame that sets each motor to .1 potential
@@ -188,7 +175,7 @@ private:
 
         struct can_frame poll_frame;
         poll_frame.can_id = 0x010;
-        poll_frame.can_dlc = 8;
+        poll_frame.can_dlc = 2;
         std::copy(std::begin(can_dreq_frame),
                   std::end(can_dreq_frame),
                   std::begin(poll_frame.data));
@@ -209,17 +196,17 @@ private:
      * sensor. When that sensor publishes, the PID will store the last sensed value  
      */
 
-    void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)
-    {
-        RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
-        this->current_orientation_ = msg->orientation;
-    }
+    // void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)
+    // {
+    //     RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
+    //     this->current_orientation_ = msg->orientation;
+    // }
 
-    void depth_sub_callback(const std_msgs::msg::Float32::SharedPtr msg)
-    {
-        RCLCPP_INFO(this->get_logger(), "Received ms5837 depth data: %f", msg->data);
-        this->current_position_ = vector<float>{0.0, 0.0, msg->data} ;
-    }
+    // void depth_sub_callback(const std_msgs::msg::Float32::SharedPtr msg)
+    // {
+    //     RCLCPP_INFO(this->get_logger(), "Received ms5837 depth data: %f", msg->data);
+    //     this->current_position_ = vector<float>{0.0, 0.0, msg->data} ;
+    // }
 
     void position_sub_callback(const scion_types::msg::Position::SharedPtr msg)
     {    

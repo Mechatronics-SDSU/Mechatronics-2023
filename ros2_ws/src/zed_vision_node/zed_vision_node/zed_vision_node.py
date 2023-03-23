@@ -61,7 +61,6 @@ class ZedVision(Node):
         #         self.get_logger().info('Publishing Position Data: "x: %f\ny: %f\nz: %f\n"' % (msg.position[0], msg.position[1], msg.position[2]))
         #         self.get_logger().info('Publishing Velocity Data: "x: %f\ny: %f\nz: %f\n"' % (msg.velocity[0], msg.velocity[1], msg.velocity[2]))
 
-
         """ Wall/Object avoidance code in progress """        
 
         # import matplotlib
