@@ -226,21 +226,21 @@ def generate_launch_description():
         # launch_ros.actions.Node(
         #     package='ahrs_node', executable='ahrs_exec',
         #     ),
-        # launch_ros.actions.Node(
-        #     package='pid_node', executable='pid_exec', output='screen' 
-        #     ),    
-        # launch_ros.actions.Node(
-        #     package='can2ros_driver', executable='can2ros_driver'
-        #     ),
+        launch_ros.actions.Node(
+            package='pid_node', executable='pid_exec', output='screen' 
+            ),    
+        launch_ros.actions.Node(
+            package='can2ros_driver', executable='can2ros_driver'
+            ),
         # # launch_ros.actions.Node(
         # #     package='dres_dvl_decode', executable='dres_dvl_decode' 
         # #     ),
         # launch_ros.actions.Node(
         #     package='dres_ms5837_decode', executable='dres_ms5837_decode'
         #     ),
-        # launch_ros.actions.Node(
-        #     package='zed_pos_node', executable='zed_pos_exec' 
-        #     ),   
+        launch_ros.actions.Node(
+            package='zed_pos_node', executable='zed_pos_exec' 
+            ),   
         # launch_ros.actions.Node(
         #     package='zed_vision_node', executable='zed_vision_exec' 
         #     ),   
