@@ -140,7 +140,7 @@ private:
                                     // Refer to classes/pid_controller/scion_pid_controller.hpp for this function
 
     /* STEP 3: Send those generated values to the motors */
-        // make_CAN_request(this->controller_.current_thrust_values);
+        make_CAN_request(this->controller_.current_thrust_values);
     }
 
     void make_CAN_request(vector<float> thrusts)
@@ -158,7 +158,7 @@ private:
          * We can extract using an and mask and get last 8 bits which in hex is 0xFF. Char size is one byte
          * which is why we use an array of chars
          */
-        unsigned char can_dreq_frame[8] = 
+        unsigned char can_dreq_frame[2] = 
                                 {
                                     (thrust0 & 0xFF),
                                     (thrust1 & 0xFF),
