@@ -36,8 +36,6 @@ class ZedVision(Node):
         self.publisher_ = self.create_publisher(ZedObject, 'topic', 10)
         timer_period = .05  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
-        self.forwardCount = 0
-        self.turnCount = 0
 
         self.vision = Zed_Vision()
         self.zed, self.opt = self.vision.initCamera()
@@ -66,125 +64,120 @@ class ZedVision(Node):
 
         """ Wall/Object avoidance code in progress """        
 
+        # import matplotlib
+        # matplotlib.use('TkAgg')
+        # import matplotlib.pyplot as plt
+        # import numpy as np
 
+        # from numpy import inf
+
+        # # GUI(depth_map=depth_map)
+        # depth_ocv = depth_map.get_data()
+
+        # # depth_ocv = np.clip(depth_ocv, 0, 1)
+
+        # # depth_ocv = depth_ocv[512:768, 360:720]
+        # np.round(depth_ocv, decimals=1)
+
+        # average = 0
+        # pixels = 0
+        # nan = 0
+        # lessThan = 0
+        # big = 0
+        # inf = 0
 
         # x = 360
-        # while x < 364:
-        #     y = 360
-        #     while y < 364:
-        #         # depth_value = depth_map.get_value(x,y)
-        #         # print(str(x) + ", " + str(y) + " " + str(depth_value[1]))
-        #         # f.write(str(x) + ", " + str(y) + " " + str(depth_value[1]) + "\n")
-        #         # if math.isinf(depth_value[1]):
-        #         #     inf += 1
-        #         # # print(str(x) + "," + str(y) + " " + str(depth_value) + "\n")
-        #         # # f.write(str(x) + "," + str(y) + " " + str(depth_value) + "\n")
-        #         y += 2
-        #     x += 2
-        
+        # while x < 600:
+        #     y = 450
+        #     while y < 890:
+        #         # if math.isnan(depth_ocv[x,y]):
+        #         #     nan += 1
+        #         if math.isinf(depth_ocv[x,y]):
+        #             inf += 1
+        #         # if not math.isinf(depth_ocv[x,y]) and not math.isnan(depth_ocv[x,y]):
+        #         #     average += depth_ocv[x,y]
+        #         #     pixels += 1
+        #         if depth_ocv[x,y] < .9:
+        #             lessThan += 1
+        #         # if depth_ocv[x,y] > 5:
+        #         #     big += 1
+        #         y += 20
+        #     x += 20
 
-        # print(depth_map)
+        # from enum import Enum
 
-            # Load depth data into a numpy array
+        # class State(Enum):
 
-        import matplotlib
-        matplotlib.use('TkAgg')
-        import matplotlib.pyplot as plt
-        import numpy as np
+        #     WALL = 1
 
-        from numpy import inf
+        #     OBJECT = 2
 
-        depth_ocv = depth_map.get_data()
-        np.round(depth_ocv, decimals=1)
+        #     EITHER = 3
 
-        # print(depth_ocv)
-        
-        # print(depth_ocv[400,721])
+        #     CLEAR = 4
 
-        average = 0
-        pixels = 0
-        nan = 0
-        lessThan = 0
-        
-        for x in range(360, 600):
-            for y in range(512, 768):
-                if math.isnan(depth_ocv[x,y]):
-                    nan += 1
-                if not math.isinf(depth_ocv[x,y]) and not math.isnan(depth_ocv[x,y]):
-                    average += depth_ocv[x,y]
-                    pixels += 1
-                if depth_ocv[x,y] < 1:
-                    lessThan += 1
+        # State = Enum('State', ['WALL', 'OBJECT', 'EITHER', 'CLEAR'])
 
-        from enum import Enum
+        # state = State.WALL
 
-        # class syntax
-
-        class State(Enum):
-
-            WALL = 1
-
-            OBJECT = 2
-
-            EITHER = 3
-
-            CLEAR = 4
-
-        # functional syntax
-
-        State = Enum('State', ['WALL', 'OBJECT', 'EITHER', 'CLEAR'])
-
-        state = State.WALL
-
-        
+        # # print(nan)
+        # # print(big)
         # print(lessThan)
-        # print(pixels)
+        # print(inf)
+        # print("\n\n\n")
 
-        if pixels == 0:
-            pixels = 1
+        # if lessThan > 3 or inf > 1:
+        #     turn()
+        # else:
+        #     move()
 
-        if nan > 8000:
-            state = State.OBJECT
-            print("nan high, object")
-        elif average/pixels < 1.15:
-            state = State.WALL
-            print("Average low, must be wall")
-        elif lessThan > 10000:
-            state = State.EITHER
-            print("Lot's over threshold, must be approaching something")
-        else:
-            state = State.CLEAR
-            print("Everything Looks good")
+        # if pixels == 0:
+        #     pixels = 1
 
-        print(state.name)
+        # if nan > 5000:
+        #     state = State.OBJECT
+        #     print("nan high, object")
+        # elif average/pixels < 1.3:
+        #     state = State.WALL
+        #     print("Average low, must be wall")
+        # elif big > 2000:
+        #     state = State.OBJECT
+        #     print("Lots of large pixels, should stop")
+        # elif lessThan > 10000:
+        #     state = State.EITHER
+        #     print("Lot's over threshold, must be approaching something")
+        # else:
+        #     state = State.CLEAR
+        #     print("Everything Looks good")
 
-        if state == State.CLEAR:
-            self.forwardCount += 1
-            self.turnCount = 0
-        else:
-            self.forwardCount = 0
-            self.turnCount += 1
+        # print(state.name)
 
-        if self.forwardCount > 3:
-            print("Move forward")
-            # move()
-        else:
-            if state == State.CLEAR:
-                print("Do nothing")
-                # doNothing()
-            else:
-                if self.turnCount > 3:
-                    print("Turn")
-                    # turn()
-                else:
-                    print("Do nothing")
-                    # doNothing()
+        # if state == State.CLEAR:
+        #     self.forwardCount += 1
+        #     self.turnCount = 0
+        # else:
+        #     self.forwardCount = 0
+        #     self.turnCount += 1
+
+        # if self.forwardCount > 3:
+        #     print("Move forward")
+        #     move()
+        # else:
+        #     if state == State.CLEAR:
+        #         print("Do nothing")
+        #         doNothing()
+        #     else:
+        #         if self.turnCount > 3:
+        #             print("Turn")
+        #             turn()
+        #         else:
+        #             turn()
 
         # print(nan)
         # print(average/pixels)
-#        Print the depth value at the center of the image
+    #    Print the depth value at the center of the image
         
-        # print(depth_ocv[int(len(depth_ocv)/2)][int(len(depth_ocv[0])/2)])
+    #     print(depth_ocv[int(len(depth_ocv)/2)][int(len(depth_ocv[0])/2)])
 
         # try:
         #     print(depth_ocv)
@@ -232,18 +225,43 @@ class ZedVision(Node):
 
 import subprocess
 
+def GUI(depth_map):
+        import matplotlib
+        matplotlib.use('TkAgg')
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        from numpy import inf
+
+        depth_ocv = depth_map.get_data()
+
+        depth_ocv = np.clip(depth_ocv, 0, 1)
+
+        # depth_ocv = depth_data[512:768, 360:720]
+        np.round(depth_ocv, decimals=1)
+
+        # depth_ocv[depth_ocv] = 10
+
+        # depth_ocv[np.isposinf(depth_ocv)] = 10
+        # depth_ocv[np.isneginf(depth_ocv)] = -10
+
+        plt.imshow(depth_ocv)
+        plt.show()
+        # print(depth_ocv)
+        
+
 
 def move():
-    bashCommand = "cansend can0 010#0101"
+    bashCommand = "cansend can0 010#1010"
     subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)       
 
-
 def turn():
-    bashCommand = "cansend can0 010#03F5"
+    bashCommand = "cansend can0 010#05F1"
     subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)       
 
 def doNothing():
     bashCommand = "cansend can0 010#0000"
+    subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE) 
     bashCommand = "cansend can0 00A#"
     subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE) 
 
