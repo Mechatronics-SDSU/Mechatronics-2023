@@ -51,16 +51,14 @@ Scion_Position_PID_Controller::Scion_Position_PID_Controller()
     //| T6
     //| T7
     
+
+    // 6X1 matrix ctrls -> 8x1 matrix thrust -> Need 8x6 matrix * 6x1 matrix
+    // 6X1 matrix -> 2X1 matrix, Need 2X6 matrix * 6x1 matrix
+
     this->pid_thrust_mapper = vector<vector<float>>
                                     {
-                                        { 0,  1, -1,  0,  0,  1},                   
-                                        { 1,  0,  0,  1,  1,  0},
-                                        { 0, -1, -1,  0,  0,  1},
-                                        { 1,  0,  0,  1, -1,  0},
-                                        {-1, -1,  1,  0,  0,  1},
-                                        { 0,  0,  0,  1,  1,  0},
-                                        {-1,  1,  1,  0,  0,  1},
-                                        { 0,  0,  0,  1, -1,  0}
+                                        { -1, 0,  0,  1,  0,  0},                   
+                                        {  1, 0,  0,  1,  0,  0},
                                     };
 }
 
@@ -100,16 +98,9 @@ Scion_Position_PID_Controller::Scion_Position_PID_Controller(map<string, map<str
     
     this->pid_thrust_mapper = vector<vector<float>>
                                     {
-                                        { 0,  1, -1,  0,  0,  1},                   
-                                        { 1,  0,  0,  1,  1,  0},
-                                        { 0, -1, -1,  0,  0,  1},
-                                        { 1,  0,  0,  1, -1,  0},
-                                        { 0, -1,  1,  0,  0,  1},
-                                        {-1,  0,  0,  1,  1,  0},
-                                        { 0,  1,  1,  0,  0,  1},
-                                        {-1,  0,  0,  1, -1,  0}
+                                        { -1, 0,  0,  1,  0,  0},                   
+                                        {  1, 0,  0,  1,  0,  0},
                                     };
-
     /* 
      * if we decide to load our PID_Params from a dictionary, we can set each controllers' values to 
      * the values stored in the hashmap from pid_params.cpp 
