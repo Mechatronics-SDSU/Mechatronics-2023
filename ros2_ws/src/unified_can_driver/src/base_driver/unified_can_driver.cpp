@@ -21,6 +21,11 @@
 
 using namespace std;
 
+/* Yucky global variables */
+std::string can_bus_interface = "vcan0";
+bool do_device_polling = true;
+uint8_t module_enabled_field = 0xFF;
+
 /*
 	The following code creates multiple filtered CAN mailboxes to divide
 	sort and separate incoming traffic from the teensy. This filtering
@@ -34,6 +39,9 @@ using namespace std;
 	The CanSendService object and the mailbox objects require a pointer to this class in order
 	to properly integrate with Ros2.
  */
+
+
+
 UnifiedCanDriver::UnifiedCanDriver()
 : Node("can_driver")
 {
@@ -43,23 +51,21 @@ UnifiedCanDriver::UnifiedCanDriver()
 	this->declare_parameter("can_bus_interface", "vcan0");
 	this->declare_parameter("module_bitfield", 0xFFFF);
 
-	GlobalSettings::module_enabled_field = this->get_parameter(
-		"module_bitfield").get_parameter_value().get<uint16_t>();
-	GlobalSettings::can_bus_interface = this->get_parameter(
-		"can_bus_interface").get_parameter_value().get<std::string>();
-	GlobalSettings::do_device_polling = this->get_parameter(
+	module_enabled_field = this->get_parameter(
+		"module_bitfield").get_parameter_value().get<uint8_t>();
+	can_bus_interface = this->get_parameter(
+		"can_bus_interface").as_string();
+	do_device_polling = this->get_parameter(
 		"do_module_polling").get_parameter_value().get<bool>();
 
 	RCLCPP_INFO(this->get_logger(), "################################################");
-	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] Unified CAN Driver ver. 0.0.4");
-	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] [Config] Connected Interface: %s", GlobalSettings::can_bus_interface);
-	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] [Config] Module Enable Field: %d", GlobalSettings::module_enabled_field);
-	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] [Config] POLLING ENABLED: %s", GlobalSettings::do_device_polling ? "true":"false" );
+	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] Unified CAN Driver ver. 0.0.5");
+	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] [Config] Connected Interface: %s", can_bus_interface.c_str());
+	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] [Config] Module Enable Field: %d", module_enabled_field);
+	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] [Config] POLLING ENABLED: %s", do_device_polling ? "true":"false" );
 	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] Starting can_driver node.");
 
-	char interface = GlobalSettings::can_bus_interface.c_str();
-	strncpy(ifr.ifr_name, interface,
-		sizeof(&interface));
+	strncpy(ifr.ifr_name, can_bus_interface.c_str(), sizeof(ifr.ifr_name));
 	_can_timer = this->create_wall_timer(
 		10ms, std::bind(&UnifiedCanDriver::can_timer_callback, this));	
 	rclcpp::on_shutdown(std::bind(&UnifiedCanDriver::shutdown_node, this));

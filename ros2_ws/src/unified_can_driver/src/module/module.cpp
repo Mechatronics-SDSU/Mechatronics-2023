@@ -21,7 +21,7 @@ DeviceModule::DeviceModule(rclcpp::Node* ctx,
 	module_topic_ptr_array = new topic_ptr_t[module_topic_ct];
 
 	/* Timer callback creation */
-	if(GlobalSettings::do_device_polling && module_enable_ti)
+	if(do_device_polling && module_enable_ti)
 	{
 		poll_timer = node_context->create_wall_timer(
 			std::chrono::milliseconds(module_timer_len),
@@ -40,4 +40,5 @@ DeviceModule::~DeviceModule()
 
 void DeviceModule::dres_handle(struct can_frame* frame) { /* UNUSED */ }
 void DeviceModule::timer_callback() { /* UNUSED */ }
+void DeviceModule::dres_info() { /* UNUSED */ }
 void DeviceModule::mod_init() { /* UNUSED */ }

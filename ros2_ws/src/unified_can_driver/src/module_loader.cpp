@@ -11,23 +11,23 @@ ModuleLoader::ModuleLoader(rclcpp::Node* ctx, struct ifreq* ifr)
 	std::fill(module_list.begin(), module_list.end(),nullptr);
 
 	/* Conditionally enable modules */
-	// if(GlobalSettings::module_enabled_field & MODULE_DVL_ENABLE)
+	// if(module_enabled_field & MODULE_DVL_ENABLE)
 	// {
 		// dvl = new DVLModule(node_context, module_mb);
 		// module_list[dvl->module_device_id] = dvl;
 	// }
 // 
-	// if(GlobalSettings::module_enabled_field & MODULE_MS5837_ENABLE)
+	// if(module_enabled_field & MODULE_MS5837_ENABLE)
 	// {
 		// ms5837 = new MS5837Module(node_context, module_mb);
 		// module_list[ms5837->module_device_id] = ms5837;
 	// }
-	// if(GlobalSettings::module_enabled_field & MODULE_BRLIGHT_ENABLE)
+	// if(module_enabled_field & MODULE_BRLIGHT_ENABLE)
 	// {
 		// brlight = new BRLIGHTModule(node_context, module_mb);
 		// module_list[ms5837->module_device_id] = brlight;
 	// }
-	// if(GlobalSettings::module_enabled_field & MODULE_BRPING1_ENABLE)
+	// if(module_enabled_field & MODULE_BRPING1_ENABLE)
 	// {
 		// ms5837 = new MS5837Module(node_context, module_mb);
 		// module_list[ms5837->module_device_id] = ms5837;
@@ -51,7 +51,7 @@ ModuleLoader::~ModuleLoader()
 template <typename module_type>
 void ModuleLoader::load_module(DeviceModule* mod, uint8_t enable_bit)
 {
-	if(GlobalSettings::module_enabled_field & enable_bit)
+	if(module_enabled_field & enable_bit)
 	{
 		mod = new module_type(node_context, module_mb);
 		module_list[mod->module_device_id] = mod;

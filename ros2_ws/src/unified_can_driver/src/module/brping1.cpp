@@ -44,7 +44,7 @@ void BRPING1Module::dres_handle(struct can_frame* frame)
 }
 void BRPING1Module::timer_callback()
 {
-	if(GlobalSettings::do_device_polling && this->module_enable_ti)
+	if(do_device_polling && this->module_enable_ti)
 	{
 		struct can_frame poll_frame;
 		memset(&poll_frame, 0, sizeof(struct can_frame));

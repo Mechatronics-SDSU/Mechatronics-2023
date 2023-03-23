@@ -11,10 +11,7 @@
 #define MODULE_BRPING1_ENABLE		0b00100000
 
 /* Global settings */
-namespace GlobalSettings
-{
-	static std::string can_bus_interface = "vcan0";
-	static uint8_t module_enabled_field = 0xFF;
-	static bool do_device_polling = true;
-}
+extern	std::string can_bus_interface;
+extern 	uint8_t module_enabled_field;
+extern	bool do_device_polling;
 #endif

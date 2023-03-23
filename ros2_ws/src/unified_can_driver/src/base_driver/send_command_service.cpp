@@ -1,3 +1,8 @@
+
+#include <memory>
+#include <string>
+#include <algorithm>
+
 #include "send_command_service.hpp"
 
 SendCommandService::SendCommandService(
@@ -24,10 +29,11 @@ void SendCommandService::service_handler(
 	if(out_mb->can_sock)
 	{
 		struct can_frame send_frame;
-		uint16_t device = (uint16_t)request->device;
-		uint16_t topic = (uint16_t)request->topic;
+		auto device = request->device;
+		auto topic = request->topic;
+		auto command = request->command;
 		memset(&send_frame, 0, sizeof(struct can_frame));
-		send_frame.can_id = (uint16_t)request->command;
+		send_frame.can_id = command;
 		send_frame.can_dlc = 8;
 
 		memcpy(&send_frame.data[0], &device, sizeof(char)*2 );
@@ -36,7 +42,7 @@ void SendCommandService::service_handler(
 
 		std::copy(std::begin(request->data),
 						std::end(request->data),
-						send_frame.data[4]);
+						std::begin(send_frame.data)+4);
 
 		if(Mailbox::MboxCan::write_mbox(out_mb, &send_frame) < 0 )
 		{
