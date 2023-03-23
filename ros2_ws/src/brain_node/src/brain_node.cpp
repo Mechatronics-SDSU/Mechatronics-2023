@@ -41,31 +41,47 @@ private:
     rclcpp::Subscription<scion_types::msg::Orientation>::SharedPtr orientation_sub_;
     rclcpp::TimerBase::SharedPtr state_timer_;
     rclcpp::TimerBase::SharedPtr message_timer_;
+    int counter_ = 0;
+    vector<int> commandSequence_{0, 1, 0, 1};
 
     /* Upon initialization set all values to [0,0,0...] */
     vector<float> current_orientation_{0.0F,0.0F,0.0F};
     vector<float> current_position_{0.0F,0.0F,0.0F};
     vector<float> current_state_{0.0F,0.0F,0.0F,0.0F,0.0F,0.0F}; // State described by yaw, pitch, roll, x, y, z 
 
+    vector<float> desired_state_ = current_state_;
+
     void state_timer_callback()
     /* Essential callback set to update PID state at certain interval */
     {
         update_current_state();
         printVector(current_state_);
+        printVector(desired_state_);
     }
 
     void message_timer_callback()
     {
         auto message = scion_types::msg::DesiredState();
         message.desired_state = std::vector<float>{0,0,0,0,0,0};
-        message.desired_state = constructDesiredState();
+        message.desired_state = constructDesiredState(commandSequence_[counter_]);
+        desired_state_ = message.desired_state;
+        // message.desired_state = desired_state_;
         desired_state_pub->publish(message);
         RCLCPP_INFO(this->get_logger(), "Publishing Desired State " );
+        counter_ = ((counter_ + 1) % 4);
     }
 
-    std::vector<float> constructDesiredState()
+    std::vector<float> constructDesiredState(int command)
     {
-        
+        if (command == 0)
+        {
+            return move(.3, current_state_);
+        }
+
+        else
+        {
+            return turn(90, current_state_);
+        }
     }
 
     void update_current_state()
@@ -95,7 +111,28 @@ private:
             this->current_position_  = msg->position;
         }
 
+    vector<float> turn(float degrees, vector<float> current_state_)
+    {
+        return vector<float>{degrees, current_state_[1],current_state_[2], current_state_[3], current_state_[4], current_state_[5]};
+    }
+
+    vector<float> move(float distance, vector<float> current_state_)
+    {
+        return vector<float>{current_state_[0], current_state_[1], current_state_[2], distance, current_state_[4], current_state_[5]};
+    }
+
 };
+
+
+// std::vector<void (*)()> turnSequence;           // vector of functions holds the desired turn sequence
+
+// SomeClass::addThingy(void (*function)())
+// {
+//     //Don't take the address of the address:
+//     vectoroffunctions.push_back(function);
+// }
+
+
 
 int main(int argc, char * argv[])
 {   
