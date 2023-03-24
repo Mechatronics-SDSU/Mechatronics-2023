@@ -4,8 +4,6 @@
  * Commands can be pre-loaded or create with navigation logic
  */
 
-
-
 #include "rclcpp/rclcpp.hpp"
 #include "scion_types/msg/desired_state.hpp"
 #include "scion_types/msg/orientation.hpp"         // Custom message types defined in scion_types package
@@ -27,15 +25,9 @@ using namespace std;
                                     // NODE MEMBER VARIABLE DECLARIONS/INITIALIZATIONS //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct Command
-{
-    vector<float>(*fun_ptr)(float, vector<float>);
-    int param1;
-    vector<float> param2;
-};
-
 class Brain : public rclcpp::Node
 {
+
 
 public:
     Brain(): Node("brain_node")
@@ -52,19 +44,27 @@ public:
         desired_state_pub_ = this->create_publisher<scion_types::msg::DesiredState>
         ("desired_state_data", 10);
 
-        reset_pos_client_ = this->create_client<std_srvs::srv::Trigger>("/zed2i/zed_node/reset_pos_tracking");
+        // reset_pos_client_ = this->create_client<std_srvs::srv::Trigger>("/zed2i/zed_node/reset_pos_tracking");
+
+        turnInBox(command_sequence_); 
     }
 
+struct Command
+{
+    vector<float>(Brain::*fun_ptr)(float, vector<float>);
+    int param1;
+    vector<float>* param2;
+};
 
 private:
     rclcpp::Subscription<scion_types::msg::Position>::SharedPtr position_sub_;
     rclcpp::Subscription<scion_types::msg::DesiredState>::SharedPtr desired_state_sub_;
     rclcpp::Publisher<scion_types::msg::DesiredState>::SharedPtr desired_state_pub_;
     rclcpp::Subscription<scion_types::msg::Orientation>::SharedPtr orientation_sub_;
-    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_pos_client_; 
+    // rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_pos_client_; 
     rclcpp::TimerBase::SharedPtr state_timer_;
     rclcpp::TimerBase::SharedPtr message_timer_;
-    vector<Command*> command_sequence_ = turnInBox();
+    vector<Command> command_sequence_;
     int counter_ = 0;
 
     /* Upon initialization set all values to [0,0,0...] */
@@ -78,24 +78,31 @@ private:
                                         // COMMAND SEQUENCE DEFINTIONS //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    vector<Command*> turnInBox()
-    {
-        vector<Command*> command_sequence;
-        
-        Command* command1;
-        command1->fun_ptr = &Brain::move;
-        command1->param1 = .3;
-        command1->param2 = current_state_;
+    // void setCommandSequence(&command_sequence_)
+    // {
+    //     command_sequence_ = turnInBox();
+    // }
 
-        Command* command2;
-        command2->fun_ptr = &Brain::turn; //static_cast<Command*>
-        command2->param1 = 90.0;
-        command2->param2 = current_state_;
+    void turnInBox(vector<Command>& command_sequence)
+    {
+        Command command1;
+        command1.fun_ptr = &Brain::move;
+        command1.param1 = 0.3;
+        command1.param2 = &current_state_;
+
+        Command command2;
+        command2.fun_ptr = &Brain::turn; //static_cast<Command*>
+        command2.param1 = 90.0;
+        command2.param2 = &current_state_;
+
+        Command command3;
+        command2.fun_ptr = &Brain::move; //static_cast<Command*>
+        command2.param1 = 10;
+        command2.param2 = &current_state_;
 
         command_sequence.push_back(command1);
         command_sequence.push_back(command2);
-
-        return command_sequence;
+        command_sequence.push_back(command3);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -140,10 +147,20 @@ private:
     
     std::vector<float> constructDesiredState()
     {
+        // for (Command* commandPtr : command_sequence_)
+        // {
+        //     std::cout << commandPtr->param1;
+        //     printVector(commandPtr->param2);
+        // }
         std::vector<float> desired_state; 
-        Command* command = command_sequence_[counter_ % command_sequence_.size()];
-        vector<float> (*command_function)(float, vector<float>) = command->fun_ptr;
-        desired_state = this->*command_function(command->param1, command->param2);
+        Command command = command_sequence_[counter_ % command_sequence_.size()];
+        cout << "ptr:" << (void*)command.fun_ptr << " " << std::endl;
+        cout << "float: "<< command.param1 << " " << std::endl;
+        cout << "vector: " << std::endl;
+        printVector(*command.param2);
+
+        vector<float> (Brain::*command_function)(float, vector<float>) = command.fun_ptr;
+        desired_state = (this->*command_function)(command.param1, *command.param2);         
         counter_ = counter_ + 1;
         return desired_state;
     }
@@ -191,7 +208,6 @@ private:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                     // POSSIBLE FUNCTIONS TO BE PERFORMED  //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     vector<float> turn(float degrees, vector<float> current_state_)
     {
         return vector<float>{degrees + current_state_[0], current_state_[1],current_state_[2], current_state_[3], current_state_[4], current_state_[5]};
@@ -201,7 +217,6 @@ private:
     {
         return vector<float>{current_state_[0], current_state_[1], current_state_[2], distance + current_state_[3], current_state_[4], current_state_[5]};
     }
-
 };
 
 int main(int argc, char * argv[])
