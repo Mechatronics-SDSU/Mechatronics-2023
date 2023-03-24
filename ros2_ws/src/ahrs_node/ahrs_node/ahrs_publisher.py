@@ -48,7 +48,7 @@ class AHRS_Node(Node):
     def __init__(self):
         super().__init__('ahrs_node')
         self.publisher_ = self.create_publisher(Orientation, 'ahrs_orientation_data', 10)     #transmits on 'ahrs_orientation' topic
-        timer_period = .001  # seconds
+        timer_period = .01  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.ahrs = SpartonAHRSDataPackets()
 

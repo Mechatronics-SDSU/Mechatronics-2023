@@ -77,6 +77,7 @@ private:
     vector<Command> command_sequence_;
     int counter_ = 0;
 
+
     /* Upon initialization set all values to [0,0,0...] */
     vector<float> current_orientation_{0.0F,0.0F,0.0F};
     vector<float> current_position_{0.0F,0.0F,0.0F};
@@ -129,6 +130,7 @@ private:
     // **/
     // {
     //     auto request = std::make_shared<std_srvs::srv::Trigger::Request>();
+
         
     //     while (!reset_pos_client_->wait_for_service(1s)) 
     //     {
@@ -181,6 +183,7 @@ private:
 
         vector<float> (Brain::*command_function)(float, vector<float>&) = command.commandPtr;           // Extract function pointer from Command struct
         desired_state = (this->*command_function)(command.degree, current_state_);                      // Actual function call using degree parameter from Command and current_state_ member
+
         counter_ = counter_ + 1;
         return desired_state;
     }
@@ -192,7 +195,6 @@ private:
     void state_timer_callback()
     /* Essential callback set to update current sensor state at certain interval */
     {
-        // makeRequest()
         update_current_state();
         printVector(current_state_);
         printVector(desired_state_);
@@ -235,6 +237,7 @@ private:
 
     vector<float> move(float distance, vector<float>& current_state_)
     {
+        makeRequest();
         return vector<float>{current_state_[0], current_state_[1], current_state_[2], distance + current_state_[3], current_state_[4], current_state_[5]};
     }
 };

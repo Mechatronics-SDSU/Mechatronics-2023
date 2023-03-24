@@ -22,13 +22,14 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(scion_types REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 
 include_directories(include)
 
 # Must include headers and source files from pid_controller class in classses/
 add_executable(brain_exec src/brain_node.cpp)
                               
-ament_target_dependencies(brain_exec rclcpp scion_types std_msgs)
+ament_target_dependencies(brain_exec rclcpp scion_types std_msgs std_srvs)
 
 install(TARGETS
   brain_exec
