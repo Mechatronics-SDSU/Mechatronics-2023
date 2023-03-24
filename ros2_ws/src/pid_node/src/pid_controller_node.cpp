@@ -39,6 +39,10 @@ using namespace std;
 #define UPDATE_PERIOD 120ms
 #define PRINT_PERIOD 500ms
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+                                    // MEMBER VARIABLE DECLARATIONS // 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /** 
  * Controller Node consists of: 
  *      - timer to update ctrl_vals
@@ -102,7 +106,9 @@ private:
 
     vector<float> current_desired_state_{0.0F,0.0F,0.0F,0.0F,0.0F,0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
 
- /***************************************** END MEMBER VARIABLE DECLARATIONS **********************************/
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                        // UPDATES OF STATE FOR PIDs // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /* Different timer for printing and sensor updates */
     void print_timer_callback()
@@ -118,7 +124,7 @@ private:
         update_current_state();
     }
 
-    void update_current_state()
+    void update_current_state() // ** Important Function **
     {
     /*
      * STEP 1: Build current state from current information 
@@ -142,6 +148,10 @@ private:
     /* STEP 3: Send those generated values to the motors */
         make_CAN_request(this->controller_.current_thrust_values);
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                    // CAN REQUESTS FOR MOTOR CONTROL // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     void make_CAN_request(vector<float> thrusts)
     {
@@ -167,7 +177,7 @@ private:
         // This is a manual motor test can frame that sets each motor to .1 potential
         // char can_dreq_frame[8] = {0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10};
 
-    /********************************************* BUILD REQUEST ********************************************/
+    ////////////////////////////////////////// BUILD REQUEST //////////////////////////////////////////
         /* 
          * Our frame will send CAN request 
          * one byte for each value -100 to 100 
@@ -184,12 +194,13 @@ private:
             RCLCPP_INFO(this->get_logger(),
             "[DresDecodeNode::_data_request] Failed to write DREQ.");
 	    }
-
     }
-    /******************************************** END REQUEST **********************************************/
+    ////////////////////////////////////////// END REQUEST //////////////////////////////////////////
 
 
-    /***************************************** SUBSCRIPTION CALLBACKS **************************************/
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                        // SUBSCRIPTION CALLBACKS // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /* 
      * These callbacks all update a member variable that holds current state of PID, each corresponds to a 

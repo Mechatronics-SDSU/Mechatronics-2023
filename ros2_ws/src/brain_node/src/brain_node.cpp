@@ -2,6 +2,15 @@
  * @author Conner Sommerfield - Zix on Discord
  * Brain node will send sequence of commands to the PIDs 
  * Commands can be pre-loaded or create with navigation logic
+ * 
+ * Robot will keep track of a "command queue"
+ * This command queue will be abstracted as an array of Commands
+ * Each command will be a function pointer to the action to perform 
+ * and any parameters to pass to the Command
+ * 
+ * The main ROS2 purpose of this node is to send a desired state to the
+ * PIDs. It's the brain 
+ * 
  */
 
 #include "rclcpp/rclcpp.hpp"
@@ -25,9 +34,17 @@ using namespace std;
                                     // NODE MEMBER VARIABLE DECLARIONS/INITIALIZATIONS //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+/* Brain will subscribe to position and orientation, and take that into account for publishing the desired state */
+
 class Brain : public rclcpp::Node
 {
 
+struct Command
+{
+    vector<float>(Brain::*commandPtr)(float, vector<float>&);           // Points to a function to execute          (turn)
+    float degree;                                                       // The magnitude to pass into that function (30 degrees)
+};
 
 public:
     Brain(): Node("brain_node")
@@ -46,15 +63,8 @@ public:
 
         // reset_pos_client_ = this->create_client<std_srvs::srv::Trigger>("/zed2i/zed_node/reset_pos_tracking");
 
-        turnInBox(command_sequence_); 
+        turnInBox(command_sequence_);                                   // Set command sequence with the commands defined in custom command sequence function
     }
-
-struct Command
-{
-    vector<float>(Brain::*fun_ptr)(float, vector<float>&);
-    float param1;
-    // vector<float>* param2;
-};
 
 private:
     rclcpp::Subscription<scion_types::msg::Position>::SharedPtr position_sub_;
@@ -70,7 +80,7 @@ private:
     /* Upon initialization set all values to [0,0,0...] */
     vector<float> current_orientation_{0.0F,0.0F,0.0F};
     vector<float> current_position_{0.0F,0.0F,0.0F};
-    vector<float> current_state_{0.0F,0.0F,0.0F,0.0F,0.0F,0.0F}; // State described by yaw, pitch, roll, x, y, z 
+    vector<float> current_state_{0.0F,0.0F,0.0F,0.0F,0.0F,0.0F};        // State described by yaw, pitch, roll, x, y, z 
 
     vector<float> desired_state_ = current_state_;
 
@@ -85,23 +95,26 @@ private:
 
     void turnInBox(vector<Command>& command_sequence)
     {
+        /* 
+         * Turn in Box command by a loop of going forward and then turning 90 degrees continually
+         */
+
         Command command1;
-        command1.fun_ptr = &Brain::move;
-        command1.param1 = 0.3;
-        // command1.param2 = &current_state_;
+        command1.commandPtr = &Brain::move;
+        command1.degree = 0.3;
 
         Command command2;
-        command2.fun_ptr = &Brain::turn; //static_cast<Command*>
-        command2.param1 = 90.0;
-        // command2.param2 = &current_state_;
+        command2.commandPtr = &Brain::turn; //static_cast<Command*>
+        command2.degree = 90.0;
 
         command_sequence.push_back(command1);
         command_sequence.push_back(command2);
         
+        /* View our commands */
         for (Command command : command_sequence)
         {
-            std::cout << (void*)command.fun_ptr << std::endl;
-            std::cout << command.param1 << std::endl;
+            std::cout << (void*)command.commandPtr << std::endl;
+            std::cout << command.degree << std::endl;
         }
     }
 
@@ -112,9 +125,7 @@ private:
     // template<typename T>
     // auto makeRequest() 
     // /** 
-    //  * request containing unixtime will be built from message as they are identical, request sent to Node2
-    //  * client will wait for the service (Node 2) to convert unixtime to a date and capture response
-    //  * Returns this response to print later.
+    //  * Reset the position of Zed to 0,0,0
     // **/
     // {
     //     auto request = std::make_shared<std_srvs::srv::Trigger::Request>();
@@ -138,39 +149,48 @@ private:
 
     void message_timer_callback()
     {
+        /* 
+         * Executes on a timer, sends the desired_state to the PID 
+         * TODO: Keep on a short timer but with condition of 1st command completion to move to the 2nd command
+         */
+
         auto message = scion_types::msg::DesiredState();
-        message.desired_state = constructDesiredState();
-        desired_state_ = message.desired_state; // Just to print to the console the desired state
+        message.desired_state = constructDesiredState();    // Other function will be called to provide logic of desired state (decides where to go)
+        desired_state_ = message.desired_state;             // Just to print to the console the desired state
         desired_state_pub_->publish(message);
         RCLCPP_INFO(this->get_logger(), "Publishing Desired State " );
     }
     
     std::vector<float> constructDesiredState()
     {
-        // for (Command* commandPtr : command_sequence_)
-        // {
-        //     std::cout << commandPtr->param1;
-        //     printVector(commandPtr->param2);
-        // }
+        /* 
+         * Grabs a command from the command vector and extracts the appropriate 
+         * desired state based on the command to send to the publisher. 
+         * Desired state is a vector of 6 floats. 
+         */
         std::vector<float> desired_state; 
         Command command = command_sequence_[(counter_ % command_sequence_.size())];
-        cout << "ptr:" << (void*)command.fun_ptr << " " << std::endl;
-        cout << "float: "<< command.param1 << " " << std::endl;
+
+        ////////////// TESTING OUTPUT TO CONSOLE ////////////
+        cout << "ptr:" << (void*)command.commandPtr << " " << std::endl;
+        cout << "float: "<< command.degree << " " << std::endl;
         cout << "vector: " << std::endl;
         printVector(current_state_);
+        ////////////////////////////////////////////////////
 
-        vector<float> (Brain::*command_function)(float, vector<float>&) = command.fun_ptr;
-        desired_state = (this->*command_function)(command.param1, current_state_);         
+
+        vector<float> (Brain::*command_function)(float, vector<float>&) = command.commandPtr;           // Extract function pointer from Command struct
+        desired_state = (this->*command_function)(command.degree, current_state_);                      // Actual function call using degree parameter from Command and current_state_ member
         counter_ = counter_ + 1;
         return desired_state;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                    // TRACKING SENSOR INFO AND CURRENT STATE  //
+                                // TRACKING SENSOR INFO AND CURRENT STATE  //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     void state_timer_callback()
-    /* Essential callback set to update PID state at certain interval */
+    /* Essential callback set to update current sensor state at certain interval */
     {
         // makeRequest()
         update_current_state();
