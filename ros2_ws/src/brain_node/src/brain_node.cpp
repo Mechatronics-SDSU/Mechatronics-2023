@@ -42,7 +42,7 @@ private:
     rclcpp::TimerBase::SharedPtr state_timer_;
     rclcpp::TimerBase::SharedPtr message_timer_;
     int counter_ = 0;
-    vector<int> commandSequence_{0, 1, 0, 1};
+    vector<int> commandSequence_{0, 1, 0, 2, 0, 3, 0, 4};
 
     /* Upon initialization set all values to [0,0,0...] */
     vector<float> current_orientation_{0.0F,0.0F,0.0F};
@@ -68,7 +68,7 @@ private:
         // message.desired_state = desired_state_;
         desired_state_pub->publish(message);
         RCLCPP_INFO(this->get_logger(), "Publishing Desired State " );
-        counter_ = ((counter_ + 1) % 4);
+        counter_ = ((counter_ + 1) % 8);
     }
 
     std::vector<float> constructDesiredState(int command)
@@ -78,10 +78,26 @@ private:
             return move(.3, current_state_);
         }
 
-        else
+        else if (command == 1)
+        {
+            return turn(0, current_state_);
+        }
+
+        else if (command == 2)
         {
             return turn(90, current_state_);
         }
+
+        else if (command == 3)
+        {
+            return turn(180, current_state_);
+        }
+
+        else if (command == 4)
+        {
+            return turn(270, current_state_);
+        }
+
     }
 
     void update_current_state()

@@ -100,7 +100,7 @@ private:
     vector<float> current_position_{0.0F,0.0F,0.0F};
     vector<float> current_state_{0.0F,0.0F,0.0F,0.0F,0.0F,0.0F}; // State described by yaw, pitch, roll, x, y, z 
 
-    vector<float> current_desired_state_{0.0F,0.0F,0.0F,0.0F,0.0F,0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
+    vector<float> current_desired_state_ = current_state_; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
 
  /***************************************** END MEMBER VARIABLE DECLARATIONS **********************************/
 
