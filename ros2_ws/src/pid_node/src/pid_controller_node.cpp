@@ -67,8 +67,8 @@ public:
         desired_state_sub_ = this->create_subscription<scion_types::msg::DesiredState>
         ("desired_state_data", 10, std::bind(&Controller::desired_state_callback, this, _1));
 
-        // orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
-        // ("ahrs_orientation_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
+        orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
+        ("ahrs_orientation_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
 
         // velocity_sub_ = this->create_subscription<scion_types::msg::Orientation>
         // ("dvl_velocity_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
@@ -126,9 +126,9 @@ private:
      * we are using orientation as first 3 values, position as next 3
      */
 
-        // this->current_state_[0] = this->current_orientation_[0];
-        // this->current_state_[1] = this->current_orientation_[1];
-        // this->current_state_[2] = this->current_orientation_[2];
+        this->current_state_[0] = this->current_orientation_[0];
+        this->current_state_[1] = this->current_orientation_[1];
+        this->current_state_[2] = this->current_orientation_[2];
         this->current_state_[3] = this->current_position_[0];
         this->current_state_[4] = this->current_position_[1];
         this->current_state_[5] = this->current_position_[2];
@@ -140,7 +140,7 @@ private:
                                     // Refer to classes/pid_controller/scion_pid_controller.hpp for this function
 
     /* STEP 3: Send those generated values to the motors */
-        // make_CAN_request(this->controller_.current_thrust_values);
+        make_CAN_request(this->controller_.current_thrust_values);
     }
 
     void make_CAN_request(vector<float> thrusts)
@@ -158,7 +158,7 @@ private:
          * We can extract using an and mask and get last 8 bits which in hex is 0xFF. Char size is one byte
          * which is why we use an array of chars
          */
-        unsigned char can_dreq_frame[8] = 
+        unsigned char can_dreq_frame[2] = 
                                 {
                                     (thrust0 & 0xFF),
                                     (thrust1 & 0xFF),
@@ -196,11 +196,11 @@ private:
      * sensor. When that sensor publishes, the PID will store the last sensed value  
      */
 
-    // void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)
-    // {
-    //     RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
-    //     this->current_orientation_ = msg->orientation;
-    // }
+    void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)
+    {
+        RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
+        this->current_orientation_ = msg->orientation;
+    }
 
     // void depth_sub_callback(const std_msgs::msg::Float32::SharedPtr msg)
     // {
