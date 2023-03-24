@@ -1,11 +1,19 @@
+/*
+ * @author Conner Sommerfield - Zix on Discord
+ * Brain node will send sequence of commands to the PIDs 
+ * Commands can be pre-loaded or create with navigation logic
+ */
+
+
+
 #include "rclcpp/rclcpp.hpp"
 #include "scion_types/msg/desired_state.hpp"
 #include "scion_types/msg/orientation.hpp"         // Custom message types defined in scion_types package
 #include "scion_types/msg/position.hpp"            
 #include "std_msgs/msg/float32.hpp"
+#include "std_srvs/srv/trigger.hpp"
 #include "vector_operations.hpp"                   
-
-
+#include <stdlib.h>
 
 using std::placeholders::_1;
 using std::placeholders::_2;
@@ -14,6 +22,17 @@ using namespace std;
 #define STATE_UPDATE_PERIOD 120ms
 #define MESSAGE_UPDATE_PERIOD 3s
 
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                    // NODE MEMBER VARIABLE DECLARIONS/INITIALIZATIONS //
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct Command
+{
+    vector<float>(*fun_ptr)(float, vector<float>);
+    int param1;
+    vector<float> param2;
+};
 
 class Brain : public rclcpp::Node
 {
@@ -30,19 +49,23 @@ public:
         orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
         ("ahrs_orientation_data", 10, std::bind(&Brain::orientation_sub_callback, this, _1));
         
-        desired_state_pub = this->create_publisher<scion_types::msg::DesiredState>
+        desired_state_pub_ = this->create_publisher<scion_types::msg::DesiredState>
         ("desired_state_data", 10);
+
+        reset_pos_client_ = this->create_client<std_srvs::srv::Trigger>("/zed2i/zed_node/reset_pos_tracking");
     }
+
 
 private:
     rclcpp::Subscription<scion_types::msg::Position>::SharedPtr position_sub_;
     rclcpp::Subscription<scion_types::msg::DesiredState>::SharedPtr desired_state_sub_;
-    rclcpp::Publisher<scion_types::msg::DesiredState>::SharedPtr desired_state_pub;
+    rclcpp::Publisher<scion_types::msg::DesiredState>::SharedPtr desired_state_pub_;
     rclcpp::Subscription<scion_types::msg::Orientation>::SharedPtr orientation_sub_;
+    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_pos_client_; 
     rclcpp::TimerBase::SharedPtr state_timer_;
     rclcpp::TimerBase::SharedPtr message_timer_;
+    vector<Command*> command_sequence_ = turnInBox();
     int counter_ = 0;
-    vector<int> commandSequence_{0, 1, 0, 1};
 
     /* Upon initialization set all values to [0,0,0...] */
     vector<float> current_orientation_{0.0F,0.0F,0.0F};
@@ -51,37 +74,91 @@ private:
 
     vector<float> desired_state_ = current_state_;
 
-    void state_timer_callback()
-    /* Essential callback set to update PID state at certain interval */
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                        // COMMAND SEQUENCE DEFINTIONS //
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    vector<Command*> turnInBox()
     {
-        update_current_state();
-        printVector(current_state_);
-        printVector(desired_state_);
+        vector<Command*> command_sequence;
+        
+        Command* command1;
+        command1->fun_ptr = &Brain::move;
+        command1->param1 = .3;
+        command1->param2 = current_state_;
+
+        Command* command2;
+        command2->fun_ptr = &Brain::turn; //static_cast<Command*>
+        command2->param1 = 90.0;
+        command2->param2 = current_state_;
+
+        command_sequence.push_back(command1);
+        command_sequence.push_back(command2);
+
+        return command_sequence;
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                    // SERVICE REQUEST TO RESET POSITION //
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // template<typename T>
+    // auto makeRequest() 
+    // /** 
+    //  * request containing unixtime will be built from message as they are identical, request sent to Node2
+    //  * client will wait for the service (Node 2) to convert unixtime to a date and capture response
+    //  * Returns this response to print later.
+    // **/
+    // {
+    //     auto request = std::make_shared<std_srvs::srv::Trigger::Request>();
+        
+    //     while (!reset_pos_client_->wait_for_service(1s)) 
+    //     {
+    //         if (!rclcpp::ok()) 
+    //         {
+    //             RCLCPP_ERROR(rclcpp::get_logger("brain_node"), "Interrupted while waiting for the service. Exiting.");
+    //         }
+    //         RCLCPP_INFO(rclcpp::get_logger("brain_node"), "service not available, waiting again...");
+    //     }
+    //     auto result = reset_pos_client_->async_send_request(request);
+    //     return result;
+    // }
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                    // GENERATE DESIRED STATE AND SEND TO PID  //
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     void message_timer_callback()
     {
         auto message = scion_types::msg::DesiredState();
-        message.desired_state = std::vector<float>{0,0,0,0,0,0};
-        message.desired_state = constructDesiredState(commandSequence_[counter_]);
-        desired_state_ = message.desired_state;
-        // message.desired_state = desired_state_;
-        desired_state_pub->publish(message);
+        message.desired_state = constructDesiredState();
+        desired_state_ = message.desired_state; // Just to print to the console the desired state
+        desired_state_pub_->publish(message);
         RCLCPP_INFO(this->get_logger(), "Publishing Desired State " );
-        counter_ = ((counter_ + 1) % 4);
+    }
+    
+    std::vector<float> constructDesiredState()
+    {
+        std::vector<float> desired_state; 
+        Command* command = command_sequence_[counter_ % command_sequence_.size()];
+        vector<float> (*command_function)(float, vector<float>) = command->fun_ptr;
+        desired_state = this->*command_function(command->param1, command->param2);
+        counter_ = counter_ + 1;
+        return desired_state;
     }
 
-    std::vector<float> constructDesiredState(int command)
-    {
-        if (command == 0)
-        {
-            return move(.3, current_state_);
-        }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                    // TRACKING SENSOR INFO AND CURRENT STATE  //
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        else
-        {
-            return turn(90, current_state_);
-        }
+    void state_timer_callback()
+    /* Essential callback set to update PID state at certain interval */
+    {
+        // makeRequest()
+        update_current_state();
+        printVector(current_state_);
+        printVector(desired_state_);
     }
 
     void update_current_state()
@@ -111,28 +188,21 @@ private:
             this->current_position_  = msg->position;
         }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                    // POSSIBLE FUNCTIONS TO BE PERFORMED  //
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     vector<float> turn(float degrees, vector<float> current_state_)
     {
-        return vector<float>{degrees, current_state_[1],current_state_[2], current_state_[3], current_state_[4], current_state_[5]};
+        return vector<float>{degrees + current_state_[0], current_state_[1],current_state_[2], current_state_[3], current_state_[4], current_state_[5]};
     }
 
     vector<float> move(float distance, vector<float> current_state_)
     {
-        return vector<float>{current_state_[0], current_state_[1], current_state_[2], distance, current_state_[4], current_state_[5]};
+        return vector<float>{current_state_[0], current_state_[1], current_state_[2], distance + current_state_[3], current_state_[4], current_state_[5]};
     }
 
 };
-
-
-// std::vector<void (*)()> turnSequence;           // vector of functions holds the desired turn sequence
-
-// SomeClass::addThingy(void (*function)())
-// {
-//     //Don't take the address of the address:
-//     vectoroffunctions.push_back(function);
-// }
-
-
 
 int main(int argc, char * argv[])
 {   
