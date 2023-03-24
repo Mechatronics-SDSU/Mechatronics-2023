@@ -23,6 +23,10 @@ find_package(rosidl_default_generators REQUIRED)
 
 add_executable(zed_orientation_exec src/zed_orientation_node.cpp)
 
-ament_target_dependencies(zed_orientation_exec rclcpp scion_types geometry_msgs)
+ament_target_dependencies(zed_orientation_exec rclcpp scion_types geometry_msgs) 
+
+install(TARGETS
+  zed_orientation_exec
+  DESTINATION lib/${PROJECT_NAME})
 
 ament_package()
