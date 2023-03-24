@@ -57,8 +57,6 @@ ALL TOPICS
 /dvl_vel_x
 /dvl_vel_y
 /dvl_vel_z
-/emergency_mb_pub
-/heartbeat_mb_pub
 /ms5837_depth
 /ms5837_temp
 /brping1_dist
@@ -164,12 +162,12 @@ Each node has SIX default services - these ones
 /ahrs_node/list_parameters
 /ahrs_node/set_parameters
 /ahrs_node/set_parameters_atomically
-/can_mbox_publisher/describe_parameters
-/can_mbox_publisher/get_parameter_types
-/can_mbox_publisher/get_parameters
-/can_mbox_publisher/list_parameters
-/can_mbox_publisher/set_parameters
-/can_mbox_publisher/set_parameters_atomically
+/can_driver/describe_parameters
+/can_driver/get_parameter_types
+/can_driver/get_parameters
+/can_driver/list_parameters
+/can_driver/set_parameters
+/can_driver/set_parameters_atomically
 
 
 

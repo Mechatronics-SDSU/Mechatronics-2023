@@ -4,8 +4,6 @@
     Currently will turn on 
         - AHRS Orientation node
         - CAN Driver node
-        - DVL Velocity Node
-        - MS5837 Depth Node
         - PID Controller Node
         - Specific Zed Position Node (filters data from Zed Node for position data)
         - Zed Node which contains various topics

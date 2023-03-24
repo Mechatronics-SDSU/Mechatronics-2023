@@ -24,7 +24,7 @@ using namespace std;
 /* Yucky global variables */
 std::string can_bus_interface = "vcan0";
 bool do_device_polling = true;
-uint8_t module_enabled_field = 0xFF;
+uint8_t module_enabled_field = 0xFFFFFFFF;
 
 /*
 	The following code creates multiple filtered CAN mailboxes to divide
@@ -52,7 +52,7 @@ UnifiedCanDriver::UnifiedCanDriver()
 	this->declare_parameter("module_bitfield", 0xFFFF);
 
 	module_enabled_field = this->get_parameter(
-		"module_bitfield").get_parameter_value().get<uint8_t>();
+		"module_bitfield").get_parameter_value().get<uint32_t>();
 	can_bus_interface = this->get_parameter(
 		"can_bus_interface").as_string();
 	do_device_polling = this->get_parameter(

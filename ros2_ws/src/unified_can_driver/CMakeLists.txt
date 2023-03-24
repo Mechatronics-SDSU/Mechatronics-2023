@@ -31,16 +31,13 @@ add_executable(
 	src/base_driver/can_mailbox_topic.cpp
 	src/base_driver/send_command_service.cpp
 	src/mbox_can.cpp
+	src/module_loader.cpp
+# Modules:
 	src/module/dvl.cpp
 	src/module/ms5837.cpp
 	src/module/brlight.cpp
 	src/module/brping1.cpp
 	src/module/module.cpp
-	src/module_loader.cpp
-#	src/dres_decoder/dres_decoder.cpp
-#	src/dres_decoder/dres_handler/dres_handler.cpp
-#	src/dres_decoder/dres_handler/dvl_handler.cpp
-#	src/dres_decoder/dres_handler/ms5837_handler.cpp
 )
 
 ament_target_dependencies(unified_can_driver rclcpp scion_types)

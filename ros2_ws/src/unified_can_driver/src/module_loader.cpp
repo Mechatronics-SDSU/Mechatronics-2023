@@ -10,28 +10,6 @@ ModuleLoader::ModuleLoader(rclcpp::Node* ctx, struct ifreq* ifr)
 	module_list.reserve(module_ct);
 	std::fill(module_list.begin(), module_list.end(),nullptr);
 
-	/* Conditionally enable modules */
-	// if(module_enabled_field & MODULE_DVL_ENABLE)
-	// {
-		// dvl = new DVLModule(node_context, module_mb);
-		// module_list[dvl->module_device_id] = dvl;
-	// }
-// 
-	// if(module_enabled_field & MODULE_MS5837_ENABLE)
-	// {
-		// ms5837 = new MS5837Module(node_context, module_mb);
-		// module_list[ms5837->module_device_id] = ms5837;
-	// }
-	// if(module_enabled_field & MODULE_BRLIGHT_ENABLE)
-	// {
-		// brlight = new BRLIGHTModule(node_context, module_mb);
-		// module_list[ms5837->module_device_id] = brlight;
-	// }
-	// if(module_enabled_field & MODULE_BRPING1_ENABLE)
-	// {
-		// ms5837 = new MS5837Module(node_context, module_mb);
-		// module_list[ms5837->module_device_id] = ms5837;
-	// }
 
 	load_module<DVLModule>(dvl, MODULE_DVL_ENABLE);
 	load_module<MS5837Module>(ms5837, MODULE_MS5837_ENABLE);
