@@ -4,12 +4,19 @@
  * Commands can be pre-loaded or create with navigation logic
  * 
  * Robot will keep track of a "command queue"
- * This command queue will be abstracted as an array of Commands
+ * This command queue will be abstracted as an vector/queue of Commands
  * Each command will be a function pointer to the action to perform 
- * and any parameters to pass to the Command
+ * and any parameters to pass to the function
  * 
  * The main ROS2 purpose of this node is to send a desired state to the
- * PIDs. It's the brain 
+ * PIDs. It's the brain that tells the PIDs where the robot wants to go.
+ * 
+ * It will do this by taking the next out of the queue
+ * 
+ * A decision maker will be responsible for loading commands into the queue
+ * 
+ * PIDs will have to send command completion status for the queue mediator
+ * to take out the next command.
  * 
  */
 
@@ -27,7 +34,7 @@ using std::placeholders::_2;
 using namespace std;
 
 #define STATE_UPDATE_PERIOD 120ms
-#define MESSAGE_UPDATE_PERIOD 3s
+#define MESSAGE_UPDATE_PERIOD 4s
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +70,7 @@ public:
 
         // reset_pos_client_ = this->create_client<std_srvs::srv::Trigger>("/zed2i/zed_node/reset_pos_tracking");
 
-        turnInBox(command_sequence_);                                   // Set command sequence with the commands defined in custom command sequence function
+        forwardBack(command_sequence_);                                   // Set command sequence with the commands defined in custom command sequence function
     }
 
 private:
@@ -117,6 +124,20 @@ private:
             std::cout << (void*)command.commandPtr << std::endl;
             std::cout << command.degree << std::endl;
         }
+    }
+
+    void forwardBack(vector<Command>& command_sequence)
+    {
+        Command command1;
+        command1.commandPtr = &Brain::move;
+        command1.degree = 0.5;
+
+        Command command2;
+        command2.commandPtr = &Brain::move; //static_cast<Command*>
+        command2.degree = -0.5;
+
+        command_sequence.push_back(command1);
+        command_sequence.push_back(command2);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -207,9 +228,9 @@ private:
      * that has been updated from the sensors. As of now
      * we are using orientation as first 3 values, position as next 3
      */
-        this->current_state_[0] = this->current_orientation_[0];
-        this->current_state_[1] = this->current_orientation_[1];
-        this->current_state_[2] = this->current_orientation_[2];
+        // this->current_state_[0] = this->current_orientation_[0];
+        // this->current_state_[1] = this->current_orientation_[1];
+        // this->current_state_[2] = this->current_orientation_[2];
         this->current_state_[3] = this->current_position_[0];
         this->current_state_[4] = this->current_position_[1];
         this->current_state_[5] = this->current_position_[2];
@@ -237,7 +258,7 @@ private:
 
     vector<float> move(float distance, vector<float>& current_state_)
     {
-        makeRequest();
+        // makeRequest();
         return vector<float>{current_state_[0], current_state_[1], current_state_[2], distance + current_state_[3], current_state_[4], current_state_[5]};
     }
 };

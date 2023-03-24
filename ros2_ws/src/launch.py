@@ -229,12 +229,12 @@ def generate_launch_description():
         launch_ros.actions.Node(
             package='brain_node', executable='brain_exec', output='screen' 
             ),  
-        launch_ros.actions.Node(
-            package='pid_node', executable='pid_exec', output='screen' 
-            ),    
-        launch_ros.actions.Node(
-            package='can2ros_driver', executable='can2ros_driver'
-            ),
+        # launch_ros.actions.Node(
+        #     package='pid_node', executable='pid_exec', output='screen' 
+        #     ),    
+        # launch_ros.actions.Node(
+        #     package='can2ros_driver', executable='can2ros_driver'
+        #     ),
         # # launch_ros.actions.Node(
         # #     package='dres_dvl_decode', executable='dres_dvl_decode' 
         # #     ),
