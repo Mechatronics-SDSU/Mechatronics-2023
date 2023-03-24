@@ -224,7 +224,7 @@ def generate_launch_description():
             description='Pose of the camera with respect to the base frame (i.e. `base_link`): [x,y,z,r,p,y]. Note: Orientation in rad.)'),
         # ******************* EVERYTHING BELOW HERE ARE OUR NODES ************** #
         launch_ros.actions.Node(
-            package='ahrs_node', executable='ahrs_exec',
+            package='ahrs_node', executable='ahrs_exec', output='screen'
             ),
         launch_ros.actions.Node(
             package='brain_node', executable='brain_exec', output='screen' 

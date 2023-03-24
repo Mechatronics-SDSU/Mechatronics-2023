@@ -58,8 +58,8 @@ public:
         
         print_timer_ = this->create_wall_timer(PRINT_PERIOD, std::bind(&Controller::print_timer_callback, this));
 
-        position_sub_ = this->create_subscription<scion_types::msg::Position>
-        ("zed_position_data", 10, std::bind(&Controller::position_sub_callback, this, _1));
+        // position_sub_ = this->create_subscription<scion_types::msg::Position>
+        // ("zed_position_data", 10, std::bind(&Controller::position_sub_callback, this, _1));
     
         // depth_sub_ = this->create_subscription<std_msgs::msg::Float32>
         // ("ms5837_depth_data", 10, std::bind(&Controller::depth_sub_callback, this, _1));
@@ -129,9 +129,9 @@ private:
         this->current_state_[0] = this->current_orientation_[0];
         this->current_state_[1] = this->current_orientation_[1];
         this->current_state_[2] = this->current_orientation_[2];
-        this->current_state_[3] = this->current_position_[0];
-        this->current_state_[4] = this->current_position_[1];
-        this->current_state_[5] = this->current_position_[2];
+        // this->current_state_[3] = this->current_position_[0];
+        // this->current_state_[4] = this->current_position_[1];
+        // this->current_state_[5] = this->current_position_[2];
     /* 
      * STEP 2: Update the PID Controller (meaning call the ScionPIDController object's
      * update function which generates ctrl_vals and show its status on the screen 
@@ -208,11 +208,11 @@ private:
     //     this->current_position_ = vector<float>{0.0, 0.0, msg->data} ;
     // }
 
-    void position_sub_callback(const scion_types::msg::Position::SharedPtr msg)
-    {    
-         RCLCPP_INFO(this->get_logger(), "Received Zed Position Data");
-         this->current_position_  = msg->position;
-    }
+    // void position_sub_callback(const scion_types::msg::Position::SharedPtr msg)
+    // {    
+    //      RCLCPP_INFO(this->get_logger(), "Received Zed Position Data");
+    //      this->current_position_  = msg->position;
+    // }
     
     void desired_state_callback(const scion_types::msg::DesiredState::SharedPtr msg)
     /** 

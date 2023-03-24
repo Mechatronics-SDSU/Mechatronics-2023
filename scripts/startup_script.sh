@@ -72,11 +72,11 @@ sleep 6
 
 # CREATE FOUR ROS SOURCED SHELLS IN CORRECT DIRECTORY (OPTION FOR SSH WITH ARG) ---------->
 
-gnome-terminal --geometry 80x25+0+500 -- bash -c "cd ../ros2_ws; . install/setup.bash; cd ..; exec bash"
+gnome-terminal --geometry 80x25+0+500 -- bash -c "cd ../ros2_ws; . install/setup.bash; source /opt/ros/foxy/setup.bash; cd ..; exec bash"
 
-gnome-terminal --geometry 80x25+1000+500 -- bash -c "cd ../ros2_ws; . install/setup.bash; exec bash"
+gnome-terminal --geometry 80x25+1000+500 -- bash -c "cd ../ros2_ws; . install/setup.bash; source /opt/ros/foxy/setup.bash; exec bash"
 
-gnome-terminal --geometry 80x25+0+0 -- bash -c "cd ../ros2_ws; . install/setup.bash; cd src; exec bash"
+gnome-terminal --geometry 80x25+0+0 -- bash -c "cd ../ros2_ws; . install/setup.bash; source /opt/ros/foxy/setup.bash cd src; exec bash"
 
 gnome-terminal --geometry 80x25+1000+0 -- bash -c "exec bash"
 

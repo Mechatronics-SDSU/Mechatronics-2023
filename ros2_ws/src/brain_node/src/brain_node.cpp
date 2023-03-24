@@ -44,7 +44,7 @@ public:
         desired_state_pub_ = this->create_publisher<scion_types::msg::DesiredState>
         ("desired_state_data", 10);
 
-        // reset_pos_client_ = this->create_client<std_srvs::srv::Trigger>("/zed2i/zed_node/reset_pos_tracking");
+        reset_pos_client_ = this->create_client<std_srvs::srv::Trigger>("/zed2i/zed_node/reset_pos_tracking");
 
         turnInBox(command_sequence_); 
     }
@@ -61,7 +61,7 @@ private:
     rclcpp::Subscription<scion_types::msg::DesiredState>::SharedPtr desired_state_sub_;
     rclcpp::Publisher<scion_types::msg::DesiredState>::SharedPtr desired_state_pub_;
     rclcpp::Subscription<scion_types::msg::Orientation>::SharedPtr orientation_sub_;
-    // rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_pos_client_; 
+    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_pos_client_; 
     rclcpp::TimerBase::SharedPtr state_timer_;
     rclcpp::TimerBase::SharedPtr message_timer_;
     vector<Command> command_sequence_;
@@ -88,7 +88,7 @@ private:
     {
         Command command1;
         command1.fun_ptr = &Brain::move;
-        command1.param1 = 0.3;
+        command1.param1 = .1;
         // command1.param2 = &current_state_;
 
         Command command2;
@@ -110,27 +110,26 @@ private:
                                     // SERVICE REQUEST TO RESET POSITION //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // template<typename T>
-    // auto makeRequest() 
-    // /** 
-    //  * request containing unixtime will be built from message as they are identical, request sent to Node2
-    //  * client will wait for the service (Node 2) to convert unixtime to a date and capture response
-    //  * Returns this response to print later.
-    // **/
-    // {
-    //     auto request = std::make_shared<std_srvs::srv::Trigger::Request>();
+    auto makeRequest() 
+    /** 
+     * request containing unixtime will be built from message as they are identical, request sent to Node2
+     * client will wait for the service (Node 2) to convert unixtime to a date and capture response
+     * Returns this response to print later.
+    **/
+    {
+        auto request = std::make_shared<std_srvs::srv::Trigger::Request>();
         
-    //     while (!reset_pos_client_->wait_for_service(1s)) 
-    //     {
-    //         if (!rclcpp::ok()) 
-    //         {
-    //             RCLCPP_ERROR(rclcpp::get_logger("brain_node"), "Interrupted while waiting for the service. Exiting.");
-    //         }
-    //         RCLCPP_INFO(rclcpp::get_logger("brain_node"), "service not available, waiting again...");
-    //     }
-    //     auto result = reset_pos_client_->async_send_request(request);
-    //     return result;
-    // }
+        while (!reset_pos_client_->wait_for_service(1s)) 
+        {
+            if (!rclcpp::ok()) 
+            {
+                RCLCPP_ERROR(rclcpp::get_logger("brain_node"), "Interrupted while waiting for the service. Exiting.");
+            }
+            RCLCPP_INFO(rclcpp::get_logger("brain_node"), "service not available, waiting again...");
+        }
+        auto result = reset_pos_client_->async_send_request(request);
+        return result;
+    }
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -174,7 +173,6 @@ private:
     void state_timer_callback()
     /* Essential callback set to update PID state at certain interval */
     {
-        // makeRequest()
         update_current_state();
         printVector(current_state_);
         printVector(desired_state_);
@@ -217,6 +215,7 @@ private:
 
     vector<float> move(float distance, vector<float>& current_state_)
     {
+        makeRequest();
         return vector<float>{current_state_[0], current_state_[1], current_state_[2], distance + current_state_[3], current_state_[4], current_state_[5]};
     }
 };
