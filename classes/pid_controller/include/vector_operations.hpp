@@ -10,7 +10,7 @@ using namespace std;
 
 // Print each element of vector
 template <typename T>
-void printVector(vector<T> vector) 
+void printVector(vector<T>& vector) 
 {
     for (T element : vector)
     {
