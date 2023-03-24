@@ -51,9 +51,9 @@ public:
 
 struct Command
 {
-    vector<float>(Brain::*fun_ptr)(float, vector<float>);
-    int param1;
-    vector<float>* param2;
+    vector<float>(Brain::*fun_ptr)(float, vector<float>&);
+    float param1;
+    // vector<float>* param2;
 };
 
 private:
@@ -88,21 +88,21 @@ private:
         Command command1;
         command1.fun_ptr = &Brain::move;
         command1.param1 = 0.3;
-        command1.param2 = &current_state_;
+        // command1.param2 = &current_state_;
 
         Command command2;
         command2.fun_ptr = &Brain::turn; //static_cast<Command*>
         command2.param1 = 90.0;
-        command2.param2 = &current_state_;
-
-        Command command3;
-        command2.fun_ptr = &Brain::move; //static_cast<Command*>
-        command2.param1 = 10;
-        command2.param2 = &current_state_;
+        // command2.param2 = &current_state_;
 
         command_sequence.push_back(command1);
         command_sequence.push_back(command2);
-        command_sequence.push_back(command3);
+        
+        for (Command command : command_sequence)
+        {
+            std::cout << (void*)command.fun_ptr << std::endl;
+            std::cout << command.param1 << std::endl;
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,14 +153,14 @@ private:
         //     printVector(commandPtr->param2);
         // }
         std::vector<float> desired_state; 
-        Command command = command_sequence_[counter_ % command_sequence_.size()];
+        Command command = command_sequence_[(counter_ % command_sequence_.size())];
         cout << "ptr:" << (void*)command.fun_ptr << " " << std::endl;
         cout << "float: "<< command.param1 << " " << std::endl;
         cout << "vector: " << std::endl;
-        printVector(*command.param2);
+        printVector(current_state_);
 
-        vector<float> (Brain::*command_function)(float, vector<float>) = command.fun_ptr;
-        desired_state = (this->*command_function)(command.param1, *command.param2);         
+        vector<float> (Brain::*command_function)(float, vector<float>&) = command.fun_ptr;
+        desired_state = (this->*command_function)(command.param1, current_state_);         
         counter_ = counter_ + 1;
         return desired_state;
     }
@@ -208,12 +208,12 @@ private:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                     // POSSIBLE FUNCTIONS TO BE PERFORMED  //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    vector<float> turn(float degrees, vector<float> current_state_)
+    vector<float> turn(float degrees, vector<float>& current_state_)
     {
         return vector<float>{degrees + current_state_[0], current_state_[1],current_state_[2], current_state_[3], current_state_[4], current_state_[5]};
     }
 
-    vector<float> move(float distance, vector<float> current_state_)
+    vector<float> move(float distance, vector<float>& current_state_)
     {
         return vector<float>{current_state_[0], current_state_[1], current_state_[2], distance + current_state_[3], current_state_[4], current_state_[5]};
     }
