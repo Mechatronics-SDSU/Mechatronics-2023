@@ -100,11 +100,11 @@ private:
     PID_Params pid_params_object_;                      // Passed to controller for tuning
 
     /* Upon initialization set all values to [0,0,0...] */
-    vector<float> current_orientation_{0.0F,0.0F,0.0F};
-    vector<float> current_position_{0.0F,0.0F,0.0F};
-    vector<float> current_state_{0.0F,0.0F,0.0F,0.0F,0.0F,0.0F}; // State described by yaw, pitch, roll, x, y, z 
+    vector<float> current_orientation_{0.0F, 0.0F, 0.0F};
+    vector<float> current_position_{0.0F, 0.0F, 0.0F};
+    vector<float> current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
 
-    vector<float> current_desired_state_ = current_state_; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
+    vector<float> current_desired_state_; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                         // UPDATES OF STATE FOR PIDs // 
@@ -113,8 +113,10 @@ private:
     /* Different timer for printing and sensor updates */
     void print_timer_callback()
     {
-        RCLCPP_INFO(this->get_logger(), "Current State:");
+        std::cout << "CURRENT AND DESIRED STATE" << "\n" << "___________________________ \n";
         printVector(this->current_state_);
+        printVector(this->current_desired_state_);
+        std::cout << "___________________________\n\n";
         this->controller_.getStatus(); 
     }
 
@@ -132,9 +134,9 @@ private:
      * we are using orientation as first 3 values, position as next 3
      */
 
-        // this->current_state_[0] = this->current_orientation_[0];
-        // this->current_state_[1] = this->current_orientation_[1];
-        // this->current_state_[2] = this->current_orientation_[2];
+        this->current_state_[0] = this->current_orientation_[0];
+        this->current_state_[1] = this->current_orientation_[1];
+        this->current_state_[2] = this->current_orientation_[2];
         this->current_state_[3] = this->current_position_[0];
         this->current_state_[4] = this->current_position_[1];
         this->current_state_[5] = this->current_position_[2];
@@ -142,8 +144,15 @@ private:
      * STEP 2: Update the PID Controller (meaning call the ScionPIDController object's
      * update function which generates ctrl_vals and show its status on the screen 
      */
-        this->controller_.update(current_state_, current_desired_state_, .010); // MOST IMPORTANT LINE IN PROGRAM
-                                    // Refer to classes/pid_controller/scion_pid_controller.hpp for this function
+        if (current_desired_state_.size() == 0)
+        {
+            current_desired_state_ = current_state_;
+        }
+        if (current_desired_state_.size() > 0)
+        {
+                                        // Refer to classes/pid_controller/scion_pid_controller.hpp for this function
+            this->controller_.update(current_state_, current_desired_state_, .010); // MOST IMPORTANT LINE IN PROGRAM
+        }
 
     /* STEP 3: Send those generated values to the motors */
         make_CAN_request(this->controller_.current_thrust_values);
@@ -153,7 +162,7 @@ private:
                                     // CAN REQUESTS FOR MOTOR CONTROL // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void make_CAN_request(vector<float> thrusts)
+    void make_CAN_request(vector<float>& thrusts)
     {
         /* Thrusts come out of PID as a float between -1 and 1; motors need int value from -100 to 100 */
         int thrust0 = (int)(thrusts[0]*100);
@@ -192,7 +201,7 @@ private:
         if(Mailbox::MboxCan::write_mbox(this->poll_mb_, &poll_frame) == -1) 
         {
             RCLCPP_INFO(this->get_logger(),
-            "[DresDecodeNode::_data_request] Failed to write DREQ.");
+            "[DresDecodeNode::_data_request] Failed to write CAN Request.");
 	    }
     }
     ////////////////////////////////////////// END REQUEST //////////////////////////////////////////
