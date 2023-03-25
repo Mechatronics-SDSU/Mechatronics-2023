@@ -131,7 +131,7 @@ pair<float, float> PID_Controller::update(float current_point, float desired_poi
     float derivative = this->k_d * (error - this->previous_error); // Derivative takes into account previous error
 
     this->previous_error = error;            // reset error for next cycle
-
+{}
 
     // std::cout << "proportional: " << proportional << endl;    //Just for testing
     // std::cout << "integral: " << integral << endl;
@@ -171,9 +171,9 @@ pair<float, float> PID_Controller::update(float current_point, float desired_poi
 /* Print all PIDs fields */
 void PID_Controller::getStatus()
 {
-    cout << "k_p: " << this->k_p << endl;
-    cout << "k_i: " << this->k_i << endl;
-    cout << "k_d: " << this->k_d << endl;
+    // cout << "k_p: " << this->k_p << endl;
+    // cout << "k_i: " << this->k_i << endl;
+    // cout << "k_d: " << this->k_d << endl;
     cout << "integral: " << this->integral << endl;
     cout << "previous_error: " << this->previous_error << endl;
 }

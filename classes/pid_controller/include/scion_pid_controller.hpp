@@ -44,8 +44,8 @@ class Scion_Position_PID_Controller
         // Request control values from each PID
         pair<vector<float>, vector<float>> update
             (
-                vector<float> current_point=    vector<float>{0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
-                vector<float> desired_point=vector<float>{0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, 
+                vector<float>& current_point,
+                vector<float>& desired_point, 
                 float dt=0.010
             );
 

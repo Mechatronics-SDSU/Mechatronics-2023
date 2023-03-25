@@ -124,8 +124,8 @@ Scion_Position_PID_Controller::Scion_Position_PID_Controller(map<string, map<str
       */
 pair<vector<float>, vector<float>> Scion_Position_PID_Controller::update
     (
-        vector<float> current_point,
-        vector<float> desired_point,
+        vector<float>& current_point,
+        vector<float>& desired_point,
         float dt
     ) 
     {
