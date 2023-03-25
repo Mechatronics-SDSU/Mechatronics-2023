@@ -70,7 +70,7 @@ public:
 
         // reset_pos_client_ = this->create_client<std_srvs::srv::Trigger>("/zed2i/zed_node/reset_pos_tracking");
 
-        forwardBack(command_sequence_);                                   // Set command sequence with the commands defined in custom command sequence function
+        turnInBox(command_sequence_);                                   // Set command sequence with the commands defined in custom command sequence function
     }
 
 private:
@@ -109,7 +109,7 @@ private:
 
         Command command1;
         command1.commandPtr = &Brain::move;
-        command1.degree = 0.3;
+        command1.degree = 0.2;
 
         Command command2;
         command2.commandPtr = &Brain::turn; //static_cast<Command*>
@@ -228,9 +228,9 @@ private:
      * that has been updated from the sensors. As of now
      * we are using orientation as first 3 values, position as next 3
      */
-        // this->current_state_[0] = this->current_orientation_[0];
-        // this->current_state_[1] = this->current_orientation_[1];
-        // this->current_state_[2] = this->current_orientation_[2];
+        this->current_state_[0] = this->current_orientation_[0];
+        this->current_state_[1] = this->current_orientation_[1];
+        this->current_state_[2] = this->current_orientation_[2];
         this->current_state_[3] = this->current_position_[0];
         this->current_state_[4] = this->current_position_[1];
         this->current_state_[5] = this->current_position_[2];
@@ -238,15 +238,15 @@ private:
 
     void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)
     {
-        RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
+        // RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
         this->current_orientation_ = msg->orientation;
     }
 
     void position_sub_callback(const scion_types::msg::Position::SharedPtr msg)
-        {    
-            RCLCPP_INFO(this->get_logger(), "Received Zed Position Data");
-            this->current_position_  = msg->position;
-        }
+    {    
+        RCLCPP_INFO(this->get_logger(), "Received Zed Position Data");
+        this->current_position_  = msg->position;
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                     // POSSIBLE FUNCTIONS TO BE PERFORMED  //

@@ -71,8 +71,11 @@ public:
         desired_state_sub_ = this->create_subscription<scion_types::msg::DesiredState>
         ("desired_state_data", 10, std::bind(&Controller::desired_state_callback, this, _1));
 
+        orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
+        ("ahrs_orientation_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
+
         // orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
-        // ("ahrs_orientation_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
+        // ("zed_orientation_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
 
         // velocity_sub_ = this->create_subscription<scion_types::msg::Orientation>
         // ("dvl_velocity_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
@@ -100,11 +103,11 @@ private:
     PID_Params pid_params_object_;                      // Passed to controller for tuning
 
     /* Upon initialization set all values to [0,0,0...] */
-    vector<float> current_orientation_{0.0F,0.0F,0.0F};
-    vector<float> current_position_{0.0F,0.0F,0.0F};
-    vector<float> current_state_{0.0F,0.0F,0.0F,0.0F,0.0F,0.0F}; // State described by yaw, pitch, roll, x, y, z 
+    vector<float> current_orientation_;
+    vector<float> current_position_;
+    vector<float> current_state_; // State described by yaw, pitch, roll, x, y, z 
 
-    vector<float> current_desired_state_ = current_state_; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
+    vector<float> current_desired_state_; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                         // UPDATES OF STATE FOR PIDs // 
@@ -132,9 +135,9 @@ private:
      * we are using orientation as first 3 values, position as next 3
      */
 
-        // this->current_state_[0] = this->current_orientation_[0];
-        // this->current_state_[1] = this->current_orientation_[1];
-        // this->current_state_[2] = this->current_orientation_[2];
+        this->current_state_[0] = this->current_orientation_[0];
+        this->current_state_[1] = this->current_orientation_[1];
+        this->current_state_[2] = this->current_orientation_[2];
         this->current_state_[3] = this->current_position_[0];
         this->current_state_[4] = this->current_position_[1];
         this->current_state_[5] = this->current_position_[2];
@@ -207,11 +210,11 @@ private:
      * sensor. When that sensor publishes, the PID will store the last sensed value  
      */
 
-    // void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)
-    // {
-    //     RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
-    //     this->current_orientation_ = msg->orientation;
-    // }
+    void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)
+    {
+        // RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
+        this->current_orientation_ = msg->orientation;
+    }
 
     // void depth_sub_callback(const std_msgs::msg::Float32::SharedPtr msg)
     // {

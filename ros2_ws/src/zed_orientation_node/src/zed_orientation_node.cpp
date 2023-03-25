@@ -67,9 +67,9 @@ class ZedOrientationSubscriber : public rclcpp::Node
   private:
     void topic_callback(const geometry_msgs::msg::PoseStamped::SharedPtr msg) const
     {
-        float zed_orientation_x = (float)msg->pose.orientation.x * 180 + 180;
-        float zed_orientation_y = (float)msg->pose.orientation.y * 180 + 180;
-        float zed_orientation_z = (float)msg->pose.orientation.z * 180 + 180;
+        float zed_orientation_x = (float)msg->pose.orientation.x * 180;
+        float zed_orientation_y = (float)msg->pose.orientation.y * 180;
+        float zed_orientation_z = (float)msg->pose.orientation.z * 180;
         
         auto message = scion_types::msg::Orientation();
         message.orientation = std::vector<float>{zed_orientation_x, zed_orientation_y, zed_orientation_z};

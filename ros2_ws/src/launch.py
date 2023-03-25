@@ -229,9 +229,9 @@ def generate_launch_description():
         launch_ros.actions.Node(
             package='brain_node', executable='brain_exec', output='screen' 
             ),  
-        # launch_ros.actions.Node(
-        #     package='pid_node', executable='pid_exec', output='screen' 
-        #     ),    
+        launch_ros.actions.Node(
+            package='pid_node', executable='pid_exec', output='screen' 
+            ),    
         # launch_ros.actions.Node(
         #     package='can2ros_driver', executable='can2ros_driver'
         #     ),
@@ -241,6 +241,9 @@ def generate_launch_description():
         # launch_ros.actions.Node(
         #     package='dres_ms5837_decode', executable='dres_ms5837_decode'
         #     ),
+        # launch_ros.actions.Node(
+        #     package='zed_orientation_node', executable='zed_orientation_exec' 
+        #     ),   
         launch_ros.actions.Node(
             package='zed_pos_node', executable='zed_pos_exec' 
             ),   
