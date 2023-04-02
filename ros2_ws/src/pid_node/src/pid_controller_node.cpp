@@ -71,8 +71,11 @@ public:
         desired_state_sub_ = this->create_subscription<scion_types::msg::DesiredState>
         ("desired_state_data", 10, std::bind(&Controller::desired_state_callback, this, _1));
 
+        orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
+        ("ahrs_orientation_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
+
         // orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
-        // ("ahrs_orientation_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
+        // ("zed_orientation_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
 
         // velocity_sub_ = this->create_subscription<scion_types::msg::Orientation>
         // ("dvl_velocity_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
@@ -100,6 +103,7 @@ private:
     PID_Params pid_params_object_;                      // Passed to controller for tuning
 
     /* Upon initialization set all values to [0,0,0...] */
+
     vector<float> current_orientation_{0.0F, 0.0F, 0.0F};
     vector<float> current_position_{0.0F, 0.0F, 0.0F};
     vector<float> current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
@@ -216,11 +220,11 @@ private:
      * sensor. When that sensor publishes, the PID will store the last sensed value  
      */
 
-    // void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)
-    // {
-    //     RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
-    //     this->current_orientation_ = msg->orientation;
-    // }
+    void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)
+    {
+        // RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
+        this->current_orientation_ = msg->orientation;
+    }
 
     // void depth_sub_callback(const std_msgs::msg::Float32::SharedPtr msg)
     // {
