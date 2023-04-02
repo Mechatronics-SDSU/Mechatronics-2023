@@ -113,7 +113,7 @@ private:
     /* Different timer for printing and sensor updates */
     void print_timer_callback()
     {
-        std::cout << "CURRENT AND DESIRED STATE" << "\n" << "___________________________ \n";
+        std::cout << "CURRENT AND DESIRED STATE" << "\n" << "___________________________ \n\n";
         printVector(this->current_state_);
         printVector(this->current_desired_state_);
         std::cout << "___________________________\n\n";
