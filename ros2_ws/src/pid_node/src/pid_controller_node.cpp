@@ -24,7 +24,9 @@
 #include <cstring>
 
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_action/rclcpp_action.hpp"
 #include "control_interface.hpp"
+#include "scion_types/action/pid.hpp"
 #include "scion_types/msg/state.hpp"
 #include "scion_pid_controller.hpp"                // PID Class
 #include "mbox_can.hpp"                            // For CAN Requests
@@ -36,10 +38,16 @@ using namespace std;
 #define MBOX_INTERFACE "can0"
 #define UPDATE_PERIOD 120ms
 #define PRINT_PERIOD 500ms
+#define PID_ERROR_THRESHOLD 0.001f
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
                                     // MEMBER VARIABLE DECLARATIONS // 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+using PIDAction = scion_types::action::PID;
+using GoalHandlePIDAction = rclcpp_action::ServerGoalHandle<PIDAction>;
+using namespace std::placeholders;
+
 
 /** 
  * Controller Node consists of: 
@@ -54,7 +62,7 @@ class Controller : public rclcpp::Node
 {
 
 public:
-    Controller(): Node("pid_controller")
+    explicit Controller(): Node("pid_controller")
     {
         timer_ = this->create_wall_timer(UPDATE_PERIOD, std::bind(&Controller::timer_callback, this));
         
@@ -63,8 +71,17 @@ public:
         current_state_sub_ = this->create_subscription<scion_types::msg::State>
         ("current_state_data", 10, std::bind(&Controller::current_state_callback, this, _1));
 
-        desired_state_sub_ = this->create_subscription<scion_types::msg::State>
-        ("desired_state_data", 10, std::bind(&Controller::desired_state_callback, this, _1));
+        // desired_state_sub_ = this->create_subscription<scion_types::msg::State>
+        // ("desired_state_data", 10, std::bind(&Controller::desired_state_callback, this, _1));
+
+        this->pid_command_server_ = rclcpp_action::create_server<PIDAction>
+        (
+        this,
+        "PIDAction",
+        std::bind(&Controller::handle_goal, this, _1, _2),
+        std::bind(&Controller::handle_cancel, this, _1),
+        std::bind(&Controller::handle_accepted, this, _1)
+        );
 
         controller_ = Scion_Position_PID_Controller(pid_params_object_.get_pid_params());
         controller_.getStatus();
@@ -81,6 +98,7 @@ private:
     rclcpp::TimerBase::SharedPtr print_timer_;
     rclcpp::Subscription<scion_types::msg::State>::SharedPtr current_state_sub_;
     rclcpp::Subscription<scion_types::msg::State>::SharedPtr desired_state_sub_;
+    rclcpp_action::Server<PIDAction>::SharedPtr pid_command_server_;
     Scion_Position_PID_Controller controller_;
     PID_Params pid_params_object_;                      // Passed to controller for tuning
     Mailbox::MboxCan* poll_mb_;
@@ -97,11 +115,6 @@ private:
                                 // WAIT FOR VALID DATA TO INITIALIZE PIDs // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-                                        // UPDATES OF STATE FOR PIDs // 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-
      void initDesiredState()
     {
         auto desiredValid = std::bind(&Controller::desiredStateValid, this);
@@ -116,12 +129,22 @@ private:
 
     bool desiredStateValid()
     {
-        while (!this->desired_state_valid_)
+        while (!this->current_state_valid_)
         {
             sleep(.1);
         }
+        while (!this->areEqual(this->desired_state_, this->current_state_))
+        {
+            this->desired_state_ = this->current_state_;
+        }
+        this->desired_state_valid_ = true;
         return true;
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                        // UPDATES OF STATE FOR PIDs // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     /* Different timer for printing and sensor updates */
     void print_timer_callback()
@@ -205,21 +228,129 @@ private:
     }
     ////////////////////////////////////////// END REQUEST //////////////////////////////////////////
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            // ACTION SERVER // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    rclcpp_action::GoalResponse handle_goal
+    (
+        const rclcpp_action::GoalUUID& uuid,
+        std::shared_ptr<const PIDAction::Goal> goal
+    )
+    {
+        RCLCPP_INFO(this->get_logger(), "Received goal request with order %d", goal->desired_state);
+        (void)uuid;
+        return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+    }
+
+    rclcpp_action::CancelResponse handle_cancel
+    (
+        const std::shared_ptr<GoalHandlePIDAction> goal_handle
+    )
+    {
+        RCLCPP_INFO(this->get_logger(), "Received request to cancel goal");
+        (void)goal_handle;
+        return rclcpp_action::CancelResponse::ACCEPT;
+    }
+
+    void handle_accepted
+    (
+        const std::shared_ptr<GoalHandlePIDAction> goal_handle
+    )
+    {
+        using namespace std::placeholders;
+        // this needs to return quickly to avoid blocking the executor, so spin up a new thread
+        std::thread{std::bind(&Controller::execute, this, _1), goal_handle}.detach();
+    }
+
+    bool areEqual(float float1, float float2, float epsilon)
+    {
+        return (fabs(float1 - float2) < epsilon);
+    }
+
+    bool areEqual(std::vector<float>& current_state, std::vector<float>& desired_state)
+    {
+        bool equal = true;
+        for (std::vector<float>::size_type i = 0; i < current_state.size(); i++)
+        {
+            if (!areEqual(current_state[i], desired_state[i], (PID_ERROR_THRESHOLD*desired_state[i])))
+            {
+                equal = false;
+            }
+        }
+        return equal;
+    }
+
+    void execute(const std::shared_ptr<GoalHandlePIDAction> goal_handle)
+    {
+        RCLCPP_INFO(this->get_logger(), "Executing goal");
+        rclcpp::Rate loop_rate(100);
+
+        std::shared_ptr<PIDAction::Feedback> feedback = std::make_shared<PIDAction::Feedback>();
+        std::shared_ptr<PIDAction::Result> result = std::make_shared<PIDAction::Result>();
+        const auto goal = goal_handle->get_goal();
+
+        std::vector<float>& state = feedback->current_state;
+        state.push_back(this->current_state_[0]);
+        state.push_back(this->current_state_[1]);
+        state.push_back(this->current_state_[2]);
+        state.push_back(this->current_state_[3]);
+        state.push_back(this->current_state_[4]);
+        state.push_back(this->current_state_[5]);
+        
+        std::vector<float> desired_state = goal->desired_state + this->current_state_;
+        this->desired_state_ = desired_state;
+        std::cout << "Goal State";
+        printVector(desired_state);
+
+        while (!areEqual(state, desired_state)) {
+        //   Check if there is a cancel request
+        if (goal_handle->is_canceling()) {
+            goal_handle->canceled(result);
+            RCLCPP_INFO(this->get_logger(), "Goal canceled");
+            return;
+        }
+        std::stringstream ss;
+        // Update sequence
+        state[0] = this->current_state_[0];
+        state[1] = this->current_state_[1];
+        state[2] = this->current_state_[2];
+        state[3] = this->current_state_[3];
+        state[4] = this->current_state_[4];
+        state[5] = this->current_state_[5];
+
+        // std::cout << "State according to Server";
+        // printVector(state);
+
+        // Publish feedback
+        goal_handle->publish_feedback(feedback);
+        // RCLCPP_INFO(this->get_logger(), "Publish feedback");
+
+        loop_rate.sleep();
+
+        }
+        // Check if goal is done
+        if (rclcpp::ok()) {
+        goal_handle->succeed(result);
+        RCLCPP_INFO(this->get_logger(), "Goal succeeded");
+        }
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                         // SUBSCRIPTION CALLBACKS // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void desired_state_callback(const scion_types::msg::State::SharedPtr msg)
-    /** 
-     * You can use this subscription to manually send a desired state at command line
-     **/ 
-    {
-        if (!this->desired_state_valid_) {this->desired_state_valid_ = true;}
-        // RCLCPP_INFO(this->get_logger(), "Received Desired Position Data:");
-        printVector(msg->state);
-        this->desired_state_= msg->state; 
-    }
+    // void desired_state_callback(const scion_types::msg::State::SharedPtr msg)
+    // /** 
+    //  * You can use this subscription to manually send a desired state at command line
+    //  **/ 
+    // {
+    //     if (!this->desired_state_valid_) {this->desired_state_valid_ = true;}
+    //     // RCLCPP_INFO(this->get_logger(), "Received Desired Position Data:");
+    //     printVector(msg->state);
+    //     this->desired_state_= msg->state; 
+    // }
 
     void current_state_callback(const scion_types::msg::State::SharedPtr msg)
     /** 

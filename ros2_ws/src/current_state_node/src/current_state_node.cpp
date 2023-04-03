@@ -6,9 +6,10 @@
 #include <iostream>
 #include <functional>
 
+#include "vector_operations.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "control_interface.hpp"
-#include "std_srvs/srv/Trigger.hpp"
+#include "std_srvs/srv/trigger.hpp"
 #include "scion_types/msg/state.hpp"
 #include "scion_types/msg/position.hpp"
 #include "scion_types/msg/orientation.hpp"
@@ -16,6 +17,10 @@
 
 using std::placeholders::_1;
 using std::placeholders::_2;
+
+#define ORIENTATION 
+#define POSITION
+
 
 /* Subscribe to all relevant sensor information and consolidate it for the PID Node to subscribe to */
 
@@ -25,6 +30,14 @@ class CurrentStateNode : public rclcpp::Node
     CurrentStateNode()
     : Node("current_state_node")
     {
+        #ifdef ORIENTATION
+            orientation_valid_ = false;
+        #endif
+
+        #ifdef POSITION
+            position_valid_ = false;
+        #endif
+
         position_sub_ = this->create_subscription<scion_types::msg::Position>
         ("zed_position_data", 10, std::bind(&CurrentStateNode::position_sub_callback, this, _1));
 
@@ -45,7 +58,7 @@ class CurrentStateNode : public rclcpp::Node
 
         absolute_state_pub_ =           this->create_publisher<scion_types::msg::State>("absolute_current_state_data", 10);
         relative_state_pub_ =           this->create_publisher<scion_types::msg::State>("relative_current_state_data", 10);
-        reset_relative_state_service_ = this->create_service<std_srvs::srv::Trigger>("reset_relative_state", &resetRelativeState);
+        reset_relative_state_service_ = this->create_service<std_srvs::srv::Trigger>("reset_relative_state", std::bind(&CurrentStateNode::resetRelativeState, this, _1, _2));
 
         auto initFunction = std::bind(&CurrentStateNode::initCurrentState, this);
         std::thread(initFunction).detach();
@@ -59,12 +72,12 @@ class CurrentStateNode : public rclcpp::Node
     rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr reset_relative_state_service_;
     rclcpp::TimerBase::SharedPtr state_pub_timer_;
     Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
-    Interface::current_state_t relative_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}
+    Interface::current_state_t relative_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
     std::vector<float> current_orientation_{0.0F, 0.0F, 0.0F};
     std::vector<float> current_position_{0.0F, 0.0F, 0.0F};
     bool current_state_valid_ = false;
-    bool orientation_valid_ = false;
-    bool position_valid_ = false;
+    bool orientation_valid_ = true;
+    bool position_valid_ = true;
     
     void initCurrentState()
     {
@@ -112,13 +125,13 @@ class CurrentStateNode : public rclcpp::Node
         }
     }
 
-    void resetRelativeState  (
+    void resetRelativeState     (
                                 const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
                                       std::shared_ptr<std_srvs::srv::Trigger::Response> response
                                 )
     {
         RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming Request to Reset Relative Position\n");
-        this->relative_state_ = this->absolute_state_;
+        this->relative_state_ = this->current_state_;
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////

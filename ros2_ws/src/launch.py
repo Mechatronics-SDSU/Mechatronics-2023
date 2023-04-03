@@ -226,21 +226,27 @@ def generate_launch_description():
         launch_ros.actions.Node(
             package='ahrs_node', executable='ahrs_exec', output='screen'
             ),
-        launch_ros.actions.Node(
-            package='brain_node', executable='brain_exec', output='screen' 
-            ),  
-        launch_ros.actions.Node(
-            package='pid_node', executable='pid_exec', output='screen' 
-            ),    
+        # launch_ros.actions.Node(
+        #     package='brain_node', executable='brain_exec', output='screen' 
+        #     ),
         # launch_ros.actions.Node(
         #     package='can2ros_driver', executable='can2ros_driver'
         #     ),
+        launch_ros.actions.Node(
+            package='current_state_node', executable='current_state_exec', output='screen' 
+            ),  
         # # launch_ros.actions.Node(
         # #     package='dres_dvl_decode', executable='dres_dvl_decode' 
         # #     ),
         # launch_ros.actions.Node(
         #     package='dres_ms5837_decode', executable='dres_ms5837_decode'
         #     ),
+        launch_ros.actions.Node(
+            package='mediator_node', executable='mediator_exec', output='screen' 
+            ),  
+        launch_ros.actions.Node(
+            package='pid_node', executable='pid_exec', output='screen' 
+            ),    
         # launch_ros.actions.Node(
         #     package='zed_orientation_node', executable='zed_orientation_exec' 
         #     ),   

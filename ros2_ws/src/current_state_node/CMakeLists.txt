@@ -19,13 +19,15 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(scion_types REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(std_srvs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 add_executable(current_state_exec src/current_state_node.cpp)
 
-ament_target_dependencies(current_state_exec rclcpp scion_types) 
+ament_target_dependencies(current_state_exec rclcpp scion_types std_srvs) 
 
-target_include_directories(current_state_exec PUBLIC ../control_interface/include)
+target_include_directories(current_state_exec PUBLIC ../control_interface/include
+                                                     ../../../classes/pid_controller/include)
 
 install(TARGETS
   current_state_exec

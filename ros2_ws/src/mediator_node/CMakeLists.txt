@@ -20,16 +20,14 @@ find_package(ament_cmake REQUIRED)
 find_package(scion_types REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
+find_package(rclcpp_action REQUIRED)
 
 add_executable(mediator_exec src/mediator_node.cpp)
 
-ament_target_dependencies(mediator_exec
-"robot_types"
-"rclcpp"
-"rclcpp_action"
-"rclcpp_components")
+ament_target_dependencies(mediator_exec scion_types rclcpp rclcpp_action std_srvs)
 
 target_include_directories(mediator_exec PUBLIC ../control_interface/include)
 
