@@ -133,8 +133,8 @@ private:
         {
             sleep(.1);
         }
-        // while (!this->areEqual(this->desired_state_, this->current_state_))
-        for (int i = 0; i < 1000; i++)
+        while (!this->areEqual(this->desired_state_, this->current_state_))
+        // for (int i = 0; i < 1000; i++)
         {
             this->desired_state_ = this->current_state_;
         }
