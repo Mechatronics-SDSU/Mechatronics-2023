@@ -25,7 +25,7 @@ Scion_Position_PID_Controller::Scion_Position_PID_Controller()
     this->x_pos_pid = std::make_shared<PID_Controller>(0.0, 0.0, 0.0);
     this->y_pos_pid = std::make_shared<PID_Controller>(0.0, 0.0, 0.0);
     this->z_pos_pid = std::make_shared<PID_Controller>(0.0, 0.0, 0.0);
-
+    
 
     // Map strings to PID_Controller pointer to be able to refer to controller by name
     this->controllers = std::map<string, shared_ptr<PID_Controller>>

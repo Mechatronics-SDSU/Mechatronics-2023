@@ -25,9 +25,9 @@ PID_Params::PID_Params()
 {
     this->yaw = 
     {
-        {"kp", 0.025},
-        {"ki", 0.005},
-        {"kd", 0.006},
+        {"kp", 0.015},  // .025
+        {"ki", 0.003},   // .003
+        {"kd", 0.006},  // .006
         // {"ctrl_val_offset", 10.0},
         {"ctrl_val_max", MAX},
         {"ctrl_val_min", MIN},
