@@ -143,14 +143,18 @@ namespace Translator
 
     command_vector_t turn(float degree)
     {
-        std::cout << "Turn" << degree << std::endl;
-        return command_vector_t{};
+        Interface::Command command1;
+        command1.function.transform = &Movements::turn;
+        command1.params.degree = degree;
+        return command_vector_t{command1};
     }
 
     command_vector_t move(float degree)
     {
-        std::cout << "Move" << degree << std::endl;
-        return command_vector_t{};
+        Interface::Command command1;
+        command1.function.transform = &Movements::move;
+        command1.params.degree = degree;
+        return command_vector_t{command1};
     }
 
     command_vector_t count()

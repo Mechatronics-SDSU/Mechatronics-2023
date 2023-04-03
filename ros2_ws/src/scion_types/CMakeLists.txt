@@ -27,6 +27,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Position.msg"
   "msg/ZedObject.msg"
   "srv/SendFrame.srv"
+  "srv/Boolean.srv"
   "action/PID.action"
   )
 

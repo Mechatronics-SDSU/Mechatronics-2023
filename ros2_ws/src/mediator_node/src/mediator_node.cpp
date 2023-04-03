@@ -38,6 +38,8 @@ public:
     );
 
     reset_relative_state_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_state");
+    ignore_position_client_ = this->create_client<std_srvs::srv::Trigger>("ignore_position");
+    use_position_client_ = this->create_client<std_srvs::srv::Trigger>("use_position");
 
     idea_sub_ = this->create_subscription<scion_types::msg::Idea>
     (
@@ -55,17 +57,19 @@ public:
       std::bind(&Mediator::nextCommand, this)
     );
 
-    this->reset_timer_ = this->create_wall_timer
-    (
-      std::chrono::milliseconds(1000), 
-      std::bind(&Mediator::resetState, this)
-    );
+    // this->reset_timer_ = this->create_wall_timer
+    // (
+    //   std::chrono::milliseconds(2500), 
+    //   std::bind(&Mediator::resetStateOnTimer, this)
+    // );
 
   }
 
 private:
   rclcpp_action::Client<PIDAction>::SharedPtr pid_command_client_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_relative_state_client_;
+  rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr ignore_position_client_;
+  rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr use_position_client_;
   rclcpp::Subscription<scion_types::msg::Idea>::SharedPtr idea_sub_;
   rclcpp::TimerBase::SharedPtr next_command_timer_;
   rclcpp::TimerBase::SharedPtr reset_timer_;
@@ -97,10 +101,12 @@ private:
           Translator::spin(idea->parameters[0]);
           break;
         case Idea::MOVE:
-          Translator::move(idea->parameters[0]);
+          command_vector = Translator::move(idea->parameters[0]);
+          addToQueue(command_vector);
           break;
         case Idea::TURN:
-          Translator::turn(idea->parameters[0]);
+          command_vector = Translator::turn(idea->parameters[0]);
+          addToQueue(command_vector);
           break;
         case Idea::RELATIVE_POINT:
           command_vector = Translator::relativePoint(idea->parameters[0], idea->parameters[1]);
@@ -190,15 +196,23 @@ private:
         return;
     }
 
-    /* SUCCESS STATE */
-    std::stringstream ss;
-    ss << "State Accomplished; Setting Current Command to Null\n";
-    sleep(.3); // Sleep after reaching desired state for a split second before taking out current command
-    current_command_ = nullptr;
-    RCLCPP_INFO(this->get_logger(), ss.str().c_str());
+      /* Success State */
+      std::stringstream ss;
+      ss << "State Accomplished; Setting Current Command to Null\n";
+      sleep(.3); // Sleep after reaching desired state for a split second before taking out current command
+      usePositionRequest();
+      current_command_ = nullptr;
+      RCLCPP_INFO(this->get_logger(), ss.str().c_str());
   }
 
   void resetState()
+  {     
+      auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+      auto reset_state_result = this->reset_relative_state_client_->async_send_request(reset_state_request);
+      reset_state_result.wait();  
+  }
+
+  void resetStateOnTimer()
   {     
         if (this->current_command_ == nullptr)
         {
@@ -207,17 +221,35 @@ private:
         }
   }
 
+  void ignorePositionRequest()
+  {
+      auto ignore_position_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+      auto ignore_position_result = this->ignore_position_client_->async_send_request(ignore_position_request);
+      ignore_position_result.wait();
+  }
+
+  void usePositionRequest()
+  {
+      auto use_position_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+      auto use_position_result = this->use_position_client_->async_send_request(use_position_request);
+      use_position_result.wait();
+  }
+
+
   void nextCommand()
   {
     using namespace Interface;
     if (this->command_queue_.size() > 0 && current_command_ == nullptr) // && controlInit == true
     {
-        auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
-        auto reset_state_result = this->reset_relative_state_client_->async_send_request(reset_state_request);
+        this->resetState();
         this->current_command_ = &command_queue_[0];
         this->command_queue_.pop_front();
         
         state_transform_func func = current_command_->function.transform;
+        if (func == &Movements::turn)
+        {
+          ignorePositionRequest();
+        }
         desired_state_t desired = (*func)(current_command_->params.degree);
         this->send_goal(desired);
     }

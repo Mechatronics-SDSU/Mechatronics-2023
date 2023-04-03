@@ -85,6 +85,8 @@ public:
         );
 
         this->reset_relative_state_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_state");
+        ignore_position_service_ = this->create_service<std_srvs::srv::Trigger>("ignore_position", std::bind(&Controller::ignorePosition, this, _1, _2));
+        use_position_service_ = this->create_service<std_srvs::srv::Trigger>("use_position", std::bind(&Controller::usePosition, this, _1, _2));
 
         controller_ = Scion_Position_PID_Controller(pid_params_object_.get_pid_params());
         controller_.getStatus();
@@ -102,6 +104,8 @@ private:
     rclcpp::Subscription<scion_types::msg::State>::SharedPtr current_state_sub_;
     rclcpp::Subscription<scion_types::msg::State>::SharedPtr desired_state_sub_;
     rclcpp_action::Server<PIDAction>::SharedPtr pid_command_server_;
+    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr ignore_position_service_;
+    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr use_position_service_;
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_relative_state_client_;
     Scion_Position_PID_Controller controller_;
     PID_Params pid_params_object_;                      // Passed to controller for tuning
@@ -114,6 +118,7 @@ private:
     Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
     bool current_state_valid_ = false;
     bool desired_state_valid_ = false;
+    bool ignore_position_ = false;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                 // WAIT FOR VALID DATA TO INITIALIZE PIDs // 
@@ -137,11 +142,11 @@ private:
         {
             sleep(.1);
         }
-        // while (!this->areEqual(this->desired_state_, this->current_state_))
         auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
         auto reset_state_result = this->reset_relative_state_client_->async_send_request(reset_state_request);
-        sleep(1);
-        for (int i = 0; i < 1000; i++)
+        reset_state_result.wait();
+        // while (!this->areEqual(this->desired_state_, this->current_state_))
+        for (int i = 0; i < 100; i++)
         {
             this->desired_state_ = this->current_state_;
         }
@@ -193,6 +198,17 @@ private:
                                         // Refer to classes/pid_controller/scion_pid_controller.hpp for this function
     if (current_state_valid_ && desired_state_valid_)
     {
+        if (this->ignore_position_)
+        {
+            Interface::current_state_t current_state_no_position = Interface::current_state_t{current_state_[0], current_state_[1], current_state_[2], 0, 0, 0};
+            Interface::desired_state_t desired_state_no_position = Interface::desired_state_t{desired_state_[0], desired_state_[1], desired_state_[2], 0, 0, 0};
+            this->controller_.update
+            (
+                current_state_no_position, 
+                desired_state_no_position,
+                .010
+            );    
+        }
         this->controller_.update(current_state_, desired_state_, .010); // MOST IMPORTANT LINE IN PROGRAM
     /* STEP 2: Send those generated values to the motors */
         make_CAN_request(this->controller_.current_thrust_values);
@@ -371,6 +387,17 @@ private:
         }
     }
 
+    void ignorePosition(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+                                      std::shared_ptr<std_srvs::srv::Trigger::Response> response)
+    {
+        this->ignore_position_ = true;
+    }
+    
+    void usePosition(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+                                      std::shared_ptr<std_srvs::srv::Trigger::Response> response)
+    {
+        this->ignore_position_ = false;
+    }
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                         // SUBSCRIPTION CALLBACKS // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
