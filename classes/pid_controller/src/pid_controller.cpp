@@ -101,6 +101,7 @@ pair<float, float> PID_Controller::update(float current_point, float desired_poi
     /* if error is for angular inputs (roll, pitch, yaw), perform angle wrapping. */
     if (this->angle_wrap)
     {
+        error = (std::fmod(error, 360));
         if (error > 180)
         {
             error = error - (2 * 180);

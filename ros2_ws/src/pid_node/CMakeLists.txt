@@ -24,6 +24,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(scion_types REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 find_package(rclcpp_action REQUIRED)
 
 include_directories(include)
@@ -40,7 +41,7 @@ add_executable(pid_exec src/pid_controller_node.cpp
                         ../../../classes/pid_controller/src/pid_params.cpp)
                               
 
-ament_target_dependencies(pid_exec rclcpp scion_types std_msgs rclcpp_action)
+ament_target_dependencies(pid_exec rclcpp scion_types std_msgs std_srvs rclcpp_action)
 
 target_include_directories(pid_exec PUBLIC ../../../classes/pid_controller/include
                                            ../control_interface/include

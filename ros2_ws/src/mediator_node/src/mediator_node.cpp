@@ -54,6 +54,13 @@ public:
       std::chrono::milliseconds(100), 
       std::bind(&Mediator::nextCommand, this)
     );
+
+    this->reset_timer_ = this->create_wall_timer
+    (
+      std::chrono::milliseconds(1000), 
+      std::bind(&Mediator::resetState, this)
+    );
+
   }
 
 private:
@@ -61,6 +68,7 @@ private:
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_relative_state_client_;
   rclcpp::Subscription<scion_types::msg::Idea>::SharedPtr idea_sub_;
   rclcpp::TimerBase::SharedPtr next_command_timer_;
+  rclcpp::TimerBase::SharedPtr reset_timer_;
   Interface::command_queue_t command_queue_;
   Interface::Command* current_command_; 
 
@@ -190,18 +198,27 @@ private:
     RCLCPP_INFO(this->get_logger(), ss.str().c_str());
   }
 
+  void resetState()
+  {     
+        if (this->current_command_ == nullptr)
+        {
+          auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+          auto reset_state_result = this->reset_relative_state_client_->async_send_request(reset_state_request);
+        }
+  }
+
   void nextCommand()
   {
     using namespace Interface;
     if (this->command_queue_.size() > 0 && current_command_ == nullptr) // && controlInit == true
     {
+        auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+        auto reset_state_result = this->reset_relative_state_client_->async_send_request(reset_state_request);
         this->current_command_ = &command_queue_[0];
         this->command_queue_.pop_front();
         
         state_transform_func func = current_command_->function.transform;
         desired_state_t desired = (*func)(current_command_->params.degree);
-        auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
-        auto reset_state_result = this->reset_relative_state_client_->async_send_request(reset_state_request);
         this->send_goal(desired);
     }
   }

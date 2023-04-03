@@ -122,7 +122,16 @@ class CurrentStateNode : public rclcpp::Node
 
             scion_types::msg::State relative_state = scion_types::msg::State();
             relative_state.state = this->current_state_ - this->relative_state_;
+            bool negative = false;
+            if (relative_state.state[3] < 0)
+            {
+                negative = true;
+            }
             relative_state.state[3] = sqrt(pow(relative_state.state[3], 2) + pow(relative_state.state[4], 2));
+            if (negative) 
+            {
+                relative_state.state[3] *= -1;
+            }
             relative_state.state[4] = 0;
             relative_state_pub_->publish(relative_state);
         }
@@ -148,14 +157,14 @@ class CurrentStateNode : public rclcpp::Node
 
     void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)
     {
-        RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
+        // RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
         if (!this->orientation_valid_) {orientation_valid_ = true;}
         this->current_orientation_ = msg->orientation;
     }
 
     void position_sub_callback(const scion_types::msg::Position::SharedPtr msg)
     {    
-         RCLCPP_INFO(this->get_logger(), "Received Zed Position Data");
+        //  RCLCPP_INFO(this->get_logger(), "Received Zed Position Data");
          if (!this->position_valid_) {position_valid_ = true;}
          this->current_position_  = msg->position;
     }

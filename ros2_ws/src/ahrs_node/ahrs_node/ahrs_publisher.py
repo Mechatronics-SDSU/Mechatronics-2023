@@ -51,6 +51,7 @@ class AHRS_Node(Node):
         timer_period = .01  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.ahrs = SpartonAHRSDataPackets()
+        self.count = 0
 
 
     def format_orientation(self, yaw, pitch, roll):
@@ -84,11 +85,14 @@ class AHRS_Node(Node):
         (ToDo: Change this to orientation) message. Then we publish our message using the formatted string below
         '''
         
+        self.count += 1
         if (yaw != None and pitch != None and roll != None):
             msg = Orientation()
             msg.orientation = [yaw, pitch, roll]
             self.publisher_.publish(msg)
-            self.get_logger().info('Publishing Orientation Data: "\nyaw: %f\npitch: %f\nroll: %f\n"' % (msg.orientation[0], msg.orientation[1], msg.orientation[2]))
+            if (self.count % 50 == 0):
+                self.get_logger().info('Publishing Orientation Data: "\nyaw: %f\npitch: %f\nroll: %f\n"' % (msg.orientation[0], msg.orientation[1], msg.orientation[2]))
+            
 
 
 def main(args=None):

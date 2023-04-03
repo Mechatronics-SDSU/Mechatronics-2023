@@ -161,8 +161,11 @@ namespace Translator
     command_vector_t relativePoint(float x, float y)
     {
         float point_angle_radians = atan(x / y);
-
         float point_angle_degrees = point_angle_radians * (180/PI);
+        if (y < 0)
+        {
+            point_angle_degrees += 180;
+        }
         float point_distance_meters = sqrt(pow(x,2) + pow(y,2));
 
         Interface::Command command1;
@@ -180,10 +183,6 @@ namespace Translator
     {
         float point_angle_radians = atan(y / x);
         float point_angle_degrees = point_angle_radians * (180/PI);
-        if (y < 0)
-        {
-            point_angle_degrees += 180;
-        }
         float point_distance_meters = sqrt(pow(x,2) + pow(y,2));
 
         Interface::Command command1;

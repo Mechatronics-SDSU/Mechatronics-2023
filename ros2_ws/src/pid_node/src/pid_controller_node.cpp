@@ -26,6 +26,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "control_interface.hpp"
+#include "std_srvs/srv/trigger.hpp"
 #include "scion_types/action/pid.hpp"
 #include "scion_types/msg/state.hpp"
 #include "scion_pid_controller.hpp"                // PID Class
@@ -83,6 +84,8 @@ public:
         std::bind(&Controller::handle_accepted, this, _1)
         );
 
+        this->reset_relative_state_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_state");
+
         controller_ = Scion_Position_PID_Controller(pid_params_object_.get_pid_params());
         controller_.getStatus();
         
@@ -99,6 +102,7 @@ private:
     rclcpp::Subscription<scion_types::msg::State>::SharedPtr current_state_sub_;
     rclcpp::Subscription<scion_types::msg::State>::SharedPtr desired_state_sub_;
     rclcpp_action::Server<PIDAction>::SharedPtr pid_command_server_;
+    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_relative_state_client_;
     Scion_Position_PID_Controller controller_;
     PID_Params pid_params_object_;                      // Passed to controller for tuning
     Mailbox::MboxCan* poll_mb_;
@@ -133,8 +137,11 @@ private:
         {
             sleep(.1);
         }
-        while (!this->areEqual(this->desired_state_, this->current_state_))
-        // for (int i = 0; i < 1000; i++)
+        // while (!this->areEqual(this->desired_state_, this->current_state_))
+        auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+        auto reset_state_result = this->reset_relative_state_client_->async_send_request(reset_state_request);
+        sleep(1);
+        for (int i = 0; i < 1000; i++)
         {
             this->desired_state_ = this->current_state_;
         }
@@ -146,6 +153,7 @@ private:
         {
             this->current_state_valid_ = true;
         }
+
         return true;
     }
 
@@ -296,7 +304,7 @@ private:
         }
         for (std::vector<float>::size_type j = 3; j < 6; j++)
         {
-            if (!areEqual(current_state[i], desired_state[i], POSITION_TOLERANCE)) //.05*current_state[i])
+            if (!areEqual(current_state[j], desired_state[j], POSITION_TOLERANCE)) //.05*current_state[i])
             {
                 equal = false;
             }
@@ -322,9 +330,9 @@ private:
         state.push_back(this->current_state_[5]);
         
         std::vector<float> desired_state = goal->desired_state;
+        desired_state += this->current_state_;
         for (int i = 0; i < 100; i++)
         {
-            desired_state += this->current_state_;
             this->desired_state_ = desired_state;
         }
         std::cout << "Goal State";
