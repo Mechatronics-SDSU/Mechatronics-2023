@@ -314,7 +314,7 @@ private:
         std::vector<float> desired_state = goal->desired_state;
         for (int i = 0; i < 100; i++)
         {
-            desired_state_ += this->current_state_;
+            desired_state += this->current_state_;
             this->desired_state_ = desired_state;
         }
         std::cout << "Goal State";
