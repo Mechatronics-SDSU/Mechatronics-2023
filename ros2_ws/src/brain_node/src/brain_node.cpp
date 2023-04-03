@@ -65,7 +65,7 @@ public:
         orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
         ("ahrs_orientation_data", 10, std::bind(&Brain::orientation_sub_callback, this, _1));
         
-        desired_state_pub_ = this->create_publisher<scion_types::msg::DesiredState>
+        desired_state_pub_ = this->create_publisher<scion_types::msg::State>
         ("desired_state_data", 10);
 
         // reset_pos_client_ = this->create_client<std_srvs::srv::Trigger>("/zed2i/zed_node/reset_pos_tracking");
@@ -75,8 +75,8 @@ public:
 
 private:
     rclcpp::Subscription<scion_types::msg::Position>::SharedPtr position_sub_;
-    rclcpp::Subscription<scion_types::msg::DesiredState>::SharedPtr desired_state_sub_;
-    rclcpp::Publisher<scion_types::msg::DesiredState>::SharedPtr desired_state_pub_;
+    rclcpp::Subscription<scion_types::msg::State>::SharedPtr desired_state_sub_;
+    rclcpp::Publisher<scion_types::msg::State>::SharedPtr desired_state_pub_;
     rclcpp::Subscription<scion_types::msg::Orientation>::SharedPtr orientation_sub_;
     // rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_pos_client_; 
     rclcpp::TimerBase::SharedPtr state_timer_;
@@ -177,14 +177,14 @@ private:
          * TODO: Keep on a short timer but with condition of 1st command completion to move to the 2nd command
          */
 
-        auto message = scion_types::msg::DesiredState();
-        message.desired_state = constructDesiredState();    // Other function will be called to provide logic of desired state (decides where to go)
+        auto message = scion_types::msg::State();
+        message.desired_state = constructState();    // Other function will be called to provide logic of desired state (decides where to go)
         desired_state_ = message.desired_state;             // Just to print to the console the desired state
         desired_state_pub_->publish(message);
         RCLCPP_INFO(this->get_logger(), "Publishing Desired State " );
     }
     
-    std::vector<float> constructDesiredState()
+    std::vector<float> constructState()
     {
         /* 
          * Grabs a command from the command vector and extracts the appropriate 

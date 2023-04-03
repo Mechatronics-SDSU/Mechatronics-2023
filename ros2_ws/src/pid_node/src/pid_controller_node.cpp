@@ -24,10 +24,8 @@
 #include <cstring>
 
 #include "rclcpp/rclcpp.hpp"
-#include "scion_types/msg/desired_state.hpp"
-#include "scion_types/msg/orientation.hpp"         // Custom message types defined in scion_types package
-#include "scion_types/msg/position.hpp"            
-#include "std_msgs/msg/float32.hpp"
+#include "control_interface.hpp"
+#include "scion_types/msg/state.hpp"
 #include "scion_pid_controller.hpp"                // PID Class
 #include "mbox_can.hpp"                            // For CAN Requests
 
@@ -62,64 +60,77 @@ public:
         
         print_timer_ = this->create_wall_timer(PRINT_PERIOD, std::bind(&Controller::print_timer_callback, this));
 
-        position_sub_ = this->create_subscription<scion_types::msg::Position>
-        ("zed_position_data", 10, std::bind(&Controller::position_sub_callback, this, _1));
-    
-        // depth_sub_ = this->create_subscription<std_msgs::msg::Float32>
-        // ("ms5837_depth_data", 10, std::bind(&Controller::depth_sub_callback, this, _1));
+        current_state_sub_ = this->create_subscription<scion_types::msg::State>
+        ("current_state_data", 10, std::bind(&Controller::current_state_callback, this, _1));
 
-        desired_state_sub_ = this->create_subscription<scion_types::msg::DesiredState>
+        desired_state_sub_ = this->create_subscription<scion_types::msg::State>
         ("desired_state_data", 10, std::bind(&Controller::desired_state_callback, this, _1));
-
-        orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
-        ("ahrs_orientation_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
-
-        // orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
-        // ("zed_orientation_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
-
-        // velocity_sub_ = this->create_subscription<scion_types::msg::Orientation>
-        // ("dvl_velocity_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
-
 
         controller_ = Scion_Position_PID_Controller(pid_params_object_.get_pid_params());
         controller_.getStatus();
         
         strncpy(ifr.ifr_name, MBOX_INTERFACE, sizeof(&MBOX_INTERFACE));
         poll_mb_ = new Mailbox::MboxCan(&ifr, "poll_mb");
+
+        auto initFunction = std::bind(&Controller::initDesiredState, this);
+        std::thread(initFunction).detach();
     }
 
 private:
-    rclcpp::Subscription<scion_types::msg::Position>::SharedPtr position_sub_;
-    rclcpp::Subscription<scion_types::msg::DesiredState>::SharedPtr desired_state_sub_;
-    rclcpp::Subscription<scion_types::msg::Orientation>::SharedPtr orientation_sub_;
-    rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr depth_sub_;
-    rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr velocity_sub_;
     rclcpp::TimerBase::SharedPtr timer_;
     rclcpp::TimerBase::SharedPtr print_timer_;
+    rclcpp::Subscription<scion_types::msg::State>::SharedPtr current_state_sub_;
+    rclcpp::Subscription<scion_types::msg::State>::SharedPtr desired_state_sub_;
+    Scion_Position_PID_Controller controller_;
+    PID_Params pid_params_object_;                      // Passed to controller for tuning
     Mailbox::MboxCan* poll_mb_;
     struct ifreq ifr;
 
-    Scion_Position_PID_Controller controller_;
-    PID_Params pid_params_object_;                      // Passed to controller for tuning
+    /* Upon initialization set all values to [0,0,0] */
+    
+    Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
+    Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
+    bool current_state_valid_ = false;
+    bool desired_state_valid_ = false;
 
-    /* Upon initialization set all values to [0,0,0...] */
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                // WAIT FOR VALID DATA TO INITIALIZE PIDs // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    vector<float> current_orientation_{0.0F, 0.0F, 0.0F};
-    vector<float> current_position_{0.0F, 0.0F, 0.0F};
-    vector<float> current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
-
-    vector<float> current_desired_state_; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                         // UPDATES OF STATE FOR PIDs // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+     void initDesiredState()
+    {
+        auto desiredValid = std::bind(&Controller::desiredStateValid, this);
+        std::future<bool> promise = std::async(desiredValid);
+        std::cout << "Waiting for Valid Sensor Info. \n";
+        bool valid = promise.get();
+        if (valid) 
+        {
+            std::cout << "Got Valid Sensor Info. \n";
+        }
+    }
+
+    bool desiredStateValid()
+    {
+        while (!this->desired_state_valid_)
+        {
+            sleep(.1);
+        }
+        return true;
+    }
+
     /* Different timer for printing and sensor updates */
     void print_timer_callback()
     {
-        std::cout << "CURRENT AND DESIRED STATE" << "\n" << "___________________________ \n\n";
+        std::cout << "PID STATE UPDATE\n _______________________________\n"; 
+        std::cout << "Current State: ";
         printVector(this->current_state_);
-        printVector(this->current_desired_state_);
+        std::cout << "Desired State: ";
+        printVector(this->desired_state_);
         std::cout << "___________________________\n\n";
         this->controller_.getStatus(); 
     }
@@ -131,35 +142,19 @@ private:
     }
 
     void update_current_state() // ** Important Function **
-    {
-    /*
-     * STEP 1: Build current state from current information 
-     * that has been updated from the sensors. As of now
-     * we are using orientation as first 3 values, position as next 3
-     */
-
-        this->current_state_[0] = this->current_orientation_[0];
-        this->current_state_[1] = this->current_orientation_[1];
-        this->current_state_[2] = this->current_orientation_[2];
-        this->current_state_[3] = this->current_position_[0];
-        this->current_state_[4] = this->current_position_[1];
-        this->current_state_[5] = this->current_position_[2];
+    {    
     /* 
-     * STEP 2: Update the PID Controller (meaning call the ScionPIDController object's
+     * STEP 1: Update the PID Controller (meaning call the ScionPIDController object's
      * update function which generates ctrl_vals and show its status on the screen 
      */
-        if (current_desired_state_.size() == 0)
-        {
-            current_desired_state_ = current_state_;
-        }
-        if (current_desired_state_.size() > 0)
-        {
                                         // Refer to classes/pid_controller/scion_pid_controller.hpp for this function
-            this->controller_.update(current_state_, current_desired_state_, .010); // MOST IMPORTANT LINE IN PROGRAM
-        }
-
-    /* STEP 3: Send those generated values to the motors */
+    if (current_state_valid_ && desired_state_valid_)
+    {
+        this->controller_.update(current_state_, desired_state_, .010); // MOST IMPORTANT LINE IN PROGRAM
+    /* STEP 2: Send those generated values to the motors */
         make_CAN_request(this->controller_.current_thrust_values);
+    }
+
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -215,37 +210,26 @@ private:
                                         // SUBSCRIPTION CALLBACKS // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* 
-     * These callbacks all update a member variable that holds current state of PID, each corresponds to a 
-     * sensor. When that sensor publishes, the PID will store the last sensed value  
-     */
-
-    void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)
-    {
-        // RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
-        this->current_orientation_ = msg->orientation;
-    }
-
-    // void depth_sub_callback(const std_msgs::msg::Float32::SharedPtr msg)
-    // {
-    //     RCLCPP_INFO(this->get_logger(), "Received ms5837 depth data: %f", msg->data);
-    //     this->current_position_ = vector<float>{0.0, 0.0, msg->data} ;
-    // }
-
-    void position_sub_callback(const scion_types::msg::Position::SharedPtr msg)
-    {    
-         RCLCPP_INFO(this->get_logger(), "Received Zed Position Data");
-         this->current_position_  = msg->position;
-    }
-    
-    void desired_state_callback(const scion_types::msg::DesiredState::SharedPtr msg)
+    void desired_state_callback(const scion_types::msg::State::SharedPtr msg)
     /** 
      * You can use this subscription to manually send a desired state at command line
      **/ 
     {
-        RCLCPP_INFO(this->get_logger(), "Received Desired Position Data:");
-        printVector(msg->desired_state);
-        this->current_desired_state_= msg->desired_state; 
+        if (!this->desired_state_valid_) {this->desired_state_valid_ = true;}
+        // RCLCPP_INFO(this->get_logger(), "Received Desired Position Data:");
+        printVector(msg->state);
+        this->desired_state_= msg->state; 
+    }
+
+    void current_state_callback(const scion_types::msg::State::SharedPtr msg)
+    /** 
+     * You can use this subscription to manually send a desired state at command line
+     **/ 
+    {
+        if (!this->current_state_valid_) {this->current_state_valid_ = true;}
+        // RCLCPP_INFO(this->get_logger(), "Received Current Position Data:");
+        printVector(msg->state);
+        this->current_state_= msg->state; 
     }
 };
 

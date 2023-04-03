@@ -42,6 +42,7 @@ add_executable(pid_exec src/pid_controller_node.cpp
 ament_target_dependencies(pid_exec rclcpp scion_types std_msgs)
 
 target_include_directories(pid_exec PUBLIC ../../../classes/pid_controller/include
+                                           ../control_interface/include
                                            ../can2ros_driver/include)
 
 install(TARGETS

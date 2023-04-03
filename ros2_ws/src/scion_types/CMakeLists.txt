@@ -21,8 +21,9 @@ find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/CanFrame.msg"
+  "msg/Idea.msg"
   "msg/Orientation.msg"
-  "msg/DesiredState.msg"
+  "msg/State.msg"
   "msg/Position.msg"
   "msg/ZedObject.msg"
   "srv/SendFrame.srv"
