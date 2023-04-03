@@ -38,7 +38,7 @@ using namespace std;
 #define MBOX_INTERFACE "can0"
 #define UPDATE_PERIOD 120ms
 #define PRINT_PERIOD 500ms
-#define PID_ERROR_THRESHOLD 0.001f
+#define PID_ERROR_THRESHOLD 0.01f
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
                                     // MEMBER VARIABLE DECLARATIONS // 
@@ -69,7 +69,7 @@ public:
         print_timer_ = this->create_wall_timer(PRINT_PERIOD, std::bind(&Controller::print_timer_callback, this));
 
         current_state_sub_ = this->create_subscription<scion_types::msg::State>
-        ("current_state_data", 10, std::bind(&Controller::current_state_callback, this, _1));
+        ("relative_current_state_data", 10, std::bind(&Controller::current_state_callback, this, _1));
 
         // desired_state_sub_ = this->create_subscription<scion_types::msg::State>
         // ("desired_state_data", 10, std::bind(&Controller::desired_state_callback, this, _1));

@@ -186,8 +186,6 @@ private:
     std::stringstream ss;
     ss << "State Accomplished; Setting Current Command to Null\n";
     sleep(.3); // Sleep after reaching desired state for a split second before taking out current command
-    auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
-    auto reset_state_result = this->reset_relative_state_client_->async_send_request(reset_state_request);
     current_command_ = nullptr;
     RCLCPP_INFO(this->get_logger(), ss.str().c_str());
   }
@@ -197,12 +195,14 @@ private:
     using namespace Interface;
     if (this->command_queue_.size() > 0 && current_command_ == nullptr) // && controlInit == true
     {
-      this->current_command_ = &command_queue_[0];
-      this->command_queue_.pop_front();
-      
-      state_transform_func func = current_command_->function.transform;
-      desired_state_t desired = (*func)(current_command_->params.degree);
-      this->send_goal(desired);
+        this->current_command_ = &command_queue_[0];
+        this->command_queue_.pop_front();
+        
+        state_transform_func func = current_command_->function.transform;
+        desired_state_t desired = (*func)(current_command_->params.degree);
+        auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+        auto reset_state_result = this->reset_relative_state_client_->async_send_request(reset_state_request);
+        this->send_goal(desired);
     }
   }
 

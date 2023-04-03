@@ -5,6 +5,7 @@
 #include <future>
 #include <iostream>
 #include <functional>
+#include <math.h>
 
 #include "vector_operations.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -121,6 +122,8 @@ class CurrentStateNode : public rclcpp::Node
 
             scion_types::msg::State relative_state = scion_types::msg::State();
             relative_state.state = this->current_state_ - this->relative_state_;
+            relative_state.state[3] = sqrt(pow(relative_state.state[3], 2) + pow(relative_state.state[4], 2));
+            relative_state.state[4] = 0;
             relative_state_pub_->publish(relative_state);
         }
     }
