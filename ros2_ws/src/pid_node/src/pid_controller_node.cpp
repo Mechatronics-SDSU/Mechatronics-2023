@@ -24,10 +24,10 @@
 #include <cstring>
 
 #include "rclcpp/rclcpp.hpp"
-#include "scion_types/msg/desired_state.hpp"
-#include "scion_types/msg/orientation.hpp"         // Custom message types defined in scion_types package
-#include "scion_types/msg/position.hpp"            
-#include "std_msgs/msg/float32.hpp"
+#include "rclcpp_action/rclcpp_action.hpp"
+#include "control_interface.hpp"
+#include "scion_types/action/pid.hpp"
+#include "scion_types/msg/state.hpp"
 #include "scion_pid_controller.hpp"                // PID Class
 #include "mbox_can.hpp"                            // For CAN Requests
 
@@ -38,10 +38,16 @@ using namespace std;
 #define MBOX_INTERFACE "can0"
 #define UPDATE_PERIOD 120ms
 #define PRINT_PERIOD 500ms
+#define PID_ERROR_THRESHOLD 0.01f
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
                                     // MEMBER VARIABLE DECLARATIONS // 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+using PIDAction = scion_types::action::PID;
+using GoalHandlePIDAction = rclcpp_action::ServerGoalHandle<PIDAction>;
+using namespace std::placeholders;
+
 
 /** 
  * Controller Node consists of: 
@@ -56,69 +62,98 @@ class Controller : public rclcpp::Node
 {
 
 public:
-    Controller(): Node("pid_controller")
+    explicit Controller(): Node("pid_controller")
     {
         timer_ = this->create_wall_timer(UPDATE_PERIOD, std::bind(&Controller::timer_callback, this));
         
         print_timer_ = this->create_wall_timer(PRINT_PERIOD, std::bind(&Controller::print_timer_callback, this));
 
-        position_sub_ = this->create_subscription<scion_types::msg::Position>
-        ("zed_position_data", 10, std::bind(&Controller::position_sub_callback, this, _1));
-    
-        // depth_sub_ = this->create_subscription<std_msgs::msg::Float32>
-        // ("ms5837_depth_data", 10, std::bind(&Controller::depth_sub_callback, this, _1));
+        current_state_sub_ = this->create_subscription<scion_types::msg::State>
+        ("relative_current_state_data", 10, std::bind(&Controller::current_state_callback, this, _1));
 
-        desired_state_sub_ = this->create_subscription<scion_types::msg::DesiredState>
-        ("desired_state_data", 10, std::bind(&Controller::desired_state_callback, this, _1));
+        // desired_state_sub_ = this->create_subscription<scion_types::msg::State>
+        // ("desired_state_data", 10, std::bind(&Controller::desired_state_callback, this, _1));
 
-        orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
-        ("ahrs_orientation_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
-
-        // orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
-        // ("zed_orientation_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
-
-        // velocity_sub_ = this->create_subscription<scion_types::msg::Orientation>
-        // ("dvl_velocity_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
+        this->pid_command_server_ = rclcpp_action::create_server<PIDAction>
+        (
+        this,
+        "PIDAction",
+        std::bind(&Controller::handle_goal, this, _1, _2),
+        std::bind(&Controller::handle_cancel, this, _1),
+        std::bind(&Controller::handle_accepted, this, _1)
+        );
 
         controller_ = Scion_Position_PID_Controller(pid_params_object_.get_pid_params());
         controller_.getStatus();
         
         strncpy(ifr.ifr_name, MBOX_INTERFACE, sizeof(&MBOX_INTERFACE));
         poll_mb_ = new Mailbox::MboxCan(&ifr, "poll_mb");
+
+        auto initFunction = std::bind(&Controller::initDesiredState, this);
+        std::thread(initFunction).detach();
     }
 
 private:
-    rclcpp::Subscription<scion_types::msg::Position>::SharedPtr position_sub_;
-    rclcpp::Subscription<scion_types::msg::DesiredState>::SharedPtr desired_state_sub_;
-    rclcpp::Subscription<scion_types::msg::Orientation>::SharedPtr orientation_sub_;
-    rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr depth_sub_;
-    rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr velocity_sub_;
     rclcpp::TimerBase::SharedPtr timer_;
     rclcpp::TimerBase::SharedPtr print_timer_;
+    rclcpp::Subscription<scion_types::msg::State>::SharedPtr current_state_sub_;
+    rclcpp::Subscription<scion_types::msg::State>::SharedPtr desired_state_sub_;
+    rclcpp_action::Server<PIDAction>::SharedPtr pid_command_server_;
+    Scion_Position_PID_Controller controller_;
+    PID_Params pid_params_object_;                      // Passed to controller for tuning
     Mailbox::MboxCan* poll_mb_;
     struct ifreq ifr;
 
-    Scion_Position_PID_Controller controller_;
-    PID_Params pid_params_object_;                      // Passed to controller for tuning
+    /* Upon initialization set all values to [0,0,0] */
+    
+    Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
+    Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
+    bool current_state_valid_ = false;
+    bool desired_state_valid_ = false;
 
-    /* Upon initialization set all values to [0,0,0...] */
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                // WAIT FOR VALID DATA TO INITIALIZE PIDs // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    vector<float> current_orientation_{10000.0F,10000.0F,10000.0F};
-    vector<float> current_position_{10000.0F,10000.0F,10000.0F};
-    vector<float> current_state_{10000.0F,10000.0F,10000.0F,10000.0F,10000.0F,10000.0F}; // State described by yaw, pitch, roll, x, y, z 
+     void initDesiredState()
+    {
+        auto desiredValid = std::bind(&Controller::desiredStateValid, this);
+        std::future<bool> promise = std::async(desiredValid);
+        std::cout << "Waiting for Valid Sensor Info. \n";
+        bool valid = promise.get();
+        if (valid) 
+        {
+            std::cout << "Got Valid Sensor Info. \n";
+        }
+    }
 
-    vector<float> current_desired_state_{10000.0F,10000.0F,10000.0F,10000.0F,10000.0F,10000.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
+    bool desiredStateValid()
+    {
+        while (!this->current_state_valid_)
+        {
+            sleep(.1);
+        }
+        while (!this->areEqual(this->desired_state_, this->current_state_))
+        {
+            this->desired_state_ = this->current_state_;
+        }
+        this->desired_state_valid_ = true;
+        return true;
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                         // UPDATES OF STATE FOR PIDs //
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
     /* Different timer for printing and sensor updates */
     void print_timer_callback()
     {
-        std::cout << "CURRENT AND DESIRED STATE" << "\n" << "___________________________ \n";
+        std::cout << "PID STATE UPDATE\n _______________________________\n"; 
+        std::cout << "Current State: ";
         printVector(this->current_state_);
-        printVector(this->current_desired_state_);
+        std::cout << "Desired State: ";
+        printVector(this->desired_state_);
         std::cout << "___________________________\n\n";
         this->controller_.getStatus(); 
     }
@@ -130,37 +165,19 @@ private:
     }
 
     void update_current_state() // ** Important Function **
-    {
-    /*
-     * STEP 1: Build current state from current information 
-     * that has been updated from the sensors. As of now
-     * we are using orientation as first 3 values, position as next 3
-     */
-        current_state_[0] = this->current_orientation_[0];
-        current_state_[1] = this->current_orientation_[1];
-        current_state_[2] = this->current_orientation_[2];
-        current_state_[3] = this->current_position_[0];
-        current_state_[4] = this->current_position_[1];
-        current_state_[5] = this->current_position_[2];
+    {    
     /* 
-     * STEP 2: Update the PID Controller (meaning call the ScionPIDController object's
+     * STEP 1: Update the PID Controller (meaning call the ScionPIDController object's
      * update function which generates ctrl_vals and show its status on the screen 
      */
-        if (current_desired_state_[0] > 9999 && current_state_[0] < 9999)
-        {
-            current_desired_state_ = current_state_;
-        }
-        if (current_desired_state_[0] < 9999 && current_state_[0] < 9999)
-        {
                                         // Refer to classes/pid_controller/scion_pid_controller.hpp for this function
-            this->controller_.update(current_state_, current_desired_state_, .010); // MOST IMPORTANT LINE IN PROGRAM
-        }
+    if (current_state_valid_ && desired_state_valid_)
+    {
+        this->controller_.update(current_state_, desired_state_, .010); // MOST IMPORTANT LINE IN PROGRAM
+    /* STEP 2: Send those generated values to the motors */
+        make_CAN_request(this->controller_.current_thrust_values);
+    }
 
-    /* STEP 3: Send those generated values to the motors */
-        if (this->controller_.current_thrust_values.size() > 0)
-        {
-            make_CAN_request(this->controller_.current_thrust_values);
-        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -211,42 +228,139 @@ private:
     }
     ////////////////////////////////////////// END REQUEST //////////////////////////////////////////
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            // ACTION SERVER // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    rclcpp_action::GoalResponse handle_goal
+    (
+        const rclcpp_action::GoalUUID& uuid,
+        std::shared_ptr<const PIDAction::Goal> goal
+    )
+    {
+        RCLCPP_INFO(this->get_logger(), "Received goal request with order %d", goal->desired_state);
+        (void)uuid;
+        return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+    }
+
+    rclcpp_action::CancelResponse handle_cancel
+    (
+        const std::shared_ptr<GoalHandlePIDAction> goal_handle
+    )
+    {
+        RCLCPP_INFO(this->get_logger(), "Received request to cancel goal");
+        (void)goal_handle;
+        return rclcpp_action::CancelResponse::ACCEPT;
+    }
+
+    void handle_accepted
+    (
+        const std::shared_ptr<GoalHandlePIDAction> goal_handle
+    )
+    {
+        using namespace std::placeholders;
+        // this needs to return quickly to avoid blocking the executor, so spin up a new thread
+        std::thread{std::bind(&Controller::execute, this, _1), goal_handle}.detach();
+    }
+
+    bool areEqual(float float1, float float2, float epsilon)
+    {
+        return (fabs(float1 - float2) < epsilon);
+    }
+
+    bool areEqual(std::vector<float>& current_state, std::vector<float>& desired_state)
+    {
+        bool equal = true;
+        for (std::vector<float>::size_type i = 0; i < current_state.size(); i++)
+        {
+            if (!areEqual(current_state[i], desired_state[i], (PID_ERROR_THRESHOLD*desired_state[i])))
+            {
+                equal = false;
+            }
+        }
+        return equal;
+    }
+
+    void execute(const std::shared_ptr<GoalHandlePIDAction> goal_handle)
+    {
+        RCLCPP_INFO(this->get_logger(), "Executing goal");
+        rclcpp::Rate loop_rate(100);
+
+        std::shared_ptr<PIDAction::Feedback> feedback = std::make_shared<PIDAction::Feedback>();
+        std::shared_ptr<PIDAction::Result> result = std::make_shared<PIDAction::Result>();
+        const auto goal = goal_handle->get_goal();
+
+        std::vector<float>& state = feedback->current_state;
+        state.push_back(this->current_state_[0]);
+        state.push_back(this->current_state_[1]);
+        state.push_back(this->current_state_[2]);
+        state.push_back(this->current_state_[3]);
+        state.push_back(this->current_state_[4]);
+        state.push_back(this->current_state_[5]);
+        
+        std::vector<float> desired_state = goal->desired_state + this->current_state_;
+        this->desired_state_ = desired_state;
+        std::cout << "Goal State";
+        printVector(desired_state);
+
+        while (!areEqual(state, desired_state)) {
+        //   Check if there is a cancel request
+        if (goal_handle->is_canceling()) {
+            goal_handle->canceled(result);
+            RCLCPP_INFO(this->get_logger(), "Goal canceled");
+            return;
+        }
+        std::stringstream ss;
+        // Update sequence
+        state[0] = this->current_state_[0];
+        state[1] = this->current_state_[1];
+        state[2] = this->current_state_[2];
+        state[3] = this->current_state_[3];
+        state[4] = this->current_state_[4];
+        state[5] = this->current_state_[5];
+
+        // std::cout << "State according to Server";
+        // printVector(state);
+
+        // Publish feedback
+        goal_handle->publish_feedback(feedback);
+        // RCLCPP_INFO(this->get_logger(), "Publish feedback");
+
+        loop_rate.sleep();
+
+        }
+        // Check if goal is done
+        if (rclcpp::ok()) {
+        goal_handle->succeed(result);
+        RCLCPP_INFO(this->get_logger(), "Goal succeeded");
+        }
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                         // SUBSCRIPTION CALLBACKS // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* 
-     * These callbacks all update a member variable that holds current state of PID, each corresponds to a 
-     * sensor. When that sensor publishes, the PID will store the last sensed value  
-     */
-
-    void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)
-    {
-        // RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
-        this->current_orientation_ = msg->orientation;
-    }
-
-    // void depth_sub_callback(const std_msgs::msg::Float32::SharedPtr msg)
+    // void desired_state_callback(const scion_types::msg::State::SharedPtr msg)
+    // /** 
+    //  * You can use this subscription to manually send a desired state at command line
+    //  **/ 
     // {
-    //     RCLCPP_INFO(this->get_logger(), "Received ms5837 depth data: %f", msg->data);
-    //     this->current_position_ = vector<float>{0.0, 0.0, msg->data} ;
+    //     if (!this->desired_state_valid_) {this->desired_state_valid_ = true;}
+    //     // RCLCPP_INFO(this->get_logger(), "Received Desired Position Data:");
+    //     printVector(msg->state);
+    //     this->desired_state_= msg->state; 
     // }
 
-    void position_sub_callback(const scion_types::msg::Position::SharedPtr msg)
-    {    
-        //  RCLCPP_INFO(this->get_logger(), "Received Zed Position Data");
-         this->current_position_  = msg->position;
-    }
-    
-    void desired_state_callback(const scion_types::msg::DesiredState::SharedPtr msg)
+    void current_state_callback(const scion_types::msg::State::SharedPtr msg)
     /** 
      * You can use this subscription to manually send a desired state at command line
      **/ 
     {
-        // RCLCPP_INFO(this->get_logger(), "Received Desired Position Data:");
-        printVector(msg->desired_state);
-        this->current_desired_state_= msg->desired_state; 
+        if (!this->current_state_valid_) {this->current_state_valid_ = true;}
+        // RCLCPP_INFO(this->get_logger(), "Received Current Position Data:");
+        printVector(msg->state);
+        this->current_state_= msg->state; 
     }
 };
 

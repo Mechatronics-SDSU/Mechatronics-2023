@@ -20,286 +20,94 @@
  * 
  */
 
+#include <vector>
+#include <unistd.h>
+
+#include "scion_types/action/pid.hpp"
+#include "scion_types/msg/idea.hpp"
+#include "control_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "scion_types/msg/desired_state.hpp"
-#include "scion_types/msg/orientation.hpp"         // Custom message types defined in scion_types package
-#include "scion_types/msg/position.hpp"            
-#include "std_msgs/msg/float32.hpp"
-#include "std_srvs/srv/trigger.hpp"
-#include "vector_operations.hpp"                   
-#include <stdlib.h>
-#include <memory>
-#include <future>         // std::async, std::future
+#include "rclcpp_action/rclcpp_action.hpp"
+#include "rclcpp_components/register_node_macro.hpp"
 
-// // a non-optimized way of checking for prime numbers:
-// bool is_prime (int x) {
-//   std::cout << "Calculating. Please, wait...\n";
-//   for (int i=2; i<x; ++i) if (x%i==0) return false;
-//   return true;
-// }
-
-// int main ()
-// {
-//   // call is_prime(313222313) asynchronously:
-//   std::future<bool> fut = std::async (is_prime,313222313);
-
-//   std::cout << "Checking whether 313222313 is prime.\n";
-//   // ...
-
-//   bool ret = fut.get();      // waits for is_prime to return
-
-//   if (ret) std::cout << "It is prime!\n";
-//   else std::cout << "It is not prime.\n";
-
-//   return 0;
-// }
-
-
-using std::placeholders::_1;
-using std::placeholders::_2;
-using namespace std;
-
-#define STATE_UPDATE_PERIOD 120ms
-#define MESSAGE_UPDATE_PERIOD 4s
-
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                    // NODE MEMBER VARIABLE DECLARIONS/INITIALIZATIONS //
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-/* Brain will subscribe to position and orientation, and take that into account for publishing the desired state */
+#define MODE "Mission"
 
 class Brain : public rclcpp::Node
 {
-
-struct Command
-{
-    vector<float>(Brain::*commandPtr)(float, vector<float>&);           // Points to a function to execute          (turn)
-    float degree;                                                       // The magnitude to pass into that function (30 degrees)
-};
-
-public:
-    Brain(): Node("brain_node")
-    {
-        state_timer_ = this->create_wall_timer(STATE_UPDATE_PERIOD, std::bind(&Brain::state_timer_callback, this));
-        message_timer_ = this->create_wall_timer(MESSAGE_UPDATE_PERIOD, std::bind(&Brain::message_timer_callback, this));
-
-        position_sub_ = this->create_subscription<scion_types::msg::Position>
-        ("zed_position_data", 10, std::bind(&Brain::position_sub_callback, this, _1));
-
-        orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
-        ("ahrs_orientation_data", 10, std::bind(&Brain::orientation_sub_callback, this, _1));
-        
-        desired_state_pub_ = this->create_publisher<scion_types::msg::DesiredState>
-        ("desired_state_data", 10);
-
-        reset_pos_client_ = this->create_client<std_srvs::srv::Trigger>("/zed2i/zed_node/reset_pos_tracking");
-
-        turnInBox(command_sequence_);                                   // Set command sequence with the commands defined in custom command sequence function
-    }
-
-private:
-    rclcpp::Subscription<scion_types::msg::Position>::SharedPtr position_sub_;
-    rclcpp::Subscription<scion_types::msg::DesiredState>::SharedPtr desired_state_sub_;
-    rclcpp::Publisher<scion_types::msg::DesiredState>::SharedPtr desired_state_pub_;
-    rclcpp::Subscription<scion_types::msg::Orientation>::SharedPtr orientation_sub_;
-    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_pos_client_; 
-    rclcpp::TimerBase::SharedPtr state_timer_;
-    rclcpp::TimerBase::SharedPtr message_timer_;
-    vector<Command> command_sequence_;
-    int counter_ = 0;
-
-
-    /* Upon initialization set all values to [0,0,0...] */
-    vector<float> current_orientation_{10000.0F,10000.0F,10000.0F};
-    vector<float> current_position_{10000.0F,10000.0F,10000.0F};
-    vector<float> current_state_{10000.0F,10000.0F,10000.0F,10000.0F,10000.0F,10000.0F};        // State described by yaw, pitch, roll, x, y, z 
-
-    vector<float> desired_state_ = current_state_;
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                        // COMMAND SEQUENCE DEFINTIONS //
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // void setCommandSequence(&command_sequence_)
-    // {
-    //     command_sequence_ = turnInBox();
-    // }
-
-    void turnInBox(vector<Command>& command_sequence)
-    {
-        /* 
-         * Turn in Box command by a loop of going forward and then turning 90 degrees continually
-         */
-
-        Command command1;
-        command1.commandPtr = &Brain::move;
-        command1.degree = 0.3;
-
-        Command command2;
-        command2.commandPtr = &Brain::turn; //static_cast<Command*>
-        command2.degree = 90.0;
-
-        command_sequence.push_back(command1);
-        command_sequence.push_back(command2);
-        
-        /* View our commands */
-        for (Command command : command_sequence)
+    public:
+        explicit Brain(): Node("brain_node")
         {
-            std::cout << (void*)command.commandPtr << std::endl;
-            std::cout << command.degree << std::endl;
-        }
-    }
+            this->declare_parameter("mode", MODE);
+            mode_param = this->get_parameter("mode").get_parameter_value().get<std::string>();
 
-    void forwardBack(vector<Command>& command_sequence)
-    {
-        Command command1;
-        command1.commandPtr = &Brain::move;
-        command1.degree = 0.5;
-
-        Command command2;
-        command2.commandPtr = &Brain::move; //static_cast<Command*>
-        command2.degree = -0.5;
-
-        command_sequence.push_back(command1);
-        command_sequence.push_back(command2);
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                    // SERVICE REQUEST TO RESET POSITION //
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    std::shared_ptr<std_srvs::srv::Trigger::Response> makeRequest() 
-    /** 
-     * Reset the position of Zed to 0,0,0
-    **/
-    {
-        // std::cout << "Making Request" << std::endl;
-        std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();
-
-        while (!reset_pos_client_->wait_for_service(1s)) 
-        {
-            if (!rclcpp::ok()) 
+            idea_pub_ = this->create_publisher<scion_types::msg::Idea>("brain_idea_data", 10);
+            
+            if (mode_param == "Explore")
             {
-                RCLCPP_ERROR(rclcpp::get_logger("brain_node"), "Interrupted while waiting for the service. Exiting.");
+                decision_timer_ = this->create_wall_timer
+                (
+                    std::chrono::milliseconds(25), 
+                    std::bind(&Brain::make_decision, this)
+                );
             }
-            RCLCPP_INFO(rclcpp::get_logger("brain_node"), "service not available, waiting again...");
+            if (mode_param == "Mission")
+            {
+                initSequence(idea_sequence_);
+                publishSequence(idea_sequence_);
+            }
         }
-        std::shared_ptr<std_srvs::srv::Trigger::Response> result = reset_pos_client_->async_send_request(request);
-        return result;
-    }
+    private:
+        rclcpp::Publisher<scion_types::msg::Idea>::SharedPtr idea_pub_;
+        rclcpp::TimerBase::SharedPtr decision_timer_;
+        Interface::idea_vector_t idea_sequence_;
+        std::string mode_param;
 
+        void make_decision()
+        {
+            std::cout << "Making A Decision" << std::endl;
+        }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                    // GENERATE DESIRED STATE AND SEND TO PID  //
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        void initSequence(Interface::idea_vector_t& idea_sequence)
+        {
+            using namespace Interface;
+            scion_types::msg::Idea idea1 = scion_types::msg::Idea();
+            idea1.code = Idea::RELATIVE_POINT;
+            idea1.parameters = std::vector<float>{1.0F,1.0F};
 
-    void message_timer_callback()
-    {
-        /* 
-         * Executes on a timer, sends the desired_state to the PID 
-         * TODO: Keep on a short timer but with condition of 1st command completion to move to the 2nd command
-         */
+            scion_types::msg::Idea idea2 = scion_types::msg::Idea();
+            idea2.code = Idea::RELATIVE_POINT;
+            idea2.parameters = std::vector<float>{0.0,1.0F};
 
-        auto message = scion_types::msg::DesiredState();
-        message.desired_state = constructDesiredState();    // Other function will be called to provide logic of desired state (decides where to go)
-        desired_state_ = message.desired_state;             // Just to print to the console the desired state
-        desired_state_pub_->publish(message);
-        RCLCPP_INFO(this->get_logger(), "Publishing Desired State " );
-    }
-    
-    std::vector<float> constructDesiredState()
-    {
-        /* 
-         * Grabs a command from the command vector and extracts the appropriate 
-         * desired state based on the command to send to the publisher. 
-         * Desired state is a vector of 6 floats. 
-         */
-        std::vector<float> desired_state; 
-        Command command = command_sequence_[(counter_ % command_sequence_.size())];
+            idea_sequence.push_back(idea1);
+            idea_sequence.push_back(idea2);
+        }
 
-        ////////////// TESTING OUTPUT TO CONSOLE ////////////
-        // cout << "ptr:" << (void*)command.commandPtr << " " << std::endl;
-        // cout << "float: "<< command.degree << " " << std::endl;
-        // cout << "vector: " << std::endl;
-        printVector(current_state_);
-        ////////////////////////////////////////////////////
+        void publishSequence(Interface::idea_vector_t& idea_sequence)
+        {   
+            using namespace Interface;
+            // for (idea_message_t& idea_message : idea_sequence)
+            // {
+            //     std::cout << idea_message.code << std::endl;
+            //     for (float parameter : idea_message.parameters)
+            //     {
+            //         std::cout << parameter << std::endl;
+            //     } 
+            // }
+            for (idea_message_t& idea_message : idea_sequence)
+            {
+                sleep(1);
+                this->idea_pub_->publish(idea_message);
+            }
+            RCLCPP_INFO(this->get_logger(), "Publishing Idea" );
+        }
 
+}; // class Brain
 
-        vector<float> (Brain::*command_function)(float, vector<float>&) = command.commandPtr;           // Extract function pointer from Command struct
-        desired_state = (this->*command_function)(command.degree, current_state_);                      // Actual function call using degree parameter from Command and current_state_ member
-
-        counter_ = counter_ + 1;
-        return desired_state;
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                // TRACKING SENSOR INFO AND CURRENT STATE  //
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    void state_timer_callback()
-    /* Essential callback set to update current sensor state at certain interval */
-    {
-        update_current_state();
-        // printVector(current_state_);
-        // printVector(desired_state_);
-    }
-
-    void update_current_state()
-    {
-    /*
-     * STEP 1: Build current state from current information 
-     * that has been updated from the sensors. As of now
-     * we are using orientation as first 3 values, position as next 3
-     */
-        this->current_state_[0] = this->current_orientation_[0];
-        this->current_state_[1] = this->current_orientation_[1];
-        this->current_state_[2] = this->current_orientation_[2];
-        this->current_state_[3] = this->current_position_[0];
-        this->current_state_[4] = this->current_position_[1];
-        this->current_state_[5] = this->current_position_[2];
-    }
-
-    void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)
-    {
-        // RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
-        this->current_orientation_ = msg->orientation;
-    }
-
-    void position_sub_callback(const scion_types::msg::Position::SharedPtr msg)
-    {    
-        // RCLCPP_INFO(this->get_logger(), "Received Zed Position Data");
-        this->current_position_  = msg->position;
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                    // POSSIBLE FUNCTIONS TO BE PERFORMED  //
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    vector<float> turn(float degrees, vector<float>& current_state_)
-    {
-        return vector<float>{degrees + current_state_[0], current_state_[1],current_state_[2], current_state_[3], current_state_[4], current_state_[5]};
-    }
-
-    vector<float> move(float distance, vector<float>& current_state_)
-    {
-        std::future<std::shared_ptr<std_srvs::srv::Trigger::Response> > promise = std::async (this->makeRequest);
-
-        std::cout << "Sending Service Request.\n";
-        // ...
-
-        std::shared_ptr<std_srvs::srv::Trigger::Response> ret = promise.get();      // waits for is_prime to return
-        std::cout << "Ready to move" << std::endl;
-
-        return vector<float>{current_state_[0], current_state_[1], current_state_[2], distance + current_state_[3], current_state_[4], current_state_[5]};
-    }
-};
 
 int main(int argc, char * argv[])
-{   
-    rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<Brain>()); // simply call Brain constructor
-    rclcpp::shutdown();
-    return 0;
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<Brain>());
+  rclcpp::shutdown();
+  return 0;
 }
- 
