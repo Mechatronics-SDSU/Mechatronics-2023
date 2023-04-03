@@ -80,7 +80,6 @@ public:
         // velocity_sub_ = this->create_subscription<scion_types::msg::Orientation>
         // ("dvl_velocity_data", 10, std::bind(&Controller::orientation_sub_callback, this, _1));
 
-
         controller_ = Scion_Position_PID_Controller(pid_params_object_.get_pid_params());
         controller_.getStatus();
         
@@ -104,14 +103,14 @@ private:
 
     /* Upon initialization set all values to [0,0,0...] */
 
-    vector<float> current_orientation_{0.0F, 0.0F, 0.0F};
-    vector<float> current_position_{0.0F, 0.0F, 0.0F};
-    vector<float> current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
+    vector<float> current_orientation_{10000.0F,10000.0F,10000.0F};
+    vector<float> current_position_{10000.0F,10000.0F,10000.0F};
+    vector<float> current_state_{10000.0F,10000.0F,10000.0F,10000.0F,10000.0F,10000.0F}; // State described by yaw, pitch, roll, x, y, z 
 
-    vector<float> current_desired_state_; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
+    vector<float> current_desired_state_{10000.0F,10000.0F,10000.0F,10000.0F,10000.0F,10000.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-                                        // UPDATES OF STATE FOR PIDs // 
+                                        // UPDATES OF STATE FOR PIDs //
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /* Different timer for printing and sensor updates */
@@ -137,29 +136,31 @@ private:
      * that has been updated from the sensors. As of now
      * we are using orientation as first 3 values, position as next 3
      */
-
-        this->current_state_[0] = this->current_orientation_[0];
-        this->current_state_[1] = this->current_orientation_[1];
-        this->current_state_[2] = this->current_orientation_[2];
-        this->current_state_[3] = this->current_position_[0];
-        this->current_state_[4] = this->current_position_[1];
-        this->current_state_[5] = this->current_position_[2];
+        current_state_[0] = this->current_orientation_[0];
+        current_state_[1] = this->current_orientation_[1];
+        current_state_[2] = this->current_orientation_[2];
+        current_state_[3] = this->current_position_[0];
+        current_state_[4] = this->current_position_[1];
+        current_state_[5] = this->current_position_[2];
     /* 
      * STEP 2: Update the PID Controller (meaning call the ScionPIDController object's
      * update function which generates ctrl_vals and show its status on the screen 
      */
-        if (current_desired_state_.size() == 0)
+        if (current_desired_state_[0] > 9999 && current_state_[0] < 9999)
         {
             current_desired_state_ = current_state_;
         }
-        if (current_desired_state_.size() > 0)
+        if (current_desired_state_[0] < 9999 && current_state_[0] < 9999)
         {
                                         // Refer to classes/pid_controller/scion_pid_controller.hpp for this function
             this->controller_.update(current_state_, current_desired_state_, .010); // MOST IMPORTANT LINE IN PROGRAM
         }
 
     /* STEP 3: Send those generated values to the motors */
-        make_CAN_request(this->controller_.current_thrust_values);
+        if (this->controller_.current_thrust_values.size() > 0)
+        {
+            make_CAN_request(this->controller_.current_thrust_values);
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -234,7 +235,7 @@ private:
 
     void position_sub_callback(const scion_types::msg::Position::SharedPtr msg)
     {    
-         RCLCPP_INFO(this->get_logger(), "Received Zed Position Data");
+        //  RCLCPP_INFO(this->get_logger(), "Received Zed Position Data");
          this->current_position_  = msg->position;
     }
     
@@ -243,7 +244,7 @@ private:
      * You can use this subscription to manually send a desired state at command line
      **/ 
     {
-        RCLCPP_INFO(this->get_logger(), "Received Desired Position Data:");
+        // RCLCPP_INFO(this->get_logger(), "Received Desired Position Data:");
         printVector(msg->desired_state);
         this->current_desired_state_= msg->desired_state; 
     }

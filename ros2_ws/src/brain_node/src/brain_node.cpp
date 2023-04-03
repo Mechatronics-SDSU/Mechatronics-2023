@@ -28,6 +28,32 @@
 #include "std_srvs/srv/trigger.hpp"
 #include "vector_operations.hpp"                   
 #include <stdlib.h>
+#include <memory>
+#include <future>         // std::async, std::future
+
+// // a non-optimized way of checking for prime numbers:
+// bool is_prime (int x) {
+//   std::cout << "Calculating. Please, wait...\n";
+//   for (int i=2; i<x; ++i) if (x%i==0) return false;
+//   return true;
+// }
+
+// int main ()
+// {
+//   // call is_prime(313222313) asynchronously:
+//   std::future<bool> fut = std::async (is_prime,313222313);
+
+//   std::cout << "Checking whether 313222313 is prime.\n";
+//   // ...
+
+//   bool ret = fut.get();      // waits for is_prime to return
+
+//   if (ret) std::cout << "It is prime!\n";
+//   else std::cout << "It is not prime.\n";
+
+//   return 0;
+// }
+
 
 using std::placeholders::_1;
 using std::placeholders::_2;
@@ -68,7 +94,7 @@ public:
         desired_state_pub_ = this->create_publisher<scion_types::msg::DesiredState>
         ("desired_state_data", 10);
 
-        // reset_pos_client_ = this->create_client<std_srvs::srv::Trigger>("/zed2i/zed_node/reset_pos_tracking");
+        reset_pos_client_ = this->create_client<std_srvs::srv::Trigger>("/zed2i/zed_node/reset_pos_tracking");
 
         turnInBox(command_sequence_);                                   // Set command sequence with the commands defined in custom command sequence function
     }
@@ -78,7 +104,7 @@ private:
     rclcpp::Subscription<scion_types::msg::DesiredState>::SharedPtr desired_state_sub_;
     rclcpp::Publisher<scion_types::msg::DesiredState>::SharedPtr desired_state_pub_;
     rclcpp::Subscription<scion_types::msg::Orientation>::SharedPtr orientation_sub_;
-    // rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_pos_client_; 
+    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_pos_client_; 
     rclcpp::TimerBase::SharedPtr state_timer_;
     rclcpp::TimerBase::SharedPtr message_timer_;
     vector<Command> command_sequence_;
@@ -86,9 +112,9 @@ private:
 
 
     /* Upon initialization set all values to [0,0,0...] */
-    vector<float> current_orientation_{0.0F,0.0F,0.0F};
-    vector<float> current_position_{0.0F,0.0F,0.0F};
-    vector<float> current_state_{0.0F,0.0F,0.0F,0.0F,0.0F,0.0F};        // State described by yaw, pitch, roll, x, y, z 
+    vector<float> current_orientation_{10000.0F,10000.0F,10000.0F};
+    vector<float> current_position_{10000.0F,10000.0F,10000.0F};
+    vector<float> current_state_{10000.0F,10000.0F,10000.0F,10000.0F,10000.0F,10000.0F};        // State described by yaw, pitch, roll, x, y, z 
 
     vector<float> desired_state_ = current_state_;
 
@@ -109,7 +135,7 @@ private:
 
         Command command1;
         command1.commandPtr = &Brain::move;
-        command1.degree = 0.2;
+        command1.degree = 0.3;
 
         Command command2;
         command2.commandPtr = &Brain::turn; //static_cast<Command*>
@@ -144,26 +170,25 @@ private:
                                     // SERVICE REQUEST TO RESET POSITION //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // template<typename T>
-    // auto makeRequest() 
-    // /** 
-    //  * Reset the position of Zed to 0,0,0
-    // **/
-    // {
-    //     auto request = std::make_shared<std_srvs::srv::Trigger::Request>();
+    std::shared_ptr<std_srvs::srv::Trigger::Response> makeRequest() 
+    /** 
+     * Reset the position of Zed to 0,0,0
+    **/
+    {
+        // std::cout << "Making Request" << std::endl;
+        std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();
 
-        
-    //     while (!reset_pos_client_->wait_for_service(1s)) 
-    //     {
-    //         if (!rclcpp::ok()) 
-    //         {
-    //             RCLCPP_ERROR(rclcpp::get_logger("brain_node"), "Interrupted while waiting for the service. Exiting.");
-    //         }
-    //         RCLCPP_INFO(rclcpp::get_logger("brain_node"), "service not available, waiting again...");
-    //     }
-    //     auto result = reset_pos_client_->async_send_request(request);
-    //     return result;
-    // }
+        while (!reset_pos_client_->wait_for_service(1s)) 
+        {
+            if (!rclcpp::ok()) 
+            {
+                RCLCPP_ERROR(rclcpp::get_logger("brain_node"), "Interrupted while waiting for the service. Exiting.");
+            }
+            RCLCPP_INFO(rclcpp::get_logger("brain_node"), "service not available, waiting again...");
+        }
+        std::shared_ptr<std_srvs::srv::Trigger::Response> result = reset_pos_client_->async_send_request(request);
+        return result;
+    }
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -195,9 +220,9 @@ private:
         Command command = command_sequence_[(counter_ % command_sequence_.size())];
 
         ////////////// TESTING OUTPUT TO CONSOLE ////////////
-        cout << "ptr:" << (void*)command.commandPtr << " " << std::endl;
-        cout << "float: "<< command.degree << " " << std::endl;
-        cout << "vector: " << std::endl;
+        // cout << "ptr:" << (void*)command.commandPtr << " " << std::endl;
+        // cout << "float: "<< command.degree << " " << std::endl;
+        // cout << "vector: " << std::endl;
         printVector(current_state_);
         ////////////////////////////////////////////////////
 
@@ -217,8 +242,8 @@ private:
     /* Essential callback set to update current sensor state at certain interval */
     {
         update_current_state();
-        printVector(current_state_);
-        printVector(desired_state_);
+        // printVector(current_state_);
+        // printVector(desired_state_);
     }
 
     void update_current_state()
@@ -244,7 +269,7 @@ private:
 
     void position_sub_callback(const scion_types::msg::Position::SharedPtr msg)
     {    
-        RCLCPP_INFO(this->get_logger(), "Received Zed Position Data");
+        // RCLCPP_INFO(this->get_logger(), "Received Zed Position Data");
         this->current_position_  = msg->position;
     }
 
@@ -258,7 +283,14 @@ private:
 
     vector<float> move(float distance, vector<float>& current_state_)
     {
-        // makeRequest();
+        std::future<std::shared_ptr<std_srvs::srv::Trigger::Response> > promise = std::async (this->makeRequest);
+
+        std::cout << "Sending Service Request.\n";
+        // ...
+
+        std::shared_ptr<std_srvs::srv::Trigger::Response> ret = promise.get();      // waits for is_prime to return
+        std::cout << "Ready to move" << std::endl;
+
         return vector<float>{current_state_[0], current_state_[1], current_state_[2], distance + current_state_[3], current_state_[4], current_state_[5]};
     }
 };

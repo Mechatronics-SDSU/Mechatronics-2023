@@ -223,15 +223,15 @@ def generate_launch_description():
             default_value='[0.0,0.0,0.0,0.0,0.0,0.0]',
             description='Pose of the camera with respect to the base frame (i.e. `base_link`): [x,y,z,r,p,y]. Note: Orientation in rad.)'),
         # ******************* EVERYTHING BELOW HERE ARE OUR NODES ************** #
-        launch_ros.actions.Node(
-            package='ahrs_node', executable='ahrs_exec', output='screen'
-            ),
-        launch_ros.actions.Node(
-            package='brain_node', executable='brain_exec', output='screen' 
-            ),  
-        launch_ros.actions.Node(
-            package='pid_node', executable='pid_exec', output='screen' 
-            ),    
+        # launch_ros.actions.Node(
+        #     package='ahrs_node', executable='ahrs_exec', output='screen'
+        #     ),
+        # launch_ros.actions.Node(
+        #     package='brain_node', executable='brain_exec', output='screen' 
+        #     ),  
+        # launch_ros.actions.Node(
+        #     package='pid_node', executable='pid_exec', output='screen' 
+        #     ),    
         # launch_ros.actions.Node(
         #     package='can2ros_driver', executable='can2ros_driver'
         #     ),
