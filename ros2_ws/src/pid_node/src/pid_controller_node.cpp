@@ -36,7 +36,7 @@ using std::placeholders::_2;
 using namespace std;
 
 #define MBOX_INTERFACE "can0"
-#define UPDATE_PERIOD 120ms
+#define UPDATE_PERIOD 50ms
 #define PRINT_PERIOD 500ms
 #define PID_ERROR_THRESHOLD 0.01f
 
@@ -133,11 +133,19 @@ private:
         {
             sleep(.1);
         }
-        while (!this->areEqual(this->desired_state_, this->current_state_))
+        // while (!this->areEqual(this->desired_state_, this->current_state_))
+        for (int i = 0; i < 1000; i++)
         {
             this->desired_state_ = this->current_state_;
         }
-        this->desired_state_valid_ = true;
+        while (!this->desired_state_valid_)
+        {
+            this->desired_state_valid_ = true;
+        }
+        while (!this->current_state_valid_)
+        {
+            this->current_state_valid_ = true;
+        }
         return true;
     }
 
@@ -170,6 +178,10 @@ private:
      * STEP 1: Update the PID Controller (meaning call the ScionPIDController object's
      * update function which generates ctrl_vals and show its status on the screen 
      */
+
+    std::cout << this->current_state_valid_ << std::endl;
+    std::cout << this->desired_state_valid_ << std::endl;
+
                                         // Refer to classes/pid_controller/scion_pid_controller.hpp for this function
     if (current_state_valid_ && desired_state_valid_)
     {
@@ -274,7 +286,7 @@ private:
         bool equal = true;
         for (std::vector<float>::size_type i = 0; i < current_state.size(); i++)
         {
-            if (!areEqual(current_state[i], desired_state[i], (PID_ERROR_THRESHOLD*desired_state[i])))
+            if (!areEqual(current_state[i], desired_state[i], 1)) //.05*current_state[i])
             {
                 equal = false;
             }
@@ -299,8 +311,12 @@ private:
         state.push_back(this->current_state_[4]);
         state.push_back(this->current_state_[5]);
         
-        std::vector<float> desired_state = goal->desired_state + this->current_state_;
-        this->desired_state_ = desired_state;
+        std::vector<float> desired_state = goal->desired_state;
+        for (int i = 0; i < 100; i++)
+        {
+            desired_state_ += this->current_state_;
+            this->desired_state_ = desired_state;
+        }
         std::cout << "Goal State";
         printVector(desired_state);
 

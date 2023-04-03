@@ -27,7 +27,7 @@ PID_Params::PID_Params()
     {
         {"kp", 0.015},  // .025
         {"ki", 0.003},   // .003
-        {"kd", 0.006},  // .006
+        {"kd", 0.009},  // .006
         // {"ctrl_val_offset", 10.0},
         {"ctrl_val_max", MAX},
         {"ctrl_val_min", MIN},
