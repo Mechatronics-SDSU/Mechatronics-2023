@@ -283,10 +283,20 @@ private:
 
     bool areEqual(std::vector<float>& current_state, std::vector<float>& desired_state)
     {
+        #define ORIENTATION_TOLERANCE 1.0f
+        #define POSITION_TOLERANCE 0.05f
+
         bool equal = true;
-        for (std::vector<float>::size_type i = 0; i < current_state.size(); i++)
+        for (std::vector<float>::size_type i = 0; i < 3; i++)
         {
-            if (!areEqual(current_state[i], desired_state[i], 1)) //.05*current_state[i])
+            if (!areEqual(current_state[i], desired_state[i], ORIENTATION_TOLERANCE)) //.05*current_state[i])
+            {
+                equal = false;
+            }
+        }
+        for (std::vector<float>::size_type j = 3; j < 6; j++)
+        {
+            if (!areEqual(current_state[i], desired_state[i], POSITION_TOLERANCE)) //.05*current_state[i])
             {
                 equal = false;
             }
