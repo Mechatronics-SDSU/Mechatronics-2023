@@ -209,7 +209,7 @@ private:
   {     
       auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
       auto reset_state_result = this->reset_relative_state_client_->async_send_request(reset_state_request);
-      reset_state_result.wait();  
+      // reset_state_result.wait();  
   }
 
   void resetStateOnTimer()
@@ -223,16 +223,19 @@ private:
 
   void ignorePositionRequest()
   {
+      // std::cout << "Function call";
       auto ignore_position_request = std::make_shared<std_srvs::srv::Trigger::Request>();
       auto ignore_position_result = this->ignore_position_client_->async_send_request(ignore_position_request);
-      ignore_position_result.wait();
+      // std::cout << "Before Waitng";
+      // ignore_position_result.wait();
+      // std::cout << "Done Waiting";
   }
 
   void usePositionRequest()
   {
       auto use_position_request = std::make_shared<std_srvs::srv::Trigger::Request>();
       auto use_position_result = this->use_position_client_->async_send_request(use_position_request);
-      use_position_result.wait();
+      // use_position_result.wait();
   }
 
 
@@ -241,7 +244,7 @@ private:
     using namespace Interface;
     if (this->command_queue_.size() > 0 && current_command_ == nullptr) // && controlInit == true
     {
-        this->resetState();
+        // this->resetState();
         this->current_command_ = &command_queue_[0];
         this->command_queue_.pop_front();
         

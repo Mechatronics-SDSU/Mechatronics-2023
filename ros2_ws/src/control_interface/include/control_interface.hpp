@@ -101,13 +101,11 @@ namespace Movements
 
     desired_state_t turn(float degree)
     {
-        std::cout << "Turn " << degree << " New " << std::endl;
         return desired_state_t{degree,0,0,0,0,0};
     }
 
     desired_state_t move(float degree)
     {
-        std::cout << "Move " << degree << std::endl;
         return desired_state_t{0,0,0,degree,0,0};
     }
 }
