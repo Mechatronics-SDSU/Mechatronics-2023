@@ -208,7 +208,9 @@ private:
   void resetState()
   {     
       auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
-      auto reset_state_result = this->reset_relative_state_client_->async_send_request(reset_state_request);
+      auto reset_state_future = this->reset_relative_state_client_->async_send_request(reset_state_request);
+      // reset_state_future.wait();
+      // auto reset_state_result = reset_state_future.get();
       // reset_state_result.wait();  
   }
 
@@ -244,7 +246,6 @@ private:
     using namespace Interface;
     if (this->command_queue_.size() > 0 && current_command_ == nullptr) // && controlInit == true
     {
-        // this->resetState();
         this->current_command_ = &command_queue_[0];
         this->command_queue_.pop_front();
         
@@ -253,6 +254,7 @@ private:
         {
           ignorePositionRequest();
         }
+        this->resetState();
         desired_state_t desired = (*func)(current_command_->params.degree);
         this->send_goal(desired);
     }

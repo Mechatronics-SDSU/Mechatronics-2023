@@ -143,7 +143,9 @@ private:
         {
             sleep(.1);
         }
+        sleep(.3);
         // this->resetState();
+        // sleep(.15);
         std::cout << "THIS IS DESIRED: ";
         printVector(this->desired_state_);
         std::cout << "THIS IS CURRENT: ";
@@ -151,12 +153,12 @@ private:
         while (!this->areEqual(this->desired_state_, this->current_state_))
         // for (int i = 0; i < 1000; i++)
         {
-            std::cout << "DESIRED: ";
-            printVector(this->desired_state_);
-            std::cout << "CURRENT: ";
-            printVector(this->current_state_);
+            // std::cout << "DESIRED: ";
+            // printVector(this->desired_state_);
+            // std::cout << "CURRENT: ";
+            // printVector(this->current_state_);
             this->desired_state_ = this->current_state_;
-            printVector(this->desired_state_);
+            // printVector(this->desired_state_);
         }
         while (!this->desired_state_valid_)
         {
@@ -365,6 +367,11 @@ private:
         std::shared_ptr<PIDAction::Result> result = std::make_shared<PIDAction::Result>();
         const auto goal = goal_handle->get_goal();
 
+        vector<float> zero = vector<float>{0,0,0,0,0,0};
+        while (!areEqual(this->current_state_, zero))
+        {
+            sleep(.1);
+        }
         std::vector<float> desired_state = goal->desired_state;
         desired_state += this->current_state_;
         this->desired_state_ = desired_state;
