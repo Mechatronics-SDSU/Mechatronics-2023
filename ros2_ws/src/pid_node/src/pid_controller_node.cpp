@@ -119,7 +119,7 @@ private:
     bool current_state_valid_ = false;
     bool desired_state_valid_ = false;
     bool ignore_position_ = false;
-
+    bool service_done_ = false;
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                 // WAIT FOR VALID DATA TO INITIALIZE PIDs // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -136,19 +136,27 @@ private:
         }
     }
 
+
     bool desiredStateValid()
     {
         while (!this->current_state_valid_)
         {
             sleep(.1);
         }
-        // auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
-        // auto reset_state_result = this->reset_relative_state_client_->async_send_request(reset_state_request);
-        // reset_state_result.wait();
-        // while (!this->areEqual(this->desired_state_, this->current_state_))
-        for (int i = 0; i < 1000; i++)
+        // this->resetState();
+        std::cout << "THIS IS DESIRED: ";
+        printVector(this->desired_state_);
+        std::cout << "THIS IS CURRENT: ";
+        printVector(this->current_state_);
+        while (!this->areEqual(this->desired_state_, this->current_state_))
+        // for (int i = 0; i < 1000; i++)
         {
+            std::cout << "DESIRED: ";
+            printVector(this->desired_state_);
+            std::cout << "CURRENT: ";
+            printVector(this->current_state_);
             this->desired_state_ = this->current_state_;
+            printVector(this->desired_state_);
         }
         while (!this->desired_state_valid_)
         {
@@ -356,6 +364,7 @@ private:
         std::shared_ptr<PIDAction::Feedback> feedback = std::make_shared<PIDAction::Feedback>();
         std::shared_ptr<PIDAction::Result> result = std::make_shared<PIDAction::Result>();
         const auto goal = goal_handle->get_goal();
+
         std::vector<float> desired_state = goal->desired_state;
         desired_state += this->current_state_;
         this->desired_state_ = desired_state;
@@ -458,6 +467,14 @@ private:
         goal_handle->succeed(result);
         RCLCPP_INFO(this->get_logger(), "Goal succeeded");
         }
+    }
+
+    void resetState()
+    {
+        auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+        auto reset_state_future = this->reset_relative_state_client_->async_send_request(reset_state_request);
+        reset_state_future.wait();
+        auto reset_state_result = reset_state_future.get();
     }
 
     void ignorePosition(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,

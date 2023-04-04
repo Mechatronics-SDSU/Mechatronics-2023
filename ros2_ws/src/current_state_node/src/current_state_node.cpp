@@ -144,6 +144,7 @@ class CurrentStateNode : public rclcpp::Node
     {
         RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming Request to Reset Relative Position\n");
         this->relative_state_ = this->current_state_;
+        response->success = true;
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////
