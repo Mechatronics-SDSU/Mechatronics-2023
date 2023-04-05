@@ -40,6 +40,7 @@ public:
     reset_relative_state_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_state");
     ignore_position_client_ = this->create_client<std_srvs::srv::Trigger>("ignore_position");
     use_position_client_ = this->create_client<std_srvs::srv::Trigger>("use_position");
+    stop_robot_client_ = this->create_client<std_srvs::srv::Trigger>("stop_robot");
 
     idea_sub_ = this->create_subscription<scion_types::msg::Idea>
     (
@@ -52,17 +53,11 @@ public:
     current_command_ = nullptr;
 
     this->next_command_timer_ = this->create_wall_timer
-    
     (
       std::chrono::milliseconds(100), 
       std::bind(&Mediator::nextCommand, this)
     );
 
-    // this->reset_timer_ = this->create_wall_timer
-    // (
-    //   std::chrono::milliseconds(2500), 
-    //   std::bind(&Mediator::resetStateOnTimer, this)
-    // );
   }
 
 private:
@@ -70,12 +65,57 @@ private:
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_relative_state_client_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr ignore_position_client_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr use_position_client_;
+  rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr stop_robot_client_;
   rclcpp::Subscription<scion_types::msg::Idea>::SharedPtr idea_sub_;
   rclcpp::TimerBase::SharedPtr next_command_timer_;
   rclcpp::TimerBase::SharedPtr reset_timer_;
   Interface::command_queue_t command_queue_;
   Interface::Command* current_command_; 
 
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            // COMMAND HANDLING // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  void nextCommandPrep(Interface::state_transform_func function_ptr)
+  {
+    if (function_ptr == &Movements::turn)
+        {
+          ignorePositionRequest();
+        }
+        this->resetState();
+  }
+
+  void nextCommand()
+  {
+    using namespace Interface;
+    if (this->command_queue_.size() > 0 && current_command_ == nullptr) // && controlInit == true
+    {
+        this->current_command_ = &command_queue_[0];
+        this->command_queue_.pop_front();
+        
+        state_transform_func func = current_command_->function.transform;
+        this->nextCommandPrep(func);
+        desired_state_t desired = (*func)(current_command_->params.degree);
+        this->send_goal(desired);
+    }
+  }
+
+  //   void populateQueue()
+  //   {
+  //     using namespace Interface;
+  //     Command command1;
+  //     command1.function.movement = &Movements::count;
+  //     Command command2;
+  //     command2.function.movement = &Movements::count;
+  //     Command command3;
+  //     command3.function.movement = &Movements::count;
+
+  //     this->command_queue_.push_back(command1);
+  //     this->command_queue_.push_back(command2);
+  //     this->command_queue_.push_back(command3);
+  //   }
 
   void addToQueue(Interface::command_vector_t& command_vector)
   {
@@ -92,7 +132,7 @@ private:
       switch (idea->code)
       {
         case Idea::STOP:
-          Translator::stop();
+          this->cancel_goal();
           break;
         case Idea::GO:
           Translator::go(idea->parameters[0]);
@@ -124,6 +164,11 @@ private:
       }
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            // ACTION SERVER // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
   void send_goal(Interface::desired_state_t& desired)
   {
     using namespace std::placeholders;
@@ -148,6 +193,8 @@ private:
     using namespace std::placeholders;
     auto cancel_goal_options = rclcpp_action::Client<PIDAction>::CancelRequest();
     this->pid_command_client_->async_cancel_all_goals();
+    // CAN request of 010#0000
+    // 
   }
 
   void goal_response_callback
@@ -205,6 +252,17 @@ private:
       RCLCPP_INFO(this->get_logger(), ss.str().c_str());
   }
 
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            // MEDIATION SERVICES // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  void stopRobot()
+  {
+      auto stop_robot_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+      auto stop_robot_future = this->reset_relative_state_client_->async_send_request(stop_robot_request);
+  }
+
   void resetState()
   {     
       auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
@@ -214,23 +272,10 @@ private:
       // reset_state_result.wait();  
   }
 
-  void resetStateOnTimer()
-  {     
-        if (this->current_command_ == nullptr)
-        {
-          auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
-          auto reset_state_result = this->reset_relative_state_client_->async_send_request(reset_state_request);
-        }
-  }
-
   void ignorePositionRequest()
   {
-      // std::cout << "Function call";
       auto ignore_position_request = std::make_shared<std_srvs::srv::Trigger::Request>();
       auto ignore_position_result = this->ignore_position_client_->async_send_request(ignore_position_request);
-      // std::cout << "Before Waitng";
-      // ignore_position_result.wait();
-      // std::cout << "Done Waiting";
   }
 
   void usePositionRequest()
@@ -240,40 +285,6 @@ private:
       // use_position_result.wait();
   }
 
-
-  void nextCommand()
-  {
-    using namespace Interface;
-    if (this->command_queue_.size() > 0 && current_command_ == nullptr) // && controlInit == true
-    {
-        this->current_command_ = &command_queue_[0];
-        this->command_queue_.pop_front();
-        
-        state_transform_func func = current_command_->function.transform;
-        if (func == &Movements::turn)
-        {
-          ignorePositionRequest();
-        }
-        this->resetState();
-        desired_state_t desired = (*func)(current_command_->params.degree);
-        this->send_goal(desired);
-    }
-  }
-
-//   void populateQueue()
-//   {
-//     using namespace Interface;
-//     Command command1;
-//     command1.function.movement = &Movements::count;
-//     Command command2;
-//     command2.function.movement = &Movements::count;
-//     Command command3;
-//     command3.function.movement = &Movements::count;
-
-//     this->command_queue_.push_back(command1);
-//     this->command_queue_.push_back(command2);
-//     this->command_queue_.push_back(command3);
-//   }
 
 };  // class Mediator
 

@@ -26,6 +26,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "control_interface.hpp"
+// #include "std_srvs/srv/setbool.hpp"
 #include "std_srvs/srv/trigger.hpp"
 #include "scion_types/action/pid.hpp"
 #include "scion_types/msg/state.hpp"
@@ -87,6 +88,7 @@ public:
         this->reset_relative_state_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_state");
         ignore_position_service_ = this->create_service<std_srvs::srv::Trigger>("ignore_position", std::bind(&Controller::ignorePosition, this, _1, _2));
         use_position_service_ = this->create_service<std_srvs::srv::Trigger>("use_position", std::bind(&Controller::usePosition, this, _1, _2));
+        stop_robot_service_ = this->create_service<std_srvs::srv::Trigger>("stop_robot", std::bind(&Controller::stopRobot, this, _1, _2));
 
         controller_ = Scion_Position_PID_Controller(pid_params_object_.get_pid_params());
         controller_.getStatus();
@@ -106,6 +108,7 @@ private:
     rclcpp_action::Server<PIDAction>::SharedPtr pid_command_server_;
     rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr ignore_position_service_;
     rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr use_position_service_;
+    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr stop_robot_service_;
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_relative_state_client_;
     Scion_Position_PID_Controller controller_;
     PID_Params pid_params_object_;                      // Passed to controller for tuning
@@ -474,6 +477,28 @@ private:
         goal_handle->succeed(result);
         RCLCPP_INFO(this->get_logger(), "Goal succeeded");
         }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            // CONTROL SERVICES // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    void stopRobot(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+                                      std::shared_ptr<std_srvs::srv::Trigger::Response> response)
+    {
+        unsigned char can_dreq_frame[2] = {0, 0};             
+
+        struct can_frame poll_frame;
+        poll_frame.can_id = 0x010;
+        poll_frame.can_dlc = 2;
+        std::copy(std::begin(can_dreq_frame),
+                  std::end(can_dreq_frame),
+                  std::begin(poll_frame.data));
+        if(Mailbox::MboxCan::write_mbox(this->poll_mb_, &poll_frame) == -1) 
+        {
+            RCLCPP_INFO(this->get_logger(),
+            "[DresDecodeNode::_data_request] Failed to write CAN Request.");
+	    }
     }
 
     void resetState()
