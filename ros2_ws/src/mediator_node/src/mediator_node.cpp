@@ -52,6 +52,7 @@ public:
     current_command_ = nullptr;
 
     this->next_command_timer_ = this->create_wall_timer
+    
     (
       std::chrono::milliseconds(100), 
       std::bind(&Mediator::nextCommand, this)
@@ -62,7 +63,6 @@ public:
     //   std::chrono::milliseconds(2500), 
     //   std::bind(&Mediator::resetStateOnTimer, this)
     // );
-
   }
 
 private:
