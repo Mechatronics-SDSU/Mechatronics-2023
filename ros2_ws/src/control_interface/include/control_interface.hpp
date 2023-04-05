@@ -5,9 +5,18 @@
 #include <unordered_map>
 #include <cmath>
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_action/rclcpp_action.hpp"
+#include "std_srvs/srv/trigger.hpp"
 #include "scion_types/msg/idea.hpp"
+#include "scion_types/msg/state.hpp"
+#include "scion_types/msg/position.hpp"
+#include "scion_types/msg/orientation.hpp"
+#include "scion_types/action/pid.hpp"
+
 
 #define PI 3.14159265
+
+using PIDAction = scion_types::action::PID;
 
 namespace Interface
 {
