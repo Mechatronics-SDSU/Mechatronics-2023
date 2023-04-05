@@ -50,16 +50,22 @@ class ZedVision(Node):
         """
         
         object_list, depth_map = self.vision.updateCamera(self.zed)
-        # if object_list:
-        #     for object in object_list:
-        #         msg = ZedObject()
-        #         #msg.label = object.label
-        #         msg.velocity = [object.velocity[0]. object.velocity[1], object.velocity[2]]
-        #         msg.position = [object.position[0], object.p
-        #         position[1], object.position[2]]
-        #         self.publisher_.publish(msg)
-        #         self.get_logger().info('Publishing Position Data: "x: %f\ny: %f\nz: %f\n"' % (msg.position[0], msg.position[1], msg.position[2]))
-        #         self.get_logger().info('Publishing Velocity Data: "x: %f\ny: %f\nz: %f\n"' % (msg.velocity[0], msg.velocity[1], msg.velocity[2]))
+        if object_list:
+            for object in object_list:
+                msg = ZedObject()
+                print(type(object.bounding_box))
+                print(object.bounding_box)
+
+                # msg.label = object.label
+                # msg.velocity = [object.velocity[0]. object.velocity[1], object.velocity[2]]
+                # msg.position = [object.position[0], object.position[1], object.position[2]]
+                # self.publisher_.publish(msg)
+                # print(msg.label)
+                # print(object.id)
+                # print(object.label_id)
+                # print(object.position)
+                # self.get_logger().info('Publishing Position Data: "[x: %fy: %fz: %f]"' % (msg.position[0], msg.position[1], msg.position[2]))
+                # self.get_logger().info('Publishing Velocity Data: "x: %f\ny: %f\nz: %f\n"' % (msg.velocity[0], msg.velocity[1], msg.velocity[2]))
 
         """ Wall/Object avoidance code in progress """        
 
@@ -69,7 +75,7 @@ class ZedVision(Node):
         # import numpy as np
 
         # from numpy import inf
-
+ 
         # # GUI(depth_map=depth_map)
         # depth_ocv = depth_map.get_data()
 
