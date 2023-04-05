@@ -19,7 +19,7 @@
 using std::placeholders::_1;
 using std::placeholders::_2;
 
-#define ORIENTATION 
+#define ORIENTATION
 #define POSITION
 
 
@@ -105,35 +105,49 @@ class CurrentStateNode : public rclcpp::Node
         return true;
     }
 
+
+    void update_current_state()
+    {
+        this->current_state_[0] = this->current_orientation_[0];
+        this->current_state_[1] = this->current_orientation_[1];
+        this->current_state_[2] = this->current_orientation_[2];
+        this->current_state_[3] = this->current_position_[0];
+        this->current_state_[4] = this->current_position_[1];
+        this->current_state_[5] = this->current_position_[2];
+    }
+
+    void publish_absolute_state()
+    {
+        scion_types::msg::State absolute_state = scion_types::msg::State();
+        absolute_state.state = this->current_state_;
+        this->absolute_state_pub_->publish(absolute_state);
+    }
+
+    void publish_relative_state()
+    {
+        scion_types::msg::State relative_state = scion_types::msg::State();
+        relative_state.state = this->current_state_ - this->relative_state_;
+        bool negative = false;
+        if (relative_state.state[3] < 0)
+        {
+            negative = true;
+        }
+        relative_state.state[3] = sqrt(pow(relative_state.state[3], 2) + pow(relative_state.state[4], 2));
+        if (negative) 
+        {
+            relative_state.state[3] *= -1;
+        }
+        relative_state.state[4] = 0;
+        sthis->relative_state_pub_->publish(relative_state);
+    }
+
     void publish_state()
     {
-        current_state_[0] = current_orientation_[0];
-        current_state_[1] = current_orientation_[1];
-        current_state_[2] = current_orientation_[2];
-        current_state_[3] = current_position_[0];
-        current_state_[4] = current_position_[1];
-        current_state_[5] = current_position_[2];
-
+        this->update_current_state();
         if (current_state_valid_)
         {
-            scion_types::msg::State absolute_state = scion_types::msg::State();
-            absolute_state.state = this->current_state_;
-            absolute_state_pub_->publish(absolute_state);
-
-            scion_types::msg::State relative_state = scion_types::msg::State();
-            relative_state.state = this->current_state_ - this->relative_state_;
-            bool negative = false;
-            if (relative_state.state[3] < 0)
-            {
-                negative = true;
-            }
-            relative_state.state[3] = sqrt(pow(relative_state.state[3], 2) + pow(relative_state.state[4], 2));
-            if (negative) 
-            {
-                relative_state.state[3] *= -1;
-            }
-            relative_state.state[4] = 0;
-            relative_state_pub_->publish(relative_state);
+            this->publish_absolute_state();
+            this->publish_relative_state();
         }
     }
 
