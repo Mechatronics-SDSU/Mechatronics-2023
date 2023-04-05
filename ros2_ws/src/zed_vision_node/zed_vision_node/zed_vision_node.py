@@ -52,7 +52,7 @@ class ZedVision(Node):
         self.idea_publisher = self.create_publisher(Idea, 'brain_idea_data', 10)
 
         self.vision = Zed_Vision()
-        # self.zed, self.opt = self.vision.initCamera()
+        self.zed, self.opt = self.vision.initCamera()
         capture_thread = Thread(target=self.vision.torch_thread,
                                 kwargs={'weights': self.opt.weights, 'img_size': self.opt.img_size, "conf_thres": self.opt.conf_thres})
         capture_thread.start()

@@ -16,12 +16,28 @@ namespace Interface
     struct Command;
 
     /* Custom Types to Use In Control System */
-    typedef std::vector<float>                                  current_state_t;
-    typedef std::vector<float>                                  desired_state_t;
-    typedef scion_types::msg::Idea                              idea_message_t;
-    typedef std::vector<scion_types::msg::Idea>                 idea_vector_t;
-    typedef std::deque<Command>                                 command_queue_t;
-    typedef std::vector<Command>                                command_vector_t;
+    typedef std::vector<float>                                                              current_state_t;
+    typedef std::vector<float>                                                              desired_state_t;
+    typedef scion_types::msg::Idea                                                          idea_message_t;
+    typedef std::vector<scion_types::msg::Idea>                                             idea_vector_t;
+    typedef std::deque<Command>                                                             command_queue_t;
+    typedef std::vector<Command>                                                            command_vector_t;
+
+    typedef rclcpp_action::Client<PIDAction>::SharedPtr                                     pid_action_client_t;
+    typedef rclcpp_action::Server<PIDAction>::SharedPtr                                     pid_action_server_t;
+    typedef rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr                               ros_trigger_client_t;
+    typedef rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr                              ros_trigger_service_t;
+    typedef rclcpp::Subscription<scion_types::msg::Idea>::SharedPtr                         idea_sub_t;
+    typedef rclcpp::Subscription<scion_types::msg::State>::SharedPtr                        state_sub_t;
+    typedef rclcpp::Subscription<scion_types::msg::Position>::SharedPtr                     position_sub_t;
+    typedef rclcpp::Subscription<scion_types::msg::Orientation>::SharedPtr                  orientation_sub_t;
+    typedef rclcpp::Publisher<scion_types::msg::Idea>::SharedPtr                            idea_pub_t;
+    typedef rclcpp::Publisher<scion_types::msg::State>::SharedPtr                           state_pub_t;
+    typedef rclcpp::Publisher<scion_types::msg::Position>::SharedPtr                        position_pub_t;
+    typedef rclcpp::Publisher<scion_types::msg::Orientation>::SharedPtr                     orientation_pub_t;
+    typedef rclcpp::TimerBase::SharedPtr                                                    ros_timer_t;
+
+
 
     /* Function Pointers That Point to Different Commands for Robot */
     typedef desired_state_t (*state_transform_func)(float); //, current_state_t&

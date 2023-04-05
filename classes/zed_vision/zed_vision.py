@@ -168,7 +168,6 @@ class Zed_Vision():
             print(repr(status))
             exit()
 
-
         print("Initialized Camera")
 
         positional_tracking_parameters = sl.PositionalTrackingParameters()
