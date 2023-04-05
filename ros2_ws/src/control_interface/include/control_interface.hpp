@@ -60,14 +60,12 @@ namespace Interface
         SPIN = 2,
         MOVE = 3,
         TURN = 4,
+        // PITCH = 5,
+        // ROLL = 6,
         RELATIVE_POINT = 7,
         ABSOLUTE_POINT = 8,
         PURE_RELATIVE_POINT = 9,
         PURE_ABSOLUTE_POINT = 10
-
-        // YAW = 4,
-        // PITCH = 5,
-        // ROLL = 6,
     };
 
     /*
