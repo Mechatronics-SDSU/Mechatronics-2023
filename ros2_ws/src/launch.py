@@ -251,13 +251,13 @@ def generate_launch_description():
         # launch_ros.actions.Node(
         #     package='zed_orientation_node', executable='zed_orientation_exec' 
         #     ),   
-        launch_ros.actions.Node(
-            package='zed_pos_node', executable='zed_pos_exec' 
-            ),   
+        # launch_ros.actions.Node(
+        #     package='zed_pos_node', executable='zed_pos_exec' 
+        #     ),   
         # launch_ros.actions.Node(
         #     package='zed_vision_node', executable='zed_vision_exec' 
         #     ),   
-        OpaqueFunction(function=launch_setup)
+        # OpaqueFunction(function=launch_setup)
     ])# This includes all the parameters from launch_setup function            
     
         

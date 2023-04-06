@@ -131,7 +131,13 @@ private:
       switch (idea->code)
       {
         case Idea::STOP:
-          this->cancel_goal();
+          if (this->current_command_)
+          {
+          if (this->current_command_->function.transform == &Movements::move)
+            {
+              this->cancel_goal();
+            }
+          }
           break;
         case Idea::GO:
           Translator::go(idea->parameters[0]);
@@ -232,20 +238,20 @@ private:
       case rclcpp_action::ResultCode::SUCCEEDED:
         break;
       case rclcpp_action::ResultCode::ABORTED:
-        RCLCPP_ERROR(this->get_logger(), "Goal was aborted");
-        return;
+        RCLCPP_INFO(this->get_logger(), "Goal was aborted");
+        break;
       case rclcpp_action::ResultCode::CANCELED:
-        RCLCPP_ERROR(this->get_logger(), "Goal was canceled");
-        return;
+        RCLCPP_INFO(this->get_logger(), "Goal was canceled");
+        break;
       default:
-        RCLCPP_ERROR(this->get_logger(), "Unknown result code");
-        return;
+        RCLCPP_INFO(this->get_logger(), "Unknown result code");
+        break;
     }
 
       /* Success State */
       std::stringstream ss;
       ss << "State Accomplished; Setting Current Command to Null\n";
-      sleep(.3); // Sleep after reaching desired state for a split second before taking out current command
+      sleep(.05); // Sleep after reaching desired state for a split second before taking out current command
       usePositionRequest();
       current_command_ = nullptr;
       RCLCPP_INFO(this->get_logger(), ss.str().c_str());
