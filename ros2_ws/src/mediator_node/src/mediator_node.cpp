@@ -192,7 +192,7 @@ private:
     using namespace std::placeholders;
     auto cancel_goal_options = rclcpp_action::Client<PIDAction>::CancelRequest();
     this->pid_command_client_->async_cancel_all_goals();
-    // CAN request of 010#0000
+    this->stopRobot();
     // 
   }
 
@@ -259,7 +259,7 @@ private:
   void stopRobot()
   {
       auto stop_robot_request = std::make_shared<std_srvs::srv::Trigger::Request>();
-      auto stop_robot_future = this->reset_relative_state_client_->async_send_request(stop_robot_request);
+      auto stop_robot_future = this->stop_robot_client_->async_send_request(stop_robot_request);
   }
 
   void resetState()

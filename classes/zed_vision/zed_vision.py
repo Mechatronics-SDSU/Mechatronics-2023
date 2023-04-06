@@ -188,10 +188,12 @@ class Zed_Vision():
         global image_net, exit_signal, run_signal, detections
 
         image_left_tmp = sl.Mat()
+        zed_pose = sl.Pose()
         depth_map = sl.Mat()
         objects = sl.Objects()
         runtime_params = sl.RuntimeParameters()
         obj_runtime_param = sl.ObjectDetectionRuntimeParameters()
+        
         
 
         from time import sleep
@@ -276,7 +278,7 @@ class Zed_Vision():
         #     sleep(2)
 
 
-
+        zed_sensors = sl.SensorsData()
 
 
         if zed.grab(runtime_params) == sl.ERROR_CODE.SUCCESS:
@@ -288,6 +290,17 @@ class Zed_Vision():
             lock.acquire()
             zed.retrieve_image(image_left_tmp, sl.VIEW.LEFT)
             zed.retrieve_measure(depth_map, sl.MEASURE.DEPTH)
+            zed.get_position(zed_pose, sl.REFERENCE_FRAME.WORLD)
+
+            zed.get_sensors_data(zed_sensors, sl.TIME_REFERENCE.IMAGE)
+            zed_imu = zed_sensors.get_imu_data()
+            py_translation = sl.Translation()
+            tx = round(zed_pose.get_translation(py_translation).get()[0], 3)
+            ty = round(zed_pose.get_translation(py_translation).get()[1], 3)
+            tz = round(zed_pose.get_translation(py_translation).get()[2], 3)
+            # print("Translation: Tx: {0}, Ty: {1}, Tz {2}, Timestamp: {3}\n".format(tx, ty, tz, zed_pose.timestamp.get_milliseconds()))
+
+
             image_net = image_left_tmp.get_data()
             lock.release()
             run_signal = True
@@ -307,7 +320,7 @@ class Zed_Vision():
             # for object in objects.object_list:
             #     print("{} {} {}".format(object.id, object.position, object.dimensions))
 
-            return objects.object_list, depth_map
+            return objects.object_list, depth_map, zed_pose, py_translation
 
 
 

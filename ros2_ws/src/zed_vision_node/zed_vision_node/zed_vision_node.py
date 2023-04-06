@@ -24,6 +24,7 @@ from threading import Thread
 from classes.zed_vision.zed_vision import Zed_Vision
 from scion_types.msg import Idea
 from scion_types.msg import ZedObject
+from scion_types.msg import Position
 import math
 
 
@@ -47,6 +48,7 @@ class ZedVision(Node):
         """
         super().__init__('zed_vision_data')
         self.vision_publisher = self.create_publisher(ZedObject, 'topic', 10)
+        self.position_publisher = self.create_publisher(Position, 'zed_position_data', 10)
         timer_period = .05  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.idea_publisher = self.create_publisher(Idea, 'brain_idea_data', 10)
@@ -93,7 +95,7 @@ class ZedVision(Node):
         Here we'll query the zed_vision class for the info using updateCamera function and then publish what we need in ROS messages 
         """
         
-        object_list, depth_map = self.vision.updateCamera(self.zed)
+        object_list, depth_map, zed_pose, py_translation = self.vision.updateCamera(self.zed)
         # if object_list:
         #     for object in object_list:
         #         msg = ZedObject()
@@ -113,10 +115,15 @@ class ZedVision(Node):
 
         """ Wall/Object avoidance code in progress """        
 
-        self.processDepthData(depth_map)
+        self.processDepthData(depth_map)    
+        tx = round(zed_pose.get_translation(py_translation).get()[0], 3)
+        ty = round(zed_pose.get_translation(py_translation).get()[1], 3)
+        tz = round(zed_pose.get_translation(py_translation).get()[2], 3)
 
-        
-
+        position = Position()
+        position.position = [tz, tx, ty]
+        self.position_publisher.publish(position)
+        print(f'{tz}, {tx}, {ty}')
 
         # import matplotlib
         # matplotlib.use('TkAgg')

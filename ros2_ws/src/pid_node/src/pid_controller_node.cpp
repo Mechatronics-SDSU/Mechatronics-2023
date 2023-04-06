@@ -26,7 +26,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "control_interface.hpp"
-// #include "std_srvs/srv/setbool.hpp"
+#include "std_srvs/srv/set_bool.hpp"
 #include "std_srvs/srv/trigger.hpp"
 #include "scion_types/action/pid.hpp"
 #include "scion_types/msg/state.hpp"
