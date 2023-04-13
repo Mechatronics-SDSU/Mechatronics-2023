@@ -63,44 +63,8 @@ Scion_Position_PID_Controller::Scion_Position_PID_Controller()
 }
 
 // PID params constructor will tune PID using pid_params.cpp values
-Scion_Position_PID_Controller::Scion_Position_PID_Controller(map<string, map<string, float>> pid_params)
+Scion_Position_PID_Controller::Scion_Position_PID_Controller(map<string, map<string, float>> pid_params) : Scion_Position_PID_Controller::Scion_Position_PID_Controller()
 {
-    this->yaw_pid = std::make_shared<PID_Controller>(0.0, 0.0, 0.0, true);
-    this->pitch_pid = std::make_shared<PID_Controller>(0.0, 0.0, 0.0, true);
-    this->roll_pid = std::make_shared<PID_Controller>(0.0, 0.0, 0.0, true);
-
-    this->x_pos_pid = std::make_shared<PID_Controller>(0.0, 0.0, 0.0);
-    this->y_pos_pid = std::make_shared<PID_Controller>(0.0, 0.0, 0.0);
-    this->z_pos_pid = std::make_shared<PID_Controller>(0.0, 0.0, 0.0);
-
-    this->controllers = std::map<string, shared_ptr<PID_Controller>>
-    (
-        {
-            {"yaw",   this->yaw_pid}, 
-            {"pitch", this->pitch_pid},
-            {"roll",  this->roll_pid},
-            {"x_pos", this->x_pos_pid},
-            {"y_pos", this->y_pos_pid},
-            {"z_pos", this->z_pos_pid},
-        }
-    ) ;
-
-    // matrix mapping the 6 pid controller outputs to the 8 thrusters
-    // -----yaw---pitch---roll---x---y---z
-    //| T0
-    //| T1
-    //| T2
-    //| T3
-    //| T4
-    //| T5
-    //| T6
-    //| T7
-    
-    this->pid_thrust_mapper = vector<vector<float>>
-                                    {
-                                        { -1, 0,  0,  1,  0,  0},                   
-                                        {  1, 0,  0,  1,  0,  0},
-                                    };
     /* 
      * if we decide to load our PID_Params from a dictionary, we can set each controllers' values to 
      * the values stored in the hashmap from pid_params.cpp 

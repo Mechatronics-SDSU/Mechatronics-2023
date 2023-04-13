@@ -61,16 +61,16 @@ public:
   }
 
 private:
-  rclcpp_action::Client<PIDAction>::SharedPtr pid_command_client_;
-  rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_relative_state_client_;
-  rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr ignore_position_client_;
-  rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr use_position_client_;
-  rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr stop_robot_client_;
-  rclcpp::Subscription<scion_types::msg::Idea>::SharedPtr idea_sub_;
-  rclcpp::TimerBase::SharedPtr next_command_timer_;
-  rclcpp::TimerBase::SharedPtr reset_timer_;
-  Interface::command_queue_t command_queue_;
-  Interface::Command* current_command_; 
+  Interface::pid_action_client_t          pid_command_client_;
+  Interface::ros_trigger_client_t         reset_relative_state_client_;
+  Interface::ros_trigger_client_t         ignore_position_client_;
+  Interface::ros_trigger_client_t         use_position_client_;
+  Interface::ros_trigger_client_t         stop_robot_client_;
+  Interface::idea_sub_t                   idea_sub_;
+  Interface::ros_timer_t                  next_command_timer_;
+  Interface::ros_timer_t                  reset_timer_;
+  Interface::command_queue_t              command_queue_;
+  Interface::Command*                     current_command_; 
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

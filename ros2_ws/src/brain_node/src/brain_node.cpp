@@ -51,7 +51,8 @@ class Brain : public rclcpp::Node
                 );
             }
             if (mode_param == "Mission")
-            {
+            {   
+                sleep(7);
                 initSequence(idea_sequence_);
                 publishSequence(idea_sequence_);
             }
@@ -72,14 +73,45 @@ class Brain : public rclcpp::Node
             using namespace Interface;
             scion_types::msg::Idea idea1 = scion_types::msg::Idea();
             idea1.code = Idea::RELATIVE_POINT;
-            idea1.parameters = std::vector<float>{1.0F,1.0F};
+            idea1.parameters = std::vector<float>{0.0F,-0.3F};
 
             scion_types::msg::Idea idea2 = scion_types::msg::Idea();
             idea2.code = Idea::RELATIVE_POINT;
-            idea2.parameters = std::vector<float>{0.0,1.0F};
+            idea2.parameters = std::vector<float>{0.0F,-0.3F};
+
+            // scion_types::msg::Idea idea1 = scion_types::msg::Idea();
+            // idea1.code = Idea::TURN;
+            // idea1.parameters = std::vector<float>{20};
+
+            // scion_types::msg::Idea idea2 = scion_types::msg::Idea();
+            // idea1.code = Idea::MOVE;
+            // idea1.parameters = std::vector<float>{0.1};
+            
+            idea_sequence.push_back(idea1);
+            idea_sequence.push_back(idea2);
 
             idea_sequence.push_back(idea1);
             idea_sequence.push_back(idea2);
+
+            idea_sequence.push_back(idea1);
+            idea_sequence.push_back(idea2);
+
+            idea_sequence.push_back(idea1);
+            idea_sequence.push_back(idea2);
+
+            idea_sequence.push_back(idea1);
+            idea_sequence.push_back(idea2);
+
+            idea_sequence.push_back(idea1);
+            idea_sequence.push_back(idea2);
+
+            idea_sequence.push_back(idea1);
+            idea_sequence.push_back(idea2);
+
+            idea_sequence.push_back(idea1);
+            idea_sequence.push_back(idea2);
+
+
         }
 
         void publishSequence(Interface::idea_vector_t& idea_sequence)
