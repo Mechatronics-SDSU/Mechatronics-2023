@@ -49,9 +49,9 @@ class ZedVision(Node):
         super().__init__('zed_vision_data')
         self.vision_publisher = self.create_publisher(ZedObject, 'topic', 10)
         self.position_publisher = self.create_publisher(Position, 'zed_position_data', 10)
+        self.idea_publisher = self.create_publisher(Idea, 'brain_idea_data', 10)
         timer_period = .05  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
-        self.idea_publisher = self.create_publisher(Idea, 'brain_idea_data', 10)
 
         self.vision = Zed_Vision()
         self.zed, self.opt = self.vision.initCamera()
@@ -59,7 +59,7 @@ class ZedVision(Node):
                                 kwargs={'weights': self.opt.weights, 'img_size': self.opt.img_size, "conf_thres": self.opt.conf_thres})
         capture_thread.start()
         
-
+                       
     def iterate_pixels(self, depth_ocv) -> int:
         inf = 0
         lessThan = 0
@@ -123,7 +123,6 @@ class ZedVision(Node):
         position = Position()
         position.position = [tz, tx, ty]
         self.position_publisher.publish(position)
-        print(f'{tz}, {tx}, {ty}')
 
         # import matplotlib
         # matplotlib.use('TkAgg')

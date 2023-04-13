@@ -48,8 +48,6 @@ using namespace std;
 
 using PIDAction = scion_types::action::PID;
 using GoalHandlePIDAction = rclcpp_action::ServerGoalHandle<PIDAction>;
-using namespace std::placeholders;
-
 
 /** 
  * Controller Node consists of: 
@@ -101,18 +99,18 @@ public:
     }
 
 private:
-    rclcpp::TimerBase::SharedPtr timer_;
-    rclcpp::TimerBase::SharedPtr print_timer_;
-    rclcpp::Subscription<scion_types::msg::State>::SharedPtr current_state_sub_;
-    rclcpp::Subscription<scion_types::msg::State>::SharedPtr desired_state_sub_;
-    rclcpp_action::Server<PIDAction>::SharedPtr pid_command_server_;
-    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr ignore_position_service_;
-    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr use_position_service_;
-    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr stop_robot_service_;
-    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_relative_state_client_;
-    Scion_Position_PID_Controller controller_;
-    PID_Params pid_params_object_;                      // Passed to controller for tuning
-    Mailbox::MboxCan* poll_mb_;
+    Interface::ros_timer_t                      timer_;
+    Interface::ros_timer_t                      print_timer_;
+    Interface::state_sub_t                      current_state_sub_;
+    Interface::state_sub_t                      desired_state_sub_;
+    Interface::pid_action_server_t              pid_command_server_;
+    Interface::ros_trigger_service_t            ignore_position_service_;
+    Interface::ros_trigger_service_t            use_position_service_;
+    Interface::ros_trigger_service_t            stop_robot_service_;
+    Interface::ros_trigger_client_t             reset_relative_state_client_;
+    Scion_Position_PID_Controller               controller_;
+    PID_Params                                  pid_params_object_;                      // Passed to controller for tuning
+    Mailbox::MboxCan*                           poll_mb_;
     struct ifreq ifr;
 
     /* Upon initialization set all values to [0,0,0] */
@@ -147,8 +145,6 @@ private:
             sleep(.1);
         }
         sleep(.3);
-        // this->resetState();
-        // sleep(.15);
         std::cout << "THIS IS DESIRED: ";
         printVector(this->desired_state_);
         std::cout << "THIS IS CURRENT: ";
