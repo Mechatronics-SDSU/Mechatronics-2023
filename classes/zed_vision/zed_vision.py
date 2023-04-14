@@ -12,20 +12,21 @@ import pyzed.sl as sl
 import torch.backends.cudnn as cudnn
 import math
 
-from ultralytics import YOLO
+"""from ultralytics import YOLO
 from ultralytics.nn.tasks import attempt_load_weights
 from ultralytics.yolo.utils.ops import non_max_suppression, scale_segments, xyxy2xywh
 from ultralytics.yolo.utils.torch_utils import select_device
 from ultralytics.yolo.data.dataloaders.v5augmentations import letterbox
 #from ultralytics.yolo.data.augment import LetterBox
 from ultralytics.yolo.utils.checks import check_imgsz
+"""
 
-#sys.path.append("/home/mechatronics/vision_nodes/Mechatronics-2023/classes/zed_vision/yolov5")
-#from models.experimental import attempt_load
+sys.path.append("/home/mechatronics/vision_nodes/Mechatronics-2023/classes/zed_vision/yolov5")
+from models.experimental import attempt_load
 #from utils.general import check_img_size, non_max_suppression, scale_coords, xyxy2xywh
-#from utils.general import check_img_size, non_max_suppression, scale_segments, xyxy2xywh
-#from utils.torch_utils import select_device
-#from utils.augmentations import letterbox
+from utils.general import check_img_size, non_max_suppression, scale_segments, xyxy2xywh
+from utils.torch_utils import select_device
+from utils.augmentations import letterbox
 
 from threading import Lock, Thread
 from time import sleep
@@ -111,11 +112,11 @@ class Zed_Vision():
         imgsz = img_size
 
         # Load model
-        model = attempt_load_weights(weights, device=device)
+        model = attempt_load(weights, device=device)
                                         
         #model = attempt_load(weights, map_location=lambda storage, loc: storage)
         stride = max(int(model.stride.max()), 32)  # model stride
-        imgsz = check_imgsz(imgsz, stride=stride)  # check img_size
+        imgsz = check_img_size(imgsz, stride=stride)  # check img_size
         if half:
             model.half()  # to FP16
         cudnn.benchmark = True
