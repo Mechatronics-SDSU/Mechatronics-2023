@@ -222,10 +222,10 @@ class Zed_Vision():
             lock.release()
             zed.retrieve_objects(objects, obj_runtime_param)
 
-            #for object in objects.object_list:
-            #    print("{} {} {}".format(object.id, object.position, object.dimensions))
+            for object in objects.object_list:
+                print("{} {} {}".format(object.id, object.position, object.dimensions))
 
-            return objects.object_list, depth_map
+            #return objects.object_list, depth_map
            
 
 
@@ -237,7 +237,8 @@ def main():
     capture_thread = Thread(target=zed_vision_object.torch_thread,
                             kwargs={'weights': opt.weights, 'img_size': opt.img_size, "conf_thres": opt.conf_thres})
     capture_thread.start()
-    zed_vision_object.updateCamera(zed)
+    while 0 <= 1:
+        zed_vision_object.updateCamera(zed)
     
 
 if __name__ == '__main__':
