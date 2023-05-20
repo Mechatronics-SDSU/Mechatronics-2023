@@ -49,10 +49,10 @@ class Controller : public rclcpp::Node
                                         { 1,  0,  0,  1,  1,  0},
                                         { 0, -1, -1,  0,  0,  1},
                                         { 1,  0,  0,  1, -1,  0},
-                                        {-1, -1,  1,  0,  0,  1},
-                                        { 0,  0,  0,  1,  1,  0},
-                                        {-1,  1,  1,  0,  0,  1},
-                                        { 0,  0,  0,  1, -1,  0}
+                                        { 0, -1,  1,  0,  0,  1},
+                                        {-1,  0,  0,  1,  1,  0},
+                                        { 0,  1,  1,  0,  0,  1},
+                                        {-1,  0,  0,  1, -1,  0}
                                     };
     }
 
@@ -69,10 +69,10 @@ class Controller : public rclcpp::Node
         vector<int> buttons = msg->buttons;
 
         /* These map to the actual controller sticks and buttons */
-        float left_x = msg->axes[0]; // yaw
+        float left_x = -1 * msg->axes[0]; // yaw
         float right_trigger = msg->axes[5] - 1; // pitch
         float left_trigger = msg->axes[2] - 1; // roll
-        float right_x = msg->axes[3]; // x
+        float right_x = -1 * msg->axes[3]; // x
         float right_y = msg->axes[4]; // y
         float left_y = msg->axes[1]; // z
 
