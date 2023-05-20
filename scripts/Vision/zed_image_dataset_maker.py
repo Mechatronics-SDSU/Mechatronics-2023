@@ -11,6 +11,16 @@ import cv2 as cv
 import os
 from datetime import datetime
 import numpy as np
+import argparse
+from time import sleep
+
+# Parse command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('-folder', help='Folder path to save images', required=True)
+parser.add_argument('-date', help='Folder path to save date of images', required=False)
+SAVE_TO_DIRECTORY = "/home/mechatronics/master/Mechatronics-2023/scripts/Vision"
+
+args = parser.parse_args()
 
 zed = sl.Camera()
 
@@ -31,19 +41,29 @@ init_params.camera_fps = 60  # FPS of 15, 30, 60, or 100
 
 images = 0
 # set up folder path to save images
-numbered_folder_path = "C:/Users/j4vdo/Desktop/Games"  # these folder placeholder formats are correct
-date_folder_path = "/path/to/date/organized/folder"
+numbered_folder_path = "datasets/" + args.folder  # these folder placeholder formats are correct
+
+if args.folder is not None:
+    date_folder_path = args.date
+else:
+    date_folder_path = args.folder
 
 def exist(folder_path):
     if not os.path.exists(folder_path):
         print(f"The folder path {folder_path} does not exist.")
+        return False
     else:
         print(f"The folder path {folder_path} exists.")
+        return True
 
+# Use command line argument to create new folder if it does not already exist
+if not exist(numbered_folder_path):
+    directory = numbered_folder_path
+    parent_dir = SAVE_TO_DIRECTORY
+    path = os.path.join(parent_dir, directory)
+    os.mkdir(path)
 
-exist(numbered_folder_path)
-exist(date_folder_path)
-
+# exist(date_folder_path)
 
 contents = os.listdir(numbered_folder_path)
 for item in contents:
@@ -53,12 +73,14 @@ print(f"There are {img_label} images currently in {numbered_folder_path}.")
 
 # open camera
 camera_state = zed.open(init_params)
-
 # print camera params (Resolution, fps)
-print(f"Resolution: {zed.get_camera_information().camera_resolution} \n FPS: {zed.get_camera_information().camera_fps}")
-
+# print(f"Resolution: {zed.get_camera_information().camera_resolution} \n FPS: {zed.get_camera_information().camera_fps}")
+# Set up frame counter and saving interval
+frame_counter = 0
+saving_interval = 30
+mode = False
 while True:
-    # create image object
+    # create image objesct
     image_zed = sl.Mat()
 
     # Zed image object exists
@@ -85,13 +107,28 @@ while True:
         # take timestamped image
         if key == ord('t'):
             # generate image label with timestamp
-            now = datetime.now().strftime("%Y%m%d_%H%M%S")
+            now = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
             date_img_label = f"{now}.jpg"
 
             # save captured image with ordered label in specified folder
             img_path = os.path.join(date_folder_path, date_img_label)
             cv.imwrite(img_path, image_ocv)
             print(f"Image taken at {now} is now stored in {date_folder_path}")
+
+        #Save image every 10 frames
+        if mode:
+            if frame_counter % saving_interval == 0:
+                img_label += 1
+                img_path = os.path.join(str(numbered_folder_path), str(str(img_label) + ".jpg"))
+                cv.imwrite(img_path, image_ocv)
+                print(f"Image number {img_label} is now stored in {numbered_folder_path}")
+
+        if key == ord('m'):
+            if mode:
+                mode = False
+            else:
+                mode = True
+
         # quit
         elif key == ord('q'):
             print("Closing window")
@@ -99,3 +136,6 @@ while True:
             cv.destroyAllWindows()
             zed.close()
             break
+
+        #increment frame counter
+        frame_counter += 1
