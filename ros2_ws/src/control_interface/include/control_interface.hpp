@@ -1,3 +1,7 @@
+/* @author Zix
+ * Organizes massive amount of declarations I need for the control system
+ */
+
 
 #include <vector>
 #include <iostream>
@@ -5,9 +9,18 @@
 #include <unordered_map>
 #include <cmath>
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_action/rclcpp_action.hpp"
+#include "std_srvs/srv/trigger.hpp"
 #include "scion_types/msg/idea.hpp"
+#include "scion_types/msg/state.hpp"
+#include "scion_types/msg/position.hpp"
+#include "scion_types/msg/orientation.hpp"
+#include "scion_types/action/pid.hpp"
+
 
 #define PI 3.14159265
+
+using PIDAction = scion_types::action::PID;
 
 namespace Interface
 {
@@ -16,12 +29,28 @@ namespace Interface
     struct Command;
 
     /* Custom Types to Use In Control System */
-    typedef std::vector<float>                                  current_state_t;
-    typedef std::vector<float>                                  desired_state_t;
-    typedef scion_types::msg::Idea                              idea_message_t;
-    typedef std::vector<scion_types::msg::Idea>                 idea_vector_t;
-    typedef std::deque<Command>                                 command_queue_t;
-    typedef std::vector<Command>                                command_vector_t;
+    typedef std::vector<float>                                                              current_state_t;
+    typedef std::vector<float>                                                              desired_state_t;
+    typedef scion_types::msg::Idea                                                          idea_message_t;
+    typedef std::vector<scion_types::msg::Idea>                                             idea_vector_t;
+    typedef std::deque<Command>                                                             command_queue_t;
+    typedef std::vector<Command>                                                            command_vector_t;
+
+    typedef rclcpp_action::Client<PIDAction>::SharedPtr                                     pid_action_client_t;
+    typedef rclcpp_action::Server<PIDAction>::SharedPtr                                     pid_action_server_t;
+    typedef rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr                               ros_trigger_client_t;
+    typedef rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr                              ros_trigger_service_t;
+    typedef rclcpp::Subscription<scion_types::msg::Idea>::SharedPtr                         idea_sub_t;
+    typedef rclcpp::Subscription<scion_types::msg::State>::SharedPtr                        state_sub_t;
+    typedef rclcpp::Subscription<scion_types::msg::Position>::SharedPtr                     position_sub_t;
+    typedef rclcpp::Subscription<scion_types::msg::Orientation>::SharedPtr                  orientation_sub_t;
+    typedef rclcpp::Publisher<scion_types::msg::Idea>::SharedPtr                            idea_pub_t;
+    typedef rclcpp::Publisher<scion_types::msg::State>::SharedPtr                           state_pub_t;
+    typedef rclcpp::Publisher<scion_types::msg::Position>::SharedPtr                        position_pub_t;
+    typedef rclcpp::Publisher<scion_types::msg::Orientation>::SharedPtr                     orientation_pub_t;
+    typedef rclcpp::TimerBase::SharedPtr                                                    ros_timer_t;
+
+
 
     /* Function Pointers That Point to Different Commands for Robot */
     typedef desired_state_t (*state_transform_func)(float); //, current_state_t&
@@ -35,14 +64,12 @@ namespace Interface
         SPIN = 2,
         MOVE = 3,
         TURN = 4,
+        // PITCH = 5,
+        // ROLL = 6,
         RELATIVE_POINT = 7,
         ABSOLUTE_POINT = 8,
         PURE_RELATIVE_POINT = 9,
         PURE_ABSOLUTE_POINT = 10
-
-        // YAW = 4,
-        // PITCH = 5,
-        // ROLL = 6,
     };
 
     /*
@@ -101,13 +128,11 @@ namespace Movements
 
     desired_state_t turn(float degree)
     {
-        std::cout << "Turn " << degree << " New " << std::endl;
         return desired_state_t{degree,0,0,0,0,0};
     }
 
     desired_state_t move(float degree)
     {
-        std::cout << "Move " << degree << std::endl;
         return desired_state_t{0,0,0,degree,0,0};
     }
 }

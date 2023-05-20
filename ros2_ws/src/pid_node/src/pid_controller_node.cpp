@@ -26,6 +26,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "control_interface.hpp"
+#include "std_srvs/srv/set_bool.hpp"
 #include "std_srvs/srv/trigger.hpp"
 #include "scion_types/action/pid.hpp"
 #include "scion_types/msg/state.hpp"
@@ -47,8 +48,6 @@ using namespace std;
 
 using PIDAction = scion_types::action::PID;
 using GoalHandlePIDAction = rclcpp_action::ServerGoalHandle<PIDAction>;
-using namespace std::placeholders;
-
 
 /** 
  * Controller Node consists of: 
@@ -87,6 +86,7 @@ public:
         this->reset_relative_state_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_state");
         ignore_position_service_ = this->create_service<std_srvs::srv::Trigger>("ignore_position", std::bind(&Controller::ignorePosition, this, _1, _2));
         use_position_service_ = this->create_service<std_srvs::srv::Trigger>("use_position", std::bind(&Controller::usePosition, this, _1, _2));
+        stop_robot_service_ = this->create_service<std_srvs::srv::Trigger>("stop_robot", std::bind(&Controller::stopRobot, this, _1, _2));
 
         controller_ = Scion_Position_PID_Controller(pid_params_object_.get_pid_params());
         controller_.getStatus();
@@ -99,17 +99,18 @@ public:
     }
 
 private:
-    rclcpp::TimerBase::SharedPtr timer_;
-    rclcpp::TimerBase::SharedPtr print_timer_;
-    rclcpp::Subscription<scion_types::msg::State>::SharedPtr current_state_sub_;
-    rclcpp::Subscription<scion_types::msg::State>::SharedPtr desired_state_sub_;
-    rclcpp_action::Server<PIDAction>::SharedPtr pid_command_server_;
-    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr ignore_position_service_;
-    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr use_position_service_;
-    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_relative_state_client_;
-    Scion_Position_PID_Controller controller_;
-    PID_Params pid_params_object_;                      // Passed to controller for tuning
-    Mailbox::MboxCan* poll_mb_;
+    Interface::ros_timer_t                      timer_;
+    Interface::ros_timer_t                      print_timer_;
+    Interface::state_sub_t                      current_state_sub_;
+    Interface::state_sub_t                      desired_state_sub_;
+    Interface::pid_action_server_t              pid_command_server_;
+    Interface::ros_trigger_service_t            ignore_position_service_;
+    Interface::ros_trigger_service_t            use_position_service_;
+    Interface::ros_trigger_service_t            stop_robot_service_;
+    Interface::ros_trigger_client_t             reset_relative_state_client_;
+    Scion_Position_PID_Controller               controller_;
+    PID_Params                                  pid_params_object_;                      // Passed to controller for tuning
+    Mailbox::MboxCan*                           poll_mb_;
     struct ifreq ifr;
 
     /* Upon initialization set all values to [0,0,0] */
@@ -119,7 +120,7 @@ private:
     bool current_state_valid_ = false;
     bool desired_state_valid_ = false;
     bool ignore_position_ = false;
-
+    bool service_done_ = false;
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                 // WAIT FOR VALID DATA TO INITIALIZE PIDs // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -136,19 +137,27 @@ private:
         }
     }
 
+
     bool desiredStateValid()
     {
         while (!this->current_state_valid_)
         {
             sleep(.1);
         }
-        auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
-        auto reset_state_result = this->reset_relative_state_client_->async_send_request(reset_state_request);
-        reset_state_result.wait();
-        // while (!this->areEqual(this->desired_state_, this->current_state_))
-        for (int i = 0; i < 100; i++)
+        sleep(.3);
+        std::cout << "THIS IS DESIRED: ";
+        printVector(this->desired_state_);
+        std::cout << "THIS IS CURRENT: ";
+        printVector(this->current_state_);
+        while (!this->areEqual(this->desired_state_, this->current_state_))
+        // for (int i = 0; i < 1000; i++)
         {
+            // std::cout << "DESIRED: ";
+            // printVector(this->desired_state_);
+            // std::cout << "CURRENT: ";
+            // printVector(this->current_state_);
             this->desired_state_ = this->current_state_;
+            // printVector(this->desired_state_);
         }
         while (!this->desired_state_valid_)
         {
@@ -192,27 +201,32 @@ private:
      * update function which generates ctrl_vals and show its status on the screen 
      */
 
-    std::cout << this->current_state_valid_ << std::endl;
-    std::cout << this->desired_state_valid_ << std::endl;
+    // std::cout << this->current_state_valid_ << std::endl;
+    // std::cout << this->desired_state_valid_ << std::endl;
 
                                         // Refer to classes/pid_controller/scion_pid_controller.hpp for this function
-    if (current_state_valid_ && desired_state_valid_)
-    {
-        if (this->ignore_position_)
-        {
-            Interface::current_state_t current_state_no_position = Interface::current_state_t{current_state_[0], current_state_[1], current_state_[2], 0, 0, 0};
-            Interface::desired_state_t desired_state_no_position = Interface::desired_state_t{desired_state_[0], desired_state_[1], desired_state_[2], 0, 0, 0};
-            this->controller_.update
-            (
-                current_state_no_position, 
-                desired_state_no_position,
-                .010
-            );    
-        }
-        this->controller_.update(current_state_, desired_state_, .010); // MOST IMPORTANT LINE IN PROGRAM
+    // if (current_state_valid_ && desired_state_valid_)
+    // {
+    //     if (this->ignore_position_)
+    //     {
+    //         std::cout << "IGNORING POSITION" << std::endl;
+    //         Interface::current_state_t current_state_no_position = Interface::current_state_t{current_state_[0], current_state_[1], current_state_[2], 0, 0, 0};
+    //         Interface::desired_state_t desired_state_no_position = Interface::desired_state_t{desired_state_[0], desired_state_[1], desired_state_[2], 0, 0, 0};
+    //         this->controller_.update
+    //         (
+    //             current_state_no_position, 
+    //             desired_state_no_position,
+    //             .010
+    //         );    
+    //     }
+    //     else
+    //     {
+    //         std::cout << "NOT IGNORING POSITION" << std::endl;
+    //         this->controller_.update(current_state_, desired_state_, .010); // MOST IMPORTANT LINE IN PROGRAM
+    //     }
     /* STEP 2: Send those generated values to the motors */
-        make_CAN_request(this->controller_.current_thrust_values);
-    }
+        // make_CAN_request(this->controller_.current_thrust_values);
+    // }
 
     }
 
@@ -220,7 +234,7 @@ private:
                                     // CAN REQUESTS FOR MOTOR CONTROL // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void make_CAN_request(vector<float>& thrusts)
+    vector<int> make_CAN_request(vector<float>& thrusts)
     {
         /* Thrusts come out of PID as a float between -1 and 1; motors need int value from -100 to 100 */
         int thrust0 = (int)(thrusts[0]*100);
@@ -261,7 +275,9 @@ private:
             RCLCPP_INFO(this->get_logger(),
             "[DresDecodeNode::_data_request] Failed to write CAN Request.");
 	    }
+        return vector<int>{thrust0, thrust1};
     }
+
     ////////////////////////////////////////// END REQUEST //////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -328,33 +344,80 @@ private:
         return equal;
     }
 
+    bool equalToZero(vector<int> thrustVect)
+    {
+        bool equal = true;
+        for (int thrust : thrustVect)
+        {
+            if (thrust != 0)
+            {
+                equal = false;
+            }
+        }
+        return equal;
+    }
+
     void execute(const std::shared_ptr<GoalHandlePIDAction> goal_handle)
     {
         RCLCPP_INFO(this->get_logger(), "Executing goal");
-        rclcpp::Rate loop_rate(100);
+        rclcpp::Rate loop_rate(20);
 
         std::shared_ptr<PIDAction::Feedback> feedback = std::make_shared<PIDAction::Feedback>();
         std::shared_ptr<PIDAction::Result> result = std::make_shared<PIDAction::Result>();
         const auto goal = goal_handle->get_goal();
 
-        std::vector<float>& state = feedback->current_state;
-        state.push_back(this->current_state_[0]);
-        state.push_back(this->current_state_[1]);
-        state.push_back(this->current_state_[2]);
-        state.push_back(this->current_state_[3]);
-        state.push_back(this->current_state_[4]);
-        state.push_back(this->current_state_[5]);
-        
+        vector<float> zero = vector<float>{0,0,0,0,0,0};
+        while (!areEqual(this->current_state_, zero))
+        {
+            sleep(.1);
+        }
         std::vector<float> desired_state = goal->desired_state;
         desired_state += this->current_state_;
-        for (int i = 0; i < 100; i++)
-        {
-            this->desired_state_ = desired_state;
-        }
-        std::cout << "Goal State";
-        printVector(desired_state);
+        this->desired_state_ = desired_state;
 
-        while (!areEqual(state, desired_state)) {
+        std::vector<float>& state = feedback->current_state;
+        vector<float> thrusts;
+        if (this->current_state_valid_ && this->desired_state_valid_)
+        {
+            if (this->ignore_position_)
+            {
+                std::cout << "IGNORING POSITION" << std::endl;
+                Interface::current_state_t current_state_no_position = Interface::current_state_t{current_state_[0], current_state_[1], current_state_[2], 0, 0, 0};
+                Interface::desired_state_t desired_state_no_position = Interface::desired_state_t{desired_state_[0], desired_state_[1], desired_state_[2], 0, 0, 0};
+                thrusts = this->controller_.update
+                (
+                    current_state_no_position, 
+                    desired_state_no_position,
+                    .010
+                );    
+            }
+            else
+            {
+                std::cout << "NOT IGNORING POSITION" << std::endl;
+                thrusts = this->controller_.update(current_state_, desired_state_, .010); // MOST IMPORTANT LINE IN PROGRAM
+            }
+        }
+        vector<int> thrustInts = this->make_CAN_request(thrusts);
+        state.push_back((float)thrustInts[0]);
+        state.push_back((float)thrustInts[1]);
+        
+        // state.push_back(this->current_state_[0]);
+        // state.push_back(this->current_state_[1]);
+        // state.push_back(this->current_state_[2]);
+        // state.push_back(this->current_state_[3]);
+        // state.push_back(this->current_state_[4]);
+        // state.push_back(this->current_state_[5]);
+        
+        // std::vector<float> desired_state = goal->desired_state;
+        // desired_state += this->current_state_;
+        // for (int i = 0; i < 100; i++)
+        // {
+        //     this->desired_state_ = desired_state;
+        // }
+        // std::cout << "Goal State";
+        // printVector(desired_state);
+
+        while (!this->equalToZero(thrustInts)) { //areEqual(state, desired_state)
         //   Check if there is a cancel request
         if (goal_handle->is_canceling()) {
             goal_handle->canceled(result);
@@ -362,13 +425,38 @@ private:
             return;
         }
         std::stringstream ss;
+
+        if (this->current_state_valid_ && this->desired_state_valid_)
+        {
+            if (this->ignore_position_)
+            {
+                std::cout << "IGNORING POSITION" << std::endl;
+                Interface::current_state_t current_state_no_position = Interface::current_state_t{current_state_[0], current_state_[1], current_state_[2], 0, 0, 0};
+                Interface::desired_state_t desired_state_no_position = Interface::desired_state_t{desired_state_[0], desired_state_[1], desired_state_[2], 0, 0, 0};
+                thrusts = this->controller_.update
+                (
+                    current_state_no_position, 
+                    desired_state_no_position,
+                    .010
+                );    
+            }
+            else
+            {
+                std::cout << "NOT IGNORING POSITION" << std::endl;
+                thrusts = controller_.update(current_state_, desired_state_, .010); // MOST IMPORTANT LINE IN PROGRAM
+            }
+        }
+        thrustInts = this->make_CAN_request(thrusts);
+        state[0] = (float)thrustInts[0];
+        state[1] = (float)thrustInts[1];
+
         // Update sequence
-        state[0] = this->current_state_[0];
-        state[1] = this->current_state_[1];
-        state[2] = this->current_state_[2];
-        state[3] = this->current_state_[3];
-        state[4] = this->current_state_[4];
-        state[5] = this->current_state_[5];
+        // state[0] = this->current_state_[0];
+        // state[1] = this->current_state_[1];
+        // state[2] = this->current_state_[2];
+        // state[3] = this->current_state_[3];
+        // state[4] = this->current_state_[4];
+        // state[5] = this->current_state_[5];
 
         // std::cout << "State according to Server";
         // printVector(state);
@@ -385,6 +473,36 @@ private:
         goal_handle->succeed(result);
         RCLCPP_INFO(this->get_logger(), "Goal succeeded");
         }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            // CONTROL SERVICES // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    void stopRobot(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+                                      std::shared_ptr<std_srvs::srv::Trigger::Response> response)
+    {
+        unsigned char can_dreq_frame[2] = {0, 0};             
+
+        struct can_frame poll_frame;
+        poll_frame.can_id = 0x010;
+        poll_frame.can_dlc = 2;
+        std::copy(std::begin(can_dreq_frame),
+                  std::end(can_dreq_frame),
+                  std::begin(poll_frame.data));
+        if(Mailbox::MboxCan::write_mbox(this->poll_mb_, &poll_frame) == -1) 
+        {
+            RCLCPP_INFO(this->get_logger(),
+            "[DresDecodeNode::_data_request] Failed to write CAN Request.");
+	    }
+    }
+
+    void resetState()
+    {
+        auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+        auto reset_state_future = this->reset_relative_state_client_->async_send_request(reset_state_request);
+        reset_state_future.wait();
+        auto reset_state_result = reset_state_future.get();
     }
 
     void ignorePosition(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,

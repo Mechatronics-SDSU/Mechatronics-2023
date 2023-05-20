@@ -22,8 +22,22 @@ from rclpy.node import Node
 from std_msgs.msg import String
 from threading import Thread
 from classes.zed_vision.zed_vision import Zed_Vision
+from scion_types.msg import Idea
 from scion_types.msg import ZedObject
+from scion_types.msg import Position
 import math
+
+
+# Defines a box of pixels of interest for current camera frame
+# Variables here should be immutable
+XSTART = 360
+XEND = 600
+YSTART = 450
+YEND = 890
+PIXEL_WINDOW = (XEND - XSTART) * (YEND - YSTART)
+THRESHOLD_DISTANCE = .55
+INFTHRESHOLD = 10
+PIXELTHRESHOLD = 10
 
 class ZedVision(Node):
 
@@ -33,7 +47,9 @@ class ZedVision(Node):
         We also need to initialize the camera with the initCamera function which will pass in all the parameters we need
         """
         super().__init__('zed_vision_data')
-        self.publisher_ = self.create_publisher(ZedObject, 'topic', 10)
+        self.vision_publisher = self.create_publisher(ZedObject, 'topic', 10)
+        self.position_publisher = self.create_publisher(Position, 'zed_position_data', 10)
+        self.idea_publisher = self.create_publisher(Idea, 'brain_idea_data', 10)
         timer_period = .05  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
@@ -43,25 +59,70 @@ class ZedVision(Node):
                                 kwargs={'weights': self.opt.weights, 'img_size': self.opt.img_size, "conf_thres": self.opt.conf_thres})
         capture_thread.start()
         
+                       
+    def iterate_pixels(self, depth_ocv) -> int:
+        inf = 0
+        lessThan = 0
+        x = XSTART
+        while x < XEND:
+            y = YSTART
+            while y < YEND:
+                if math.isinf(depth_ocv[x,y]):
+                    inf += 1
+                if depth_ocv[x,y] < THRESHOLD_DISTANCE:
+                    lessThan += 1
+                y += 5
+            x += 5
+        return inf, lessThan
+
+
+    def processDepthData(self, depth_map):
+        depth_ocv = depth_map.get_data()
+        inf, lessThan = self.iterate_pixels(depth_ocv)
+
+        if inf > INFTHRESHOLD or lessThan > PIXELTHRESHOLD:
+            self.stop_idea()
+
+
+    def stop_idea(self):
+        idea = Idea()
+        idea.code = 0
+        self.idea_publisher.publish(idea)
+
 
     def timer_callback(self):
         """
         Here we'll query the zed_vision class for the info using updateCamera function and then publish what we need in ROS messages 
         """
         
-        object_list, depth_map = self.vision.updateCamera(self.zed)
+        object_list, depth_map, zed_pose, py_translation = self.vision.updateCamera(self.zed)
         # if object_list:
         #     for object in object_list:
         #         msg = ZedObject()
-        #         #msg.label = object.label
-        #         msg.velocity = [object.velocity[0]. object.velocity[1], object.velocity[2]]
-        #         msg.position = [object.position[0], object.p
-        #         position[1], object.position[2]]
-        #         self.publisher_.publish(msg)
-        #         self.get_logger().info('Publishing Position Data: "x: %f\ny: %f\nz: %f\n"' % (msg.position[0], msg.position[1], msg.position[2]))
-        #         self.get_logger().info('Publishing Velocity Data: "x: %f\ny: %f\nz: %f\n"' % (msg.velocity[0], msg.velocity[1], msg.velocity[2]))
+        #         print(type(object.bounding_box))
+        #         print(object.bounding_box)
+
+                # msg.label = object.label
+                # msg.velocity = [object.velocity[0]. object.velocity[1], object.velocity[2]]
+                # msg.position = [object.position[0], object.position[1], object.position[2]]
+                # self.publisher_.publish(msg)
+                # print(msg.label)
+                # print(object.id)
+                # print(object.label_id)
+                # print(object.position)
+                # self.get_logger().info('Publishing Position Data: "[x: %fy: %fz: %f]"' % (msg.position[0], msg.position[1], msg.position[2]))
+                # self.get_logger().info('Publishing Velocity Data: "x: %f\ny: %f\nz: %f\n"' % (msg.velocity[0], msg.velocity[1], msg.velocity[2]))
 
         """ Wall/Object avoidance code in progress """        
+
+        self.processDepthData(depth_map)    
+        tx = round(zed_pose.get_translation(py_translation).get()[0], 3)
+        ty = round(zed_pose.get_translation(py_translation).get()[1], 3)
+        tz = round(zed_pose.get_translation(py_translation).get()[2], 3)
+
+        position = Position()
+        position.position = [tz, tx, ty]
+        self.position_publisher.publish(position)
 
         # import matplotlib
         # matplotlib.use('TkAgg')
@@ -69,7 +130,7 @@ class ZedVision(Node):
         # import numpy as np
 
         # from numpy import inf
-
+ 
         # # GUI(depth_map=depth_map)
         # depth_ocv = depth_map.get_data()
 
@@ -217,7 +278,7 @@ class ZedVision(Node):
          if position is not None:
             msg.position = [position[0], position[1], position[2]]      
             #msg.
-            self.publisher_.publish(msg)
+            self.vision_publisher.publish(msg)
             self.get_logger().info('Publishing Position Data: "x: %f\ny: %f\nz: %f\n"' % (msg.position[0], msg.position[1], msg.position[2]))
 
         """
