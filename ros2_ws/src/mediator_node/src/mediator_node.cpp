@@ -1,0 +1,302 @@
+/* @author Zix
+ * I'll explain this later there's a lot going on haha.
+ */
+
+
+#include <functional>
+#include <future>
+#include <memory>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <iostream>
+#include <unistd.h>
+#include <deque>
+
+#include "scion_types/action/pid.hpp"
+#include "scion_types/msg/state.hpp"
+#include "scion_types/msg/idea.hpp"
+#include "std_srvs/srv/trigger.hpp"
+#include "control_interface.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp_action/rclcpp_action.hpp"
+
+using PIDAction = scion_types::action::PID;
+using GoalHandlePIDAction = rclcpp_action::ClientGoalHandle<PIDAction>;
+using namespace std::placeholders;
+
+class Mediator : public rclcpp::Node
+{
+public:
+  explicit Mediator()
+  : Node("Mediator")
+  {
+    this->pid_command_client_ = rclcpp_action::create_client<PIDAction>
+    (
+      this,
+      "PIDAction"
+    );
+
+    reset_relative_state_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_state");
+    ignore_position_client_ = this->create_client<std_srvs::srv::Trigger>("ignore_position");
+    use_position_client_ = this->create_client<std_srvs::srv::Trigger>("use_position");
+    stop_robot_client_ = this->create_client<std_srvs::srv::Trigger>("stop_robot");
+
+    idea_sub_ = this->create_subscription<scion_types::msg::Idea>
+    (
+      "brain_idea_data",
+       10,
+       std::bind(&Mediator::translateIdea, this, _1)
+    );
+
+    // this->populateQueue();
+    current_command_ = nullptr;
+
+    this->next_command_timer_ = this->create_wall_timer
+    (
+      std::chrono::milliseconds(100), 
+      std::bind(&Mediator::nextCommand, this)
+    );
+
+  }
+
+private:
+  Interface::pid_action_client_t          pid_command_client_;
+  Interface::ros_trigger_client_t         reset_relative_state_client_;
+  Interface::ros_trigger_client_t         ignore_position_client_;
+  Interface::ros_trigger_client_t         use_position_client_;
+  Interface::ros_trigger_client_t         stop_robot_client_;
+  Interface::idea_sub_t                   idea_sub_;
+  Interface::ros_timer_t                  next_command_timer_;
+  Interface::ros_timer_t                  reset_timer_;
+  Interface::command_queue_t              command_queue_;
+  Interface::Command*                     current_command_; 
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            // COMMAND HANDLING // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  void nextCommandPrep(Interface::state_transform_func function_ptr)
+  {
+    if (function_ptr == &Movements::turn)
+        {
+          ignorePositionRequest();
+        }
+        this->resetState();
+  }
+
+  void nextCommand()
+  {
+    using namespace Interface;
+    if (this->command_queue_.size() > 0 && current_command_ == nullptr) // && controlInit == true
+    {
+        this->current_command_ = &command_queue_[0];
+        this->command_queue_.pop_front();
+        
+        state_transform_func func = current_command_->function.transform;
+        this->nextCommandPrep(func);
+        desired_state_t desired = (*func)(current_command_->params.degree);
+        this->send_goal(desired);
+    }
+  }
+
+  //   void populateQueue()
+  //   {
+  //     using namespace Interface;
+  //     Command command1;
+  //     command1.function.movement = &Movements::count;
+  //     Command command2;
+  //     command2.function.movement = &Movements::count;
+  //     Command command3;
+  //     command3.function.movement = &Movements::count;
+
+  //     this->command_queue_.push_back(command1);
+  //     this->command_queue_.push_back(command2);
+  //     this->command_queue_.push_back(command3);
+  //   }
+
+  void addToQueue(Interface::command_vector_t& command_vector)
+  {
+    for (Interface::Command command : command_vector)
+    {
+      this->command_queue_.push_back(command);
+    }
+  }
+
+  void translateIdea(scion_types::msg::Idea::SharedPtr idea)
+    {
+      using namespace Interface;
+      Interface::command_vector_t command_vector;
+      switch (idea->code)
+      {
+        case Idea::STOP:
+          if (this->current_command_)
+          {
+          if (this->current_command_->function.transform == &Movements::move)
+            {
+              this->cancel_goal();
+            }
+          }
+          break;
+        case Idea::GO:
+          Translator::go(idea->parameters[0]);
+          break;
+        case Idea::SPIN:
+          Translator::spin(idea->parameters[0]);
+          break;
+        case Idea::MOVE:
+          command_vector = Translator::move(idea->parameters[0]);
+          addToQueue(command_vector);
+          break;
+        case Idea::TURN:
+          command_vector = Translator::turn(idea->parameters[0]);
+          addToQueue(command_vector);
+          break;
+        case Idea::RELATIVE_POINT:
+          command_vector = Translator::relativePoint(idea->parameters[0], idea->parameters[1]);
+          addToQueue(command_vector);
+          break;
+        case Idea::ABSOLUTE_POINT:
+          Translator::absolutePoint(idea->parameters[0], idea->parameters[1]);
+          break;
+        case Idea::PURE_RELATIVE_POINT:
+          Translator::pureRelativePoint(idea->parameters[0], idea->parameters[1]);
+          break;
+        case Idea::PURE_ABSOLUTE_POINT:
+          Translator::pureAbsolutePoint(idea->parameters[0], idea->parameters[1]);
+          break;
+      }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            // ACTION SERVER // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+  void send_goal(Interface::desired_state_t& desired)
+  {
+    using namespace std::placeholders;
+    if (!this->pid_command_client_->wait_for_action_server()) 
+    {
+      RCLCPP_ERROR(this->get_logger(), "Action server not available after waiting");
+      rclcpp::shutdown();
+    }
+    auto goal_msg = PIDAction::Goal();
+    goal_msg.desired_state = desired;
+    RCLCPP_INFO(this->get_logger(), "Sending goal");
+
+    auto send_goal_options = rclcpp_action::Client<PIDAction>::SendGoalOptions();
+    send_goal_options.goal_response_callback = std::bind(&Mediator::goal_response_callback, this, _1);
+    send_goal_options.feedback_callback = std::bind(&Mediator::feedback_callback, this, _1, _2);
+    send_goal_options.result_callback = std::bind(&Mediator::result_callback, this, _1);
+    this->pid_command_client_->async_send_goal(goal_msg, send_goal_options);
+  }
+
+  void cancel_goal()
+  {
+    using namespace std::placeholders;
+    auto cancel_goal_options = rclcpp_action::Client<PIDAction>::CancelRequest();
+    this->pid_command_client_->async_cancel_all_goals();
+    this->stopRobot();
+    // 
+  }
+
+  void goal_response_callback
+  (
+    std::shared_future<GoalHandlePIDAction::SharedPtr> future
+  )
+  {
+    auto goal_handle = future.get();
+    if (!goal_handle) {
+      RCLCPP_ERROR(this->get_logger(), "Goal was rejected by server");
+    } else {
+      RCLCPP_INFO(this->get_logger(), "Goal accepted by server, waiting for result");
+    }
+  }
+
+  void feedback_callback
+  (
+    GoalHandlePIDAction::SharedPtr, const std::shared_ptr<const PIDAction::Feedback> feedback
+  )
+  {
+    // std::stringstream ss;
+    // ss << "Current State: ";
+    // for (float element : feedback->ongoing_state) {
+    //   ss << element << " ";
+    // }
+    // RCLCPP_INFO(this->get_logger(), ss.str().c_str());
+  }
+
+  void result_callback
+  (
+    const GoalHandlePIDAction::WrappedResult & result
+  )
+  {
+    switch (result.code) 
+    {
+      case rclcpp_action::ResultCode::SUCCEEDED:
+        break;
+      case rclcpp_action::ResultCode::ABORTED:
+        RCLCPP_INFO(this->get_logger(), "Goal was aborted");
+        break;
+      case rclcpp_action::ResultCode::CANCELED:
+        RCLCPP_INFO(this->get_logger(), "Goal was canceled");
+        break;
+      default:
+        RCLCPP_INFO(this->get_logger(), "Unknown result code");
+        break;
+    }
+
+      /* Success State */
+      std::stringstream ss;
+      ss << "State Accomplished; Setting Current Command to Null\n";
+      sleep(.05); // Sleep after reaching desired state for a split second before taking out current command
+      usePositionRequest();
+      current_command_ = nullptr;
+      RCLCPP_INFO(this->get_logger(), ss.str().c_str());
+  }
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            // MEDIATION SERVICES // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  void stopRobot()
+  {
+      auto stop_robot_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+      auto stop_robot_future = this->stop_robot_client_->async_send_request(stop_robot_request);
+  }
+
+  void resetState()
+  {     
+      auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+      auto reset_state_future = this->reset_relative_state_client_->async_send_request(reset_state_request);
+      // reset_state_future.wait();
+      // auto reset_state_result = reset_state_future.get();
+      // reset_state_result.wait();  
+  }
+
+  void ignorePositionRequest()
+  {
+      auto ignore_position_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+      auto ignore_position_result = this->ignore_position_client_->async_send_request(ignore_position_request);
+  }
+
+  void usePositionRequest()
+  {
+      auto use_position_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+      auto use_position_result = this->use_position_client_->async_send_request(use_position_request);
+      // use_position_result.wait();
+  }
+
+
+};  // class Mediator
+
+int main(int argc, char * argv[])
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<Mediator>());
+  rclcpp::shutdown();
+  return 0;
+}
