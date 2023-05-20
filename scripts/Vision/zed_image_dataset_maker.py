@@ -18,7 +18,7 @@ from time import sleep
 parser = argparse.ArgumentParser()
 parser.add_argument('-folder', help='Folder path to save images', required=True)
 parser.add_argument('-date', help='Folder path to save date of images', required=False)
-SAVE_TO_DIRECTORY = "/home/mechatronics/master/Mechatronics-2023/scripts/Vision"
+SAVE_TO_DIRECTORY = os.getcwd()
 
 args = parser.parse_args()
 
@@ -55,6 +55,12 @@ def exist(folder_path):
     else:
         print(f"The folder path {folder_path} exists.")
         return True
+
+if not exist(SAVE_TO_DIRECTORY + "/datasets"):
+    directory = "datasets"
+    parent_dir = SAVE_TO_DIRECTORY
+    path = os.path.join(parent_dir, directory)
+    os.mkdir(path)
 
 # Use command line argument to create new folder if it does not already exist
 if not exist(numbered_folder_path):
