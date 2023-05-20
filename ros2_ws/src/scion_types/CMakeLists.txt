@@ -25,7 +25,9 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/DesiredState.msg"
   "msg/Position.msg"
   "msg/ZedObject.msg"
+  "msg/Datapoint.msg"
   "srv/SendFrame.srv"
+  "srv/CanCommand.srv"
   )
 
 ament_package()
