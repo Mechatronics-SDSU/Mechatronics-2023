@@ -142,7 +142,7 @@ class Zed_Vision():
 
     def initCamera(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument('--weights', nargs='+', type=str, default='yolov8m.pt', help='model.pt path(s)') #where we put weights at
+        parser.add_argument('--weights', nargs='+', type=str, default='yolov5m.pt', help='model.pt path(s)') #where we put weights at
         parser.add_argument('--svo', type=str, default=None, help='optional svo file')
         parser.add_argument('--img_size', type=int, default=416, help='inference size (pixels)')
         parser.add_argument('--conf_thres', type=float, default=0.4, help='object confidence threshold')
@@ -223,9 +223,9 @@ class Zed_Vision():
             zed.retrieve_objects(objects, obj_runtime_param)
 
             for object in objects.object_list:
-                print("{} {} {}".format(object.id, object.position, object.dimensions))
+                print("{} {} {}".format(object.raw_label, object.position, object.dimensions))
 
-            #return objects.object_list, depth_map
+            return objects.object_list, depth_map
            
 
 
