@@ -1,3 +1,40 @@
+#!/bin/bash
+# @Zix - New Startup Script Baby
+
+change_script_permissions()
+{
+
+original_dir=$(pwd)
+
+directories=(
+  $(pwd)/software_can
+  $(pwd)/motor_tests
+  $(pwd)/ros_scripts
+  $(pwd)/tmux
+)
+
+for directory in "${directories[@]}"; do
+
+    # Change to the directory
+    cd "$directory" || exit 1
+
+    # Iterate over files in the directory
+    for file in *; do
+    # Check if the file is a regular file and not a directory
+    if [ -f "$file" ]; then
+        # Make the file executable
+        chmod +x "$file"
+        echo "Enabled execution for $file"
+    fi
+    done
+
+    cd $original_dir
+
+done 
+
+echo "All scripts in the directory are now enabled."
+}
+
 ask_enable_can()
 {
     ENABLE_CAN_MESSAGE='Do you want to enable CAN (y/n): '  
@@ -8,10 +45,27 @@ For the second argument type 3 if you want the robot to be in test mode or 4 for
 # Make a decision based on the user's input
     if [[ $choice == "y" ]]; then
         read -rp $ENABLE_CAN_ARGS_MESSAGE arg1 arg2 
-        ./software_can/can_enable.sh 0 4
+        ./software_can/can_enable.sh "$arg1" "$arg2"
     elif [[ $choice == "n" ]]; then
         echo "Choosing to Skip CAN Enable'."
-    # Perform actions for 'no' choice
+    else
+        echo "Invalid choice."
+        ask_enable_can
+    fi
+}
+
+ask_device_enable()
+{
+    ENABLE_DEVICE_MESSAGE='Do you want to enable any CAN Devices (y/n): '
+    ENABLE_DEVICE_ARGS_MESSAGE='This takes flags type -dvl if you want to enable all devices, or just -dv for example for only Depth sensor and DVL'
+    
+    read -rp $ENABLE_DEVICE_MESSAGE choice
+# Make a decision based on the user's input
+    if [[ $choice == "y" ]]; then
+        read -rp $ENABLE_DEVICE_ARGS_MESSAGE arg1 
+        ./software_can/device_enable.sh arg1
+    elif [[ $choice == "n" ]]; then
+        echo "Choosing to Skip CAN Enable'."
     else
         echo "Invalid choice."
         ask_enable_can
@@ -20,11 +74,6 @@ For the second argument type 3 if you want the robot to be in test mode or 4 for
 
 IFS=
 
+change_script_permissions
 ask_enable_can
-
-
-
-# ./software_can/can_enable.sh
-# ./software_can/device_enable.sh
-# ./motor_tests.sh
-# ./
+ask_device_enable

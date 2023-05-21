@@ -4,6 +4,8 @@
 # Panes are organized and access three directories - scripts, ros_ws, and src (launch file)
 # All windows will have ROS sourced so I can keep my sanity one day longer
 # VSCode will also be opened if it is not already
+cd ..
+parent_dir=$(pwd)
 
 tmux new-session -d -s robot        # I named it robot because i felt like it
 
@@ -14,33 +16,33 @@ tmux split-window -d -p 10\; split-window -h\; split-window -d\; split-window -d
 
 # Run commands in each pane - 0:i is used to identify pane
 
-tmux send-keys -t robot:0.0 "cd /home/mechatronics/master/Mechatronics-2023/ros2_ws; 
+tmux send-keys -t robot:0.0 "cd $parent_dir/ros2_ws; 
 . install/setup.bash; 
 cd src;
 clear" Enter
 
-tmux send-keys -t robot:0.1 "cd /home/mechatronics/master/Mechatronics-2023/ros2_ws;
+tmux send-keys -t robot:0.1 "cd $parent_dir/ros2_ws;
 . install/setup.bash
 clear" Enter
 
 
-tmux send-keys -t robot:0.2 "cd /home/mechatronics/master/Mechatronics-2023/ros2_ws;
+tmux send-keys -t robot:0.2 "cd $parent_dir/ros2_ws;
 . install/setup.bash
 clear" Enter
 
-tmux send-keys -t robot:0.3 "cd /home/mechatronics/master/Mechatronics-2023/ros2_ws;
+tmux send-keys -t robot:0.3 "cd $parent_dir/ros2_ws;
 . install/setup.bash
 clear" Enter
 
 # Here we open VScode if not already opened and then source and open scripts
-tmux send-keys -t robot:0.4 "cd /home/mechatronics/master/Mechatronics-2023;
+tmux send-keys -t robot:0.4 "cd $parent_dir;
 if pgrep -x "code" > /dev/null; then
     echo "VSCode is running"
 else
     code .
 fi;
 clear;
-cd /home/mechatronics/master/Mechatronics-2023/ros2_ws;
+cd $parent_dir/ros2_ws;
 . install/setup.bash;
 cd ..;
 cd scripts
