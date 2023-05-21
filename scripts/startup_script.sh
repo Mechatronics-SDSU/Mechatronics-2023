@@ -67,7 +67,7 @@ ask_device_enable()
     elif [[ $choice == "n" ]]; then
         echo "Choosing to Skip CAN Enable'."
     else
-        echo "Invalid choice."
+        ask_device_enable
     fi
 }
 
@@ -81,7 +81,7 @@ ask_motor_tests()
     elif [[ $choice == "n" ]]; then
         echo "Choosing to Skip CAN Enable'."
     else
-        echo "Invalid choice."
+        ask_motor_tests
     fi  
 }
 
