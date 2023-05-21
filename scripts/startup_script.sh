@@ -38,8 +38,7 @@ echo "All scripts in the directory are now enabled."
 ask_enable_can()
 {
     ENABLE_CAN_MESSAGE='Do you want to enable CAN (y/n): '  
-    ENABLE_CAN_ARGS_MESSAGE='This script takes two command line arguments, the first one can be either 0 or 1, type 1 if you need to enable CAN, type 0 if its already enabled.
-For the second argument type 3 if you want the robot to be in test mode or 4 for safety mode (stops after 1 second). Type them both on the same line with space in between, then press enter.'
+    ENABLE_CAN_ARGS_MESSAGE='This script takes a command line argument of 3 if you want the robot to be in test mode or 4 for safety mode (stops after 1 second): '
 
     read -rp $ENABLE_CAN_MESSAGE choice
 # Make a decision based on the user's input
@@ -58,13 +57,13 @@ For the second argument type 3 if you want the robot to be in test mode or 4 for
 ask_device_enable()
 {
     ENABLE_DEVICE_MESSAGE='Do you want to enable any CAN Devices (y/n): '
-    ENABLE_DEVICE_ARGS_MESSAGE='This takes flags type -dvl if you want to enable all devices, or just -dv for example for only Depth sensor and DVL'
+    ENABLE_DEVICE_ARGS_MESSAGE='This takes flags type -dvl if you want to enable all devices, or just -dv for example for only Depth sensor and DVL: '
     
     read -rp $ENABLE_DEVICE_MESSAGE choice
 # Make a decision based on the user's input
     if [[ $choice == "y" ]]; then
         read -rp $ENABLE_DEVICE_ARGS_MESSAGE arg1 
-        ./software_can/device_enable.sh arg1
+        ./software_can/device_enable.sh $arg1
     elif [[ $choice == "n" ]]; then
         echo "Choosing to Skip CAN Enable'."
     else
@@ -93,3 +92,7 @@ change_script_permissions
 ask_enable_can
 ask_device_enable
 ask_motor_tests
+
+echo "Startup Complete"
+sleep 1
+clear
