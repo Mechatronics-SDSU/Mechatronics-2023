@@ -138,7 +138,7 @@ class CurrentStateNode : public rclcpp::Node
         //     relative_state.state[3] *= -1;
         // }
         relative_state.state[4] = 0;
-        sthis->relative_state_pub_->publish(relative_state);
+        this->relative_state_pub_->publish(relative_state);
     }
 
     void publish_state()
