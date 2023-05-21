@@ -1,8 +1,6 @@
 # If you have questions about this script ask Talor
 # Directory containing the motor_tests
-current_dir=current_directory=$(pwd)
-dir_name="/motor_tests/"
-test_dir="$current_dir$dir_name"
+tests_dir=$(pwd)/motor_tests
 pattern='([0-9]+)\(([^)]*)\)'
 run_commands() {
   echo
@@ -29,7 +27,28 @@ run_commands() {
   done
   echo
 }
-
+# Not done yet
+#walk_through_tests() {
+#
+#{
+c=0
+# Iterate through each script in test scripts
+for scripts in "$tests_dir"/*
+do
+  # Convert complete path to file into just the file name with the assoicated int
+  echo "$scripts: $c" | sed "s/.*\///"
+  # Define a variable like $def="This script does..." in a file in motor_tests and the defition will appear with the script
+  # Note has to be $def= not $def =
+  sed -n 's/^$def=\(.*\)/\1/p' < $scripts
+  # Define the script by an asscoiated int in increasing order
+  eval "script$c=$scripts";
+  c=$((c+1));
+  echo
+done
 run_commands
-
-esac
+#not done yet
+#read -n1 -p "Do you want to walk through any tests? [y,n]" doit 
+#case $doit in  
+#  y|Y) run_commands ;; 
+#  n|N) walk_through_tests;; 
+#esac
