@@ -44,8 +44,9 @@ For the second argument type 3 if you want the robot to be in test mode or 4 for
     read -rp $ENABLE_CAN_MESSAGE choice
 # Make a decision based on the user's input
     if [[ $choice == "y" ]]; then
-        read -rp $ENABLE_CAN_ARGS_MESSAGE arg1 arg2 
-        ./software_can/can_enable.sh "$arg1" "$arg2"
+        read -rp $ENABLE_CAN_ARGS_MESSAGE arg1 
+        first_int=$((arg1))
+        ./software_can/can_enable.sh $first_int 
     elif [[ $choice == "n" ]]; then
         echo "Choosing to Skip CAN Enable'."
     else
@@ -85,10 +86,6 @@ ask_motor_tests()
     fi  
 }
 
-ask_sensor_tests()
-{
-    
-}
 
 IFS=
 

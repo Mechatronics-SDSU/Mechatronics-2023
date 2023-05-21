@@ -9,8 +9,7 @@
 # take the value of 3 or 4, and determines the mode of the robot for CAN (Joseph's modes; 3 is testing, 4 is performance)
 
 # ENABLE CAN ------------------------------------------------------------------------------>
-if [ $1 -eq 1 ]
-then
+if ! ip link show | grep can0 > /dev/null; then
   echo "Enabling CAN....."
   sudo busybox devmem 0x0c303010 w 0xc400
   sudo busybox devmem 0x0c303018 w 0xc458
@@ -23,13 +22,13 @@ fi
 
 # status check
 tmux send-keys -t robot:0.1 "candump can0" Enter
-if [ $2 -eq 3 ]
+if [ "$1" -eq 3 ]
 then
   tmux send-keys -t robot:0.2 "cansend can0 022#0000000003 " Enter
   tmux send-keys -t robot:0.2 "cansend can0 020#00000000 " Enter
 fi
 
-if [ $2 -eq 4 ]
+if [ "$1" -eq 4 ]
 then
   tmux send-keys -t robot:0.2 "cansend can0 022#0000000004 " Enter
   tmux send-keys -t robot:0.2 "cansend can0 020#00000000 " Enter
