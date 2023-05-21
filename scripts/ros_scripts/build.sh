@@ -2,7 +2,7 @@
 origin_directory=$(pwd)
 cd ..
 cd ..
-cd ros2_ws
+cd ros2_ws/
 
 source /opt/ros/foxy/setup.bash
 
