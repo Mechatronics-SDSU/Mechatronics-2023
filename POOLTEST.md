@@ -10,7 +10,7 @@ Note: don’t forget the -X and -C flags because we need them for GUI forwarding
 ## STEP 2 ##
 When you’re SSHd in, you’ll have to run the tmux session. You’re in luck because there’s a script that does this so you just have to navigate to home/mechatronics/master/Mechatronics-2023/scripts
 
-Then you’ll run ./tmux_script.sh
+Then you’ll run ./tmux/start.sh
 This will pull up a session with all the windows you need and they’ll all be sourced for ROS2. You’ll have a /src directory for the launch file, 3 /ros directories for running nodes, and a /scripts directory for scripts
 
 ## STEP 3 ##

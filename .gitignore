@@ -30,4 +30,5 @@ var/
 wheels/
 *.pyc
 
+# Vision stuff
 *.jpg
