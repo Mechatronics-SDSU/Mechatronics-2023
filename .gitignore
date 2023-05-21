@@ -29,3 +29,5 @@ sdist/
 var/
 wheels/
 *.pyc
+
+*.jpg
