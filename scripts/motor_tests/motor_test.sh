@@ -1,6 +1,8 @@
 # @Zix
 # Very quick motor test to spin all motors one-by-one for .6 seconds
 
+$def="quick motor test moves all motors quickly to see they are active"
+
 cansend can0 010#0000000000000000
 cansend can0 00A#
 

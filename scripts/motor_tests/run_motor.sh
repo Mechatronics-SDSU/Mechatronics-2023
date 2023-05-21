@@ -2,6 +2,7 @@
 # Convenience script so people don't have to memorize CAN commands
 # Just type the script and the number of motor you want to run
 
+$def="runs selected motor by use of command line argument (pass in 1 to activate motor 1)"
 
 cansend can0 010#0000000000000000
 cansend can0 00A#

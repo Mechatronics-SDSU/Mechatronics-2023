@@ -4,6 +4,8 @@
 # NOTE: This script will stall motors if the sleep is less than .1 seconds
 # It is a guarantee to stall the motors at .1 seconds
 
+$def="runs motors through backwards and forwards cycles to run a thorough test"
+
 cansend can0 010#0000000000000000
 cansend can0 00A#
 
