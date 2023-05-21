@@ -68,8 +68,26 @@ ask_device_enable()
         echo "Choosing to Skip CAN Enable'."
     else
         echo "Invalid choice."
-        ask_enable_can
     fi
+}
+
+ask_motor_tests()
+{
+    RUN_MOTORS_MESSAGE='Do you want to run motor tests (y/n): '
+    read -rp $RUN_MOTORS_MESSAGE choice
+    # Make a decision based on the user's input
+    if [[ $choice == "y" ]]; then
+        ./motor_tests.sh
+    elif [[ $choice == "n" ]]; then
+        echo "Choosing to Skip CAN Enable'."
+    else
+        echo "Invalid choice."
+    fi  
+}
+
+ask_sensor_tests()
+{
+    
 }
 
 IFS=
@@ -77,3 +95,4 @@ IFS=
 change_script_permissions
 ask_enable_can
 ask_device_enable
+ask_motor_tests
