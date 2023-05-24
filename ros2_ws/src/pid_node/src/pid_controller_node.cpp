@@ -197,7 +197,6 @@ private:
             RCLCPP_INFO(this->get_logger(),
             "[DresDecodeNode::_data_request] Failed to write DREQ.");
 	    }
-
     }
     /******************************************** END REQUEST **********************************************/
 
