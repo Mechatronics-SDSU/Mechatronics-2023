@@ -1,6 +1,7 @@
 #include "scion_types/srv/send_frame.hpp"
+#include <iterator>
 #include "rclcpp/rclcpp.hpp"
-
+#include <vector>
 using namespace std::placeholders;
 
 class Test : public rclcpp::Node
@@ -24,13 +25,26 @@ private:
 
     void sendFrame()
     {
-        auto can_request = std::make_shared<scion_types::srv::SendFrame::Request>();
-        can_request->can_id = 10;
-        can_request->can_dlc = 8;
-        can_request->can_data = {5,5,5,5,5,5,5,5};
-        auto can_future = this->can_client_->async_send_request(can_request);
+        std::vector<unsigned char> kintama = {3, 3, 3, 3, 3, 3, 3, 3};
+
+        sendFrameToYourMomsHouse(10, 8, kintama.data());
+    }
+
+    void sendFrameToYourMomsHouse(int32_t can_id, int8_t can_dlc, unsigned char can_data[])
+    {
+      auto can_request = std::make_shared<scion_types::srv::SendFrame::Request>();
+      can_request->can_id = can_id;
+      can_request->can_dlc = can_dlc;
+      std::copy
+      (
+          can_data,
+          can_data + can_dlc,
+          can_request->can_data.begin()
+      );
+      auto can_future = this->can_client_->async_send_request(can_request);
     }
 };
+
 
 int main(int argc, char * argv[])
 {
@@ -41,16 +55,3 @@ int main(int argc, char * argv[])
 }
 
 
-// In progress doesn't work yet
-void sendFrame(int32_t can_id, int8_t can_dlc, char can_data[])
-{
-    auto can_request = std::make_shared<scion_types::srv::SendFrame::Request>();
-    can_request->can_id = can_id;
-    can_request->can_dlc = can_dlc;
-    std::copy   (
-                    std::begin(can_data),
-                    std::end(can_data),
-                    std::begin(can_request->can_data)
-                );
-    auto can_future = this->can_client_->async_send_request(can_request);
-}
