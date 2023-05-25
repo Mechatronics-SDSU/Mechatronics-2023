@@ -119,7 +119,7 @@ private:
     bool desired_state_valid_ = false;
     bool ignore_position_ = false;
     bool service_done_ = false;
-    bool stabilize_robot_ = false;
+    bool stabilize_robot_ = true;
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                 // WAIT FOR VALID DATA TO INITIALIZE PIDs // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -200,15 +200,12 @@ private:
     // std::cout << this->current_state_valid_ << std::endl;
     // std::cout << this->desired_state_valid_ << std::endl;
 
-                                        // Refer to classes/pid_controller/scion_pid_controller.hpp for this function
-    // if (current_state_valid_ && desired_state_valid_)
-    // {
-    //      this->controller_.update(current_state_, desired_state_, .010); // MOST IMPORTANT LINE IN PROGRAM
-    // }
-    //     
-    /* STEP 2: Send those generated values to the motors */
-        // make_CAN_request(this->controller_.current_thrust_values);
-    // }
+        if (stabilize_robot_ && current_state_valid_ && desired_state_valid_)
+        {
+            thrusts = this->controller_.update;
+            sendFrame(MOTOR_ID, MOTOR_COUNT, byteThrusts.data());
+        }
+
     }
 
     vector<float> update_PID(Interface::current_state_t& current_state, Interface::desired_state_t& desired_state)
@@ -261,6 +258,13 @@ private:
         {
             convertedThrusts.push_back(((int)(thrust * 100) & 0xFF));
         }
+
+        /* 
+         * We have integer values that are 32 bits (4 bytes) but need values of one byte to send to motor
+         * We can extract using an and mask and get last 8 bits which in hex is 0xFF. Char size is one byte
+         * which is why we use an array of chars
+         */          
+        
         std::vector<unsigned char> byteThrusts;
         for (int thrust : convertedThrusts)
         {
@@ -268,15 +272,6 @@ private:
         }
         /* See exactly our 8 thrust values sent to motors */
         printVector(byteThrusts);
-
-        /* 
-         * We have integer values that are 32 bits (4 bytes) but need values of one byte to send to motor
-         * We can extract using an and mask and get last 8 bits which in hex is 0xFF. Char size is one byte
-         * which is why we use an array of chars
-         */          
-
-        // This is a manual motor test can frame that sets each motor to .1 potential
-        // char can_dreq_frame[8] = {0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10};
 
     ////////////////////////////////////////// BUILD REQUEST //////////////////////////////////////////
         /* 
