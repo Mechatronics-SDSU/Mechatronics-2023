@@ -256,7 +256,7 @@ private:
         std::vector<int> convertedThrusts;
         for (float thrust : thrusts)
         {
-            convertedThrusts.push_back(((int)(thrust * 100) & 0xFF));
+            convertedThrusts.push_back(((int)(thrust * 100)));
         }
 
         /* 
