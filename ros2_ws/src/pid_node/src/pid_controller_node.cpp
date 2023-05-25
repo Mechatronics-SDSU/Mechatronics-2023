@@ -202,8 +202,9 @@ private:
 
         if (stabilize_robot_ && current_state_valid_ && desired_state_valid_)
         {
-            thrusts = this->controller_.update;
-            sendFrame(MOTOR_ID, MOTOR_COUNT, byteThrusts.data());
+            std::vector<float> thrusts(6, 0.0);
+            thrusts = this->controller_.update(this->current_state_, this->desired_state_);
+            make_CAN_request(thrusts);
         }
 
     }
@@ -264,7 +265,7 @@ private:
          * We can extract using an and mask and get last 8 bits which in hex is 0xFF. Char size is one byte
          * which is why we use an array of chars
          */          
-        
+
         std::vector<unsigned char> byteThrusts;
         for (int thrust : convertedThrusts)
         {
