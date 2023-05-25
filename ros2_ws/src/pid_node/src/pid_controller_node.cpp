@@ -206,7 +206,6 @@ private:
             thrusts = this->controller_.update(this->current_state_, this->desired_state_);
             make_CAN_request(thrusts);
         }
-
     }
 
     vector<float> update_PID(Interface::current_state_t& current_state, Interface::desired_state_t& desired_state)

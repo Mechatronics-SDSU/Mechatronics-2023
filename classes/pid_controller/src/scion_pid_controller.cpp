@@ -57,8 +57,14 @@ Scion_Position_PID_Controller::Scion_Position_PID_Controller()
 
     this->pid_thrust_mapper = vector<vector<float>>
                                     {
-                                        { -1, 0,  0,  1,  0,  0},                   
-                                        {  1, 0,  0,  1,  0,  0},
+                                        { 0,  1, -1,  0,  0,  1},                   
+                                        { 1,  0,  0,  1,  1,  0},
+                                        { 0, -1, -1,  0,  0,  1},
+                                        { 1,  0,  0,  1, -1,  0},
+                                        {-1, -1,  1,  0,  0,  1},
+                                        { 0,  0,  0,  1,  1,  0},
+                                        {-1,  1,  1,  0,  0,  1},
+                                        { 0,  0,  0,  1, -1,  0}
                                     };
 }
 
