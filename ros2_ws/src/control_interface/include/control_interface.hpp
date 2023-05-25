@@ -11,6 +11,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "std_srvs/srv/trigger.hpp"
+#include "std_srvs/srv/set_bool.hpp"
+#include "scion_types/srv/send_frame.hpp"
 #include "scion_types/msg/idea.hpp"
 #include "scion_types/msg/state.hpp"
 #include "scion_types/msg/position.hpp"
@@ -39,7 +41,11 @@ namespace Interface
     typedef rclcpp_action::Client<PIDAction>::SharedPtr                                     pid_action_client_t;
     typedef rclcpp_action::Server<PIDAction>::SharedPtr                                     pid_action_server_t;
     typedef rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr                               ros_trigger_client_t;
+    typedef rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr                               ros_bool_client_t;
+    typedef rclcpp::Client<scion_types::srv::SendFrame>::SharedPtr                          ros_sendframe_client_t;
     typedef rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr                              ros_trigger_service_t;
+    typedef rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr                              ros_bool_service_t;
+    typedef rclcpp::Service<scion_types::srv::SendFrame>::SharedPtr                         ros_sendframe_service_t;
     typedef rclcpp::Subscription<scion_types::msg::Idea>::SharedPtr                         idea_sub_t;
     typedef rclcpp::Subscription<scion_types::msg::State>::SharedPtr                        state_sub_t;
     typedef rclcpp::Subscription<scion_types::msg::Position>::SharedPtr                     position_sub_t;

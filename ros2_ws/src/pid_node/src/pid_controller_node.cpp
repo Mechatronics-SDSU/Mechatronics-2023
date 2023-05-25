@@ -31,7 +31,6 @@
 #include "scion_types/action/pid.hpp"
 #include "scion_types/msg/state.hpp"
 #include "scion_pid_controller.hpp"                // PID Class
-#include "mbox_can.hpp"                            // For CAN Requests
 
 using std::placeholders::_1;
 using std::placeholders::_2;
@@ -41,6 +40,8 @@ using namespace std;
 #define UPDATE_PERIOD 50ms
 #define PRINT_PERIOD 500ms
 #define PID_ERROR_THRESHOLD 0.01f
+#define MOTOR_ID 10
+#define MOTOR_COUNT 8
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
                                     // MEMBER VARIABLE DECLARATIONS // 
@@ -83,16 +84,14 @@ public:
         std::bind(&Controller::handle_accepted, this, _1)
         );
 
-        this->reset_relative_state_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_state");
-        ignore_position_service_ = this->create_service<std_srvs::srv::Trigger>("ignore_position", std::bind(&Controller::ignorePosition, this, _1, _2));
-        use_position_service_ = this->create_service<std_srvs::srv::Trigger>("use_position", std::bind(&Controller::usePosition, this, _1, _2));
+        can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
+        reset_relative_state_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_state");
+        use_position_service_ = this->create_service<std_srvs::srv::SetBool>("use_position", std::bind(&Controller::usePosition, this, _1, _2));
         stop_robot_service_ = this->create_service<std_srvs::srv::Trigger>("stop_robot", std::bind(&Controller::stopRobot, this, _1, _2));
+        stabilize_robot_service_ = this->create_service<std_srvs::srv::SetBool>("stabilize_robot", std::bind(&Controller::stabilizeRobot, this, _1, _2));
 
         controller_ = Scion_Position_PID_Controller(pid_params_object_.get_pid_params());
         controller_.getStatus();
-        
-        strncpy(ifr.ifr_name, MBOX_INTERFACE, sizeof(&MBOX_INTERFACE));
-        poll_mb_ = new Mailbox::MboxCan(&ifr, "poll_mb");
 
         auto initFunction = std::bind(&Controller::initDesiredState, this);
         std::thread(initFunction).detach();
@@ -104,14 +103,13 @@ private:
     Interface::state_sub_t                      current_state_sub_;
     Interface::state_sub_t                      desired_state_sub_;
     Interface::pid_action_server_t              pid_command_server_;
-    Interface::ros_trigger_service_t            ignore_position_service_;
-    Interface::ros_trigger_service_t            use_position_service_;
+    Interface::ros_bool_service_t               use_position_service_;
+    Interface::ros_bool_service_t               stabilize_robot_service_;
     Interface::ros_trigger_service_t            stop_robot_service_;
     Interface::ros_trigger_client_t             reset_relative_state_client_;
+    Interface::ros_sendframe_client_t           can_client_;
     Scion_Position_PID_Controller               controller_;
     PID_Params                                  pid_params_object_;                      // Passed to controller for tuning
-    Mailbox::MboxCan*                           poll_mb_;
-    struct ifreq ifr;
 
     /* Upon initialization set all values to [0,0,0] */
     
@@ -121,6 +119,7 @@ private:
     bool desired_state_valid_ = false;
     bool ignore_position_ = false;
     bool service_done_ = false;
+    bool stabilize_robot_ = false;
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                 // WAIT FOR VALID DATA TO INITIALIZE PIDs // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -212,15 +211,10 @@ private:
     // }
     }
 
-    void correctError()
-    {
-
-    }
-
     vector<float> update_PID(Interface::current_state_t& current_state, Interface::desired_state_t& desired_state)
     {
         using namespace Interface;
-        vector<float> thrusts = vector<float>{0,0,0,0,0,0};
+        std::vector<float> thrusts(6, 0.0);
         if (this->current_state_valid_ && this->desired_state_valid_)
         {
             if (this->ignore_position_)
@@ -229,21 +223,13 @@ private:
                 current_state_t current_state_no_position = current_state_t{current_state[0], current_state[1], current_state[2], 0, 0, 0};
                 desired_state_t desired_state_no_position = desired_state_t{desired_state[0], desired_state[1], desired_state[2], 0, 0, 0};
                 thrusts = this->controller_.update
-                (
-                    current_state_no_position, 
-                    desired_state_no_position,
-                    .010
-                );    
+                (current_state_no_position, desired_state_no_position, .010);    
             }
             else
             {
                 std::cout << "NOT IGNORING POSITION" << std::endl;
                 thrusts = this->controller_.update
-                (
-                    current_state, 
-                    desired_state, 
-                    .010
-                ); // MOST IMPORTANT LINE IN PROGRAM
+                (current_state, desired_state, .010); // MOST IMPORTANT LINE IN PROGRAM
             }
         }
         return thrusts;
@@ -253,26 +239,41 @@ private:
                                     // CAN REQUESTS FOR MOTOR CONTROL // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    void sendFrame(int32_t can_id, int8_t can_dlc, unsigned char can_data[])
+    {
+      auto can_request = std::make_shared<scion_types::srv::SendFrame::Request>();
+      can_request->can_id = can_id;
+      can_request->can_dlc = can_dlc;
+      std::copy
+      (
+          can_data,
+          can_data + can_dlc,
+          can_request->can_data.begin()
+      );
+      auto can_future = this->can_client_->async_send_request(can_request);
+    }
+
     vector<int> make_CAN_request(vector<float>& thrusts)
     {
         /* Thrusts come out of PID as a float between -1 and 1; motors need int value from -100 to 100 */
-        int thrust0 = (int)(thrusts[0]*100);
-        int thrust1 = (int)(thrusts[1]*100);
-    
+        std::vector<int> convertedThrusts;
+        for (float thrust : thrusts)
+        {
+            convertedThrusts.push_back(((int)(thrust * 100) & 0xFF));
+        }
+        std::vector<unsigned char> byteThrusts;
+        for (int thrust : convertedThrusts)
+        {
+            byteThrusts.push_back((thrust & 0xFF));
+        }
         /* See exactly our 8 thrust values sent to motors */
-        std::cout << " " << thrust0 << " " << thrust1 << " ";
-        std::cout << std::endl;
+        printVector(byteThrusts);
 
         /* 
          * We have integer values that are 32 bits (4 bytes) but need values of one byte to send to motor
          * We can extract using an and mask and get last 8 bits which in hex is 0xFF. Char size is one byte
          * which is why we use an array of chars
-         */
-        unsigned char can_dreq_frame[2] = 
-                                {
-                                    (thrust0 & 0xFF),
-                                    (thrust1 & 0xFF),
-                                };             
+         */          
 
         // This is a manual motor test can frame that sets each motor to .1 potential
         // char can_dreq_frame[8] = {0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10};
@@ -283,18 +284,8 @@ private:
          * one byte for each value -100 to 100 
          */
 
-        struct can_frame poll_frame;
-        poll_frame.can_id = 0x010;
-        poll_frame.can_dlc = 2;
-        std::copy(std::begin(can_dreq_frame),
-                  std::end(can_dreq_frame),
-                  std::begin(poll_frame.data));
-        if(Mailbox::MboxCan::write_mbox(this->poll_mb_, &poll_frame) == -1) 
-        {
-            RCLCPP_INFO(this->get_logger(),
-            "[DresDecodeNode::_data_request] Failed to write CAN Request.");
-	    }
-        return vector<int>{thrust0, thrust1};
+        sendFrame(MOTOR_ID, MOTOR_COUNT, byteThrusts.data());
+        return convertedThrusts;
     }
 
     ////////////////////////////////////////// END REQUEST //////////////////////////////////////////
@@ -395,6 +386,7 @@ private:
         desired_state += this->current_state_;
         this->desired_state_ = desired_state;
 
+        /* Init States */
         std::vector<float>& state = feedback->current_state;
         vector<float> thrusts = this->update_PID(this->current_state_, this->desired_state_);
         vector<int> thrustInts = this->make_CAN_request(thrusts);
@@ -411,6 +403,7 @@ private:
         }
         std::stringstream ss;
 
+        /* Update at Every Loop */
         thrusts = update_PID(this->current_state_, this->desired_state_);
         thrustInts = this->make_CAN_request(thrusts);
         state[0] = (float)thrustInts[0];
@@ -436,37 +429,25 @@ private:
                          std::shared_ptr<std_srvs::srv::Trigger::Response> response)
     {
         unsigned char can_dreq_frame[2] = {0, 0};             
+        sendFrame(MOTOR_ID, MOTOR_COUNT, can_dreq_frame);
+    }
 
-        struct can_frame poll_frame;
-        poll_frame.can_id = 0x010;
-        poll_frame.can_dlc = 2;
-        std::copy(std::begin(can_dreq_frame),
-                  std::end(can_dreq_frame),
-                  std::begin(poll_frame.data));
-        if(Mailbox::MboxCan::write_mbox(this->poll_mb_, &poll_frame) == -1) 
-        {
-            RCLCPP_INFO(this->get_logger(),
-            "[DresDecodeNode::_data_request] Failed to write CAN Request.");
-	    }
-    }y
     void resetState()
     {
         auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
         auto reset_state_future = this->reset_relative_state_client_->async_send_request(reset_state_request);
-        reset_state_future.wait();
-        auto reset_state_result = reset_state_future.get();
-    }
-
-    void ignorePosition(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
-                                      std::shared_ptr<std_srvs::srv::Trigger::Response> response)
-    {
-        this->ignore_position_ = true;
     }
     
-    void usePosition(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
-                                      std::shared_ptr<std_srvs::srv::Trigger::Response> response)
+    void usePosition(const  std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+                            std::shared_ptr<std_srvs::srv::SetBool::Response> response)
     {
-        this->ignore_position_ = false;
+        this->ignore_position_ = request->data;
+    }
+
+    void stabilizeRobot(const   std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+                                std::shared_ptr<std_srvs::srv::SetBool::Response> response)
+    {
+        this->stabilize_robot_ = request->data;
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                         // SUBSCRIPTION CALLBACKS // 
@@ -489,7 +470,6 @@ private:
      **/ 
     {
         if (!this->current_state_valid_) {this->current_state_valid_ = true;}
-        // RCLCPP_INFO(this->get_logger(), "Received Current Position Data:");
         printVector(msg->state);
         this->current_state_= msg->state; 
     }

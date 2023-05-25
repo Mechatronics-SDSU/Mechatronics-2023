@@ -35,7 +35,6 @@ include_directories(include)
 
 # Must include headers and source files from pid_controller class in classses/
 add_executable(pid_exec src/pid_controller_node.cpp
-                        ../can2ros_driver/src/mbox_can.cpp
                         ../../../classes/pid_controller/src/pid_controller.cpp
                         ../../../classes/pid_controller/src/scion_pid_controller.cpp
                         ../../../classes/pid_controller/src/pid_params.cpp)
