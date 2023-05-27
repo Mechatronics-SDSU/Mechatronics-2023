@@ -69,6 +69,10 @@ class Controller : public rclcpp::Node
         vector<int> buttons = msg->buttons;
 
         /* These map to the actual controller sticks and buttons */
+
+        /* This part randomly changed on me before pool test, I have no idea why, it was working and then I had to change
+        the buttons. Before I had it as 0 5 2 3 4 1, but for the version on the day before pool test it is working
+        as 0 4 3 2 5 1 */
         float left_x = -1 * msg->axes[0]; // yaw
         float right_trigger = msg->axes[4] - 1; // pitch
         float left_trigger = msg->axes[3] - 1; // roll
