@@ -20,6 +20,7 @@ MS5837Module::MS5837Module(rclcpp::Node* ctx, Mailbox::MboxCan* mb)
 	init_frame.can_dlc = 8;
 	init_frame.can_id = static_cast<uint8_t>(CanDriver::Command::STOW);
 	init_frame.data[0] = this->module_device_id;
+	init_frame.data[4] = 1;
 	Mailbox::MboxCan::write_mbox(this->mailbox_ptr, &init_frame);
 
 	RCLCPP_INFO(node_context->get_logger(), "[MS5837Module] Initialized.");
