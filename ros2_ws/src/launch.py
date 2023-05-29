@@ -224,21 +224,24 @@ def generate_launch_description():
         #     description='Pose of the camera with respect to the base frame (i.e. `base_link`): [x,y,z,r,p,y]. Note: Orientation in rad.)'),
         # ******************* EVERYTHING BELOW HERE ARE OUR NODES ************** #
 
-        launch_ros.actions.Node(
-            package='ahrs_node', executable='ahrs_exec', output='screen'
-            ),
-        launch_ros.actions.Node(
-            package='brain_node', executable='brain_exec', output='screen' 
-            ),
+        # launch_ros.actions.Node(
+        #     package='ahrs_node', executable='ahrs_exec', output='screen'
+        #     ),
+        # launch_ros.actions.Node(
+        #     package='brain_node', executable='brain_exec', output='screen' 
+        #     ),
         # launch_ros.actions.Node(
         #     package='can2ros_driver', executable='can2ros_driver'
         #     ),
         launch_ros.actions.Node(
-            package='current_state_node', executable='current_state_exec', output='screen'
+            package='controller_node', executable='controller_exec', output='screen'
             ),  
-        launch_ros.actions.Node(
-            package='mediator_node', executable='mediator_exec', output='screen' 
-            ),  
+        # launch_ros.actions.Node(
+        #     package='current_state_node', executable='current_state_exec', output='screen'
+        #     ),  
+        # launch_ros.actions.Node(
+        #     package='mediator_node', executable='mediator_exec', output='screen' 
+        #     ),  
         # launch_ros.actions.Node(
         #     package='pid_node', executable='pid_exec', output='screen' 
         #     ),    
@@ -246,7 +249,7 @@ def generate_launch_description():
             package='unified_can_driver', executable='unified_can_driver', output='screen',         
             parameters= [
                             {"can_bus_interface": "can0"},
-                            {"do_module_polling": True},
+                            {"do_module_polling": False},
                             {"module_bitfield": 255}
                         ]
             ),

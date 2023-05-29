@@ -16,10 +16,13 @@
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/joy.hpp"
 #include "std_msgs/msg/string.hpp"
-#include "mbox_can.hpp" 
 #include "vector_operations.hpp"
+#include "control_interface.hpp"
 
 #define MBOX_INTERFACE "can0"
+#define MOTOR_ID 10
+#define MOTOR_COUNT 8
+#define MAX_POWER 50
 
 using namespace std;
 using std::placeholders::_1;
@@ -40,8 +43,7 @@ class Controller : public rclcpp::Node
         controller_sub_ = this->create_subscription<sensor_msgs::msg::Joy>
         ("/joy", 10, std::bind(&Controller::controller_subscription_callback, this, _1));
 
-        strncpy(ifr.ifr_name, MBOX_INTERFACE, sizeof(&MBOX_INTERFACE));
-        poll_mb_ = new Mailbox::MboxCan(&ifr, "poll_mb");
+        can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
 
         thrust_mapper_ = vector<vector<float>>
                                     {
@@ -57,12 +59,11 @@ class Controller : public rclcpp::Node
     }
 
   private:
-    rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr controller_sub_;
-    Mailbox::MboxCan* poll_mb_;
-    struct ifreq ifr;
-    vector<vector<float>> thrust_mapper_;
+    rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr  controller_sub_;
+    Interface::ros_sendframe_client_t                       can_client_;
+    vector<vector<float>>                                   thrust_mapper_;
     
-    
+
     void controller_subscription_callback(const sensor_msgs::msg::Joy::SharedPtr msg)
     {
         vector<float> axes = msg->axes;
@@ -87,62 +88,51 @@ class Controller : public rclcpp::Node
         make_CAN_request(thrust_vals);
     }
 
-
-    void make_CAN_request(vector<float> thrusts)
+    void sendFrame(int32_t can_id, int8_t can_dlc, unsigned char can_data[])
     {
-        /* Thrusts come out of PID as a float between -1 and 1; motors need int value from -100 to 100 and scale */
-        int thrust0 = (int)(thrusts[0]*100/3);
-        int thrust1 = (int)(thrusts[1]*100/3);
-        int thrust2 = (int)(thrusts[2]*100/3);
-        int thrust3 = (int)(thrusts[3]*100/3);
-        int thrust4 = (int)(thrusts[4]*100/3);
-        int thrust5 = (int)(thrusts[5]*100/3);
-        int thrust6 = (int)(thrusts[6]*100/3);
-        int thrust7 = (int)(thrusts[7]*100/3);
+      auto can_request = std::make_shared<scion_types::srv::SendFrame::Request>();
+      can_request->can_id = can_id;
+      can_request->can_dlc = can_dlc;
+      std::copy
+      (
+          can_data,
+          can_data + can_dlc,
+          can_request->can_data.begin()
+      );
+      auto can_future = this->can_client_->async_send_request(can_request);
+    }
 
-        /* See exactly our 8 thrust values sent to motors */
-        std::cout << " " << thrust0 << " " << thrust1 << " " << thrust2 << " " << thrust3;
-        std::cout << " " << thrust4 << " " << thrust5 << " " << thrust6 << " " << thrust7;
-        std::cout << std::endl;
+    vector<int> make_CAN_request(vector<float>& thrusts)
+    {
+        /* Thrusts come out of PID as a float between -1 and 1; motors need int value from -100 to 100 */
+        std::vector<int> convertedThrusts;
+        for (float thrust : thrusts)
+        {
+            convertedThrusts.push_back(((int)(thrust * 100 * MAX_POWER/100)));
+        }
 
         /* 
          * We have integer values that are 32 bits (4 bytes) but need values of one byte to send to motor
          * We can extract using an and mask and get last 8 bits which in hex is 0xFF. Char size is one byte
          * which is why we use an array of chars
-         */
-        unsigned char can_dreq_frame[8] = 
-                                {
-                                    (thrust0 & 0xFF),
-                                    (thrust1 & 0xFF),
-                                    (thrust2 & 0xFF),
-                                    (thrust3 & 0xFF),
-                                    (thrust4 & 0xFF),
-                                    (thrust5 & 0xFF),
-                                    (thrust6 & 0xFF),
-                                    (thrust7 & 0xFF) 
-                                };             
+         */          
 
-        // This is a manual motor test can frame that sets each motor to .1 potential
-        // char can_dreq_frame[8] = {0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10};
+        std::vector<unsigned char> byteThrusts;
+        for (int thrust : convertedThrusts)
+        {
+            byteThrusts.push_back((thrust & 0xFF));
+        }
+        /* See exactly our 8 thrust values sent to motors */
+        printVector(byteThrusts);
 
-    /********************************************* BUILD REQUEST ********************************************/
+    ////////////////////////////////////////// BUILD REQUEST //////////////////////////////////////////
         /* 
          * Our frame will send CAN request 
          * one byte for each value -100 to 100 
          */
 
-        struct can_frame poll_frame;
-        poll_frame.can_id = 0x010;
-        poll_frame.can_dlc = 8;
-        std::copy(std::begin(can_dreq_frame),
-                  std::end(can_dreq_frame),
-                  std::begin(poll_frame.data));
-        if(Mailbox::MboxCan::write_mbox(this->poll_mb_, &poll_frame) == -1) 
-        {
-            RCLCPP_INFO(this->get_logger(),
-            "[DresDecodeNode::_data_request] Failed to write DREQ.");
-	    }
-
+        sendFrame(MOTOR_ID, MOTOR_COUNT, byteThrusts.data());
+        return convertedThrusts;
     }
 };
 

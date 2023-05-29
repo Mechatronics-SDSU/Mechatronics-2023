@@ -24,14 +24,13 @@ find_package(sensor_msgs REQUIRED)
 
 include_directories(include)
 
-add_executable(controller_exec src/controller_node.cpp
-                               ../can2ros_driver/src/mbox_can.cpp)
+add_executable(controller_exec src/controller_node.cpp)
 
 
 ament_target_dependencies(controller_exec rclcpp scion_types std_msgs sensor_msgs)
 
 target_include_directories(controller_exec PUBLIC ../../../classes/pid_controller/include
-                                                  ../can2ros_driver/include)
+                                                             ../control_interface/include)
 
                                            
 install(TARGETS
