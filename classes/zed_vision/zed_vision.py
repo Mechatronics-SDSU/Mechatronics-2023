@@ -21,7 +21,7 @@ from ultralytics.yolo.data.dataloaders.v5augmentations import letterbox
 from ultralytics.yolo.utils.checks import check_imgsz
 """
 
-sys.path.append("/home/mechatronics/master/Mechatronics-2023/classes/zed_vision/yolov5")
+sys.path.append("/home/mechatronics/master/classes/zed_vision/yolov5")
 from models.experimental import attempt_load
 #from utils.general import check_img_size, non_max_suppression, scale_coords, xyxy2xywh
 from utils.general import check_img_size, non_max_suppression, scale_segments, xyxy2xywh
@@ -190,6 +190,7 @@ class Zed_Vision():
         global image_net, exit_signal, run_signal, detections
 
         image_left_tmp = sl.Mat()
+        zed_pose = sl.Pose()
         depth_map = sl.Mat()
         objects = sl.Objects()
         runtime_params = sl.RuntimeParameters()
@@ -206,6 +207,8 @@ class Zed_Vision():
             lock.acquire()
             zed.retrieve_image(image_left_tmp, sl.VIEW.LEFT)
             zed.retrieve_measure(depth_map, sl.MEASURE.DEPTH)
+            zed.get_position(zed_pose, sl.REFERENCE_FRAME.WORLD)
+            py_translation = sl.Translation()
             image_net = image_left_tmp.get_data()
             lock.release()
             run_signal = True
@@ -225,7 +228,7 @@ class Zed_Vision():
             for object in objects.object_list:
                 print("{} {} {}".format(object.raw_label, object.position, object.dimensions))
 
-            return objects.object_list, depth_map
+            return objects.object_list, depth_map, zed_pose, py_translation
            
 
 

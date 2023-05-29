@@ -236,6 +236,9 @@ def generate_launch_description():
         # launch_ros.actions.Node(
         #     package='current_state_node', executable='current_state_exec', output='screen'
         #     ),  
+        launch_ros.actions.Node(
+            package='joy', executable='joy_node', output='screen'
+            ),  
         # launch_ros.actions.Node(
         #     package='mediator_node', executable='mediator_exec', output='screen' 
         #     ),  

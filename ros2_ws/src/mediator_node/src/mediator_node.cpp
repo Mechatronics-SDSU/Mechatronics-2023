@@ -272,9 +272,6 @@ private:
   {     
       auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
       auto reset_state_future = this->reset_relative_state_client_->async_send_request(reset_state_request);
-      // reset_state_future.wait();
-      // auto reset_state_result = reset_state_future.get();
-      // reset_state_result.wait();  
   }
 
   void ignorePositionRequest()
@@ -287,7 +284,6 @@ private:
   {
       auto use_position_request = std::make_shared<std_srvs::srv::Trigger::Request>();
       auto use_position_result = this->use_position_client_->async_send_request(use_position_request);
-      // use_position_result.wait();
   }
 
 
