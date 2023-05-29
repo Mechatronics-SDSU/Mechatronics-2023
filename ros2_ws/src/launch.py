@@ -230,9 +230,6 @@ def generate_launch_description():
         # launch_ros.actions.Node(
         #     package='brain_node', executable='brain_exec', output='screen' 
         #     ),
-        # launch_ros.actions.Node(
-        #     package='can2ros_driver', executable='can2ros_driver'
-        #     ),
         launch_ros.actions.Node(
             package='controller_node', executable='controller_exec', output='screen'
             ),  
