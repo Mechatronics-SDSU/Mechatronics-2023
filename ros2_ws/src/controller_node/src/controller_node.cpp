@@ -106,7 +106,7 @@ class Controller : public rclcpp::Node
     {
         /* Thrusts come out of PID as a float between -1 and 1; motors need int value from -100 to 100 */
         std::vector<int> convertedThrusts;
-        for (float thrust : thrusts)
+        for (float &thrust : thrusts)
         {
             convertedThrusts.push_back(((int)(thrust * 100 * MAX_POWER/100)));
         }
@@ -118,7 +118,7 @@ class Controller : public rclcpp::Node
          */          
 
         std::vector<unsigned char> byteThrusts;
-        for (int thrust : convertedThrusts)
+        for (int &thrust : convertedThrusts)
         {
             byteThrusts.push_back((thrust & 0xFF));
         }
