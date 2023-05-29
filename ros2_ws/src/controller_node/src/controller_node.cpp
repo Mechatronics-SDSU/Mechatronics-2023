@@ -19,7 +19,6 @@
 #include "vector_operations.hpp"
 #include "control_interface.hpp"
 
-#define MBOX_INTERFACE "can0"
 #define MOTOR_ID 10
 #define MOTOR_COUNT 8
 #define MAX_POWER 50

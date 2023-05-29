@@ -36,7 +36,6 @@ using std::placeholders::_1;
 using std::placeholders::_2;
 using namespace std;
 
-#define MBOX_INTERFACE "can0"
 #define UPDATE_PERIOD 50ms
 #define PRINT_PERIOD 500ms
 #define PID_ERROR_THRESHOLD 0.01f
