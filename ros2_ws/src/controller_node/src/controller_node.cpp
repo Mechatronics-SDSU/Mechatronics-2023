@@ -110,6 +110,7 @@ class Controller : public rclcpp::Node
         {
             convertedThrusts.push_back(((int)(thrust * 100 * MAX_POWER/100)));
         }
+        printVector(convertedThrusts);
 
         /* 
          * We have integer values that are 32 bits (4 bytes) but need values of one byte to send to motor
@@ -120,10 +121,9 @@ class Controller : public rclcpp::Node
         std::vector<unsigned char> byteThrusts;
         for (int &thrust : convertedThrusts)
         {
-            byteThrusts.push_back((thrust & 0xFF));
+            byteThrusts.push_back(thrust & 0xFF);
         }
         /* See exactly our 8 thrust values sent to motors */
-        printVector(byteThrusts);
 
     ////////////////////////////////////////// BUILD REQUEST //////////////////////////////////////////
         /* 

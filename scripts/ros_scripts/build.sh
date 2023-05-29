@@ -18,3 +18,5 @@ source install/setup.bash
 colcon build --packages-ignore "${packages_to_ignore[@]}"
 
 cd $origin_directory
+
+. install/setup.bash
