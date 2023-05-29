@@ -17,9 +17,8 @@ ModuleLoader::ModuleLoader(rclcpp::Node* ctx, struct ifreq* ifr)
 	load_module<BRPING1Module>(brping1, MODULE_BRPING1_ENABLE);
 	
 	RCLCPP_INFO(node_context->get_logger(),"[ModuleLoader] Initialized.");
-
-	
 }
+
 ModuleLoader::~ModuleLoader()
 {
 	Mailbox::MboxCan::close_mbox(module_mb);
