@@ -19,8 +19,8 @@
 #include "vector_operations.hpp"
 #include "control_interface.hpp"
 
-#define MOTOR_ID 10
-#define MOTOR_COUNT 8
+#define MOTOR_ID 0x010
+#define MOTOR_COUNT 2
 #define MAX_POWER 50
 
 using namespace std;
@@ -55,6 +55,8 @@ class Controller : public rclcpp::Node
                                         { 0,  1,  1,  0,  0,  1},
                                         {-1,  0,  0,  1, -1,  0}
                                     };
+        
+        canClient::setBotInSafeMode(can_client_);
     }
 
   private:
@@ -87,25 +89,11 @@ class Controller : public rclcpp::Node
         make_CAN_request(thrust_vals);
     }
 
-    void sendFrame(int32_t can_id, int8_t can_dlc, unsigned char can_data[])
-    {
-      auto can_request = std::make_shared<scion_types::srv::SendFrame::Request>();
-      can_request->can_id = can_id;
-      can_request->can_dlc = can_dlc;
-      std::copy
-      (
-          can_data,
-          can_data + can_dlc,
-          can_request->can_data.begin()
-      );
-      auto can_future = this->can_client_->async_send_request(can_request);
-    }
-
     vector<int> make_CAN_request(vector<float>& thrusts)
     {
         /* Thrusts come out of PID as a float between -1 and 1; motors need int value from -100 to 100 */
         std::vector<int> convertedThrusts;
-        for (float &thrust : thrusts)
+        for (float thrust : thrusts)
         {
             convertedThrusts.push_back(((int)(thrust * 100 * MAX_POWER/100)));
         }
@@ -118,7 +106,7 @@ class Controller : public rclcpp::Node
          */          
 
         std::vector<unsigned char> byteThrusts;
-        for (int &thrust : convertedThrusts)
+        for (int thrust : convertedThrusts)
         {
             byteThrusts.push_back(thrust & 0xFF);
         }
@@ -130,7 +118,7 @@ class Controller : public rclcpp::Node
          * one byte for each value -100 to 100 
          */
 
-        sendFrame(MOTOR_ID, MOTOR_COUNT, byteThrusts.data());
+        canClient::sendFrame(MOTOR_ID, MOTOR_COUNT, byteThrusts.data(), this->can_client_);
         return convertedThrusts;
     }
 };

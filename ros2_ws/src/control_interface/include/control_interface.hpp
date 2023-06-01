@@ -265,3 +265,26 @@ namespace Translator
         return command_vector_t{command1, command2};
     }
 }
+
+namespace canClient
+{
+    void sendFrame(int32_t can_id, int8_t can_dlc, unsigned char can_data[], Interface::ros_sendframe_client_t can_client)
+    {
+      auto can_request = std::make_shared<scion_types::srv::SendFrame::Request>();
+      can_request->can_id = can_id;
+      can_request->can_dlc = can_dlc;
+      std::copy
+      (
+          can_data,
+          can_data + can_dlc,
+          can_request->can_data.begin()
+      );
+      auto can_future = can_client->async_send_request(can_request);
+    }
+
+    void setBotInSafeMode(Interface::ros_sendframe_client_t can_client)
+    {
+        vector<unsigned char> safeModeFrame{0,0,0,0,0x04};
+        sendFrame(0x022, 5, safeModeFrame.data(), can_client);
+    }
+}
