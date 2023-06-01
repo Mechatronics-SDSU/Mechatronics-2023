@@ -94,6 +94,8 @@ public:
 
         auto initFunction = std::bind(&Controller::initDesiredState, this);
         std::thread(initFunction).detach();
+
+        canClient::setBotInSafeMode(can_client_);
     }
 
 private:
@@ -235,20 +237,6 @@ private:
                                     // CAN REQUESTS FOR MOTOR CONTROL // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void sendFrame(int32_t can_id, int8_t can_dlc, unsigned char can_data[])
-    {
-      auto can_request = std::make_shared<scion_types::srv::SendFrame::Request>();
-      can_request->can_id = can_id;
-      can_request->can_dlc = can_dlc;
-      std::copy
-      (
-          can_data,
-          can_data + can_dlc,
-          can_request->can_data.begin()
-      );
-      auto can_future = this->can_client_->async_send_request(can_request);
-    }
-
     vector<int> make_CAN_request(vector<float>& thrusts)
     {
         /* Thrusts come out of PID as a float between -1 and 1; motors need int value from -100 to 100 */
@@ -278,7 +266,7 @@ private:
          * one byte for each value -100 to 100 
          */
 
-        sendFrame(MOTOR_ID, MOTOR_COUNT, byteThrusts.data());
+        canClient::sendFrame(MOTOR_ID, MOTOR_COUNT, byteThrusts.data(), this->can_client_);
         return convertedThrusts;
     }
 
@@ -423,7 +411,7 @@ private:
                          std::shared_ptr<std_srvs::srv::Trigger::Response> response)
     {
         unsigned char can_dreq_frame[2] = {0, 0};             
-        sendFrame(MOTOR_ID, MOTOR_COUNT, can_dreq_frame);
+        canClient::sendFrame(MOTOR_ID, MOTOR_COUNT, can_dreq_frame, this->can_client_);
     }
 
     void resetState()
