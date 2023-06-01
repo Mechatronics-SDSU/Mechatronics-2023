@@ -14,7 +14,7 @@ ModuleLoader::ModuleLoader(rclcpp::Node* ctx, struct ifreq* ifr)
 	load_module<DVLModule>(dvl, MODULE_DVL_ENABLE);
 	load_module<MS5837Module>(ms5837, MODULE_MS5837_ENABLE);
 	load_module<BRLIGHTModule>(brlight, MODULE_BRLIGHT_ENABLE);
-	load_module<BRPING1Module>(brping1, MODULE_BRPING1_ENABLE);
+	// load_module<BRPING1Module>(brping1, MODULE_BRPING1_ENABLE);
 	
 	RCLCPP_INFO(node_context->get_logger(),"[ModuleLoader] Initialized.");
 }
