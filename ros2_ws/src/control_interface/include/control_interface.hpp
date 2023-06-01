@@ -101,7 +101,19 @@ namespace Interface
         Function function;           // Points to a function to execute          (turn)
         Params params;               // The magnitude to pass into that function (30 degrees)
     };
-}
+
+    vector<vector<float>> thrust_mapper =  vector<vector<float>>
+                                        {
+                                            { 0,  1, -1,  0,  0,  1},                   
+                                            { 1,  0,  0,  1,  1,  0},
+                                            { 0, -1, -1,  0,  0,  1},
+                                            { 1,  0,  0,  1, -1,  0},
+                                            { 0, -1,  1,  0,  0,  1},
+                                            {-1,  0,  0,  1,  1,  0},
+                                            { 0,  1,  1,  0,  0,  1},
+                                            {-1,  0,  0,  1, -1,  0}
+                                        };
+    }
 
 /* Defines Possible Commands to Be Given to the PID Controller */
 namespace Movements

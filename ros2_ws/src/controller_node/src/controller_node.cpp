@@ -43,18 +43,6 @@ class Controller : public rclcpp::Node
         ("/joy", 10, std::bind(&Controller::controller_subscription_callback, this, _1));
 
         can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
-
-        thrust_mapper_ = vector<vector<float>>
-                                    {
-                                        { 0,  1, -1,  0,  0,  1},                   
-                                        { 1,  0,  0,  1,  1,  0},
-                                        { 0, -1, -1,  0,  0,  1},
-                                        { 1,  0,  0,  1, -1,  0},
-                                        { 0, -1,  1,  0,  0,  1},
-                                        {-1,  0,  0,  1,  1,  0},
-                                        { 0,  1,  1,  0,  0,  1},
-                                        {-1,  0,  0,  1, -1,  0}
-                                    };
         
         canClient::setBotInSafeMode(can_client_);
     }
@@ -62,7 +50,6 @@ class Controller : public rclcpp::Node
   private:
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr  controller_sub_;
     Interface::ros_sendframe_client_t                       can_client_;
-    vector<vector<float>>                                   thrust_mapper_;
     
 
     void controller_subscription_callback(const sensor_msgs::msg::Joy::SharedPtr msg)
@@ -84,7 +71,7 @@ class Controller : public rclcpp::Node
 
         /* Multiply our 8 x 6 mapper matrix by our 6 x 1 ctrl_vals to get an 8 x 1 vector of thrust values (a vector with 8 values) */
         vector<float> ctrl_vals = vector<float>{left_x, right_trigger, left_trigger, right_x, right_y, left_y};
-        vector<float> thrust_vals = this->thrust_mapper_ * ctrl_vals;
+        vector<float> thrust_vals = Interface::thrust_mapper * ctrl_vals;
 
         make_CAN_request(thrust_vals);
     }
