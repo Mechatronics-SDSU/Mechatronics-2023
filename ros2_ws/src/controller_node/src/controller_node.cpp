@@ -22,8 +22,8 @@
 #include "control_interface.hpp"
 
 #define MOTOR_ID 0x010
-#define MOTOR_COUNT 2
-#define MAX_POWER 50
+#define MOTOR_COUNT 8 // Have to change this to be dynamic
+#define MAX_POWER 75
 
 using namespace std;
 using std::placeholders::_1;
