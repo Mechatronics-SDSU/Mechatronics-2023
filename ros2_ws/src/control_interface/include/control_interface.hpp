@@ -102,18 +102,24 @@ namespace Interface
         Params params;               // The magnitude to pass into that function (30 degrees)
     };
 
-    vector<vector<float>> thrust_mapper =  vector<vector<float>>
-                                        {
-                                            { 0,  1, -1,  0,  0,  1},                   
-                                            { 1,  0,  0,  1,  1,  0},
-                                            { 0, -1, -1,  0,  0,  1},
-                                            { 1,  0,  0,  1, -1,  0},
-                                            { 0, -1,  1,  0,  0,  1},
-                                            {-1,  0,  0,  1,  1,  0},
-                                            { 0,  1,  1,  0,  0,  1},
-                                            {-1,  0,  0,  1, -1,  0}
-                                        };
-    }
+    std::vector<std::vector<float>> percy_thrust_mapper
+    {
+        { 0,  1, -1,  0,  0,  1},                   
+        { 1,  0,  0,  1,  1,  0},
+        { 0, -1, -1,  0,  0,  1},
+        { 1,  0,  0,  1, -1,  0},
+        { 0, -1,  1,  0,  0,  1},
+        {-1,  0,  0,  1,  1,  0},
+        { 0,  1,  1,  0,  0,  1},
+        {-1,  0,  0,  1, -1,  0}
+    };
+
+    std::vector<std::vector<float>> junebug_thrust_mapper
+    {
+        { 1,  0,  0,  1,  0,  0},                   
+        {-1,  0,  0,  1,  0,  0},
+    };
+}
 
 /* Defines Possible Commands to Be Given to the PID Controller */
 namespace Movements
@@ -296,7 +302,7 @@ namespace canClient
 
     void setBotInSafeMode(Interface::ros_sendframe_client_t can_client)
     {
-        vector<unsigned char> safeModeFrame{0,0,0,0,0x04};
+        std::vector<unsigned char> safeModeFrame{0,0,0,0,0x04};
         sendFrame(0x022, 5, safeModeFrame.data(), can_client);
     }
 }

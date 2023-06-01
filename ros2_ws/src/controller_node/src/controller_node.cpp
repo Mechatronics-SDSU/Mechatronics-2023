@@ -12,6 +12,8 @@
 
 #include <vector>
 #include <iostream>
+#include <stdlib.h>
+#include <string>
 
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/joy.hpp"
@@ -44,12 +46,33 @@ class Controller : public rclcpp::Node
 
         can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
         
+
+        this->declare_parameter("thrust_mapper", "percy");
+
+        string thrust_mapper = this->get_parameter("thrust_mapper").as_string();
+        if (thrust_mapper == "percy")
+        {
+            this->thrust_mapper_ = Interface::percy_thrust_mapper;
+        } 
+        else if (thrust_mapper == "junebug")
+        {
+            this->thrust_mapper_ = Interface::junebug_thrust_mapper;
+        }
+        else
+        {
+            RCLCPP_INFO(this->get_logger(), "GIVE VALID VALUE FOR THRUST MAPPER IN LAUNCH FILE");
+            exit(EXIT_FAILURE);
+        }
+
         canClient::setBotInSafeMode(can_client_);
+
+
     }
 
   private:
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr  controller_sub_;
     Interface::ros_sendframe_client_t                       can_client_;
+    vector<vector<float>>                                   thrust_mapper_;
     
 
     void controller_subscription_callback(const sensor_msgs::msg::Joy::SharedPtr msg)
@@ -71,7 +94,7 @@ class Controller : public rclcpp::Node
 
         /* Multiply our 8 x 6 mapper matrix by our 6 x 1 ctrl_vals to get an 8 x 1 vector of thrust values (a vector with 8 values) */
         vector<float> ctrl_vals = vector<float>{left_x, right_trigger, left_trigger, right_x, right_y, left_y};
-        vector<float> thrust_vals = Interface::thrust_mapper * ctrl_vals;
+        vector<float> thrust_vals = this->thrust_mapper_ * ctrl_vals;
 
         make_CAN_request(thrust_vals);
     }
@@ -79,7 +102,7 @@ class Controller : public rclcpp::Node
     vector<int> make_CAN_request(vector<float>& thrusts)
     {
         /* Thrusts come out of PID as a float between -1 and 1; motors need int value from -100 to 100 */
-        std::vector<int> convertedThrusts;
+        vector<int> convertedThrusts;
         for (float thrust : thrusts)
         {
             convertedThrusts.push_back(((int)(thrust * 100 * MAX_POWER/100)));
@@ -92,7 +115,7 @@ class Controller : public rclcpp::Node
          * which is why we use an array of chars
          */          
 
-        std::vector<unsigned char> byteThrusts;
+        vector<unsigned char> byteThrusts;
         for (int thrust : convertedThrusts)
         {
             byteThrusts.push_back(thrust & 0xFF);
