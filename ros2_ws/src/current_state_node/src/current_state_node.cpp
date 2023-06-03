@@ -70,19 +70,19 @@ class CurrentStateNode : public rclcpp::Node
     }
 
   private:    
-    rclcpp::Subscription<scion_types::msg::Position>::SharedPtr position_sub_;
-    rclcpp::Subscription<scion_types::msg::Orientation>::SharedPtr orientation_sub_;
-    rclcpp::Publisher<scion_types::msg::State>::SharedPtr absolute_state_pub_;
-    rclcpp::Publisher<scion_types::msg::State>::SharedPtr relative_state_pub_;
-    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr reset_relative_state_service_;
-    rclcpp::TimerBase::SharedPtr state_pub_timer_;
-    Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
-    Interface::current_state_t relative_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
-    std::vector<float> current_orientation_{0.0F, 0.0F, 0.0F};
-    std::vector<float> current_position_{0.0F, 0.0F, 0.0F};
+    position_sub_t              position_sub_;
+    orientation_sub_t           orientation_sub_;
+    state_sub_t                 absolute_state_pub_;
+    state_sub_t                 relative_state_pub_;
+    ros_trigger_service_t       reset_relative_state_service_;
+    ros_timer_t                 state_pub_timer_;
+    Interface::current_state_t  current_state_  {0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+    Interface::current_state_t  relative_state_ {0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+    std::vector<float>          current_orientation_{0.0F, 0.0F, 0.0F};
+    std::vector<float>          current_position_   {0.0F, 0.0F, 0.0F};
     bool current_state_valid_ = false;
-    bool orientation_valid_ = true;
-    bool position_valid_ = true;
+    bool orientation_valid_ =   true;
+    bool position_valid_ =      true;
     
     void initCurrentState()
     {

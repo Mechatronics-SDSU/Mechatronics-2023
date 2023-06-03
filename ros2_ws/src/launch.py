@@ -32,7 +32,10 @@ def generate_launch_description():
         #     package='brain_node', executable='brain_exec', output='screen' 
         #     ),
         # launch_ros.actions.Node(
-        #     package='controller_node', executable='controller_exec', output='screen', parameters= [{"thrust_mapper": "percy"}] # Type in correct robot here to map to motors correctly (percy or junebug)
+        #     package='controller_node', executable='controller_exec', output='screen', 
+        #     parameters= [
+        #                     {"thrust_mapper": "percy"}
+        #                 ]
         #     ),  
         launch_ros.actions.Node(
             package='current_state_node', executable='current_state_exec', output='screen',
