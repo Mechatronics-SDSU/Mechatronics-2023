@@ -23,7 +23,7 @@
 
 #define MOTOR_ID 0x010
 #define MOTOR_COUNT 8 // Have to change this to be dynamic
-#define MAX_POWER 75
+#define MAX_POWER 100
 
 using namespace std;
 using std::placeholders::_1;
@@ -65,8 +65,6 @@ class Controller : public rclcpp::Node
         }
 
         canClient::setBotInSafeMode(can_client_);
-
-
     }
 
   private:
