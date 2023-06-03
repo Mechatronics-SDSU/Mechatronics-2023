@@ -118,7 +118,7 @@ private:
     Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
     bool current_state_valid_ = false;
     bool desired_state_valid_ = false;
-    bool ignore_position_ = false;
+    bool use_position_ = true;
     bool service_done_ = false;
     bool stabilize_robot_ = true;
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -223,7 +223,7 @@ private:
         std::vector<float> thrusts(6, 0.0);
         if (this->current_state_valid_ && this->desired_state_valid_)
         {
-            if (this->ignore_position_)
+            if (!this->use_position_)
             {
                 std::cout << "IGNORING POSITION" << std::endl;
                 current_state_t current_state_no_position = current_state_t{current_state[0], current_state[1], current_state[2], 0, 0, 0};
@@ -266,7 +266,7 @@ private:
             byteThrusts.push_back((thrust & 0xFF));
         }
         /* See exactly our 8 thrust values sent to motors */
-        printVector(byteThrusts);
+        printVector(convertedThrusts);
 
     ////////////////////////////////////////// BUILD REQUEST //////////////////////////////////////////
         /* 
@@ -431,7 +431,7 @@ private:
     void usePosition(const  std::shared_ptr<std_srvs::srv::SetBool::Request> request,
                             std::shared_ptr<std_srvs::srv::SetBool::Response> response)
     {
-        this->ignore_position_ = request->data;
+        this->use_position_ = request->data;
     }
 
     void stabilizeRobot(const   std::shared_ptr<std_srvs::srv::SetBool::Request> request,
