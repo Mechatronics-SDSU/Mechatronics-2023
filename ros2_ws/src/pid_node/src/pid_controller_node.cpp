@@ -39,7 +39,7 @@ using namespace std;
 #define UPDATE_PERIOD 50ms
 #define PRINT_PERIOD 500ms
 #define PID_ERROR_THRESHOLD 0.01f
-#define MOTOR_ID 10
+#define MOTOR_ID 0x010
 #define MOTOR_COUNT 8
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
