@@ -70,19 +70,19 @@ class CurrentStateNode : public rclcpp::Node
     }
 
   private:    
-    position_sub_t              position_sub_;
-    orientation_sub_t           orientation_sub_;
-    state_sub_t                 absolute_state_pub_;
-    state_sub_t                 relative_state_pub_;
-    ros_trigger_service_t       reset_relative_state_service_;
-    ros_timer_t                 state_pub_timer_;
-    Interface::current_state_t  current_state_  {0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
-    Interface::current_state_t  relative_state_ {0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
-    std::vector<float>          current_orientation_{0.0F, 0.0F, 0.0F};
-    std::vector<float>          current_position_   {0.0F, 0.0F, 0.0F};
-    bool current_state_valid_ = false;
-    bool orientation_valid_ =   true;
-    bool position_valid_ =      true;
+    Interface::position_sub_t           position_sub_;
+    Interface::orientation_sub_t        orientation_sub_;
+    Interface::state_pub_t              absolute_state_pub_;
+    Interface::state_pub_t              relative_state_pub_;
+    Interface::ros_trigger_service_t    reset_relative_state_service_;
+    Interface::ros_timer_t              state_pub_timer_;
+    Interface::current_state_t          current_state_  {0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+    Interface::current_state_t          relative_state_ {0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+    std::vector<float>                  current_orientation_{0.0F, 0.0F, 0.0F};
+    std::vector<float>                  current_position_   {0.0F, 0.0F, 0.0F};
+    bool current_state_valid_ =         false;
+    bool orientation_valid_ =           true;
+    bool position_valid_ =              true;
     
     void initCurrentState()
     {
