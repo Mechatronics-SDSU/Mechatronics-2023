@@ -6,6 +6,7 @@
 #include <iostream>
 #include <functional>
 #include <math.h>
+#include <string>
 
 #include "vector_operations.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -18,10 +19,7 @@
 
 using std::placeholders::_1;
 using std::placeholders::_2;
-
-#define ORIENTATION
-#define POSITION
-
+using namespace std;
 
 /* Subscribe to all relevant sensor information and consolidate it for the PID Node to subscribe to */
 
@@ -31,13 +29,19 @@ class CurrentStateNode : public rclcpp::Node
     CurrentStateNode()
     : Node("current_state_node")
     {
-        #ifdef ORIENTATION
-            orientation_valid_ = false;
-        #endif
+        this->declare_parameter("position", true);
+        this->declare_parameter("orientation", true);
 
-        #ifdef POSITION
+        bool position = this->get_parameter("position").get_parameter_value().get<bool>();
+        bool orientation =  this->get_parameter("orientation").get_parameter_value().get<bool>();
+        if (position)
+        {
             position_valid_ = false;
-        #endif
+        }
+        if (orientation)
+        {
+            orientation_valid_ = false;
+        }
 
         position_sub_ = this->create_subscription<scion_types::msg::Position>
         ("zed_position_data", 10, std::bind(&CurrentStateNode::position_sub_callback, this, _1));
