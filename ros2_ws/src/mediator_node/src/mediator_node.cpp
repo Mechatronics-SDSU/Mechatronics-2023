@@ -17,6 +17,7 @@
 #include "scion_types/msg/state.hpp"
 #include "scion_types/msg/idea.hpp"
 #include "std_srvs/srv/trigger.hpp"
+#include "std_srvs/srv/set_bool.hpp"
 #include "control_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -38,9 +39,9 @@ public:
     );
 
     reset_relative_state_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_state");
-    ignore_position_client_ = this->create_client<std_srvs::srv::Trigger>("ignore_position");
-    use_position_client_ = this->create_client<std_srvs::srv::Trigger>("use_position");
+    use_position_client_ = this->create_client<std_srvs::srv::SetBool>("use_position");
     stop_robot_client_ = this->create_client<std_srvs::srv::Trigger>("stop_robot");
+    stabilize_robot_client_ = this->create_client<std_srvs::srv::SetBool>("stabilize_robot");
 
     idea_sub_ = this->create_subscription<scion_types::msg::Idea>
     (
@@ -63,9 +64,9 @@ public:
 private:
   Interface::pid_action_client_t          pid_command_client_;
   Interface::ros_trigger_client_t         reset_relative_state_client_;
-  Interface::ros_trigger_client_t         ignore_position_client_;
-  Interface::ros_trigger_client_t         use_position_client_;
   Interface::ros_trigger_client_t         stop_robot_client_;
+  Interface::ros_bool_client_t            use_position_client_;
+  Interface::ros_bool_client_t            stabilize_robot_client_;
   Interface::idea_sub_t                   idea_sub_;
   Interface::ros_timer_t                  next_command_timer_;
   Interface::ros_timer_t                  reset_timer_;
@@ -81,9 +82,19 @@ private:
   {
     if (function_ptr == &Movements::turn)
         {
-          ignorePositionRequest();
+          usePositionRequest(false);
+          stabilizeRobotRequest(false);
         }
         this->resetState();
+  }
+
+  void commandCleanup()
+  {
+    /* Success State */
+    sleep(.02); // Sleep after reaching desired state for a split second before taking out current command
+    usePositionRequest(true);
+    stabilizeRobotRequest(true);
+    current_command_ = nullptr;
   }
 
   void nextCommand()
@@ -248,13 +259,7 @@ private:
         break;
     }
 
-      /* Success State */
-      std::stringstream ss;
-      ss << "State Accomplished; Setting Current Command to Null\n";
-      sleep(.05); // Sleep after reaching desired state for a split second before taking out current command
-      usePositionRequest();
-      current_command_ = nullptr;
-      RCLCPP_INFO(this->get_logger(), ss.str().c_str());
+    this->commandCleanup();
   }
 
 
@@ -274,16 +279,18 @@ private:
       auto reset_state_future = this->reset_relative_state_client_->async_send_request(reset_state_request);
   }
 
-  void ignorePositionRequest()
+  void usePositionRequest(bool request)
   {
-      auto ignore_position_request = std::make_shared<std_srvs::srv::Trigger::Request>();
-      auto ignore_position_result = this->ignore_position_client_->async_send_request(ignore_position_request);
+      auto use_position_request = std::make_shared<std_srvs::srv::SetBool::Request>();
+      use_position_request->data = request;
+      auto use_position_result = this->use_position_client_->async_send_request(use_position_request);
   }
 
-  void usePositionRequest()
+  void stabilizeRobotRequest(bool request)
   {
-      auto use_position_request = std::make_shared<std_srvs::srv::Trigger::Request>();
-      auto use_position_result = this->use_position_client_->async_send_request(use_position_request);
+      auto stabilize_robot_request = std::make_shared<std_srvs::srv::SetBool::Request>();
+      stabilize_robot_request->data = request;
+      auto stabilize_robot_result = this->stabilize_robot_client_->async_send_request(stabilize_robot_request);
   }
 
 
