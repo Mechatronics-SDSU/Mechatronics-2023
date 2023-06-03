@@ -29,11 +29,11 @@ class CurrentStateNode : public rclcpp::Node
     CurrentStateNode()
     : Node("current_state_node")
     {
-        this->declare_parameter("position", true);
-        this->declare_parameter("orientation", true);
+        this->declare_parameter("use_position_tracking", true);
+        this->declare_parameter("use_orientation_tracking", true);
 
-        bool position = this->get_parameter("position").get_parameter_value().get<bool>();
-        bool orientation =  this->get_parameter("orientation").get_parameter_value().get<bool>();
+        bool position = this->get_parameter("use_position_tracking").get_parameter_value().get<bool>();
+        bool orientation =  this->get_parameter("use_orientation_tracking").get_parameter_value().get<bool>();
         if (position)
         {
             position_valid_ = false;
