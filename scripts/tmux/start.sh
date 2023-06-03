@@ -23,7 +23,9 @@ clear" Enter
 
 tmux send-keys -t robot:0.1 "cd $parent_dir/ros2_ws;
 . install/setup.bash
-clear" Enter
+clear
+candump can0" Enter
+
 
 
 tmux send-keys -t robot:0.2 "cd $parent_dir/ros2_ws;
