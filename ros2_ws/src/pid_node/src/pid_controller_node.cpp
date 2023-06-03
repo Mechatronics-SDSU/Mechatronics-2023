@@ -200,6 +200,14 @@ private:
 
     // std::cout << this->current_state_valid_ << std::endl;
     // std::cout << this->desired_state_valid_ << std::endl;
+        if (stabilize_robot_)
+        {
+            cout << "Stabilizing Robot";
+        }
+        else 
+        {
+            cout << "Not Stabilizing Robot";
+        }
 
         if (stabilize_robot_ && current_state_valid_ && desired_state_valid_)
         {
