@@ -21,18 +21,18 @@ if ! ip link show | grep can0 > /dev/null; then
 fi
 
 # status check
-tmux send-keys -t robot:0.1 "candump can0" Enter
-if [ "$1" -eq 3 ]
-then
-  tmux send-keys -t robot:0.2 "cansend can0 022#0000000003 " Enter
-  tmux send-keys -t robot:0.2 "cansend can0 020#00000000 " Enter
-fi
+# tmux send-keys -t robot:0.1 "candump can0" Enter
+# if [ "$1" -eq 3 ]
+# then
+#   tmux send-keys -t robot:0.2 "cansend can0 022#0000000003 " Enter
+#   tmux send-keys -t robot:0.2 "cansend can0 020#00000000 " Enter
+# fi
 
-if [ "$1" -eq 4 ]
-then
-  tmux send-keys -t robot:0.2 "cansend can0 022#0000000004 " Enter
-  tmux send-keys -t robot:0.2 "cansend can0 020#00000000 " Enter
-fi
+# if [ "$1" -eq 4 ]
+# then
+#   tmux send-keys -t robot:0.2 "cansend can0 022#0000000004 " Enter
+#   tmux send-keys -t robot:0.2 "cansend can0 020#00000000 " Enter
+# fi
 
 # RUN MOTOR TEST ------------------------------------------------------------------------->
 # /bin/bash motor_tests/motor_test.sh
@@ -42,4 +42,4 @@ fi
 
 # RUN SENSORS TESTS ---------------------------------------------------------------------->
 
-exit 0
+# exit 0
