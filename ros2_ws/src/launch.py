@@ -40,8 +40,8 @@ def generate_launch_description():
         launch_ros.actions.Node(
             package='current_state_node', executable='current_state_exec', output='screen',
             parameters= [
-                            {"orientation": False},
-                            {"position": False},
+                            {"use_position_tracking": False},
+                            {"use_orientation_tracking": False},
                         ]
             ),  
         # launch_ros.actions.Node(
