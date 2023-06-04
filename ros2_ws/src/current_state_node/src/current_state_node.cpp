@@ -131,17 +131,6 @@ class CurrentStateNode : public rclcpp::Node
     {
         scion_types::msg::State relative_state = scion_types::msg::State();
         relative_state.state = this->current_state_ - this->relative_state_;
-        bool negative = false;
-        // if (relative_state.state[3] < 0)
-        // {
-        //     negative = true;
-        // }
-        relative_state.state[3] = sqrt(pow(relative_state.state[3], 2) + pow(relative_state.state[4], 2));
-        // if (negative) 
-        // {
-        //     relative_state.state[3] *= -1;
-        // }
-        relative_state.state[4] = 0;
         this->relative_state_pub_->publish(relative_state);
     }
 
