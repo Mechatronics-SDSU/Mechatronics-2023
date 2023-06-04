@@ -3,7 +3,7 @@
 using namespace Module;
 
 BRLIGHTModule::BRLIGHTModule(rclcpp::Node* ctx, Mailbox::MboxCan* mb)
-	: DeviceModule(ctx, mb, 0, static_cast<uint8_t>(CanDriver::Device::BRLIGHT::ID), false, true, 5)
+	: DeviceModule(ctx, mb, 0, static_cast<uint16_t>(CanDriver::Device::BRLIGHT::ID), false, true, 5)
 {
 	/* Member function jump table*/
 	module_topic_ptr_array[0] = static_cast<topic_ptr_t>(&BRLIGHTModule::dres_info);

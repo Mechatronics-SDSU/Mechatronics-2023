@@ -1,4 +1,4 @@
-/* Connor Larmer
+ /* Connor Larmer
  * 1.24.2023
  * mbox_can class implementation
  * See [include/mbox_can.hpp] for a more in-depth documentation
