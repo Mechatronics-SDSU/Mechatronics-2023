@@ -168,6 +168,7 @@ private:
         {
             this->current_state_valid_ = true;
         }
+        this->resetState();
         return true;
     }
 
@@ -198,16 +199,9 @@ private:
      * update function which generates ctrl_vals and show its status on the screen 
      */
 
-    // std::cout << this->current_state_valid_ << std::endl;
-    // std::cout << this->desired_state_valid_ << std::endl;
-        if (stabilize_robot_)
-        {
-            cout << "Stabilizing Robot";
-        }
-        else 
-        {
-            cout << "Not Stabilizing Robot";
-        }
+        // std::cout << this->current_state_valid_ << std::endl;
+        // std::cout << this->desired_state_valid_ << std::endl;
+        stabilize_robot_ ? cout << "Stabilizing Robot" << endl : cout << "Not Stabilizing Robot" << endl;
 
         if (stabilize_robot_ && current_state_valid_ && desired_state_valid_)
         {
