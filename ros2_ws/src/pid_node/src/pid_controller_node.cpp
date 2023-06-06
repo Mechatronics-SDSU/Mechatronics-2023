@@ -115,7 +115,7 @@ private:
     /* Upon initialization set all values to [0,0,0] */
     
     Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
-    Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
+    Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
     bool current_state_valid_ = false;
     bool desired_state_valid_ = false;
     bool use_position_ = true;
@@ -202,11 +202,11 @@ private:
     // std::cout << this->desired_state_valid_ << std::endl;
         if (stabilize_robot_)
         {
-            cout << "Stabilizing Robot";
+            cout << "Stabilizing Robot" << endl;
         }
         else 
         {
-            cout << "Not Stabilizing Robot";
+            cout << "Not Stabilizing Robot" << endl;
         }
 
         if (stabilize_robot_ && current_state_valid_ && desired_state_valid_)

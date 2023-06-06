@@ -132,7 +132,7 @@ pair<float, float> PID_Controller::update(float current_point, float desired_poi
     float derivative = this->k_d * (error - this->previous_error); // Derivative takes into account previous error
 
     this->previous_error = error;            // reset error for next cycle
-{}
+
 
     // std::cout << "proportional: " << proportional << endl;    //Just for testing
     // std::cout << "integral: " << integral << endl;
@@ -156,11 +156,11 @@ pair<float, float> PID_Controller::update(float current_point, float desired_poi
     {
         if(ctrl_val < this->ctrl_val_min)
         {
-            ctrl_val = this->ctrl_val_min;
+            // ctrl_val = this->ctrl_val_min;
         }
         else if(ctrl_val > this->ctrl_val_max)
         {
-            ctrl_val = this->ctrl_val_max;
+            // ctrl_val = this->ctrl_val_max;
         }
     }
 

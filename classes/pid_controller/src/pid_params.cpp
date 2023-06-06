@@ -10,7 +10,7 @@
 
 #include "pid_params.hpp"
 #define MAX 1
-#define MIN 1
+#define MIN -1
 
 /* 
     To make sure motor isn't running at maximum value, we want to cap our ctrl_val min/max. You can do this changing the macros up above to 
@@ -37,10 +37,10 @@ PID_Params::PID_Params()
 
     this->pitch = 
     {
-        {"kp", 0.004},
-        {"ki", 0.005},
-        {"kd", 0.002},
-        // {"ctrl_val_offset", 15.0},
+        {"kp", 0.0015},
+        {"ki", 0.0003},
+        {"kd", 0.0006},
+        {"ctrl_val_offset", 0.0},
         {"ctrl_val_max", MAX},
         {"ctrl_val_min", MIN},
         {"i_max", MAX},
@@ -50,9 +50,9 @@ PID_Params::PID_Params()
 
     this->roll = 
     {
-        {"kp", 0.004},
-        {"ki", 0.005},
-        {"kd", 0.002},
+        {"kp", 0.0015},
+        {"ki", 0.0003},
+        {"kd", 0.0006},
         // {"ctrl_val_offset", 0.0},
         {"ctrl_val_max", MAX},
         {"ctrl_val_min", MIN},
@@ -62,10 +62,10 @@ PID_Params::PID_Params()
     
     this->x_pos =
     {
-        {"kp", 0.35},
-        {"ki", 0.01},
-        {"kd", 0.01},
-        // {"ctrl_val_offset", 0.0},
+        {"kp", 0.015},
+        {"ki", 0.003},
+        {"kd", 0.001},
+        {"ctrl_val_offset", 0.0},
         {"ctrl_val_max", MAX},
         {"ctrl_val_min", MIN},
         {"i_max", MAX},
@@ -75,10 +75,10 @@ PID_Params::PID_Params()
 
     this->y_pos = 
     {
-        {"kp", 0.25},
-        {"ki", 0.01},
-        {"kd", 0.01},
-        // {"ctrl_val_offset", 16.0},
+        {"kp", 0.015},
+        {"ki", 0.003},
+        {"kd", 0.001},
+        {"ctrl_val_offset", 0.0},
         {"ctrl_val_max", MAX},
         {"ctrl_val_min", MIN},
         {"i_max", MAX},
@@ -87,10 +87,10 @@ PID_Params::PID_Params()
 
     this->z_pos =
     {
-        {"kp", 0.25},
-        {"ki", 0.01},
-        {"kd", 0.01},
-        // {"ctrl_val_offset", 20.0},
+        {"kp", 0.75},
+        {"ki", 0.075},
+        {"kd", 0.03},
+        {"ctrl_val_offset", 0.0},
         {"ctrl_val_max", MAX},
         {"ctrl_val_min", MIN},
         {"i_max", MAX},

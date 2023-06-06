@@ -17,6 +17,7 @@
 #include "scion_types/msg/state.hpp"
 #include "scion_types/msg/position.hpp"
 #include "scion_types/msg/orientation.hpp"
+#include "scion_types/msg/datapoint.hpp"
 #include "scion_types/action/pid.hpp"
 
 
@@ -50,6 +51,7 @@ namespace Interface
     typedef rclcpp::Subscription<scion_types::msg::State>::SharedPtr                        state_sub_t;
     typedef rclcpp::Subscription<scion_types::msg::Position>::SharedPtr                     position_sub_t;
     typedef rclcpp::Subscription<scion_types::msg::Orientation>::SharedPtr                  orientation_sub_t;
+    typedef rclcpp::Subscription<scion_types::msg::Datapoint>::SharedPtr                    datapoint_sub_t;
     typedef rclcpp::Publisher<scion_types::msg::Idea>::SharedPtr                            idea_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::State>::SharedPtr                           state_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::Position>::SharedPtr                        position_pub_t;
@@ -304,5 +306,15 @@ namespace canClient
     {
         std::vector<unsigned char> safeModeFrame{0,0,0,0,0x04};
         sendFrame(0x022, 5, safeModeFrame.data(), can_client);
+        std::vector<unsigned char> nothing{0,0,0,0,0,0,0,0};
+        sendFrame(0x010, 8, nothing.data(), can_client);
+        sendFrame(0x010, 8, nothing.data(), can_client);
+        sendFrame(0x010, 8, nothing.data(), can_client);
+        sendFrame(0x010, 8, nothing.data(), can_client);
+        sendFrame(0x010, 8, nothing.data(), can_client);
+        sendFrame(0x010, 8, nothing.data(), can_client);
+        sendFrame(0x010, 8, nothing.data(), can_client);
+        sendFrame(0x010, 8, nothing.data(), can_client);
+
     }
 }
