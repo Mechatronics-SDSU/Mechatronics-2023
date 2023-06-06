@@ -37,22 +37,22 @@ def generate_launch_description():
         #                     {"thrust_mapper": "percy"}
         #                 ]
         #     ),  
-        launch_ros.actions.Node(
-            package='current_state_node', executable='current_state_exec', output='screen',
-            parameters= [
-                            {"use_position_tracking": False},
-                            {"use_orientation_tracking": False},
-                        ]
-            ),  
+        # launch_ros.actions.Node(
+        #     package='current_state_node', executable='current_state_exec', output='screen',
+        #     parameters= [
+        #                     {"use_position_tracking": False},
+        #                     {"use_orientation_tracking": True},
+        #                 ]
+        #     ),  
         # launch_ros.actions.Node(
         #     package='joy', executable='joy_node', output='screen'
         #     ),  
-        launch_ros.actions.Node(
-            package='mediator_node', executable='mediator_exec', output='screen' 
-            ),  
-        launch_ros.actions.Node(
-            package='pid_node', executable='pid_exec', output='screen' 
-            ),    
+        # launch_ros.actions.Node(
+        #     package='mediator_node', executable='mediator_exec', output='screen' 
+        #     ),  
+        # launch_ros.actions.Node(
+        #     package='pid_node', executable='pid_exec', output='screen' 
+            # ),    
         # launch_ros.actions.Node(
         #     package='test_node', executable='test_exec', output='screen' 
         #     ),    
@@ -60,7 +60,7 @@ def generate_launch_description():
             package='unified_can_driver', executable='unified_can_driver', output='screen',         
             parameters= [
                             {"can_bus_interface": "can0"},
-                            {"do_module_polling": False},
+                            {"do_module_polling": True},
                             {"module_bitfield": 255}
                         ]
             ),

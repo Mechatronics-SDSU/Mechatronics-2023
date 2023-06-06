@@ -83,11 +83,11 @@ class Controller : public rclcpp::Node
         /* This part randomly changed on me before pool test, I have no idea why, it was working and then I had to change
         the buttons. Before I had it as 0 5 2 3 4 1, but for the version on the day before pool test it is working
         as 0 4 3 2 5 1 */
-        float left_x = msg->axes[0]; // yaw
+        float left_x = -1 * msg->axes[0]; // yaw
         float right_trigger = msg->axes[5] - 1; // pitch
         float left_trigger = msg->axes[2] - 1; // roll
-        float right_x = msg->axes[4]; // x
-        float right_y = msg->axes[3]; // y
+        float right_x = -1 * msg->axes[3]; // x
+        float right_y = msg->axes[4]; // y
         float left_y = -1 * msg->axes[1]; // z
 
         /* Multiply our 8 x 6 mapper matrix by our 6 x 1 ctrl_vals to get an 8 x 1 vector of thrust values (a vector with 8 values) */
