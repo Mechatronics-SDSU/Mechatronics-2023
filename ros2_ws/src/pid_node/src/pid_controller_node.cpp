@@ -228,11 +228,10 @@ private:
         if (stabilize_robot_ && current_state_valid_ && desired_state_valid_)
         {
             std::vector<float> thrusts(6, 0.0);
-            thrusts = this->controller_.update(this->current_state_, this->desired_state_);
+            thrusts = this->getThrusts(this->current_state_, this->desired_state_);
             make_CAN_request(thrusts);
         }
     }
-
 
     vector<float> getThrusts(vector<float> current_state, vector<float> desired_state)
     {
@@ -243,6 +242,34 @@ private:
         ctrl_vals_and_errors = this->controller_.update(this->current_state_, this->desired_state_);
         // ctrl_vals = adjustCtrls(ctrl_vals_and_errors.first, ctrl_vals_and_errors.second, orientation);
         thrusts = ctrlValstoThrusts(ctrl_vals);
+        return thrusts;
+    }    
+
+    vector<float> ctrlValstoThrusts(vector<float>& ctrl_vals)
+    {
+        vector<float> thrusts = this->thrust_mapper_ * ctrl_vals;
+        return thrusts;
+    }
+
+    vector<float> update_PID(Interface::current_state_t& current_state, Interface::desired_state_t& desired_state)
+    {
+        using namespace Interface;
+        std::vector<float> thrusts(6, 0.0);
+        if (this->current_state_valid_ && this->desired_state_valid_)
+        {
+            if (!this->use_position_)
+            {
+                std::cout << "IGNORING POSITION" << std::endl;
+                current_state_t current_state_no_position = current_state_t{current_state[0], current_state[1], current_state[2], 0, 0, 0};
+                desired_state_t desired_state_no_position = desired_state_t{desired_state[0], desired_state[1], desired_state[2], 0, 0, 0};
+                thrusts = this->getThrusts(current_state_no_position, desired_state_no_position);    
+            }
+            else
+            {
+                std::cout << "NOT IGNORING POSITION" << std::endl;
+                thrusts = this->getThrusts(current_state, desired_state); // MOST IMPORTANT LINE IN PROGRAM
+            }
+        }
         return thrusts;
     }
 
@@ -299,36 +326,6 @@ private:
 
     //     return adjustedVals;
     // }
-
-    vector<float> ctrlValstoThrusts(vector<float>& ctrl_vals)
-    {
-        vector<float> thrusts = this->thrust_mapper_ * ctrl_vals;
-        return thrusts;
-    }
-
-    vector<float> update_PID(Interface::current_state_t& current_state, Interface::desired_state_t& desired_state)
-    {
-        using namespace Interface;
-        std::vector<float> thrusts(6, 0.0);
-        if (this->current_state_valid_ && this->desired_state_valid_)
-        {
-            if (!this->use_position_)
-            {
-                std::cout << "IGNORING POSITION" << std::endl;
-                current_state_t current_state_no_position = current_state_t{current_state[0], current_state[1], current_state[2], 0, 0, 0};
-                desired_state_t desired_state_no_position = desired_state_t{desired_state[0], desired_state[1], desired_state[2], 0, 0, 0};
-                thrusts = this->controller_.update
-                (current_state_no_position, desired_state_no_position, .010);    
-            }
-            else
-            {
-                std::cout << "NOT IGNORING POSITION" << std::endl;
-                thrusts = this->controller_.update
-                (current_state, desired_state, .010); // MOST IMPORTANT LINE IN PROGRAM
-            }
-        }
-        return thrusts;
-    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                     // CAN REQUESTS FOR MOTOR CONTROL // 

@@ -9,8 +9,8 @@
 
 
 #include "pid_params.hpp"
-#define MAX  .5
-#define MIN -.5
+#define MAX .4
+#define MIN -.4
 
 /* 
     To make sure motor isn't running at maximum value, we want to cap our ctrl_val min/max. You can do this changing the macros up above to 
@@ -47,7 +47,6 @@ PID_Params::PID_Params()
     //     {"i_min", MIN}
     // };
     
-
     // this->roll = 
     // {
     //     {"kp", 0.0015},
@@ -72,7 +71,6 @@ PID_Params::PID_Params()
     //     {"i_min", MIN}
     // };
 
-
     // this->y_pos = 
     // {
     //     {"kp", 0.015},
@@ -87,9 +85,9 @@ PID_Params::PID_Params()
 
     // this->z_pos =
     // {
-    //     {"kp", 0.45},
-    //     {"ki", 0.003},
-    //     {"kd", 0.001},
+    //     {"kp", 0.75},
+    //     {"ki", 0.075},
+    //     {"kd", 0.03},
     //     {"ctrl_val_offset", 0.0},
     //     {"ctrl_val_max", MAX},
     //     {"ctrl_val_min", MIN},
@@ -102,7 +100,7 @@ PID_Params::PID_Params()
         {"kp", 0.0015},  // .015
         {"ki", 0.0003},   // .003
         {"kd", 0.0006},  // .006
-        // {"ctrl_val_offset", 10.0},
+        {"ctrl_val_offset", 0.0},
         {"ctrl_val_max", MAX},
         {"ctrl_val_min", MIN},
         {"i_max", MAX},
@@ -111,9 +109,9 @@ PID_Params::PID_Params()
 
     this->pitch = 
     {
-        {"kp", 0.0015},
-        {"ki", 0.0003},
-        {"kd", 0.0006},
+        {"kp", 0.00015},
+        {"ki", 0.00003},
+        {"kd", 0.00006},
         {"ctrl_val_offset", 0.0},
         {"ctrl_val_max", MAX},
         {"ctrl_val_min", MIN},
@@ -121,13 +119,12 @@ PID_Params::PID_Params()
         {"i_min", MIN}
     };
     
-
     this->roll = 
     {
-        {"kp", 0.0015},
-        {"ki", 0.0003},
-        {"kd", 0.0006},
-        // {"ctrl_val_offset", 0.0},
+        {"kp", 0.00015},
+        {"ki", 0.00003},
+        {"kd", 0.00006},
+        {"ctrl_val_offset", 0.0},
         {"ctrl_val_max", MAX},
         {"ctrl_val_min", MIN},
         {"i_max", MAX},
@@ -136,9 +133,9 @@ PID_Params::PID_Params()
     
     this->x_pos =
     {
-        {"kp", 0.025},
-        {"ki", 0.003},
-        {"kd", 0.001},
+        {"kp", 0.25},
+        {"ki", 0.03},
+        {"kd", 0.01},
         {"ctrl_val_offset", 0.0},
         {"ctrl_val_max", MAX},
         {"ctrl_val_min", MIN},
@@ -146,12 +143,11 @@ PID_Params::PID_Params()
         {"i_min", MIN}
     };
 
-
     this->y_pos = 
     {
-        {"kp", 0.025},
-        {"ki", 0.003},
-        {"kd", 0.001},
+        {"kp", 0.25},
+        {"ki", 0.03},
+        {"kd", 0.01},
         {"ctrl_val_offset", 0.0},
         {"ctrl_val_max", MAX},
         {"ctrl_val_min", MIN},
@@ -161,16 +157,15 @@ PID_Params::PID_Params()
 
     this->z_pos =
     {
-        {"kp", 0.025},
-        {"ki", 0.003},
-        {"kd", 0.001},
+        {"kp", 0.00001},
+        {"ki", 0.00001},
+        {"kd", 0.00001},
         {"ctrl_val_offset", 0.0},
         {"ctrl_val_max", MAX},
         {"ctrl_val_min", MIN},
         {"i_max", MAX},
         {"i_min", MIN}
     };
-
 
     this->pid_params = 
     {

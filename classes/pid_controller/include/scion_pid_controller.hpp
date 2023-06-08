@@ -6,6 +6,7 @@
 #include <utility>
 #include <tuple>
 #include <memory>
+#include <cmath>
 
 #include "pid_controller.hpp"
 #include "pid_params.hpp"
@@ -42,12 +43,14 @@ class Scion_Position_PID_Controller
         Scion_Position_PID_Controller(map<string, map<string, float>> pid_params);
     
         // Request control values from each PID
-        vector<float> update
+        pair<vector<float>, vector<float>> update
             (
                 vector<float>& current_point,
                 vector<float>& desired_point, 
                 float dt=0.010
             );
+
+        vector<float> ctrlValstoThrusts(vector<float>& ctrlVals);
 
         // Print status of all PIDs to console
         void getStatus();

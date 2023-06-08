@@ -2,6 +2,7 @@
 #define VECTOR_OPERATIONS_H
 
 #define _USE_MATH_DEFINES
+#define PI 3.14159265
 #include <iostream>
 #include <vector>
 #include <cmath>
