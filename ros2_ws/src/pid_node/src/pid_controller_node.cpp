@@ -199,22 +199,9 @@ private:
      * update function which generates ctrl_vals and show its status on the screen 
      */
 
-<<<<<<< HEAD
         // std::cout << this->current_state_valid_ << std::endl;
         // std::cout << this->desired_state_valid_ << std::endl;
         stabilize_robot_ ? cout << "Stabilizing Robot" << endl : cout << "Not Stabilizing Robot" << endl;
-=======
-    // std::cout << this->current_state_valid_ << std::endl;
-    // std::cout << this->desired_state_valid_ << std::endl;
-        if (stabilize_robot_)
-        {
-            cout << "Stabilizing Robot" << endl;
-        }
-        else 
-        {
-            cout << "Not Stabilizing Robot" << endl;
-        }
->>>>>>> e412ee7bac4d1d84219b482419f5530e2fc3e7f8
 
         if (stabilize_robot_ && current_state_valid_ && desired_state_valid_)
         {
@@ -467,7 +454,8 @@ private:
      **/ 
     {
         if (!this->current_state_valid_) {this->current_state_valid_ = true;}
-        printVector(msg->state);
+        // if (this->stabilize_robot_) {}
+        
         this->current_state_= msg->state; 
     }
 };
