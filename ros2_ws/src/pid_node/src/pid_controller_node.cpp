@@ -138,6 +138,7 @@ private:
     
     Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
     Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
+    std::vector<unsigned char> nothing_{0,0,0,0,0,0,0,0};
     bool current_state_valid_ = false;
     bool desired_state_valid_ = false;
     bool use_position_ = true;
@@ -172,16 +173,19 @@ private:
     {
         while (!this->current_state_valid_)
         {
+            // canClient::sendFrame(MOTOR_ID, motor_count_, nothing_.data(), can_client_);
             sleep(.1);
         }
         sleep(.3);
-        this->printCurrentAndDesiredStates();
-        while (!this->areEqual(this->desired_state_, this->current_state_))
-        {
-            this->printCurrentAndDesiredStates();
-            this->desired_state_ = this->current_state_;
-            printVector(this->desired_state_);
-        }
+        // this->printCurrentAndDesiredStates();
+        // while (!this->areEqual(this->desired_state_, this->current_state_))
+        // {
+        //     this->printCurrentAndDesiredStates();
+        //     this->desired_state_ = this->current_state_;
+        //     printVector(this->desired_state_);
+        // }
+        this->resetState();
+        this->desired_state_ = vector<float>{0,0,0,0,0,0};
         while (!this->desired_state_valid_)
         {
             this->desired_state_valid_ = true;
@@ -190,7 +194,6 @@ private:
         {
             this->current_state_valid_ = true;
         }
-        this->resetState();
         return true;
     }
 
@@ -223,13 +226,13 @@ private:
 
         // std::cout << this->current_state_valid_ << std::endl;
         // std::cout << this->desired_state_valid_ << std::endl;
-        stabilize_robot_ ? cout << "Stabilizing Robot" << endl : cout << "Not Stabilizing Robot" << endl;
+        // stabilize_robot_ ? cout << "Stabilizing Robot" << endl : cout << "Not Stabilizing Robot" << endl;
 
         if (stabilize_robot_ && current_state_valid_ && desired_state_valid_)
         {
-            std::vector<float> thrusts(6, 0.0);
-            thrusts = this->getThrusts(this->current_state_, this->desired_state_);
-            make_CAN_request(thrusts);
+            // std::vector<float> thrusts(6, 0.0);
+            // thrusts = this->getThrusts(this->current_state_, this->desired_state_);
+            // make_CAN_request(thrusts);
         }
     }
 
@@ -546,14 +549,19 @@ private:
      **/ 
     {
         if (!this->current_state_valid_) {this->current_state_valid_ = true;}
-        if (!this->stabilize_robot_) {this->current_state_ = vector<float>{
-            msg->state[0], 
-            msg->state[1],
-            msg->state[2],
-            (float)sqrt(pow(msg->state[3], 2) + pow(msg->state[4], 2 + pow(msg->state[5], 2))),
-            0, 
-            0};}
-        this->current_state_= msg->state; 
+        // if (!this->stabilize_robot_)
+        // {
+            this->current_state_ = vector<float>
+            {
+                msg->state[0], 
+                msg->state[1],
+                msg->state[2],
+                (float)sqrt(pow(msg->state[3], 2) + pow(msg->state[4], 2 + pow(msg->state[5], 2))),
+                0, 
+                0
+            };
+        // }
+        // this->current_state_= msg->state; 
     }
 };
 
