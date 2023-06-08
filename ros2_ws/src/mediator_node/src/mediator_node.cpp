@@ -156,12 +156,28 @@ private:
         case Idea::SPIN:
           Translator::spin(idea->parameters[0]);
           break;
+        case Idea::TURN:
+          command_vector = Translator::turn(idea->parameters[0]);
+          addToQueue(command_vector);
+          break;
+        case Idea::PITCH:
+          command_vector = Translator::pitch(idea->parameters[0]);
+          addToQueue(command_vector);
+          break;
+        case Idea::ROLL:
+          command_vector = Translator::roll(idea->parameters[0]);
+          addToQueue(command_vector);
+          break;
         case Idea::MOVE:
           command_vector = Translator::move(idea->parameters[0]);
           addToQueue(command_vector);
           break;
-        case Idea::TURN:
-          command_vector = Translator::turn(idea->parameters[0]);
+        case Idea::TRANSLATE:
+          command_vector = Translator::move(idea->parameters[0]);
+          addToQueue(command_vector);
+          break;
+        case Idea::LEVITATE:
+          command_vector = Translator::move(idea->parameters[0]);
           addToQueue(command_vector);
           break;
         case Idea::RELATIVE_POINT:
