@@ -9,8 +9,8 @@
 
 
 #include "pid_params.hpp"
-#define MAX 1
-#define MIN -1
+#define MAX  .5
+#define MIN -.5
 
 /* 
     To make sure motor isn't running at maximum value, we want to cap our ctrl_val min/max. You can do this changing the macros up above to 
@@ -87,9 +87,9 @@ PID_Params::PID_Params()
 
     this->z_pos =
     {
-        {"kp", 0.75},
-        {"ki", 0.075},
-        {"kd", 0.03},
+        {"kp", 0.45},
+        {"ki", 0.003},
+        {"kd", 0.001},
         {"ctrl_val_offset", 0.0},
         {"ctrl_val_max", MAX},
         {"ctrl_val_min", MIN},
