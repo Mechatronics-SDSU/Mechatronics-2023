@@ -49,8 +49,8 @@ class CurrentStateNode : public rclcpp::Node
         orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
         ("ahrs_orientation_data", 10, std::bind(&CurrentStateNode::orientation_sub_callback, this, _1));
     
-        depth_sub_ = this->create_subscription<scion_types::msg::Datapoint>
-        ("ms5837_depth", 10, std::bind(&CurrentStateNode::depth_sub_callback, this, _1));
+        // depth_sub_ = this->create_subscription<scion_types::msg::Datapoint>
+        // ("ms5837_depth", 10, std::bind(&CurrentStateNode::depth_sub_callback, this, _1));
 
         // velocity_sub_ = this->create_subscription<scion_types::msg::Orientation>
         // ("dvl_velocity_data", 10, std::bind(&Controller::velocity_sub_callback, this, _1));
@@ -178,12 +178,12 @@ class CurrentStateNode : public rclcpp::Node
          this->current_position_  = msg->position;
     }
 
-    void depth_sub_callback(const scion_types::msg::Datapoint::SharedPtr msg)
-    {
-        position_valid_ = true;
-        RCLCPP_INFO(this->get_logger(), "Received ms5837 depth data: %f", msg->data);
-        this->current_position_ = vector<float>{0.0, 0.0, msg->data};
-    }
+    // void depth_sub_callback(const scion_types::msg::Datapoint::SharedPtr msg)
+    // {
+    //     position_valid_ = true;
+    //     RCLCPP_INFO(this->get_logger(), "Received ms5837 depth data: %f", msg->data);
+    //     this->current_position_ = vector<float>{0.0, 0.0, msg->data};
+    // }
 
     // void velocity_sub_callback(const std_msgs::msg::Float32::SharedPtr msg)
     // {
