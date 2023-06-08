@@ -22,6 +22,7 @@
 #include <iomanip>
 #include <vector>
 #include <cstring>
+#include <cmath>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -40,7 +41,6 @@ using namespace std;
 #define PRINT_PERIOD 500ms
 #define PID_ERROR_THRESHOLD 0.01f
 #define MOTOR_ID 0x010
-#define MOTOR_COUNT 8
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
                                     // MEMBER VARIABLE DECLARATIONS // 
@@ -64,6 +64,26 @@ class Controller : public rclcpp::Node
 public:
     explicit Controller(): Node("pid_controller")
     {
+
+        this->declare_parameter("thrust_mapper", "percy");
+
+        string thrust_mapper = this->get_parameter("thrust_mapper").as_string();
+
+        if (thrust_mapper == "percy")
+        {
+            this->thrust_mapper_ = Interface::percy_thrust_mapper;
+        } 
+        else if (thrust_mapper == "junebug")
+        {
+            this->thrust_mapper_ = Interface::junebug_thrust_mapper;
+            this->motor_count_ = 2;
+        }
+        else
+        {
+            RCLCPP_INFO(this->get_logger(), "GIVE VALID VALUE FOR THRUST MAPPER IN LAUNCH FILE");
+            exit(EXIT_FAILURE);
+        }
+
         update_timer_ = this->create_wall_timer(UPDATE_PERIOD, std::bind(&Controller::update_timer_callback, this));
         
         print_timer_ = this->create_wall_timer(PRINT_PERIOD, std::bind(&Controller::print_timer_callback, this));
@@ -111,11 +131,12 @@ private:
     Interface::ros_sendframe_client_t           can_client_;
     Scion_Position_PID_Controller               controller_;
     PID_Params                                  pid_params_object_;                      // Passed to controller for tuning
+    int                                         motor_count_ = 8;
 
     /* Upon initialization set all values to [0,0,0] */
     
     Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
-    Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
+    Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
     bool current_state_valid_ = false;
     bool desired_state_valid_ = false;
     bool use_position_ = true;
@@ -211,6 +232,75 @@ private:
         }
     }
 
+
+    vector<float> getThrusts(vector<float> current_state, vector<float> desired_state)
+    {
+        pair<vector<float>, vector<float>> ctrl_vals_and_errors;
+        vector<float> orientation = vector<float>{current_state_[0], current_state_[1], current_state_[2]};
+        vector<float> ctrl_vals(6, 0.0);
+        vector<float> thrusts  (motor_count_, 0.0);
+        ctrl_vals_and_errors = this->controller_.update(this->current_state_, this->desired_state_);
+        // ctrl_vals = adjustCtrls(ctrl_vals_and_errors.first, ctrl_vals_and_errors.second, orientation);
+        thrusts = ctrlValstoThrusts(ctrl_vals);
+        return thrusts;
+    }
+
+    // vector<float> adjustCtrls(vector<float>& ctrl_vals, vector<float>& errors, vector<float>& orientation)
+    // {
+    //     float yaw =   orientation[0];
+    //     // float pitch = orientation[1];
+    //     // float roll =  orientation[2];
+
+    //     bool xNegative = false;
+    //     bool yNegative = false;
+    //     bool zNegative = false;
+
+    //     float x = errors[3];
+    //     if (x < 0) {xNegative = true;}
+    //     float y = errors[4];
+    //     if (y < 0) {yNegative = true;}
+    //     float z = errors[5];
+    //     if (z < 0) {zNegative = true;}
+
+    //     float absoluteAngle = angleBetweenHereAndPoint(y ,x);
+    //     float absoluteDistance = distanceBetweenHereAndPoint(y, x);
+
+    //     float yawAdjustedX = absoluteDistance * cos(absoluteAngle - yaw);
+    //     float yawAdjustedY = absoluteDistance * sin(absoluteAngle - yaw);
+
+    //     // float pitchAdjustedX = absoluteDistance * cos(absoluteAngle - pitch);
+    //     // float pitchAdjustedZ = absoluteDistance * sin(absoluteAngle - pitch);
+
+    //     // float rollAdjustedY = absoluteDistance * cos(absoluteAngle - roll);
+    //     // float rollAdjustedZ = absoluteDistance * sin(absoluteAngle - roll);
+
+    //     float adjustedX = yawAdjustedX;
+    //     float adjustedY = yawAdjustedY;
+    //     float adjustedZ = 0;
+
+    //     if (xNegative) {adjustedX *= -1;}
+    //     if (yNegative) {adjustedY *= -1;}
+    //     if (zNegative) {adjustedZ *= -1;} 
+        
+    //     //, pitchAdjustedX
+    //     // distanceBetweenHereAndPoint(yawAdjustedY, rollAdjustedY);
+    //     // distanceBetweenHereAndPoint(rollAdjustedZ, pitchAdjustedZ);
+                
+    //     vector<float> adjustedVals = vector<float>
+    //     {
+    //         ctrl_vals[0],
+    //         ctrl_vals[1],
+    //         ctrl_vals[2],
+    //         adjustedX,
+    //         adjustedY,
+    //         adjustedZ
+    //     };
+
+    //     return adjustedVals;
+    // }
+
+
+
     vector<float> update_PID(Interface::current_state_t& current_state, Interface::desired_state_t& desired_state)
     {
         using namespace Interface;
@@ -268,7 +358,7 @@ private:
          * one byte for each value -100 to 100 
          */
 
-        canClient::sendFrame(MOTOR_ID, MOTOR_COUNT, byteThrusts.data(), this->can_client_);
+        canClient::sendFrame(MOTOR_ID, motor_count_, byteThrusts.data(), this->can_client_);
         return convertedThrusts;
     }
 
@@ -413,7 +503,7 @@ private:
                          std::shared_ptr<std_srvs::srv::Trigger::Response> response)
     {
         unsigned char can_dreq_frame[2] = {0, 0};             
-        canClient::sendFrame(MOTOR_ID, MOTOR_COUNT, can_dreq_frame, this->can_client_);
+        canClient::sendFrame(MOTOR_ID, motor_count_, can_dreq_frame, this->can_client_);
     }
 
     void resetState()
@@ -454,8 +544,13 @@ private:
      **/ 
     {
         if (!this->current_state_valid_) {this->current_state_valid_ = true;}
-        // if (this->stabilize_robot_) {}
-        
+        if (!this->stabilize_robot_) {this->current_state_ = vector<float>{
+            msg->state[0], 
+            msg->state[1],
+            msg->state[2],
+            sqrt(pow(msg->state[3], 2) + pow(msg->state[4], 2 + pow(msg->state[5], 2))),
+            0, 
+            0};}
         this->current_state_= msg->state; 
     }
 };
