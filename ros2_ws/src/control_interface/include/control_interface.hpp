@@ -56,6 +56,7 @@ namespace Interface
     typedef rclcpp::Publisher<scion_types::msg::State>::SharedPtr                           state_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::Position>::SharedPtr                        position_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::Orientation>::SharedPtr                     orientation_pub_t;
+    typedef std::vector<std::vector<float>>                                                 matrix_t;                                                                            
     typedef rclcpp::TimerBase::SharedPtr                                                    ros_timer_t;
 
 
@@ -67,17 +68,19 @@ namespace Interface
     /* Brain will Send Ideas to the Mediator Which will Translate Into Commands For the PID Controller */
     enum Idea
     {
-        STOP = 0,
-        GO = 1,
-        SPIN = 2,
-        MOVE = 3,
-        TURN = 4,
-        // PITCH = 5,
-        // ROLL = 6,
-        RELATIVE_POINT = 7,
-        ABSOLUTE_POINT = 8,
-        PURE_RELATIVE_POINT = 9,
-        PURE_ABSOLUTE_POINT = 10
+        STOP =     0,
+        GO =       1,
+        SPIN =     2,
+        TURN =          3,
+        PITCH =         4,
+        ROLL =          5,
+        MOVE =              6,
+        TRANSLATE =         7,
+        LEVITATE =          8,
+        RELATIVE_POINT =        9,
+        ABSOLUTE_POINT =        10,
+        PURE_RELATIVE_POINT =   11,
+        PURE_ABSOLUTE_POINT =   12
     };
 
     /*
@@ -130,26 +133,17 @@ namespace Movements
 
     desired_state_t stop()
     {
-        std::cout << "Stop " << std::endl;
-        return desired_state_t{0,0,0,0,0,0};
-    }
-
-    desired_state_t spin(float seconds)
-    {
-        std::cout << "Turn " << std::endl;
-        return desired_state_t{0,0,0,0,0,0};
-    }
-
-    desired_state_t pitch(float degree)
-    {
-        std::cout << "Pitch " << std::endl;
         return desired_state_t{0,0,0,0,0,0};
     }
 
     desired_state_t go(float seconds)
     {
-        std::cout << "Move " << std::endl;
-        return desired_state_t{10,10,10,10,10,10};
+        return desired_state_t{0,0,0,0,0,0};
+    }
+
+    desired_state_t spin(float seconds)
+    {
+        return desired_state_t{0,0,0,0,0,0};
     }
 
     desired_state_t turn(float degree)
@@ -157,9 +151,29 @@ namespace Movements
         return desired_state_t{degree,0,0,0,0,0};
     }
 
+    desired_state_t pitch(float degree)
+    {
+        return desired_state_t{0,degree,0,0,0,0};
+    }
+
+    desired_state_t roll(float degree)
+    {
+        return desired_state_t{0,0,degree,0,0,0};
+    }
+
     desired_state_t move(float degree)
     {
         return desired_state_t{0,0,0,degree,0,0};
+    }
+
+    desired_state_t translate(float degree)
+    {
+        return desired_state_t{0,0,0,0,degree,0};
+    }
+
+    desired_state_t levitate(float degree)
+    {
+        return desired_state_t{0,0,0,0,0,degree};
     }
 }
 
@@ -170,25 +184,16 @@ namespace Translator
     
     command_vector_t stop()
     {
-        std::cout << "Stop" << std::endl;
-        return command_vector_t{};
-    }
-
-    command_vector_t spin(float seconds)
-    {
-        std::cout << "Turn" << std::endl;
-        return command_vector_t{};
-    }
-
-    command_vector_t pitch(float degree)
-    {
-        std::cout << "Pitch" << std::endl;
         return command_vector_t{};
     }
 
     command_vector_t go(float seconds)
     {
-        std::cout << "Move" << std::endl;
+        return command_vector_t{};
+    }
+
+    command_vector_t spin(float seconds)
+    {
         return command_vector_t{};
     }
 
@@ -196,6 +201,22 @@ namespace Translator
     {
         Interface::Command command1;
         command1.function.transform = &Movements::turn;
+        command1.params.degree = degree;
+        return command_vector_t{command1};
+    }
+
+    command_vector_t roll(float degree)
+    {
+        Interface::Command command1;
+        command1.function.transform = &Movements::roll;
+        command1.params.degree = degree;
+        return command_vector_t{command1};
+    }
+
+    command_vector_t pitch(float degree)
+    {
+        Interface::Command command1;
+        command1.function.transform = &Movements::pitch;
         command1.params.degree = degree;
         return command_vector_t{command1};
     }
@@ -208,9 +229,20 @@ namespace Translator
         return command_vector_t{command1};
     }
 
-    command_vector_t count()
+    command_vector_t translate(float degree)
     {
-        return command_vector_t{};
+        Interface::Command command1;
+        command1.function.transform = &Movements::translate;
+        command1.params.degree = degree;
+        return command_vector_t{command1};
+    }
+
+    command_vector_t levitate(float degree)
+    {
+        Interface::Command command1;
+        command1.function.transform = &Movements::levitate;
+        command1.params.degree = degree;
+        return command_vector_t{command1};
     }
 
     command_vector_t relativePoint(float x, float y)
@@ -306,15 +338,5 @@ namespace canClient
     {
         std::vector<unsigned char> safeModeFrame{0,0,0,0,0x04};
         sendFrame(0x022, 5, safeModeFrame.data(), can_client);
-        std::vector<unsigned char> nothing{0,0,0,0,0,0,0,0};
-        sendFrame(0x010, 8, nothing.data(), can_client);
-        sendFrame(0x010, 8, nothing.data(), can_client);
-        sendFrame(0x010, 8, nothing.data(), can_client);
-        sendFrame(0x010, 8, nothing.data(), can_client);
-        sendFrame(0x010, 8, nothing.data(), can_client);
-        sendFrame(0x010, 8, nothing.data(), can_client);
-        sendFrame(0x010, 8, nothing.data(), can_client);
-        sendFrame(0x010, 8, nothing.data(), can_client);
-
     }
 }
