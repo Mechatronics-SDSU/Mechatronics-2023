@@ -129,6 +129,7 @@ private:
     Interface::ros_trigger_service_t            stop_robot_service_;
     Interface::ros_trigger_client_t             reset_relative_state_client_;
     Interface::ros_sendframe_client_t           can_client_;
+    Interface::matrix_t                         thrust_mapper_;
     Scion_Position_PID_Controller               controller_;
     PID_Params                                  pid_params_object_;                      // Passed to controller for tuning
     int                                         motor_count_ = 8;
@@ -299,7 +300,11 @@ private:
     //     return adjustedVals;
     // }
 
-
+    vector<float> ctrlValstoThrusts(vector<float>& ctrl_vals)
+    {
+        vector<float> thrusts = this->thrust_mapper_ * ctrl_vals;
+        return thrusts;
+    }
 
     vector<float> update_PID(Interface::current_state_t& current_state, Interface::desired_state_t& desired_state)
     {
@@ -548,7 +553,7 @@ private:
             msg->state[0], 
             msg->state[1],
             msg->state[2],
-            sqrt(pow(msg->state[3], 2) + pow(msg->state[4], 2 + pow(msg->state[5], 2))),
+            (float)sqrt(pow(msg->state[3], 2) + pow(msg->state[4], 2 + pow(msg->state[5], 2))),
             0, 
             0};}
         this->current_state_= msg->state; 

@@ -23,6 +23,80 @@ PID_Params::PID_Params()
 
 
 {
+    // this->yaw = 
+    // {
+    //     {"kp", 0.0015},  // .015
+    //     {"ki", 0.0003},   // .003
+    //     {"kd", 0.0006},  // .006
+    //     // {"ctrl_val_offset", 10.0},
+    //     {"ctrl_val_max", MAX},
+    //     {"ctrl_val_min", MIN},
+    //     {"i_max", MAX},
+    //     {"i_min", MIN}
+    // };
+
+    // this->pitch = 
+    // {
+    //     {"kp", 0.0015},
+    //     {"ki", 0.0003},
+    //     {"kd", 0.0006},
+    //     {"ctrl_val_offset", 0.0},
+    //     {"ctrl_val_max", MAX},
+    //     {"ctrl_val_min", MIN},
+    //     {"i_max", MAX},
+    //     {"i_min", MIN}
+    // };
+    
+
+    // this->roll = 
+    // {
+    //     {"kp", 0.0015},
+    //     {"ki", 0.0003},
+    //     {"kd", 0.0006},
+    //     // {"ctrl_val_offset", 0.0},
+    //     {"ctrl_val_max", MAX},
+    //     {"ctrl_val_min", MIN},
+    //     {"i_max", MAX},
+    //     {"i_min", MIN}
+    // };
+    
+    // this->x_pos =
+    // {
+    //     {"kp", 0.015},
+    //     {"ki", 0.003},
+    //     {"kd", 0.001},
+    //     {"ctrl_val_offset", 0.0},
+    //     {"ctrl_val_max", MAX},
+    //     {"ctrl_val_min", MIN},
+    //     {"i_max", MAX},
+    //     {"i_min", MIN}
+    // };
+
+
+    // this->y_pos = 
+    // {
+    //     {"kp", 0.015},
+    //     {"ki", 0.003},
+    //     {"kd", 0.001},
+    //     {"ctrl_val_offset", 0.0},
+    //     {"ctrl_val_max", MAX},
+    //     {"ctrl_val_min", MIN},
+    //     {"i_max", MAX},
+    //     {"i_min", MIN}
+    // };
+
+    // this->z_pos =
+    // {
+    //     {"kp", 0.45},
+    //     {"ki", 0.003},
+    //     {"kd", 0.001},
+    //     {"ctrl_val_offset", 0.0},
+    //     {"ctrl_val_max", MAX},
+    //     {"ctrl_val_min", MIN},
+    //     {"i_max", MAX},
+    //     {"i_min", MIN}
+    // };
+
     this->yaw = 
     {
         {"kp", 0.0015},  // .015
@@ -62,7 +136,7 @@ PID_Params::PID_Params()
     
     this->x_pos =
     {
-        {"kp", 0.015},
+        {"kp", 0.025},
         {"ki", 0.003},
         {"kd", 0.001},
         {"ctrl_val_offset", 0.0},
@@ -75,7 +149,7 @@ PID_Params::PID_Params()
 
     this->y_pos = 
     {
-        {"kp", 0.015},
+        {"kp", 0.025},
         {"ki", 0.003},
         {"kd", 0.001},
         {"ctrl_val_offset", 0.0},
@@ -87,7 +161,7 @@ PID_Params::PID_Params()
 
     this->z_pos =
     {
-        {"kp", 0.45},
+        {"kp", 0.025},
         {"ki", 0.003},
         {"kd", 0.001},
         {"ctrl_val_offset", 0.0},
@@ -96,6 +170,7 @@ PID_Params::PID_Params()
         {"i_max", MAX},
         {"i_min", MIN}
     };
+
 
     this->pid_params = 
     {
