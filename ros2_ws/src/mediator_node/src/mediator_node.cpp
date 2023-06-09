@@ -39,6 +39,7 @@ public:
     );
 
     reset_relative_state_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_state");
+    reset_relative_position_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_position");
     use_position_client_ = this->create_client<std_srvs::srv::SetBool>("use_position");
     stop_robot_client_ = this->create_client<std_srvs::srv::Trigger>("stop_robot");
     stabilize_robot_client_ = this->create_client<std_srvs::srv::SetBool>("stabilize_robot");
@@ -47,7 +48,7 @@ public:
     (
       "relative_current_state_data", 
       10, 
-      std::bind(&Controller::current_state_callback, this, _1)
+      std::bind(&Mediator::current_state_callback, this, _1)
     );
 
     idea_sub_ = this->create_subscription<scion_types::msg::Idea>
@@ -70,13 +71,14 @@ public:
 private:
   Interface::pid_action_client_t          pid_command_client_;
   Interface::ros_trigger_client_t         reset_relative_state_client_;
+  Interface::ros_trigger_client_t         reset_relative_position_client_;
   Interface::ros_trigger_client_t         stop_robot_client_;
   Interface::ros_bool_client_t            use_position_client_;
   Interface::ros_bool_client_t            stabilize_robot_client_;
   Interface::idea_sub_t                   idea_sub_;
   Interface::ros_timer_t                  next_command_timer_;
   Interface::ros_timer_t                  reset_timer_;
-  Interface::state_sub_t                  current_state_sub_
+  Interface::state_sub_t                  current_state_sub_;
   Interface::command_queue_t              command_queue_;
   Interface::Command*                     current_command_; 
 
@@ -93,7 +95,7 @@ private:
           usePositionRequest(false);
           stabilizeRobotRequest(false);
         }
-        this->resetState();
+        this->resetPosition();
   }
 
   void commandCleanup()
@@ -189,22 +191,22 @@ private:
       }
     }
 
-    command_vector_t relativePoint(float x, float y)
+    Interface::command_vector_t relativePoint(float x, float y)
     {
         
     }
 
-    command_vector_t absolutePoint(float x, float y)
+    Interface::command_vector_t absolutePoint(float x, float y)
     {
         
     }
 
-    command_vector_t pureRelativePoint(float x, float y)
+    Interface::command_vector_t pureRelativePoint(float x, float y)
     {
         
     }
 
-    command_vector_t pureAbsolutePoint(float x, float y)
+    Interface::command_vector_t pureAbsolutePoint(float x, float y)
     {
         
     }
@@ -308,6 +310,12 @@ private:
       auto reset_state_future = this->reset_relative_state_client_->async_send_request(reset_state_request);
   }
 
+  void resetPosition()
+  {     
+      auto reset_position_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+      auto reset_position_future = this->reset_relative_position_client_->async_send_request(reset_position_request);
+  }
+
   void usePositionRequest(bool request)
   {
       auto use_position_request = std::make_shared<std_srvs::srv::SetBool::Request>();
@@ -328,7 +336,6 @@ private:
 
   void current_state_callback(const scion_types::msg::State::SharedPtr msg)
   {
-      if (!this->current_state_valid_) {this->current_state_valid_ = true;}
       this->current_state_= msg->state; 
   }
 

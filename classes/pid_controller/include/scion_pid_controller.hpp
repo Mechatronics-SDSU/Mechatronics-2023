@@ -43,13 +43,11 @@ class Scion_Position_PID_Controller
         Scion_Position_PID_Controller(map<string, map<string, float>> pid_params);
     
         // Request control values from each PID
-        vector<float> Scion_Position_PID_Controller::update
+        vector<float> update
         (
             vector<float> errors,
             float dt
         );
-
-        vector<float> ctrlValstoThrusts(vector<float>& ctrlVals);
 
         // Print status of all PIDs to console
         void getStatus();
