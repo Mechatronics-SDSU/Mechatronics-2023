@@ -77,6 +77,7 @@ class CurrentStateNode : public rclcpp::Node
     Interface::state_pub_t              absolute_state_pub_;
     Interface::state_pub_t              relative_state_pub_;
     Interface::ros_trigger_service_t    reset_relative_state_service_;
+    Interface::ros_trigger_service_t    reset_relative_position_service_;
     Interface::ros_timer_t              state_pub_timer_;
     Interface::current_state_t          current_state_  {0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
     Interface::current_state_t          relative_state_ {0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
