@@ -45,7 +45,7 @@ class PID_Controller
    
         void set_gains(float k_p, float k_i, float k_d);
 
-        float PID_Controller::update(float error, float dt);
+        float update(float error, float dt);
 
         void getStatus();
 };

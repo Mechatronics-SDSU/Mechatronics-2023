@@ -64,6 +64,7 @@ class CurrentStateNode : public rclcpp::Node
         absolute_state_pub_ =           this->create_publisher<scion_types::msg::State>("absolute_current_state_data", 10);
         relative_state_pub_ =           this->create_publisher<scion_types::msg::State>("relative_current_state_data", 10);
         reset_relative_state_service_ = this->create_service<std_srvs::srv::Trigger>("reset_relative_state", std::bind(&CurrentStateNode::resetRelativeState, this, _1, _2));
+        reset_relative_position_service_ = this->create_service<std_srvs::srv::Trigger>("reset_relative_position", std::bind(&CurrentStateNode::resetRelativePosition, this, _1, _2));
 
         auto initFunction = std::bind(&CurrentStateNode::initCurrentState, this);
         std::thread(initFunction).detach();
@@ -152,6 +153,18 @@ class CurrentStateNode : public rclcpp::Node
     {
         RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming Request to Reset Relative Position\n");
         this->relative_state_ = this->current_state_;
+        response->success = true;
+    }
+
+    void resetRelativePosition  (
+                                const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+                                      std::shared_ptr<std_srvs::srv::Trigger::Response> response
+                                )
+    {
+        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming Request to Reset Relative Position\n");
+        this->relative_state_[3] = this->current_state_[3];
+        this->relative_state_[4] = this->current_state_[4];
+        this->relative_state_[5] = this->current_state_[5];
         response->success = true;
     }
     

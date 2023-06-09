@@ -98,7 +98,7 @@ Scion_Position_PID_Controller::Scion_Position_PID_Controller(map<string, map<str
         :return thrusts - A list of length 6 of the thrusts to apply to each motor: Range [-100, 100] 
         */
             
-       float yaw_ctrl =    this->yaw_pid->     update(errors[0]  dt);
+       float yaw_ctrl =    this->yaw_pid->     update(errors[0], dt);
        float pitch_ctrl =  this->pitch_pid->   update(errors[1], dt);
        float roll_ctrl =   this->roll_pid->    update(errors[2], dt);
        float x_pos_ctrl =  this->x_pos_pid->   update(errors[3], dt);
