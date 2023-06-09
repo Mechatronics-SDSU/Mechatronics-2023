@@ -43,12 +43,11 @@ class Scion_Position_PID_Controller
         Scion_Position_PID_Controller(map<string, map<string, float>> pid_params);
     
         // Request control values from each PID
-        pair<vector<float>, vector<float>> update
-            (
-                vector<float>& current_point,
-                vector<float>& desired_point, 
-                float dt=0.010
-            );
+        vector<float> Scion_Position_PID_Controller::update
+        (
+            vector<float> errors,
+            float dt
+        );
 
         vector<float> ctrlValstoThrusts(vector<float>& ctrlVals);
 

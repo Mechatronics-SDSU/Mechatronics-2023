@@ -248,27 +248,6 @@ private:
         return thrusts;
     }
 
-    vector<float> update_PID(Interface::current_state_t& current_state, Interface::desired_state_t& desired_state)
-    {
-        using namespace Interface;
-        if (!this->current_state_valid_ || !this->desired_state_valid_) 
-        {
-            return vector<float>(this->motor_count_, 0)
-        }
-
-        if (this->use_position_)
-        {
-            return this->getThrusts(current_state, desired_state); 
-        }
-        else
-        {
-            current_state_t current_state_no_position = current_state_t{current_state[0], current_state[1], current_state[2], 0, 0, 0};
-            desired_state_t desired_state_no_position = desired_state_t{desired_state[0], desired_state[1], desired_state[2], 0, 0, 0};
-            return this->getThrusts(current_state_no_position, desired_state_no_position);    
-        }
-    
-    }
-
     vector<float> adjustErrors(vector<float>& errors, vector<float>& orientation)
     {
         float yaw =   orientation[0];
@@ -304,9 +283,31 @@ private:
             adjustedY,
             adjustedZ
         };
-
         return adjustedVals;
     }
+
+    vector<float> update_PID(Interface::current_state_t& current_state, Interface::desired_state_t& desired_state)
+    {
+        using namespace Interface;
+        if (!this->current_state_valid_ || !this->desired_state_valid_) 
+        {
+            return vector<float>(this->motor_count_, 0)
+        }
+
+        if (this->use_position_)
+        {
+            return this->getThrusts(current_state, desired_state); 
+        }
+        else
+        {
+            current_state_t current_state_no_position = current_state_t{current_state[0], current_state[1], current_state[2], 0, 0, 0};
+            desired_state_t desired_state_no_position = desired_state_t{desired_state[0], desired_state[1], desired_state[2], 0, 0, 0};
+            return this->getThrusts(current_state_no_position, desired_state_no_position);    
+        }
+    
+    }
+
+    
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                     // CAN REQUESTS FOR MOTOR CONTROL // 
@@ -424,6 +425,12 @@ private:
         return equal;
     }
 
+/* vector<float> zero = vector<float>{0,0,0,0,0,0};
+        while (!areEqual(this->current_state_, zero))
+        {
+            this->resetState();
+        }
+ */
     void execute(const std::shared_ptr<GoalHandlePIDAction> goal_handle)
     {
         /* Goal Initialization */
@@ -434,12 +441,6 @@ private:
         std::shared_ptr<PIDAction::Result> result = std::make_shared<PIDAction::Result>();
         const auto goal = goal_handle->get_goal();
 
-        vector<float> zero = vector<float>{0,0,0,0,0,0};
-        while (!areEqual(this->current_state_, zero))
-        {
-            this->resetState();
-        }
-
         std::vector<float> desired_state = goal->desired_state;
         desired_state += this->current_state_;
         this->desired_state_ = desired_state;
@@ -448,9 +449,9 @@ private:
         std::vector<float>& state = feedback->current_state;
         vector<float> thrusts = this->update_PID(this->current_state_, this->desired_state_);
         vector<int> thrustInts = this->make_CAN_request(thrusts);
-        for (int thrustInt : thrustInts)
+        for (for int i = 0; i < thurstInits.size(); i++)
         {
-            state.push_back((float)thrustInt)
+            state[i] = ((float)thrustInt)
         }
 
         /* Feedback Loop */
@@ -465,9 +466,9 @@ private:
         /* Update at Every Loop */
         thrusts = update_PID(this->current_state_, this->desired_state_);
         thrustInts = this->make_CAN_request(thrusts);
-        for (int thrustInt : thrustInts)
+        for (for int i = 0; i < thurstInits.size(); i++)
         {
-            state.push_back((float)thrustInt)
+            state[i] = ((float)thrustInt)
         }
 
         goal_handle->publish_feedback(feedback);
