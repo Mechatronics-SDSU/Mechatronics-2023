@@ -55,17 +55,6 @@ Scion_Position_PID_Controller::Scion_Position_PID_Controller()
     // 6X1 matrix ctrls -> 8x1 matrix thrust -> Need 8x6 matrix * 6x1 matrix
     // 6X1 matrix -> 2X1 matrix, Need 2X6 matrix * 6x1 matrix
 
-    this->pid_thrust_mapper = vector<vector<float>>
-                                    {
-                                        { 0,  1, -1,  0,  0,  1},                   
-                                        { 1,  0,  0,  1,  1,  0},
-                                        { 0, -1, -1,  0,  0,  1},
-                                        { 1,  0,  0,  1, -1,  0},
-                                        { 0, -1,  1,  0,  0,  1},
-                                        {-1,  0,  0,  1,  1,  0},
-                                        { 0,  1,  1,  0,  0,  1},
-                                        {-1,  0,  0,  1, -1,  0}
-                                    };
 }
 
 // PID params constructor will tune PID using pid_params.cpp values
@@ -92,10 +81,15 @@ Scion_Position_PID_Controller::Scion_Position_PID_Controller(map<string, map<str
       * Every time we have new data on our current and desired position, we can tell each PID_Controller
       * to update their current state 
       */
-    pair<vector<float>, vector<float>> Scion_Position_PID_Controller::update
+
+    vector<float> getErrors(vector<float>& current_point, vector<float>& desired_point)
+    {   
+        vector<float> errors = desired_point - current_point;
+    }
+
+    vector<float> Scion_Position_PID_Controller::update
     (
-        vector<float>& current_point,
-        vector<float>& desired_point,
+        vector<float> errors,
         float dt
     ) 
     {
@@ -109,49 +103,19 @@ Scion_Position_PID_Controller::Scion_Position_PID_Controller(map<string, map<str
         :return thrusts - A list of length 6 of the thrusts to apply to each motor: Range [-100, 100] 
         */
             
-        pair<float, float> yaw_ctrl_data = this->yaw_pid->update(current_point[0], desired_point[0], dt);
-        float yaw_ctrl_val = yaw_ctrl_data.first;
-        float yaw_error = yaw_ctrl_data.second;
+        vector<float> yaw_ctrl =    this->yaw_pid->     update(errors[0] dt);
+        vector<float> pitch_ctrl =  this->pitch_pid->   update(errors[1], dt);
+        vector<float> roll_ctrl =   this->roll_pid->    update(errors[2], dt);
+        vector<float> x_pos_ctrl =  this->x_pos_pid->   update(errors[3], dt);
+        vector<float> y_pos_ctrl =  this->y_pos_pid->   update(errors[4], dt);
+        vector<float> z_pos_ctrl =  this->z_pos_pid->   update(errors[5], dt);
 
-        pair<float, float> pitch_ctrl_data = this->pitch_pid->update(current_point[1], desired_point[1], dt);
-        float pitch_ctrl_val = pitch_ctrl_data.first;
-        float pitch_error = pitch_ctrl_data.second;
-
-        pair<float, float> roll_ctrl_data = this->roll_pid->update(current_point[2], desired_point[2], dt);
-        float roll_ctrl_val = roll_ctrl_data.first;
-        float roll_error = roll_ctrl_data.second;
-
-        pair<float, float> x_pos_ctrl_data = this->x_pos_pid->update(current_point[3], desired_point[3], dt);
-        float x_pos_ctrl_val = x_pos_ctrl_data.first;
-        float x_pos_error = x_pos_ctrl_data.second;
-
-        pair<float, float> y_pos_ctrl_data = this->y_pos_pid->update(current_point[4], desired_point[4], dt);
-        float y_pos_ctrl_val = y_pos_ctrl_data.first;
-        float y_pos_error = y_pos_ctrl_data.second;
-
-        pair<float, float> z_pos_ctrl_data = this->z_pos_pid->update(current_point[5], desired_point[5], dt);
-        float z_pos_ctrl_val = z_pos_ctrl_data.first;
-        float z_pos_error = z_pos_ctrl_data.second;
-
-        // pull all ctrl_vals and errors into their respective vectors
-        vector<float> ctrl_vals = vector<float>
-        {yaw_ctrl_val, pitch_ctrl_val, roll_ctrl_val, x_pos_ctrl_val, y_pos_ctrl_val, z_pos_ctrl_val};
-        vector<float> pos_errors = vector<float>
-        {yaw_error, pitch_error, roll_error, x_pos_error, y_pos_error, z_pos_error};
-        
-        // map the individual controller outputs to each thruster.
-        this->current_ctrl_vals = ctrl_vals;
-        
-        pair<vector<float>, vector<float>> ctrl_vals_and_errors{ctrl_vals, pos_errors};
-        return ctrl_vals_and_errors;
+        vector<float> ctrl_vals = vector<float>{yaw_ctrl, pitch_ctrl, roll_ctrl, x_pos_ctrl, y_pos_ctrl, z_pos_ctrl};
+        this->current_ctrl_vals = ctrl_vals; 
+       
+        return ctrl_vals;
     }
 
-vector<float> Scion_Position_PID_Controller::ctrlValstoThrusts(vector<float>& ctrl_vals)
-{
-    vector<float> thrusts = this->pid_thrust_mapper * ctrl_vals;
-    this->current_thrust_values = thrusts;
-    return thrusts;
-}
 
 // View the current state of all the PIDs on Scion and the latest ctrl_vals it has generated
 void Scion_Position_PID_Controller::getStatus()

@@ -38,7 +38,7 @@ using std::placeholders::_2;
 using namespace std;
 
 #define UPDATE_PERIOD 50ms
-#define PRINT_PERIOD 500ms
+#define PRINT_PERIOD 1000ms
 #define PID_ERROR_THRESHOLD 0.01f
 #define MOTOR_ID 0x010
 
@@ -105,8 +105,8 @@ public:
 
         can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
         reset_relative_state_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_state");
-        use_position_service_ = this->create_service<std_srvs::srv::SetBool>("use_position", std::bind(&Controller::usePosition, this, _1, _2));
         stop_robot_service_ = this->create_service<std_srvs::srv::Trigger>("stop_robot", std::bind(&Controller::stopRobot, this, _1, _2));
+        use_position_service_ = this->create_service<std_srvs::srv::SetBool>("use_position", std::bind(&Controller::usePosition, this, _1, _2));
         stabilize_robot_service_ = this->create_service<std_srvs::srv::SetBool>("stabilize_robot", std::bind(&Controller::stabilizeRobot, this, _1, _2));
 
         controller_ = Scion_Position_PID_Controller(pid_params_object_.get_pid_params());
@@ -138,26 +138,38 @@ private:
     
     Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
     Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
-    std::vector<unsigned char> nothing_{0,0,0,0,0,0,0,0};
+    vector<unsigned char> nothing_           (motor_count_, 0);
+    vector<float> thrusts_                   (motor_count_, 0);
     bool current_state_valid_ = false;
     bool desired_state_valid_ = false;
     bool use_position_ = true;
     bool service_done_ = false;
     bool stabilize_robot_ = true;
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                 // WAIT FOR VALID DATA TO INITIALIZE PIDs // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-     void initDesiredState()
+    void initDesiredState()
     {
         auto desiredValid = std::bind(&Controller::desiredStateValid, this);
         std::future<bool> promise = std::async(desiredValid);
         std::cout << "Waiting for Valid Sensor Info. \n";
         bool valid = promise.get();
-        if (valid) 
+        std::cout << "Got Valid Sensor Info. \n";
+    }
+
+    bool desiredStateValid()
+    {
+        while (!this->current_state_valid_)
         {
-            std::cout << "Got Valid Sensor Info. \n";
+            this->sendNothingAndWait();
         }
+        this->resetState();
+        this->desired_state_ = vector<float>{0,0,0,0,0,0};
+        while (!this->desired_state_valid_) {this->desired_state_valid_ = true;}
+        while (!this->current_state_valid_) {this->current_state_valid_ = true;}
+        return true;
     }
 
     void printCurrentAndDesiredStates()
@@ -168,33 +180,10 @@ private:
         printVector(this->current_state_);
     }
 
-
-    bool desiredStateValid()
+    void sendNothingAndWait()
     {
-        while (!this->current_state_valid_)
-        {
-            // canClient::sendFrame(MOTOR_ID, motor_count_, nothing_.data(), can_client_);
-            sleep(.1);
-        }
-        sleep(.3);
-        // this->printCurrentAndDesiredStates();
-        // while (!this->areEqual(this->desired_state_, this->current_state_))
-        // {
-        //     this->printCurrentAndDesiredStates();
-        //     this->desired_state_ = this->current_state_;
-        //     printVector(this->desired_state_);
-        // }
-        this->resetState();
-        this->desired_state_ = vector<float>{0,0,0,0,0,0};
-        while (!this->desired_state_valid_)
-        {
-            this->desired_state_valid_ = true;
-        }
-        while (!this->current_state_valid_)
-        {
-            this->current_state_valid_ = true;
-        }
-        return true;
+        canClient::sendFrame(MOTOR_ID, motor_count_, nothing_.data(), can_client_); // Keep from exiting safe mode by sending 0 command
+        sleep(.1);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -206,13 +195,19 @@ private:
     void print_timer_callback()
     {
         std::cout << "PID STATE UPDATE\n _______________________________\n"; 
+        vector<float> adjustedErrors = adjustErrors(vector<float>& errors);
+        vector<float> ctrl_vals = this->controller.update(adjustedErrors, UPDATE_PERIOD / 1000);
+        vector<float> thrusts = ctrlValToThrusts(ctrl_vals);
         this->printCurrentAndDesiredStates();
         std::cout << "___________________________\n\n";
         this->controller_.getStatus(); 
+        stabilize_robot_ ? cout << "Stabilizing Robot" << endl : cout << "Not Stabilizing Robot" << endl;
+        current_state_valid_ && desired_state_valid_ ? cout << "ROBOT IS UPDATING" << endl : cout << "WAITING FOR GOOD SENSOR INFO";
+        ignore_position_ ? cout << "IGNORING POSITION" << endl : cout << "NOT IGNORING POSITION" << std::endl;
     }
 
-    void update_timer_callback()
     /* Essential callback set to update PID state at certain interval */
+    void update_timer_callback()
     {
         update_current_state();
     }
@@ -223,32 +218,31 @@ private:
      * STEP 1: Update the PID Controller (meaning call the ScionPIDController object's
      * update function which generates ctrl_vals and show its status on the screen 
      */
-
-        // std::cout << this->current_state_valid_ << std::endl;
-        // std::cout << this->desired_state_valid_ << std::endl;
-        // stabilize_robot_ ? cout << "Stabilizing Robot" << endl : cout << "Not Stabilizing Robot" << endl;
-
         if (stabilize_robot_ && current_state_valid_ && desired_state_valid_)
         {
-            // std::vector<float> thrusts(6, 0.0);
-            // thrusts = this->getThrusts(this->current_state_, this->desired_state_);
-            // make_CAN_request(thrusts);
+            this->thrusts_ = this->getThrusts(this->current_state_, this->desired_state_);
+            make_CAN_request(thrusts);
         }
     }
 
-    vector<float> getThrusts(vector<float> current_state, vector<float> desired_state)
+    vector<float> getErrors(vector<float> desired_state, vector<float> current_state) 
     {
-        pair<vector<float>, vector<float>> ctrl_vals_and_errors;
-        vector<float> orientation = vector<float>{current_state_[0], current_state_[1], current_state_[2]};
-        vector<float> ctrl_vals(6, 0.0);
-        vector<float> thrusts  (motor_count_, 0.0);
-        ctrl_vals_and_errors = this->controller_.update(this->current_state_, this->desired_state_);
-        // ctrl_vals = adjustCtrls(ctrl_vals_and_errors.first, ctrl_vals_and_errors.second, orientation);
-        thrusts = ctrlValstoThrusts(ctrl_vals);
-        return thrusts;
+        return desired_state - current_state;
     }    
 
-    vector<float> ctrlValstoThrusts(vector<float>& ctrl_vals)
+    vector<float> getThrusts(vector<float>& current_state, vector<float>& desired_state)
+    {
+        vector<float> errors                   {0.0F,0.0F,0.0F,0.0F,0.0F,0.0F}; 
+        vector<float> adjustedErrors           {0.0F,0.0F,0.0F,0.0F,0.0F,0.0F};
+        vector<float> ctrl_vals                {0.0F,0.0F,0.0F,0.0F,0.0F,0.0F}; 
+
+        this->errors = this->controller.getErrors(current_state,  desired_state);
+        this->adjustedErrors = adjustErrors(errors);
+        this->ctrl_vals = this->controller.update(adjustedErrors, UPDATE_PERIOD / 1000);
+        return ctrlValToThrusts(ctrl_vals);
+    }    
+
+    vector<float> ctrlValsToThrusts(vector<float>& ctrl_vals)
     {
         vector<float> thrusts = this->thrust_mapper_ * ctrl_vals;
         return thrusts;
@@ -257,78 +251,62 @@ private:
     vector<float> update_PID(Interface::current_state_t& current_state, Interface::desired_state_t& desired_state)
     {
         using namespace Interface;
-        std::vector<float> thrusts(6, 0.0);
-        if (this->current_state_valid_ && this->desired_state_valid_)
+        if (!this->current_state_valid_ || !this->desired_state_valid_) 
         {
-            if (!this->use_position_)
-            {
-                std::cout << "IGNORING POSITION" << std::endl;
-                current_state_t current_state_no_position = current_state_t{current_state[0], current_state[1], current_state[2], 0, 0, 0};
-                desired_state_t desired_state_no_position = desired_state_t{desired_state[0], desired_state[1], desired_state[2], 0, 0, 0};
-                thrusts = this->getThrusts(current_state_no_position, desired_state_no_position);    
-            }
-            else
-            {
-                std::cout << "NOT IGNORING POSITION" << std::endl;
-                thrusts = this->getThrusts(current_state, desired_state); // MOST IMPORTANT LINE IN PROGRAM
-            }
+            return vector<float>(this->motor_count_, 0)
         }
-        return thrusts;
+
+        if (this->use_position_)
+        {
+            return this->getThrusts(current_state, desired_state); 
+        }
+        else
+        {
+            current_state_t current_state_no_position = current_state_t{current_state[0], current_state[1], current_state[2], 0, 0, 0};
+            desired_state_t desired_state_no_position = desired_state_t{desired_state[0], desired_state[1], desired_state[2], 0, 0, 0};
+            return this->getThrusts(current_state_no_position, desired_state_no_position);    
+        }
+    
     }
 
-    // vector<float> adjustCtrls(vector<float>& ctrl_vals, vector<float>& errors, vector<float>& orientation)
-    // {
-    //     float yaw =   orientation[0];
-    //     // float pitch = orientation[1];
-    //     // float roll =  orientation[2];
+    vector<float> adjustErrors(vector<float>& errors, vector<float>& orientation)
+    {
+        float yaw =   orientation[0];
+        // float pitch = orientation[1];
+        // float roll =  orientation[2];
 
-    //     bool xNegative = false;
-    //     bool yNegative = false;
-    //     bool zNegative = false;
+        float absoluteAngle = angleBetweenHereAndPoint(y ,x);
+        float absoluteDistance = distanceBetweenHereAndPoint(y, x);
 
-    //     float x = errors[3];
-    //     if (x < 0) {xNegative = true;}
-    //     float y = errors[4];
-    //     if (y < 0) {yNegative = true;}
-    //     float z = errors[5];
-    //     if (z < 0) {zNegative = true;}
+        float yawAdjustedX = absoluteDistance * cos(absoluteAngle - yaw);
+        float yawAdjustedY = absoluteDistance * sin(absoluteAngle - yaw);
 
-    //     float absoluteAngle = angleBetweenHereAndPoint(y ,x);
-    //     float absoluteDistance = distanceBetweenHereAndPoint(y, x);
+        // float pitchAdjustedX = absoluteDistance * cos(absoluteAngle - pitch);
+        // float pitchAdjustedZ = absoluteDistance * sin(absoluteAngle - pitch);
 
-    //     float yawAdjustedX = absoluteDistance * cos(absoluteAngle - yaw);
-    //     float yawAdjustedY = absoluteDistance * sin(absoluteAngle - yaw);
+        // float rollAdjustedY = absoluteDistance * cos(absoluteAngle - roll);
+        // float rollAdjustedZ = absoluteDistance * sin(absoluteAngle - roll);
 
-    //     // float pitchAdjustedX = absoluteDistance * cos(absoluteAngle - pitch);
-    //     // float pitchAdjustedZ = absoluteDistance * sin(absoluteAngle - pitch);
+        float adjustedX = yawAdjustedX;
+        float adjustedY = yawAdjustedY;
+        float adjustedZ = 0;
 
-    //     // float rollAdjustedY = absoluteDistance * cos(absoluteAngle - roll);
-    //     // float rollAdjustedZ = absoluteDistance * sin(absoluteAngle - roll);
-
-    //     float adjustedX = yawAdjustedX;
-    //     float adjustedY = yawAdjustedY;
-    //     float adjustedZ = 0;
-
-    //     if (xNegative) {adjustedX *= -1;}
-    //     if (yNegative) {adjustedY *= -1;}
-    //     if (zNegative) {adjustedZ *= -1;} 
-        
-    //     //, pitchAdjustedX
-    //     // distanceBetweenHereAndPoint(yawAdjustedY, rollAdjustedY);
-    //     // distanceBetweenHereAndPoint(rollAdjustedZ, pitchAdjustedZ);
+        //, pitchAdjustedX
+        // distanceBetweenHereAndPoint(yawAdjustedY, rollAdjustedY);
+        // distanceBetweenHereAndPoint(rollAdjustedZ, pitchAdjustedZ);
                 
-    //     vector<float> adjustedVals = vector<float>
-    //     {
-    //         ctrl_vals[0],
-    //         ctrl_vals[1],
-    //         ctrl_vals[2],
-    //         adjustedX,
-    //         adjustedY,
-    //         adjustedZ
-    //     };
+        vector<float> adjustedErrors = vector<float>
+        {
+            errors[0],
+            errors[1],
+            errors[2],
+            adjustedX,
+            adjustedY,
+            adjustedZ
+        };
 
-    //     return adjustedVals;
-    // }
+        return adjustedVals;
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                     // CAN REQUESTS FOR MOTOR CONTROL // 
@@ -459,8 +437,9 @@ private:
         vector<float> zero = vector<float>{0,0,0,0,0,0};
         while (!areEqual(this->current_state_, zero))
         {
-            sleep(.1);
+            this->resetState();
         }
+
         std::vector<float> desired_state = goal->desired_state;
         desired_state += this->current_state_;
         this->desired_state_ = desired_state;
@@ -469,8 +448,10 @@ private:
         std::vector<float>& state = feedback->current_state;
         vector<float> thrusts = this->update_PID(this->current_state_, this->desired_state_);
         vector<int> thrustInts = this->make_CAN_request(thrusts);
-        state.push_back((float)thrustInts[0]);
-        state.push_back((float)thrustInts[1]);
+        for (int thrustInt : thrustInts)
+        {
+            state.push_back((float)thrustInt)
+        }
 
         /* Feedback Loop */
         while (!this->equalToZero(thrustInts)) { 
@@ -480,24 +461,19 @@ private:
             RCLCPP_INFO(this->get_logger(), "Goal canceled");
             return;
         }
-        std::stringstream ss;
 
         /* Update at Every Loop */
         thrusts = update_PID(this->current_state_, this->desired_state_);
         thrustInts = this->make_CAN_request(thrusts);
-        state[0] = (float)thrustInts[0];
-        state[1] = (float)thrustInts[1];
+        for (int thrustInt : thrustInts)
+        {
+            state.push_back((float)thrustInt)
+        }
 
         goal_handle->publish_feedback(feedback);
-
         loop_rate.sleep();
+        }
 
-        }
-        // Check if goal is done
-        if (rclcpp::ok()) {
-        goal_handle->succeed(result);
-        RCLCPP_INFO(this->get_logger(), "Goal succeeded");
-        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -544,24 +520,9 @@ private:
     // }
 
     void current_state_callback(const scion_types::msg::State::SharedPtr msg)
-    /** 
-     * You can use this subscription to manually send a desired state at command line
-     **/ 
     {
         if (!this->current_state_valid_) {this->current_state_valid_ = true;}
-        // if (!this->stabilize_robot_)
-        // {
-            this->current_state_ = vector<float>
-            {
-                msg->state[0], 
-                msg->state[1],
-                msg->state[2],
-                (float)sqrt(pow(msg->state[3], 2) + pow(msg->state[4], 2 + pow(msg->state[5], 2))),
-                0, 
-                0
-            };
-        // }
-        // this->current_state_= msg->state; 
+        this->current_state_= msg->state; 
     }
 };
 

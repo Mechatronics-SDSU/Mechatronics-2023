@@ -43,6 +43,13 @@ public:
     stop_robot_client_ = this->create_client<std_srvs::srv::Trigger>("stop_robot");
     stabilize_robot_client_ = this->create_client<std_srvs::srv::SetBool>("stabilize_robot");
 
+    current_state_sub_ = this->create_subscription<scion_types::msg::State>
+    (
+      "relative_current_state_data", 
+      10, 
+      std::bind(&Controller::current_state_callback, this, _1)
+    );
+
     idea_sub_ = this->create_subscription<scion_types::msg::Idea>
     (
       "brain_idea_data",
@@ -58,7 +65,6 @@ public:
       std::chrono::milliseconds(100), 
       std::bind(&Mediator::nextCommand, this)
     );
-
   }
 
 private:
@@ -70,9 +76,11 @@ private:
   Interface::idea_sub_t                   idea_sub_;
   Interface::ros_timer_t                  next_command_timer_;
   Interface::ros_timer_t                  reset_timer_;
+  Interface::state_sub_t                  current_state_sub_
   Interface::command_queue_t              command_queue_;
   Interface::Command*                     current_command_; 
 
+  Interface::current_state_t              current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                             // COMMAND HANDLING // 
@@ -111,21 +119,6 @@ private:
         this->send_goal(desired);
     }
   }
-
-  //   void populateQueue()
-  //   {
-  //     using namespace Interface;
-  //     Command command1;
-  //     command1.function.movement = &Movements::count;
-  //     Command command2;
-  //     command2.function.movement = &Movements::count;
-  //     Command command3;
-  //     command3.function.movement = &Movements::count;
-
-  //     this->command_queue_.push_back(command1);
-  //     this->command_queue_.push_back(command2);
-  //     this->command_queue_.push_back(command3);
-  //   }
 
   void addToQueue(Interface::command_vector_t& command_vector)
   {
@@ -173,11 +166,11 @@ private:
           addToQueue(command_vector);
           break;
         case Idea::TRANSLATE:
-          command_vector = Translator::move(idea->parameters[0]);
+          command_vector = Translator::translate(idea->parameters[0]);
           addToQueue(command_vector);
           break;
         case Idea::LEVITATE:
-          command_vector = Translator::move(idea->parameters[0]);
+          command_vector = Translator::levitate(idea->parameters[0]);
           addToQueue(command_vector);
           break;
         case Idea::RELATIVE_POINT:
@@ -194,6 +187,26 @@ private:
           Translator::pureAbsolutePoint(idea->parameters[0], idea->parameters[1]);
           break;
       }
+    }
+
+    command_vector_t relativePoint(float x, float y)
+    {
+        
+    }
+
+    command_vector_t absolutePoint(float x, float y)
+    {
+        
+    }
+
+    command_vector_t pureRelativePoint(float x, float y)
+    {
+        
+    }
+
+    command_vector_t pureAbsolutePoint(float x, float y)
+    {
+        
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -309,6 +322,15 @@ private:
       auto stabilize_robot_result = this->stabilize_robot_client_->async_send_request(stabilize_robot_request);
   }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            // CALLBACK FUNCTIONS // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  void current_state_callback(const scion_types::msg::State::SharedPtr msg)
+  {
+      if (!this->current_state_valid_) {this->current_state_valid_ = true;}
+      this->current_state_= msg->state; 
+  }
 
 };  // class Mediator
 

@@ -80,7 +80,7 @@ void PID_Controller::set_gains(float k_p, float k_i, float k_d)
 }
 
 
-pair<float, float> PID_Controller::update(float current_point, float desired_point, float dt)
+float PID_Controller::update(float error, float dt)
 {
     /*
     Perfrom a control step to correct for error in control system.
@@ -96,77 +96,39 @@ pair<float, float> PID_Controller::update(float current_point, float desired_poi
 
     /* compute error which is important in determining our proportional, integral, derivative */
 
-    float error = desired_point - current_point;
-
     /* if error is for angular inputs (roll, pitch, yaw), perform angle wrapping. */
     if (this->angle_wrap)
     {
         error = (std::fmod(error, 360));
         if (error > 180)
         {
-            error = error - (2 * 180);
+            error -= (2 * 180);
         }
         else if (error < -180)
         {
-            error = error + (2 * 180);
+            error += (2 * 180);
         }
     }
         
     /* Create our P-I-D based on error */
-    float proportional = (this->k_p * error);  // Directly proportional to error based on k_p constant
 
     this->integral = this->integral + (error * dt);     // Integral builds over time
-    if (this->i_min < this->i_max)                      // Clamp integral if necessary
-    {
-        if (this->integral < this->i_min)
-        {
-            this->integral = this->i_min;
-        }
-        else if (this->integral > this->i_max)
-        {
-            this->integral = this->i_max;
-        }
-    }
+    this->integral = max(this->integral, i_min);
+    this->integral = min(this->integral, i_max);
+    
+    float proportional = (this->k_p * error);  // Directly proportional to error based on k_p constant
     float integral = this->k_i * this->integral;
-
     float derivative = this->k_d * (error - this->previous_error); // Derivative takes into account previous error
 
     this->previous_error = error;            // reset error for next cycle
 
-
-    // std::cout << "proportional: " << proportional << endl;    //Just for testing
-    // std::cout << "integral: " << integral << endl;
-    // std::cout << "derivative: " << derivative << endl;
-
     /* Get our control value and clamp it if necessary */
-    float pre_ctrl_val = proportional + integral + derivative;
+    float ctrl_val = proportional + integral + derivative;
 
-    float ctrl_val;
+    ctrl_val = max(ctrl_val, ctrl_val_min);
+    ctrl_val = min(ctrl_val, ctrl_val_max);
 
-    if (pre_ctrl_val >= 0)
-    {
-        ctrl_val = pre_ctrl_val + this->ctrl_val_offset;
-    }
-    else
-    {
-        ctrl_val = pre_ctrl_val - this->ctrl_val_offset;
-    }
-
-    if (this->ctrl_val_min < this->ctrl_val_max)
-    {
-        if(ctrl_val < this->ctrl_val_min)
-        {
-            // ctrl_val = this->ctrl_val_min;
-        }
-        else if(ctrl_val > this->ctrl_val_max)
-        {
-            // ctrl_val = this->ctrl_val_max;
-        }
-    }
-
-    pair<float, float> ctrl_and_error(ctrl_val, error);
-
-    return ctrl_and_error;
+    return ctrl_val;
 }
 
 /* Print all PIDs fields */
