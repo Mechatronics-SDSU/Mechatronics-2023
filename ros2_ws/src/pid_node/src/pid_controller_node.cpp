@@ -23,6 +23,7 @@
 #include <vector>
 #include <cstring>
 #include <cmath>
+#include <string>
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -117,8 +118,7 @@ public:
         auto initFunction = std::bind(&Controller::initDesiredState, this);
         std::thread(initFunction).detach();
 
-        vector<unsigned char> nothing_           (motor_count_, 0);
-        vector<float> thrusts_                   (motor_count_, 0);
+        // vector<unsigned char> nothing_           (motor_count_, 0); // this causes not to build
 
         canClient::setBotInSafeMode(can_client_);
     }
@@ -144,8 +144,7 @@ private:
     
     Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
     Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
-    vector<unsigned char> nothing_ ;
-    vector<float> thrusts_         ;
+    // vector<unsigned char> nothing_ ;
     bool current_state_valid_ = false;
     bool desired_state_valid_ = false;
     bool use_position_ = true;
@@ -188,7 +187,7 @@ private:
 
     void sendNothingAndWait()
     {
-        canClient::sendFrame(MOTOR_ID, motor_count_, nothing_.data(), can_client_); // Keep from exiting safe mode by sending 0 command
+        // canClient::sendFrame(MOTOR_ID, motor_count_, nothing_.data(), can_client_); // Keep from exiting safe mode by sending 0 command
         sleep(.1);
     }
 
@@ -205,7 +204,7 @@ private:
         std::cout << "___________________________\n\n";
         this->controller_.getStatus(); 
         stabilize_robot_ ? cout << "Stabilizing Robot" << endl : cout << "Not Stabilizing Robot" << endl;
-        current_state_valid_ && desired_state_valid_ ? cout << "ROBOT IS UPDATING" << endl : cout << "WAITING FOR GOOD SENSOR INFO";
+        current_state_valid_ && desired_state_valid_ ? cout << "ROBOT IS UPDATING" << endl : cout << "WAITING FOR GOOD SENSOR INFO" << endl;
         use_position_ ? cout << "IGNORING POSITION" << endl : cout << "NOT IGNORING POSITION" << std::endl;
     }
 
@@ -254,7 +253,7 @@ private:
 
     float angleBetweenHereAndPoint(float x, float y)
     {
-        if (y = 0) {return 90;}
+        if (areEqual(y, 0, .01)) {return 90;}
         float point_angle_radians = atan(x / y);
         float point_angle_degrees = point_angle_radians * (180/PI);
         if (y < 0) {point_angle_degrees += 180;}
@@ -356,6 +355,7 @@ private:
             byteThrusts.push_back((thrust & 0xFF));
         }
         /* See exactly our 8 thrust values sent to motors */
+        cout << "THRUSTS: ";
         printVector(convertedThrusts);
 
     ////////////////////////////////////////// BUILD REQUEST //////////////////////////////////////////
