@@ -79,6 +79,7 @@ camera_state = zed.open(init_params)
 frame_counter = 0
 saving_interval = 30
 mode = False
+
 while True:
     # create image objesct
     image_zed = sl.Mat()
@@ -126,8 +127,11 @@ while True:
         if key == ord('m'):
             if mode:
                 mode = False
+                print("=========Mode: DE-ACTIVATED===========")
             else:
                 mode = True
+                print("=========Mode: ACTIVATED==============")
+
 
         # quit
         elif key == ord('q'):
