@@ -118,7 +118,8 @@ public:
         auto initFunction = std::bind(&Controller::initDesiredState, this);
         std::thread(initFunction).detach();
 
-        // vector<unsigned char> nothing_           (motor_count_, 0); // this causes not to build
+        int i = 0;
+        while (i < motor_count_) {nothing_.push_back(0); i++;} // this causes not to build
 
         canClient::setBotInSafeMode(can_client_);
     }
@@ -144,7 +145,7 @@ private:
     
     Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
     Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
-    // vector<unsigned char> nothing_ ;
+    vector<unsigned char> nothing_ ;
     bool current_state_valid_ = false;
     bool desired_state_valid_ = false;
     bool use_position_ = true;
@@ -188,7 +189,7 @@ private:
 
     void sendNothingAndWait()
     {
-        // canClient::sendFrame(MOTOR_ID, motor_count_, nothing_.data(), can_client_); // Keep from exiting safe mode by sending 0 command
+        canClient::sendFrame(MOTOR_ID, motor_count_, nothing_.data(), can_client_); // Keep from exiting safe mode by sending 0 command
         sleep(.1);
     }
 
