@@ -86,15 +86,60 @@ class Controller : public rclcpp::Node
         float left_x = -1 * msg->axes[0]; // yaw
         float right_trigger = msg->axes[5] - 1; // pitch
         float left_trigger = msg->axes[2] - 1; // roll
-        float right_x = -1 * msg->axes[3]; // x
-        float right_y = msg->axes[4]; // y
+        float right_x = 1 * msg->axes[4]; // x
+        float right_y = -1 * msg->axes[3]; // y
         float left_y = -1 * msg->axes[1]; // z
 
         /* Multiply our 8 x 6 mapper matrix by our 6 x 1 ctrl_vals to get an 8 x 1 vector of thrust values (a vector with 8 values) */
         vector<float> ctrl_vals = vector<float>{left_x, right_trigger, left_trigger, right_x, right_y, left_y};
-        vector<float> thrust_vals = this->thrust_mapper_ * ctrl_vals;
+        vector<float> normalized_ctrl_vals = normalizeCtrlVals(ctrl_vals);
+        vector<float> thrust_vals = this->thrust_mapper_ * normalized_ctrl_vals;
 
         make_CAN_request(thrust_vals);
+    }
+
+    vector<float> normalizeCtrlVals(vector<float>& ctrl_vals)
+    {
+        vector<float> normalized{0,0,0,0,0,0};
+        
+        float vectorTotal = abs(ctrl_vals[0]) + abs(ctrl_vals[3]) + abs(ctrl_vals[4]); // yaw, x, y
+        float nonVectorTotal = abs(ctrl_vals[1]) + abs(ctrl_vals[2]) + abs(ctrl_vals[5]); // roll, pitch, z
+
+        normalized[0] = ctrl_vals[0];
+        normalized[1] = ctrl_vals[1];
+        normalized[2] = ctrl_vals[2];
+        normalized[3] = ctrl_vals[3];
+        normalized[4] = ctrl_vals[4];
+        normalized[5] = ctrl_vals[5];
+
+        if (vectorTotal > 1)
+        {
+            normalized[0] = ctrl_vals[0] / vectorTotal;
+            normalized[3] = ctrl_vals[3] / vectorTotal;
+            normalized[4] = ctrl_vals[4] / vectorTotal;
+        }
+        if (nonVectorTotal > 1)
+        {
+            normalized[1] = ctrl_vals[1] / nonVectorTotal;
+            normalized[2] = ctrl_vals[2] / nonVectorTotal;
+            normalized[5] = ctrl_vals[5] / nonVectorTotal;
+        }
+
+        if (vectorTotal == 0)
+        {
+            normalized[0] = 0;
+            normalized[3] = 0;
+            normalized[4] = 0;
+        }
+
+        if (nonVectorTotal == 0)
+        {
+            normalized[1] = 0;
+            normalized[2] = 0;
+            normalized[5] = 0;
+        }
+
+        return normalized;
     }
 
     vector<int> make_CAN_request(vector<float>& thrusts)
