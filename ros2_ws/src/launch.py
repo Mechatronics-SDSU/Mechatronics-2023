@@ -50,12 +50,12 @@ def generate_launch_description():
         launch_ros.actions.Node(
             package='mediator_node', executable='mediator_exec', output='screen' 
             ),  
-        launch_ros.actions.Node(
-            package='pid_node', executable='pid_exec', output='screen',
-            parameters= [
-                            {"thrust_mapper": "junebug"}
-                        ]
-            ),    
+        # launch_ros.actions.Node(
+        #     package='pid_node', executable='pid_exec', output='screen',
+        #     parameters= [
+        #                     {"thrust_mapper": "junebug"}
+        #                 ]
+        #     ),    
         # launch_ros.actions.Node(
         #     package='test_node', executable='test_exec', output='screen' 
         #     ),    
