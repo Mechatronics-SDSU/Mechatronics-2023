@@ -5,6 +5,7 @@
 
 #include <functional>
 #include <future>
+#include <cmath>
 #include <memory>
 #include <string>
 #include <sstream>
@@ -88,14 +89,32 @@ private:
                                             // COMMAND HANDLING // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  void nextCommandPrep(Interface::state_transform_func function_ptr)
+  void nextCommandPrep(Interface::state_transform_func command)
   {
-    if (function_ptr == &Movements::turn)
+    if (command == &Movements::turn)
         {
           usePositionRequest(false);
           stabilizeRobotRequest(false);
         }
         this->resetPosition();
+  }
+
+  Interface::desired_state_t adjustDesiredState(Interface::desired_state_t& desired_state, Interface::state_transform_func command_function)
+  {
+    if (command_function == &Movements::move)
+    {
+        float xError = desired_state[3];
+        desired_state[3] = xError * cos(this->current_state_[0] * (M_PI/180));
+        desired_state[4] = xError * sin(this->current_state_[0] * (M_PI/180));
+    }
+    if (command_function == &Movements::translate)
+    {
+        float yError = desired_state[4];
+        desired_state[3] = yError * sin(this->current_state_[0] * (M_PI/180));
+        desired_state[4] = yError * cos(this->current_state_[0] * (M_PI/180));
+    }
+
+    return desired_state;
   }
 
   void commandCleanup()
@@ -115,9 +134,10 @@ private:
         this->current_command_ = &command_queue_[0];
         this->command_queue_.pop_front();
         
-        state_transform_func func = current_command_->function.transform;
-        this->nextCommandPrep(func);
-        desired_state_t desired = (*func)(current_command_->params.degree);
+        state_transform_func command_function = current_command_->function.transform;
+        this->nextCommandPrep(command_function);
+        desired_state_t desired = (*command_function)(current_command_->params.degree);
+        desired = adjustDesiredState(desired, command_function);
         this->send_goal(desired);
     }
   }

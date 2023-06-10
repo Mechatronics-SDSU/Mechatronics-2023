@@ -139,8 +139,8 @@ void PID_Controller::getStatus()
     // cout << "k_i: " << this->k_i << endl;
     // cout << "k_d: " << this->k_d << endl;
     // cout << "integral: " << this->integral << endl;
-    cout << "previous_error: " << this->previous_error << endl;
-    cout << "control_value: " << this->curr_ctrl_val << endl;
+    // cout << "previous_error: " << this->previous_error << endl;
+    // cout << "control_value: " << this->curr_ctrl_val << endl;
 }
 
 // main for testing 

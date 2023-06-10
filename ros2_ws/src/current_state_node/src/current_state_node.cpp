@@ -152,7 +152,7 @@ class CurrentStateNode : public rclcpp::Node
                                       std::shared_ptr<std_srvs::srv::Trigger::Response> response
                                 )
     {
-        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming Request to Reset Relative Position\n");
+        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming Request to Reset Relative State\n");
         this->relative_state_ = this->current_state_;
         response->success = true;
     }

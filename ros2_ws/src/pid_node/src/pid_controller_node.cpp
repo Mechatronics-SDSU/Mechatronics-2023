@@ -40,7 +40,7 @@ using namespace std;
 
 #define UPDATE_PERIOD 50ms
 #define UPDATE_PERIOD_RAW 50
-#define PRINT_PERIOD 1000ms
+#define PRINT_PERIOD 500ms
 #define PID_ERROR_THRESHOLD 0.01f
 #define MOTOR_ID 0x010
 
@@ -200,13 +200,13 @@ private:
     /* Different timer for printing and sensor updates */
     void print_timer_callback()
     {
-        std::cout << "PID STATE UPDATE\n _______________________________\n"; 
+        cout << "\n_________________________\n";
         this->printCurrentAndDesiredStates();
-        std::cout << "___________________________\n\n";
+        cout << "___________________________\n\n";
         this->controller_.getStatus(); 
-        stabilize_robot_ ? cout << "Stabilizing Robot" << endl : cout << "Not Stabilizing Robot" << endl;
-        current_state_valid_ && desired_state_valid_ ? cout << "ROBOT IS UPDATING" << endl : cout << "WAITING FOR GOOD SENSOR INFO" << endl;
-        use_position_ ? cout << "IGNORING POSITION" << endl : cout << "NOT IGNORING POSITION" << std::endl;
+        stabilize_robot_ ? cout << "Stabilizing Robot" << " | " : cout << "Not Stabilizing Robot" << " | ";
+        current_state_valid_ && desired_state_valid_ ? cout << "ROBOT IS UPDATING" << " | " : cout << "WAITING FOR GOOD SENSOR INFO" << " | ";
+        use_position_ ? cout << "USING POSITION" << " | " : cout << "IGNORING POSITION" << endl;
     }
 
     /* Essential callback set to update PID state at certain interval */
@@ -279,8 +279,8 @@ private:
         float absoluteAngle = angleBetweenHereAndPoint(y ,x);
         float absoluteDistance = distanceBetweenHereAndPoint(y, x);
 
-        float yawAdjustedX = absoluteDistance * cos(absoluteAngle - yaw);
-        float yawAdjustedY = absoluteDistance * sin(absoluteAngle - yaw);
+        float yawAdjustedX = absoluteDistance * cos((absoluteAngle - yaw) * M_PI/180);
+        float yawAdjustedY = absoluteDistance * sin((absoluteAngle - yaw) * M_PI/180);
 
         // float pitchAdjustedX = absoluteDistance * cos(absoluteAngle - pitch);
         // float pitchAdjustedZ = absoluteDistance * sin(absoluteAngle - pitch);

@@ -120,15 +120,6 @@ void Scion_Position_PID_Controller::getStatus()
     cout << endl;
     cout << "Scion PID Last Generated Control Values: ";
     printVector(this->current_ctrl_vals);
-    cout << "Last Generated Thrust Values: ";
-    printVector(this->current_thrust_values);
-
-    for (auto ctrl_type : this->controllers)
-    {      
-        cout << endl;
-        cout << "Printing Data For " << ctrl_type.first << "Controller:" << endl;
-        ctrl_type.second->getStatus();
-    }
 }
 
 //main for testing
