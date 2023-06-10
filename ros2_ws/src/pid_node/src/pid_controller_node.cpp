@@ -40,8 +40,8 @@ using std::placeholders::_2;
 using namespace std;
 
 #define SLEEP_TIME 500
-#define UPDATE_PERIOD 50ms
-#define UPDATE_PERIOD_RAW 50
+#define UPDATE_PERIOD 100ms
+#define UPDATE_PERIOD_RAW 10
 #define PRINT_PERIOD 500ms
 #define PID_ERROR_THRESHOLD 0.01f
 #define MOTOR_ID 0x010
@@ -219,12 +219,13 @@ private:
      * STEP 1: Update the PID Controller (meaning call the ScionPIDController object's
      * update function which generates ctrl_vals and show its status on the screen 
      */
-        // if (stabilize_robot_ && current_state_valid_ && desired_state_valid_)
-        // {
+        if (stabilize_robot_ && current_state_valid_ && desired_state_valid_)
+        {
+            sendNothingAndWait();
         //     vector<float> thrusts(motor_count_, 0);
         //     thrusts = this->getThrusts(this->current_state_, this->desired_state_);
         //     make_CAN_request(thrusts);
-        // }
+        }
     }
 
     vector<float> getErrors(vector<float> current_state, vector<float> desired_state) 
@@ -461,6 +462,7 @@ private:
         while (!areEqual(this->current_state_, target))
         {
             this->resetPosition();
+            std::this_thread::sleep_for(std::chrono::milliseconds(300));
         }
 
         std::vector<float> desired_state = goal->desired_state;
