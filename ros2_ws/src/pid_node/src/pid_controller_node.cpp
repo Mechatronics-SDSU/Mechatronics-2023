@@ -171,6 +171,7 @@ private:
             this->sendNothingAndWait();
         }
         this->resetState();
+        sleep(.2);
         this->desired_state_ = vector<float>{0,0,0,0,0,0};
         while (!this->desired_state_valid_) {this->desired_state_valid_ = true;}
         while (!this->current_state_valid_) {this->current_state_valid_ = true;}
@@ -228,7 +229,7 @@ private:
         }
     }
 
-    vector<float> getErrors(vector<float> desired_state, vector<float> current_state) 
+    vector<float> getErrors(vector<float> current_state, vector<float> desired_state) 
     {
         return desired_state - current_state;
     }    
@@ -472,13 +473,13 @@ private:
         std::vector<float>& state = feedback->current_state;
         vector<float> thrusts = this->update_PID(this->current_state_, this->desired_state_);
         vector<int> thrustInts = this->make_CAN_request(thrusts);
-        for (int i = 0; i < thrustInts.size(); i++)
+        for (int thrust : thrustInts)
         {
-            state[i] = ((float)thrustInts[i]);
+            state.push_back((float)thrust);
         }
 
         /* Feedback Loop */
-        while (!this->equalToZero(thrustInts)) { 
+        while (!this->equalToZero(thrustInts)) {
         //   Check if there is a cancel request
         if (goal_handle->is_canceling()) {
             goal_handle->canceled(result);
@@ -490,7 +491,7 @@ private:
         thrusts = update_PID(this->current_state_, this->desired_state_);
         thrustInts = this->make_CAN_request(thrusts);
         for (int i = 0; i < thrustInts.size(); i++)
-        {
+        { 
             state[i] = ((float)thrustInts[i]);
         }
 
