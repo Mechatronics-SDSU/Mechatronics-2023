@@ -27,6 +27,7 @@ class PID_Controller
         bool angle_wrap;
         float integral = 0.0;
         float previous_error = 0.0;
+        float curr_ctrl_val = 0.0;
         
         PID_Controller() {};
 
