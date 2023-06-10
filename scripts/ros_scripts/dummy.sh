@@ -1,2 +1,2 @@
-./position.sh 1 2 3
-./orientation.sh 10 20 30
+./position.sh 0 0 0
+./orientation.sh 0 0 0
