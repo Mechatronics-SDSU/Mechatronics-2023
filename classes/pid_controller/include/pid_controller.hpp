@@ -27,6 +27,7 @@ class PID_Controller
         bool angle_wrap;
         float integral = 0.0;
         float previous_error = 0.0;
+        float curr_ctrl_val = 0.0;
         
         PID_Controller() {};
 
@@ -45,7 +46,7 @@ class PID_Controller
    
         void set_gains(float k_p, float k_i, float k_d);
 
-        pair<float, float> update(float current_point, float desired_point, float dt);
+        float update(float error, float dt);
 
         void getStatus();
 };

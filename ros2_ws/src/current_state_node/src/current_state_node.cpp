@@ -64,6 +64,7 @@ class CurrentStateNode : public rclcpp::Node
         absolute_state_pub_ =           this->create_publisher<scion_types::msg::State>("absolute_current_state_data", 10);
         relative_state_pub_ =           this->create_publisher<scion_types::msg::State>("relative_current_state_data", 10);
         reset_relative_state_service_ = this->create_service<std_srvs::srv::Trigger>("reset_relative_state", std::bind(&CurrentStateNode::resetRelativeState, this, _1, _2));
+        reset_relative_position_service_ = this->create_service<std_srvs::srv::Trigger>("reset_relative_position", std::bind(&CurrentStateNode::resetRelativePosition, this, _1, _2));
 
         auto initFunction = std::bind(&CurrentStateNode::initCurrentState, this);
         std::thread(initFunction).detach();
@@ -76,6 +77,7 @@ class CurrentStateNode : public rclcpp::Node
     Interface::state_pub_t              absolute_state_pub_;
     Interface::state_pub_t              relative_state_pub_;
     Interface::ros_trigger_service_t    reset_relative_state_service_;
+    Interface::ros_trigger_service_t    reset_relative_position_service_;
     Interface::ros_timer_t              state_pub_timer_;
     Interface::current_state_t          current_state_  {0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
     Interface::current_state_t          relative_state_ {0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
@@ -150,8 +152,20 @@ class CurrentStateNode : public rclcpp::Node
                                       std::shared_ptr<std_srvs::srv::Trigger::Response> response
                                 )
     {
-        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming Request to Reset Relative Position\n");
+        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming Request to Reset Relative State\n");
         this->relative_state_ = this->current_state_;
+        response->success = true;
+    }
+
+    void resetRelativePosition  (
+                                const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+                                      std::shared_ptr<std_srvs::srv::Trigger::Response> response
+                                )
+    {
+        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming Request to Reset Relative Position\n");
+        this->relative_state_[3] = this->current_state_[3];
+        this->relative_state_[4] = this->current_state_[4];
+        this->relative_state_[5] = this->current_state_[5];
         response->success = true;
     }
     

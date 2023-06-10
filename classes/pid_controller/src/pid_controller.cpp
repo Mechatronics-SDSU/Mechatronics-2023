@@ -124,6 +124,7 @@ float PID_Controller::update(float error, float dt)
 
     /* Get our control value and clamp it if necessary */
     float ctrl_val = proportional + integral + derivative;
+    this->curr_ctrl_val = ctrl_val;
 
     ctrl_val = max(ctrl_val, ctrl_val_min);
     ctrl_val = min(ctrl_val, ctrl_val_max);
@@ -137,8 +138,9 @@ void PID_Controller::getStatus()
     // cout << "k_p: " << this->k_p << endl;
     // cout << "k_i: " << this->k_i << endl;
     // cout << "k_d: " << this->k_d << endl;
-    cout << "integral: " << this->integral << endl;
-    cout << "previous_error: " << this->previous_error << endl;
+    // cout << "integral: " << this->integral << endl;
+    // cout << "previous_error: " << this->previous_error << endl;
+    // cout << "control_value: " << this->curr_ctrl_val << endl;
 }
 
 // main for testing 
