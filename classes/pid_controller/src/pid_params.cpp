@@ -97,9 +97,9 @@ PID_Params::PID_Params()
 
     this->yaw = 
     {
-        {"kp", 0.0015},  // .015
-        {"ki", 0.0003},   // .003
-        {"kd", 0.0006},  // .006
+        {"kp", 0.012},  // .015
+        {"ki", 0.003},   // .003
+        {"kd", 0.006},  // .006
         {"ctrl_val_offset", 0.0},
         {"ctrl_val_max", MAX},
         {"ctrl_val_min", MIN},
@@ -133,7 +133,7 @@ PID_Params::PID_Params()
     
     this->x_pos =
     {
-        {"kp", 0.25},
+        {"kp", 0.4},
         {"ki", 0.03},
         {"kd", 0.01},
         {"ctrl_val_offset", 0.0},
@@ -145,7 +145,7 @@ PID_Params::PID_Params()
 
     this->y_pos = 
     {
-        {"kp", 0.25},
+        {"kp", 0.4},
         {"ki", 0.03},
         {"kd", 0.01},
         {"ctrl_val_offset", 0.0},

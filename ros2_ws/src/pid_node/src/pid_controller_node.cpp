@@ -142,7 +142,7 @@ private:
     
     Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
     Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
-    vector<unsigned char> safe_mode_ = vector<unsigned char> {0x00, 0x00, 0x00, 0x00, 0x03};
+    vector<unsigned char> safe_mode_ = vector<unsigned char> {0x00, 0x00, 0x00, 0x00, 0x04};
     bool current_state_valid_ = false;
     bool desired_state_valid_ = false;
     bool use_position_ = true;
@@ -219,12 +219,12 @@ private:
      * STEP 1: Update the PID Controller (meaning call the ScionPIDController object's
      * update function which generates ctrl_vals and show its status on the screen 
      */
-        if (stabilize_robot_ && current_state_valid_ && desired_state_valid_)
-        {
-            vector<float> thrusts(motor_count_, 0);
-            thrusts = this->getThrusts(this->current_state_, this->desired_state_);
-            make_CAN_request(thrusts);
-        }
+        // if (stabilize_robot_ && current_state_valid_ && desired_state_valid_)
+        // {
+        //     vector<float> thrusts(motor_count_, 0);
+        //     thrusts = this->getThrusts(this->current_state_, this->desired_state_);
+        //     make_CAN_request(thrusts);
+        // }
     }
 
     vector<float> getErrors(vector<float> current_state, vector<float> desired_state) 
