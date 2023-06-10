@@ -300,10 +300,12 @@ private:
       case rclcpp_action::ResultCode::SUCCEEDED:
         break;
       case rclcpp_action::ResultCode::ABORTED:
+        this->commandCleanup();
         RCLCPP_INFO(this->get_logger(), "Goal was aborted");
         break;
       case rclcpp_action::ResultCode::CANCELED:
         RCLCPP_INFO(this->get_logger(), "Goal was canceled");
+        this->commandCleanup();
         break;
       default:
         RCLCPP_INFO(this->get_logger(), "Unknown result code");
