@@ -116,9 +116,9 @@ class ZedVision(Node):
         """ Wall/Object avoidance code in progress """        
 
         self.processDepthData(depth_map)    
-        tx = round(zed_pose.get_translation(py_translation).get()[0], 3)
+        tx =  1 * round(zed_pose.get_translation(py_translation).get()[0], 3)
         ty = round(zed_pose.get_translation(py_translation).get()[1], 3)
-        tz = round(zed_pose.get_translation(py_translation).get()[2], 3)
+        tz = -1 * round(zed_pose.get_translation(py_translation).get()[2], 3)
 
         position = Position()
         position.position = [tz, tx, ty]
