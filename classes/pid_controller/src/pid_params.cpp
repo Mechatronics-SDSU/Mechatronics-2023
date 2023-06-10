@@ -9,8 +9,8 @@
 
 
 #include "pid_params.hpp"
-#define MAX .4
-#define MIN -.4
+#define MAX .25
+#define MIN -.25
 
 /* 
     To make sure motor isn't running at maximum value, we want to cap our ctrl_val min/max. You can do this changing the macros up above to 
