@@ -121,8 +121,8 @@ namespace Interface
 
     std::vector<std::vector<float>> junebug_thrust_mapper
     {
-        { 1,  0,  0,  1,  0,  0},                   
-        {-1,  0,  0,  1,  0,  0},
+        {-1,  0,  0,  1,  0,  0},                   
+        { 1,  0,  0,  1,  0,  0},
     };
 }
 

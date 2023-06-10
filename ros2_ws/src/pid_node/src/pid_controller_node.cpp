@@ -16,6 +16,7 @@
 #include <memory>
 #include <string>
 #include <ctime>
+#include <thread>
 #include <unistd.h>
 #include <iostream>
 #include <chrono>
@@ -38,6 +39,7 @@ using std::placeholders::_1;
 using std::placeholders::_2;
 using namespace std;
 
+#define SLEEP_TIME 500
 #define UPDATE_PERIOD 50ms
 #define UPDATE_PERIOD_RAW 50
 #define PRINT_PERIOD 500ms
@@ -117,11 +119,6 @@ public:
 
         auto initFunction = std::bind(&Controller::initDesiredState, this);
         std::thread(initFunction).detach();
-
-        int i = 0;
-        while (i < motor_count_) {nothing_.push_back(0); i++;} // this causes not to build
-
-        canClient::setBotInSafeMode(can_client_);
     }
 
 private:
@@ -145,7 +142,7 @@ private:
     
     Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
     Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
-    vector<unsigned char> nothing_ ;
+    vector<unsigned char> safe_mode_ = vector<unsigned char> {0x00, 0x00, 0x00, 0x00, 0x03};
     bool current_state_valid_ = false;
     bool desired_state_valid_ = false;
     bool use_position_ = true;
@@ -170,9 +167,10 @@ private:
         while (!this->current_state_valid_)
         {
             this->sendNothingAndWait();
+            std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
         }
         this->resetState();
-        sleep(.2);
+        std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
         this->desired_state_ = vector<float>{0,0,0,0,0,0};
         while (!this->desired_state_valid_) {this->desired_state_valid_ = true;}
         while (!this->current_state_valid_) {this->current_state_valid_ = true;}
@@ -189,8 +187,7 @@ private:
 
     void sendNothingAndWait()
     {
-        canClient::sendFrame(MOTOR_ID, motor_count_, nothing_.data(), can_client_); // Keep from exiting safe mode by sending 0 command
-        sleep(.1);
+        canClient::sendFrame(0x22, 5, safe_mode_.data(), can_client_); // Keep from exiting safe mode by sending 0 command
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
