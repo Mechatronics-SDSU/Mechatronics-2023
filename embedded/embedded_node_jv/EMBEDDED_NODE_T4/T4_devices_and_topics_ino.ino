@@ -144,7 +144,7 @@ void embsys_statectl( CAN_message_t &msg){        // 0x0000
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0002 WAYFDVL  Wayfinder DVL
 
-#define WAYFDVL_DEVICE_ID  0x0003
+#define WAYFDVL_DEVICE_ID  0x0002
 
   // Macro support still sucks
 void wayfdvl_info( CAN_message_t &msg){                                         // 0x0000
