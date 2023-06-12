@@ -289,7 +289,7 @@ private:
 
         float adjustedX = yawAdjustedX;
         float adjustedY = yawAdjustedY;
-        float adjustedZ = 0;
+        float adjustedZ = z;
 
         //, pitchAdjustedX
         // distanceBetweenHereAndPoint(yawAdjustedY, rollAdjustedY);
