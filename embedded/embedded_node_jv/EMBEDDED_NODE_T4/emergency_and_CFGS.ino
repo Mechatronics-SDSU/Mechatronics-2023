@@ -53,11 +53,12 @@ void shutdownSystem(){      // Immediate shutdown of motors, release claw
   for(int n = 0; n < ACTIVE_THRUSTERS; n++){
     motor_signal_reset(control.thruster[n].pin);
   }
-  // Actually millis wont work because of CLI, using ARM_DWT_CYCCNT
-  
-  CPU_RESET_CYCLECOUNTER;
-
-  while(ARM_DWT_CYCCNT < ESC_SIGNAL_RESET_CYCLES);
+  // Must utilize isr independent counters, thus using cycle counter
+  //  Resetting counter has some weird issues every once in a while,
+  //  falling back to standard unsigned subtraction
+  //CPU_RESET_CYCLECOUNTER;
+  uint32_t start_val = ARM_DWT_CYCCNT;
+  while((ARM_DWT_CYCCNT - start_val) < ESC_SIGNAL_RESET_CYCLES);
 #endif
   
 
