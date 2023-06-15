@@ -1,6 +1,11 @@
 #ifndef T4_NODECONSTANTS_h
 #define T4_NODECONSTANTS_h
 
+#define CPU_RESET_CYCLECOUNTER    do { ARM_DEMCR |= ARM_DEMCR_TRCENA;          \
+                                       ARM_DWT_CTRL |= ARM_DWT_CTRL_CYCCNTENA; \
+                                       ARM_DWT_CYCCNT = 0; } while(0)
+
+
 // STATE CONTROL DEFINES, THESE ARE IMPORTANT!!!!
 
 
@@ -74,7 +79,10 @@
 #define THRUSTER_PWM_FREQ 400
 
 #define NEW_ESC_RESET_PROCEDURE
-#define ESC_SIGNAL_RESET_TIME_MS  50ul
+/*  600MHz cyc period -> 1.6666 ns
+ *  50ms / 1.666ns = 30E6 = 30M
+ */
+#define ESC_SIGNAL_RESET_CYCLES  30000000ul
 
 #define MAX_BRLIGHTS      2
 

@@ -53,9 +53,11 @@ void shutdownSystem(){      // Immediate shutdown of motors, release claw
   for(int n = 0; n < ACTIVE_THRUSTERS; n++){
     motor_signal_reset(control.thruster[n].pin);
   }
-  uint32_t stall_time = millis();
+  // Actually millis wont work because of CLI, using ARM_DWT_CYCCNT
+  
+  CPU_RESET_CYCLECOUNTER;
 
-  while(stall_time + ESC_SIGNAL_RESET_TIME_MS > millis());
+  while(ARM_DWT_CYCCNT < ESC_SIGNAL_RESET_CYCLES);
 #endif
   
 
