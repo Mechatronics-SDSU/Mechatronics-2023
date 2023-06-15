@@ -49,7 +49,16 @@ void shutdownSystem(){      // Immediate shutdown of motors, release claw
   Serial.println("Shutdown!!");
 #endif
   
+#ifdef NEW_ESC_RESET_PROCEDURE
+  for(int n = 0; n < ACTIVE_THRUSTERS; n++){
+    motor_signal_reset(control.thruster[n].pin);
+  }
+  uint32_t stall_time = millis();
+
+  while(stall_time + ESC_SIGNAL_RESET_TIME_MS > millis());
+#endif
   
+
   for(int n = 0; n < ACTIVE_THRUSTERS; n++){
     // motorGo(uint8_t motor__, uint8_t percent)
     control.thruster[n].value = motorGo(control.thruster[n].pin, 0);

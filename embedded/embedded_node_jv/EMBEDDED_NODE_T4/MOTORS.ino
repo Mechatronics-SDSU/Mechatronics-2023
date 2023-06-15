@@ -79,6 +79,9 @@ uint16_t motorGo(uint8_t motor__, uint8_t percent){            // Wrapper with a
   return 0;
 }
 
+void motor_signal_reset(uint8_t motor__){
+  analogWrite(motor__, 0);
+}
 
 
 int setupMainDrives(){
