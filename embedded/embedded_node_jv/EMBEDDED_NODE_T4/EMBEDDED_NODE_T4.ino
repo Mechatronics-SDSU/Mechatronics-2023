@@ -73,6 +73,8 @@ IntervalTimer leakDetectionISRTimeout;
 volatile uint32_t OA_STATE = HARD_KILL_STATE;      // Overall State Variable
 volatile uint32_t LAST_GOOD_STATE = ALL_GOOD_STATE; // Maintains the last good state, default ALL_GOOD_STATE
 
+// Sysconfig Status Bank
+volatile uint32_t embsys_status_flags = EMBSYS_DFL_STATE;
 // Device Status Banks
 volatile uint32_t bank0_device_status = 0;
 

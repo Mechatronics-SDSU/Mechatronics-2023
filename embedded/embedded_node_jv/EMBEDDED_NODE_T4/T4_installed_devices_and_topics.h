@@ -4,6 +4,8 @@
 #include <FlexCAN_T4.h>
  
 #define INSTALLED_DEVICE_CT 5
+#define RESERVED_DEVICE_CT  0
+#define TOTAL_DEVICE_CT     (INSTALLED_DEVICE_CT + RESERVED_DEVICE_CT)
 
 #define SET_STATUS_BIT(A, B)  A = A | (1 << B)
 #define CLR_STATUS_BIT(A, B)  A = A & ~(1 << B)
@@ -20,15 +22,18 @@ typedef void (*topic_ptr_array_t)( CAN_message_t &msg);
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0000 EMBDSYS  Embedded System Info
-#define EMBSYS_DEVICE_ID    0
+#define EMBSYS_DEVICE_ID    0x0000
 #define EMBSYS_BIT          0
-#define EMBSYS_TOPIC_CT     18
+#define EMBSYS_TOPIC_CT     20
 
 // EMBDSYS Topics
  void embsys_statectl( CAN_message_t &msg);
   // 0x0001- 0x000F RES
  void embsys_subsysct( CAN_message_t &msg);
  void embsys_conndevct( CAN_message_t &msg);
+
+ void embsys_dreq_errchk( CAN_message_t &msg);
+ void embsys_dreq_rdbk( CAN_message_t &msg);
 
 topic_ptr_array_t dreq_EMBSYS[EMBSYS_TOPIC_CT] =
   {
@@ -49,12 +54,14 @@ topic_ptr_array_t dreq_EMBSYS[EMBSYS_TOPIC_CT] =
     dreq_res,         // 0x000E
     dreq_res,         // 0x000F
     embsys_subsysct,  // 0x0010
-    embsys_conndevct  // 0x0011
+    embsys_conndevct, // 0x0011
+    embsys_dreq_errchk, // 0x0012
+    embsys_dreq_rdbk  // 0x0013
   };
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0001 PWRSYS  Power System
-#define PWRSYS_DEVICE_ID    1
+#define PWRSYS_DEVICE_ID    0x0001
 #define PWRSYS_BIT          1
 #define PWRSYS_TOPIC_CT     30
 
@@ -122,7 +129,7 @@ topic_ptr_array_t dreq_PWRSYS[PWRSYS_TOPIC_CT] =
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0002 WAYFDVL  Wayfinder DVL
-#define WAYFDVL_DEVICE_ID    0x02
+#define WAYFDVL_DEVICE_ID    0x0002
 #define WAYFDVL_BIT          2
 #define WAYFDVL_TOPIC_CT    19
 
@@ -171,7 +178,7 @@ topic_ptr_array_t dreq_WAYFDVL[WAYFDVL_TOPIC_CT] =
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0003 MS5837  MS5837 Pressure and Temp Sensor
-#define MS5837_DEVICE_ID    0x03
+#define MS5837_DEVICE_ID    0x0003
 #define MS5837_BIT          3
 #define MS5837_TOPIC_CT     4
 
@@ -190,14 +197,14 @@ topic_ptr_array_t dreq_MS5837[MS5837_TOPIC_CT] =
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0004 BRLIGHT  Blue Robotics Lights
-#define BRLIGHT_DEVICE_ID    0x04
+#define BRLIGHT_DEVICE_ID    0x0004
 #define BRLIGHT_BIT          4
 #define BRLIGHT_TOPIC_CT    6
 
  void brlight_info( CAN_message_t &msg);
  void brlight_front_brightness( CAN_message_t &msg);
 
-topic_ptr_array_t data_BRLIGHT[BRLIGHT_TOPIC_CT] = 
+topic_ptr_array_t dreq_BRLIGHT[BRLIGHT_TOPIC_CT] = 
   {
     brlight_info,
     dreq_res,
@@ -235,16 +242,24 @@ topic_ptr_array_t data_RESERVED[RESERVED_TOPIC_COUNT] =
   };
 ////////////////////////////////////////////////////////////////////////////////////////
 // Device Array // Add RES and brping into this !!
-device_ptr_array_t dreq_device[INSTALLED_DEVICE_CT] =
+device_ptr_array_t dreq_device[TOTAL_DEVICE_CT] =
   {
     dreq_EMBSYS,
     dreq_PWRSYS,
     dreq_WAYFDVL,
     dreq_MS5837,
-    data_BRLIGHT
+    dreq_BRLIGHT
   };
 
-
+// Out of bounds safety array
+uint16_t vmmio_limits[TOTAL_DEVICE_CT] =
+  {
+    sizeof(dreq_EMBSYS)   / sizeof(void *),
+    sizeof(dreq_PWRSYS)   / sizeof(void *),
+    sizeof(dreq_WAYFDVL)  / sizeof(void *),
+    sizeof(dreq_MS5837)   / sizeof(void *),
+    sizeof(dreq_BRLIGHT)  / sizeof(void *)
+  };
 
 // Super important wrapper macro for easy nested array access
 void dreq_access(uint16_t device, uint16_t topic,  CAN_message_t &msg);

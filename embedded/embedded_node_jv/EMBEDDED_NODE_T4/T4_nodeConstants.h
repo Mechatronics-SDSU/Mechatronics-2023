@@ -10,11 +10,11 @@
 
 
   // Define USB Serial Print Debug Messaging
-#define DEBUG_MODE
+//#define DEBUG_MODE
 #define NO_DVL_DEBUG
 //#define DEBUG_DECODE
 //#define DEBUG_DREQ_PTR
-#define DEBUG_STOW_ACCESS
+//#define DEBUG_STOW_ACCESS
 
 
 #define CAN_LOSS_OF_CONTROL_WDT_TIMEOUT   1.0
@@ -82,7 +82,8 @@
 /*  600MHz cyc period -> 1.6666 ns
  *  50ms / 1.666ns = 30E6 = 30M
  */
-#define ESC_SIGNAL_RESET_CYCLES  30000000ul
+ // now 250ms
+#define ESC_SIGNAL_RESET_CYCLES  300000000ul
 
 #define MAX_BRLIGHTS      2
 
@@ -129,7 +130,7 @@ struct CONTROL{
 #define NO_RESPONSE_TIMEOUT_US    1000000
 #define NO_RESPONSE_ISR_PRIORITY  64
 
-
+#define NEW_DREQ_SCHEME
 // State Machine States, OA_STATE
 /*    0   Hard Kill
  *    1   RES
@@ -161,5 +162,17 @@ struct CONTROL{
 #define DREQ_ID   0x20
 #define DRES_ID   0x21
 #define STOW_ID   0x22
+
+#define INVALID_ACCESS_ID 0x24
+
+
+
+// EMBSYS Internal Status Bitfield
+
+#define EMBSYS_DREQ_ERRCHK  0
+#define EMBSYS_DREQ_RDBK    1
+
+
+#define EMBSYS_DFL_STATE   ( (1ul << EMBSYS_DREQ_RDBK) | (1ul << EMBSYS_DREQ_ERRCHK) )
 
 #endif // T4_NODECONSTANTS_h

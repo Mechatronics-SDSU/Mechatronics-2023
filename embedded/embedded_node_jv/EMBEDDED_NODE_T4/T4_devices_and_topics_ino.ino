@@ -46,6 +46,32 @@ void embsys_statectl( CAN_message_t &msg){        // 0x0000
   
 }
 
+void embsys_dreq_errchk( CAN_message_t &msg){
+  if(msg.id == STOW_ID){    // Write
+    if(msg.buf[DEV_DATA_0]){
+      SET_STATUS_BIT(embsys_status_flags, EMBSYS_DREQ_ERRCHK);
+    } else {
+      CLR_STATUS_BIT(embsys_status_flags, EMBSYS_DREQ_ERRCHK);
+    }
+  } else {                  // Read
+    msg.buf[DEV_DATA_0] = CHK_STATUS_BIT(embsys_status_flags, EMBSYS_DREQ_ERRCHK);
+    msg.len = DEV_PAY_LEN_1;
+  }
+}
+
+void embsys_dreq_rdbk( CAN_message_t &msg){
+  if(msg.id == STOW_ID){    // Write
+    if(msg.buf[DEV_DATA_0]){
+      SET_STATUS_BIT(embsys_status_flags, EMBSYS_DREQ_RDBK);
+    } else {
+      CLR_STATUS_BIT(embsys_status_flags, EMBSYS_DREQ_RDBK);
+    }
+  } else {                  // Read
+    msg.buf[DEV_DATA_0] = CHK_STATUS_BIT(embsys_status_flags, EMBSYS_DREQ_RDBK);
+    msg.len = DEV_PAY_LEN_1;
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0001 PWRSYS  Power System
 
@@ -144,8 +170,6 @@ void embsys_statectl( CAN_message_t &msg){        // 0x0000
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0002 WAYFDVL  Wayfinder DVL
 
-#define WAYFDVL_DEVICE_ID  0x0002
-
   // Macro support still sucks
 void wayfdvl_info( CAN_message_t &msg){                                         // 0x0000
   if(msg.id == STOW_ID){
@@ -243,8 +267,6 @@ void wayfdvl_tx_i( CAN_message_t &msg){             // 0x0012
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // 0x0003 MS5837  MS5837 Pressure and Temp Sensor
-
-#define MS5837_DEVICE_ID  0x0003
 
 void ms5837_info( CAN_message_t &msg){                 // 0x0000
   if(msg.id == STOW_ID){
@@ -401,10 +423,33 @@ void dreq_access(uint16_t device, uint16_t topic,  CAN_message_t &msg){
   Serial.printf("Jump Address: %8X\n", jump_address);
   Serial.printf("DREQ_D @ %8X ->  %8X   %8X   %8X   %8X\n", dreq_device, dreq_device[0], dreq_device[1], dreq_device[2], dreq_device[3]); 
 #endif
-//  Serial.printf("MS5837 @ %8X ->  %8X   %8X   %8X   %8X\n", dreq_MS5837, dreq_MS5837[0], dreq_MS5837[1], dreq_MS5837[2], dreq_MS5837[3]);
 
+#ifdef NEW_DREQ_SCHEME
+  if(CHK_STATUS_BIT(embsys_status_flags, EMBSYS_DREQ_ERRCHK)){
+    if(device < (sizeof(vmmio_limits) / sizeof(uint16_t))){
+      if(topic < vmmio_limits[device]){
+        (*(*(dreq_device[device])[topic]))(msg);  
+      } else {  // Topic call out of range
+        if(CHK_STATUS_BIT(embsys_status_flags, EMBSYS_DREQ_ERRCHK)){
+          msg.id = INVALID_ACCESS_ID;
+          msg.len = DEV_PAY_LEN_0;
+        }
+      }
+    } else {    // Device call out of range
+      if(CHK_STATUS_BIT(embsys_status_flags, EMBSYS_DREQ_ERRCHK)){
+        msg.id = INVALID_ACCESS_ID;
+        msg.len = DEV_PAY_LEN_0;
+      }
+    }  
+  } else {  // Legacy operation, default
+    (*(*(dreq_device[device])[topic]))(msg);
+  }
+  
+#else
+  // Legacy operation, no bounds checking at all and can completely brick things if sent to a random location in memory
   // Valid in C++, pure pointer math was nuked by g++ with optimizations turned on for some reason :(
   (*(*(dreq_device[device])[topic]))(msg);
+#endif
 }
 
 void fill_msg_buffer_w_float(CAN_message_t &msg, float *d_in){
