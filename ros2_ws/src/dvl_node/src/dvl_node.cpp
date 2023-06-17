@@ -37,16 +37,16 @@ class DVL : public rclcpp::Node
             ("ahrs_orientation_data", 10, std::bind(&DVL::orientation_sub_callback, this, _1));
 
             position_pub_timer_ = this->create_wall_timer
-                (
-                    std::chrono::milliseconds(50), 
-                    std::bind(&DVL::publish_position, this)
-                );
+            (
+                std::chrono::milliseconds(50), 
+                std::bind(&DVL::publish_position, this)
+            );
             
             velocity_pub_timer_ = this->create_wall_timer
-                (
-                    std::chrono::milliseconds(50), 
-                    std::bind(&DVL::publish_velocity, this)
-                );
+            (
+                std::chrono::milliseconds(50), 
+                std::bind(&DVL::publish_velocity, this)
+            );
             
             position_pub_ = this->create_publisher<scion_types::msg::State>("dvl_position_data", 10);
 
