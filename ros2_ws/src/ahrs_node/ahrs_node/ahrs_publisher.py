@@ -25,12 +25,7 @@
 
 import sys
 # Python syntax is garbage and I appended these for the relative imports
-sys.path.append(".")
-sys.path.append("..")
-sys.path.append("...")
-sys.path.append("....")
-sys.path.append(".....")
-sys.path.append("......")
+sys.path.append("/home/mechatronics/master")
 
 import rclpy
 from rclpy.node import Node

@@ -9,12 +9,7 @@
 
 import sys
 # Python syntax is garbage and I appended these for the relative imports
-sys.path.append(".")
-sys.path.append("..")
-sys.path.append("...")
-sys.path.append("....")
-sys.path.append(".....")
-sys.path.append("......")
+sys.path.append("/home/mechatronics/master")
 
 import statistics
 import rclpy
