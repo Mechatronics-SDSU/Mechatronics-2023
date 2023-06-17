@@ -178,12 +178,12 @@ class CurrentStateNode : public rclcpp::Node
      * sensor. When that sensor publishes, the PID will store the last sensed value  
      */
 
-    // void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)
-    // {
-    //     // RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
-    //     if (!this->orientation_valid_) {orientation_valid_ = true;}
-    //     this->current_orientation_ = msg->orientation;
-    // }
+    void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)
+    {
+        // RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
+        if (!this->orientation_valid_) {orientation_valid_ = true;}
+        this->current_orientation_ = msg->orientation;
+    }
 
     // void position_sub_callback(const scion_types::msg::Position::SharedPtr msg)
     // {    
@@ -194,7 +194,7 @@ class CurrentStateNode : public rclcpp::Node
 
     void depth_sub_callback(const scion_types::msg::Datapoint::SharedPtr msg)
     {
-        position_valid_ = true;
+        if (!this->position_valid_) {position_valid_ = true;}
         RCLCPP_INFO(this->get_logger(), "Received ms5837 depth data: %f", msg->data);
         this->current_position_ = vector<float>{0.0, 0.0, msg->data};
     }
