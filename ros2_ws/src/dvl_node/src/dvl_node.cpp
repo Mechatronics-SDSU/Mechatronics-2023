@@ -1,11 +1,19 @@
 #include <vector>
 #include <cmath>
 #include <memory>
+#include <unistd.h>
+#include <chrono>
+#include <thread>
 
 #include "rclcpp/rclcpp.hpp"
 #include "control_interface.hpp"
+#include "vector_operations.hpp"
 #include "scion_types/msg/datapoint.hpp"
+#include "scion_types/msg/orientation.hpp"
+#include "scion_types/msg/state.hpp"
 
+using std::placeholders::_1;
+using std::placeholders::_2;
 using namespace std;
 
 #define UPDATE_RATE 50
@@ -16,11 +24,17 @@ class DVL : public rclcpp::Node
         DVL()
         : Node("dvl_node")
         {
-            vel_x_sub_ = this->create_subscription<scion_types::msg::DataPoint>
-            ("dvl_vel_x", 10, std::bind(&Controller::vel_x_sub_callback, this, _1));
+            vel_x_sub_ = this->create_subscription<scion_types::msg::Datapoint>
+            ("dvl_vel_x", 10, std::bind(&DVL::vel_x_sub_callback, this, _1));
 
-            vel_y_sub_ = this->create_subscription<scion_types::msg::DataPoint>
-            ("dvl_vel_y", 10, std::bind(&Controller::vel_y_sub_callback, this, _1));
+            vel_y_sub_ = this->create_subscription<scion_types::msg::Datapoint>
+            ("dvl_vel_y", 10, std::bind(&DVL::vel_y_sub_callback, this, _1));
+
+            vel_z_sub_ = this->create_subscription<scion_types::msg::Datapoint>
+            ("dvl_vel_z", 10, std::bind(&DVL::vel_z_sub_callback, this, _1));
+
+            orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
+            ("ahrs_orientation_data", 10, std::bind(&DVL::orientation_sub_callback, this, _1));
 
             position_pub_timer_ = this->create_wall_timer
                 (
@@ -28,27 +42,44 @@ class DVL : public rclcpp::Node
                     std::bind(&DVL::publish_position, this)
                 );
             
-            position_pub_ = this->create_publisher<scion_types::msg::Position>("dvl_position_data", 10);
+            velocity_pub_timer_ = this->create_wall_timer
+                (
+                    std::chrono::milliseconds(50), 
+                    std::bind(&DVL::publish_velocity, this)
+                );
+            
+            position_pub_ = this->create_publisher<scion_types::msg::State>("dvl_position_data", 10);
 
-            orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
-            ("ahrs_orientation_data", 10, std::bind(&CurrentStateNode::orientation_sub_callback, this, _1));
+            velocity_pub_ = this->create_publisher<scion_types::msg::State>("dvl_velocity_data", 10);
 
+            start_vel_x_ = nullptr;
+            start_vel_y_ = nullptr;
+            start_vel_z_ = nullptr;
+            start_vel_ =   nullptr;
+
+            auto initFunction = std::bind(&DVL::initCurrentState, this);
+            std::thread(initFunction).detach();
         }
 
     private:
         Interface::datapoint_sub_t          vel_x_sub_;
         Interface::datapoint_sub_t          vel_y_sub_;
+        Interface::datapoint_sub_t          vel_z_sub_;
         Interface::orientation_sub_t        orientation_sub_;
         Interface::ros_timer_t              position_pub_timer_;
-        Interface::position_pub_t           position_pub_;
-        Interface::current_state_t          curr_pos_;
-        std::shared_ptr<std::vector<float>> currrent_vel_ = nullptr;
-        vector<float>                       current_pos_ = vector<float> {0,0};
-        vector<float>                       orientation_ = vector<float> {0,0,0};
-        float                               current_x_;
-        float                               current_y_;
-        bool                                start_vel_ = false;
-        bool                                start_vel_ = false;
+        Interface::state_pub_t              position_pub_;
+        Interface::ros_timer_t              velocity_pub_timer_;
+        Interface::state_pub_t              velocity_pub_;
+        vector<float>                       currrent_vel_=          vector<float> {0,0,0};
+        vector<float>                       current_pos_ =          vector<float> {0,0,0};
+        vector<float>                       current_orientation_ =  vector<float> {0,0,0};
+        unique_ptr<float>                   start_vel_x_;
+        unique_ptr<float>                   start_vel_y_;
+        unique_ptr<float>                   start_vel_z_;
+        unique_ptr<vector<float>>           start_vel_  ;
+        float                               current_x_ =    0.0F;
+        float                               current_y_ =    0.0F;
+        float                               current_z_ =    0.0F;
 
         void initCurrentState()
         {
@@ -63,26 +94,39 @@ class DVL : public rclcpp::Node
         {
             while (this->start_vel_ == nullptr)
             {
+                if 
+                (
+                    start_vel_x_ != nullptr &&
+                    start_vel_y_ != nullptr &&
+                    start_vel_z_ != nullptr
+                )
+                {
+                    start_vel_ = std::make_unique<vector<float>>(initializer_list<float>{*start_vel_x_, *start_vel_y_, *start_vel_z_});
+                }
                 sleep(.1);
             }
             return true;
         }
 
-        void vel_x_sub_callback(const std_msgs::msg::Datapoint::SharedPtr msg)
+        void vel_x_sub_callback(const scion_types::msg::Datapoint::SharedPtr msg)
         {
-            // RCLCPP_INFO(this->get_logger(), "X Velocity: %f", msg->data);
-            if (start_vel_ == false) {start_vel_ = true;}
-            if (current_vel_ == nullptr) {current_vel_ = std::make_shared<std::vector<float>>(2, 0.0f); }
-            current_vel_[0] = msg->data;
-            this->current_position_[0] += msg->data / (1/UPDATE_RATE);
+            if (start_vel_x_ == nullptr) {start_vel_x_  = std::make_unique<float>(msg->data);}
+            current_x_ = msg->data;
+            this->current_pos_[0] += msg->data * (1/UPDATE_RATE);
         }
 
-        void vel_y_sub_callback(const std_msgs::msg::Datapoint::SharedPtr msg)
+        void vel_y_sub_callback(const scion_types::msg::Datapoint::SharedPtr msg)
         {
-            // RCLCPP_INFO(this->get_logger(), "Y Velocity: %f", msg->data);
-            if (current_vel_ == nullptr) {current_vel_ = std::make_shared<std::vector<float>>(2, 0.0f); } // Initialize velocity after async function
-            current_vel_[1] = msg->data;
-            this->current_position_[1] += msg->data / (1/UPDATE_RATE);
+            if (start_vel_y_ == nullptr) {start_vel_y_  = std::make_unique<float>(msg->data);}
+            current_y_ = msg->data;
+            this->current_pos_[1] += msg->data * (1/UPDATE_RATE);
+        }
+
+        void vel_z_sub_callback(const scion_types::msg::Datapoint::SharedPtr msg)
+        {
+            if (start_vel_z_ == nullptr) {start_vel_z_  = std::make_unique<float>(msg->data);}
+            current_z_ = msg->data;
+            this->current_pos_[2] += msg->data * (1/UPDATE_RATE);
         }
 
         void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)
@@ -90,35 +134,28 @@ class DVL : public rclcpp::Node
             this->current_orientation_ = msg->orientation;
         }
 
-        void dead_reckon()
-        {
-            float total_dist = sqrt(pow(current_vel_[0], 2) + pow(current_vel_[1], 2)) 
-            current_pos_[0] += cos(total_dist);
-            current_pos_[1] += sin(total_dist);
-        }
+        // void dead_reckon()
+        // {
+        //     float total_dist = sqrt(pow(current_vel_[0], 2) + pow(current_vel_[1], 2)) 
+        //     current_pos_[0] += cos(total_dist);
+        //     current_pos_[1] += sin(total_dist);
+        // }
 
         void publish_position()
         {
-            scion_types::msg::Position position = scion_types::msg::Position();
-            position.position = this->current_pos_;
+            scion_types::msg::State position = scion_types::msg::State();
+            position.state = this->current_pos_;
             this->position_pub_->publish(position);
+        }
+
+        void publish_velocity()
+        {
+            scion_types::msg::State velocity = scion_types::msg::State();
+            velocity.state = this->currrent_vel_;
+            this->velocity_pub_->publish(velocity);
         }
 };
 
-  private:
-    void topic_callback(const geometry_msgs::msg::PoseStamped::SharedPtr msg) const
-    {
-        float zed_position_x = (float)msg->pose.position.x;
-        float zed_position_y = (float)msg->pose.position.y;
-        float zed_position_z = (float)msg->pose.position.z;
-        
-        auto message = scion_types::msg::Position();
-        message.position = std::vector<float>{zed_position_x, zed_position_y, zed_position_z};
-        publisher_->publish(message);
-        RCLCPP_INFO(this->get_logger(), "Publishing zed_position_data: " );
-
-    }
-    
 
 int main(int argc, char * argv[])
 {

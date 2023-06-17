@@ -56,6 +56,7 @@ namespace Interface
     typedef rclcpp::Publisher<scion_types::msg::State>::SharedPtr                           state_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::Position>::SharedPtr                        position_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::Orientation>::SharedPtr                     orientation_pub_t;
+    typedef rclcpp::Publisher<scion_types::msg::Datapoint>::SharedPtr                       datapoint_pub_t;
     typedef std::vector<std::vector<float>>                                                 matrix_t;                                                                            
     typedef rclcpp::TimerBase::SharedPtr                                                    ros_timer_t;
 

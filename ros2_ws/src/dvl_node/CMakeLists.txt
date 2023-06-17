@@ -17,6 +17,7 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(scion_types REQUIRED)
@@ -25,9 +26,10 @@ include_directories(include)
 
 add_executable(dvl_exec src/dvl_node.cpp)
 
-ament_target_dependencies(dvl_exec rclcpp scion_types std_msgs sensor_msgs)
+ament_target_dependencies(dvl_exec rclcpp scion_types std_msgs rclcpp)
 
-target_include_directories(dvl_exec PUBLIC)
+target_include_directories(dvl_exec PUBLIC  ../../../classes/pid_controller/include
+                                            ../control_interface/include)
                                            
 install(TARGETS
   dvl_exec
