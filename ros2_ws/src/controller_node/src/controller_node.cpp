@@ -22,7 +22,6 @@
 #include "control_interface.hpp"
 
 #define MOTOR_ID 0x010
-#define MOTOR_COUNT 8 // Have to change this to be dynamic
 #define MAX_POWER 100
 
 using namespace std;
@@ -45,7 +44,6 @@ class Controller : public rclcpp::Node
         ("/joy", 10, std::bind(&Controller::controller_subscription_callback, this, _1));
 
         can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
-        
 
         this->declare_parameter("thrust_mapper", "percy");
 
@@ -57,6 +55,7 @@ class Controller : public rclcpp::Node
         else if (thrust_mapper == "junebug")
         {
             this->thrust_mapper_ = Interface::junebug_thrust_mapper;
+            motor_count_ = 2;
         }
         else
         {
@@ -71,6 +70,7 @@ class Controller : public rclcpp::Node
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr  controller_sub_;
     Interface::ros_sendframe_client_t                       can_client_;
     vector<vector<float>>                                   thrust_mapper_;
+    int                                                     motor_count_ = 8;
     
 
     void controller_subscription_callback(const sensor_msgs::msg::Joy::SharedPtr msg)
@@ -92,8 +92,8 @@ class Controller : public rclcpp::Node
 
         /* Multiply our 8 x 6 mapper matrix by our 6 x 1 ctrl_vals to get an 8 x 1 vector of thrust values (a vector with 8 values) */
         vector<float> ctrl_vals = vector<float>{left_x, right_trigger, left_trigger, right_x, right_y, left_y};
-        vector<float> normalized_ctrl_vals = normalizeCtrlVals(ctrl_vals);
-        vector<float> thrust_vals = this->thrust_mapper_ * normalized_ctrl_vals;
+        ctrl_vals = normalizeCtrlVals(ctrl_vals);
+        vector<float> thrust_vals = this->thrust_mapper_ * ctrl_vals;
 
         make_CAN_request(thrust_vals);
     }
@@ -171,7 +171,7 @@ class Controller : public rclcpp::Node
          * one byte for each value -100 to 100 
          */
 
-        canClient::sendFrame(MOTOR_ID, MOTOR_COUNT, byteThrusts.data(), this->can_client_);
+        canClient::sendFrame(MOTOR_ID, motor_count_, byteThrusts.data(), this->can_client_);
         return convertedThrusts;
     }
 };
