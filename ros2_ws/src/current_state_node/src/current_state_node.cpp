@@ -46,8 +46,8 @@ class CurrentStateNode : public rclcpp::Node
         // position_sub_ = this->create_subscription<scion_types::msg::Position>
         // ("zed_position_data", 10, std::bind(&CurrentStateNode::position_sub_callback, this, _1));
 
-        // orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
-        // ("ahrs_orientation_data", 10, std::bind(&CurrentStateNode::orientation_sub_callback, this, _1));
+        orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
+        ("ahrs_orientation_data", 10, std::bind(&CurrentStateNode::orientation_sub_callback, this, _1));
     
         depth_sub_ = this->create_subscription<scion_types::msg::Datapoint>
         ("ms5837_depth", 10, std::bind(&CurrentStateNode::depth_sub_callback, this, _1));

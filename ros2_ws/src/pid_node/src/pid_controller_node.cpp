@@ -117,6 +117,8 @@ public:
         controller_ = Scion_Position_PID_Controller(pid_params_object_.get_pid_params());
         controller_.getStatus();
 
+        canClient::setBotInSafeMode(can_client_);
+
         auto initFunction = std::bind(&Controller::initDesiredState, this);
         std::thread(initFunction).detach();
     }
@@ -142,7 +144,7 @@ private:
     
     Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
     Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
-    vector<unsigned char> safe_mode_ = vector<unsigned char> {0x00, 0x00, 0x00, 0x00, 0x04};
+    vector<unsigned char> safe_mode_ = vector<unsigned char> {0x00A};
     bool current_state_valid_ = false;
     bool desired_state_valid_ = false;
     bool use_position_ = true;
@@ -187,7 +189,7 @@ private:
 
     void sendNothingAndWait()
     {
-        canClient::sendFrame(0x22, 5, safe_mode_.data(), can_client_); // Keep from exiting safe mode by sending 0 command
+        canClient::sendFrame(0x00A, 0, safe_mode_.data(), can_client_); // Keep from exiting safe mode by sending 0 command
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
