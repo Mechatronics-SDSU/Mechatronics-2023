@@ -224,9 +224,9 @@ private:
         if (stabilize_robot_ && current_state_valid_ && desired_state_valid_)
         {
             sendNothingAndWait();
-        //     vector<float> thrusts(motor_count_, 0);
-        //     thrusts = this->getThrusts(this->current_state_, this->desired_state_);
-        //     make_CAN_request(thrusts);
+            vector<float> thrusts(motor_count_, 0);
+            thrusts = this->getThrusts(this->current_state_, this->desired_state_);
+            make_CAN_request(thrusts);
         }
     }
 

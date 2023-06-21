@@ -63,8 +63,8 @@ def generate_launch_description():
             package='unified_can_driver', executable='unified_can_driver', output='screen',         
             parameters= [
                             {"can_bus_interface": "can0"},
-                            {"do_module_polling": False},
-                            {"module_bitfield": 1}
+                            {"do_module_polling": True},
+                            {"module_bitfield": 255}
                         ]
             ),
         # launch_ros.actions.Node(
