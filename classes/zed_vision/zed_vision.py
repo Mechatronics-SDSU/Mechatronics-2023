@@ -24,7 +24,7 @@ from ultralytics.yolo.utils.checks import check_imgsz
 sys.path.append("/home/mechatronics/master/classes/zed_vision/yolov5")
 from models.experimental import attempt_load
 #from utils.general import check_img_size, non_max_suppression, scale_coords, xyxy2xywh
-from utils.general import check_img_size, non_max_suppression, scale_segments, xyxy2xywh
+from utils.general import check_img_size, non_max_suppression, scale_boxes, xyxy2xywh
 from utils.torch_utils import select_device
 from utils.augmentations import letterbox
 
@@ -86,7 +86,7 @@ class Zed_Vision():
         output = []
         for i, det in enumerate(detections):
             if len(det):
-                det[:, :4] = scale_segments(im.shape[2:], det[:, :4], im0.shape).round()
+                det[:, :4] = scale_boxes(im.shape[2:], det[:, :4], im0.shape).round()
                 gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
 
                 for *xyxy, conf, cls in reversed(det):
