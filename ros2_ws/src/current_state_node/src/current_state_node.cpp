@@ -15,6 +15,7 @@
 #include "scion_types/msg/state.hpp"
 #include "scion_types/msg/position.hpp"
 #include "scion_types/msg/orientation.hpp"
+#include "scion_types/msg/datapoint.hpp"
 #include "std_msgs/msg/float32.hpp"
 
 using std::placeholders::_1;
@@ -46,14 +47,20 @@ class CurrentStateNode : public rclcpp::Node
         // position_sub_ = this->create_subscription<scion_types::msg::Position>
         // ("zed_position_data", 10, std::bind(&CurrentStateNode::position_sub_callback, this, _1));
 
-        orientation_sub_ = this->create_subscription<scion_types::msg::Orientation>
+        orientation_sub_ = this->create_subscription<scion_types::msg::State>
         ("ahrs_orientation_data", 10, std::bind(&CurrentStateNode::orientation_sub_callback, this, _1));
     
-        depth_sub_ = this->create_subscription<scion_types::msg::Datapoint>
-        ("ms5837_depth", 10, std::bind(&CurrentStateNode::depth_sub_callback, this, _1));
+        // depth_sub_ = this->create_subscription<scion_types::msg::Datapoint>
+        // ("ms5837_depth", 10, std::bind(&CurrentStateNode::depth_sub_callback, this, _1));
 
         // velocity_sub_ = this->create_subscription<scion_types::msg::Orientation>
         // ("dvl_velocity_data", 10, std::bind(&Controller::velocity_sub_callback, this, _1));
+
+        a50_state_sub_ = this->create_subscription<scion_types::msg::State>
+        ("a50_state_data", 10, std::bind(&CurrentStateNode::a50_state_sub_callback, this, _1));
+
+        // dvl_position_sub_ = this->create_subscription<scion_types::msg::State>
+        // ("dvl_position_data", 10, std::bind(&CurrentStateNode::dvl_position_sub_callback, this, _1));
 
         state_pub_timer_ = this->create_wall_timer
                 (
@@ -72,12 +79,14 @@ class CurrentStateNode : public rclcpp::Node
 
   private:    
     Interface::position_sub_t           position_sub_;
-    Interface::orientation_sub_t        orientation_sub_;
+    Interface::state_sub_t              orientation_sub_;
     Interface::datapoint_sub_t          depth_sub_;
     Interface::state_pub_t              absolute_state_pub_;
     Interface::state_pub_t              relative_state_pub_;
     Interface::ros_trigger_service_t    reset_relative_state_service_;
     Interface::ros_trigger_service_t    reset_relative_position_service_;
+    Interface::state_sub_t              dvl_position_sub_;
+    Interface::state_sub_t              a50_state_sub_;
     Interface::ros_timer_t              state_pub_timer_;
     Interface::current_state_t          current_state_  {0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
     Interface::current_state_t          relative_state_ {0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
@@ -178,11 +187,11 @@ class CurrentStateNode : public rclcpp::Node
      * sensor. When that sensor publishes, the PID will store the last sensed value  
      */
 
-    void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)
+    void orientation_sub_callback(const scion_types::msg::State::SharedPtr msg)
     {
         // RCLCPP_INFO(this->get_logger(), "Received ahrs_orientation_data");
         if (!this->orientation_valid_) {orientation_valid_ = true;}
-        this->current_orientation_ = msg->orientation;
+        this->current_orientation_ = msg->state;
     }
 
     // void position_sub_callback(const scion_types::msg::Position::SharedPtr msg)
@@ -192,18 +201,32 @@ class CurrentStateNode : public rclcpp::Node
     //      this->current_position_  = msg->position;
     // }
 
-    void depth_sub_callback(const scion_types::msg::Datapoint::SharedPtr msg)
-    {
-        if (!this->position_valid_) {position_valid_ = true;}
-        RCLCPP_INFO(this->get_logger(), "Received ms5837 depth data: %f", msg->data);
-        this->current_position_ = vector<float>{0.0, 0.0, msg->data};
-    }
+    // void depth_sub_callback(const scion_types::msg::Datapoint::SharedPtr msg)
+    // {
+    //     if (!this->position_valid_) {position_valid_ = true;}
+    //     RCLCPP_INFO(this->get_logger(), "Received ms5837 depth data: %f", msg->data);
+    //     this->current_position_ = vector<float>{0.0, 0.0, msg->data};
+    // }
 
     // void velocity_sub_callback(const std_msgs::msg::Float32::SharedPtr msg)
     // {
     //     RCLCPP_INFO(this->get_logger(), "Received ms5837 depth data: %f", msg->data);
     //     this->current_position_ = vector<float>{0.0, 0.0, msg->data} ;
     // }
+
+    // void dvl_position_sub_callback(const scion_types::msg::State::SharedPtr msg)
+    // {    
+    //     //  RCLCPP_INFO(this->get_logger(), "Received Zed Position Data");
+    //      if (!this->position_valid_) {position_valid_ = true;}
+    //      this->current_position_  = msg->state;
+    // }
+
+    void a50_state_sub_callback(const scion_types::msg::State::SharedPtr msg)
+    {    
+         RCLCPP_INFO(this->get_logger(), "Received a50 Position Data");
+         if (!this->position_valid_) {position_valid_ = true;}
+         this->current_position_  = msg->state;
+    }
 };
 
 int main(int argc, char * argv[])

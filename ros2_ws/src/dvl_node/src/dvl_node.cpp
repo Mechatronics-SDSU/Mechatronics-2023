@@ -112,21 +112,21 @@ class DVL : public rclcpp::Node
         {
             if (start_vel_x_ == nullptr) {start_vel_x_  = std::make_unique<float>(msg->data);}
             current_x_ = msg->data;
-            this->current_pos_[0] += msg->data * (1/UPDATE_RATE);
+            this->current_pos_[0] += msg->data/50;
         }
 
         void vel_y_sub_callback(const scion_types::msg::Datapoint::SharedPtr msg)
         {
             if (start_vel_y_ == nullptr) {start_vel_y_  = std::make_unique<float>(msg->data);}
             current_y_ = msg->data;
-            this->current_pos_[1] += msg->data * (1/UPDATE_RATE);
+            this->current_pos_[1] += msg->data/50;
         }
 
         void vel_z_sub_callback(const scion_types::msg::Datapoint::SharedPtr msg)
         {
             if (start_vel_z_ == nullptr) {start_vel_z_  = std::make_unique<float>(msg->data);}
             current_z_ = msg->data;
-            this->current_pos_[2] += msg->data * (1/UPDATE_RATE);
+            this->current_pos_[2] += msg->data/50;
         }
 
         void orientation_sub_callback(const scion_types::msg::Orientation::SharedPtr msg)

@@ -25,9 +25,9 @@ def generate_launch_description():
     all the nodes are placed here as well as Zed Node launch arguments
     """
     return LaunchDescription([
-        launch_ros.actions.Node(
-            package='ahrs_node', executable='ahrs_exec', output='screen'
-            ),
+        # launch_ros.actions.Node(
+        #     package='ahrs_node', executable='ahrs_exec', output='screen'
+        #     ),
         # launch_ros.actions.Node(
         #     package='brain_node', executable='brain_exec', output='screen' 
         #     ),
@@ -40,7 +40,7 @@ def generate_launch_description():
         launch_ros.actions.Node(
             package='current_state_node', executable='current_state_exec', output='screen',
             parameters= [
-                            {"use_position_tracking": False},
+                            {"use_position_tracking": True},
                             {"use_orientation_tracking": True},
                         ]
             ),  
@@ -63,8 +63,8 @@ def generate_launch_description():
             package='unified_can_driver', executable='unified_can_driver', output='screen',         
             parameters= [
                             {"can_bus_interface": "can0"},
-                            {"do_module_polling": True},
-                            {"module_bitfield": 255}
+                            {"do_module_polling": False},
+                            {"module_bitfield": 0}
                         ]
             ),
         # launch_ros.actions.Node(
