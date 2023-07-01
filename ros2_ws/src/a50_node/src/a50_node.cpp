@@ -1,7 +1,8 @@
 /* 
  * @author Zix
  * A50 sensor is the love of my life and gives a lot of information
- * That data can be grabbed from a web server using tcp/ip (sockets baby)
+ * That data can be grabbed from a web server (that is on the DVL) using tcp/ip (sockets baby)
+ * If you type nc -v 192.168.1.4 16171 in the command line you can see the data (assuming your ip has the same subnet mask)
  * Here we will take that information, parse the json for what we want, and regurgitate it out
  * Of course in C++ because I'm tired of trash languages in this code base 
  */
@@ -38,12 +39,13 @@ public:
   }
 
 private:
-    const char* TCP_IP = "192.168.1.4";
-    const int   TCP_PORT = 16171;
+    const char* TCP_IP = "192.168.1.4";     // I manually set this in the DVL configuration so if you change that make sure to change this
+    const int   TCP_PORT = 16171;           // This is the port that the DVL sends data on 
     const int   BUFFER_SIZE = 2048;
     Interface::state_pub_t position_publisher_;
     Interface::state_pub_t orientation_publisher_;
 
+    /* This is the loop that runs as long as the node is spun (no timer) */
     void startListener()
     {
         int sock = 0;
@@ -57,10 +59,11 @@ private:
             std::string json_stream(buffer, bytesRead);
             json json_dict = json::parse(json_stream);
             vector<float> a50_data = parseJson(json_dict);
-            if (!a50_data.empty()) {publishData(a50_data);}
+            if (!a50_data.empty()) {publishData(a50_data);}        //Sometimes it gives bad data so be careful
         }
     }
 
+    /* Tries to connect to the address of the DVL to grab the data*/
     int connectToSocket(int sock, struct sockaddr_in& serv_addr) 
     {
         if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -80,7 +83,8 @@ private:
         return sock;
     }
 
-    vector<float> parseJson(json json_dict) 
+    /* Using  nlohmann library makes it easy to grab the fields we want from the json*/
+    vector<float> parseJson(json& json_dict) 
     {
         float x, y, z, yaw, pitch, roll;
         try {
@@ -105,11 +109,6 @@ private:
         auto position = scion_types::msg::State();
         position.state = {a50_data[3], a50_data[4], a50_data[5]};
         position_publisher_->publish(position);
-
-        RCLCPP_INFO(this->get_logger(), "Publishing State Data: \nx: %f\ny: %f\nz: %f\n",
-                    position.state[0], position.state[1], position.state[2]);
-        RCLCPP_INFO(this->get_logger(), "Publishing State Data: \nyaw: %f\npitch: %f\nroll: %f\n",
-                    orientation.state[0], orientation.state[1], orientation.state[2]);
     }
 };
 
