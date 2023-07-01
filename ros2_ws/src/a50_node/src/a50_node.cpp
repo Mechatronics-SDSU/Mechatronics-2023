@@ -53,7 +53,7 @@ private:
         char buffer[BUFFER_SIZE] = {0};
 
         sock = connectToSocket(sock, serv_addr);
-        string jsonData = R"({"command" : "reset_dead_reckoning"})"
+        string jsonData = R"({"command" : "reset_dead_reckoning"})";
         ssize_t bytesWrite = send(sock, jsonData.c_str(), jsonData.length(), 0);
         
         if (bytesWrite != static_cast<ssize_t>(jsonData.length())) {
