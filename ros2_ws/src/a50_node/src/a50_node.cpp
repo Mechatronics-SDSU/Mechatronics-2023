@@ -30,13 +30,12 @@ using json = nlohmann::json;
 class A50Node : public rclcpp::Node
 {
 public:
-  explicit A50Node()
-    : Node("dvl_node")
-  {
-    position_publisher_ = this->create_publisher<scion_types::msg::State>("a50_state_data", 10);
-    orientation_publisher_ = this->create_publisher<scion_types::msg::State>("ahrs_orientation_data", 10);
-    this->startListener();
-  }
+    explicit A50Node(): Node("a50_node")
+    {
+        position_publisher_ = this->create_publisher<scion_types::msg::State>("a50_state_data", 10);
+        orientation_publisher_ = this->create_publisher<scion_types::msg::State>("ahrs_orientation_data", 10);
+        this->startListener();
+    }
 
 private:
     const char* TCP_IP = "192.168.1.4";     // I manually set this in the DVL configuration so if you change that make sure to change this
