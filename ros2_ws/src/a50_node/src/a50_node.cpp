@@ -50,14 +50,13 @@ private:
     {
         int sock = 0;
         struct sockaddr_in serv_addr;
-        char buffer[BUFFER_SIZE] = {0};
 
         sock = connectToSocket(sock, serv_addr);
-        string jsonData = R"({"command" : "reset_dead_reckoning"})";
-        ssize_t bytesWrite = send(sock, jsonData.c_str(), jsonData.length(), 0);
+        string json_command = R"({"command" : "reset_dead_reckoning"})";
+        ssize_t bytesWrite = send(sock, json_command.c_str(), json_command.length(), 0);
         
-        if (bytesWrite != static_cast<ssize_t>(jsonData.length())) {
-            std::cerr << "Failed to send data." << std::endl;
+        if (bytesWrite != static_cast<ssize_t>(json_command.length())) {
+            cerr << "Failed to send data." << endl;
         }
         close(sock);
     }
