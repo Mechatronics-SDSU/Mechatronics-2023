@@ -34,6 +34,7 @@ public:
     {
         position_publisher_ = this->create_publisher<scion_types::msg::State>("a50_state_data", 10);
         orientation_publisher_ = this->create_publisher<scion_types::msg::State>("ahrs_orientation_data", 10);
+        this->resetDeadReckoning();
         this->startListener();
     }
 
@@ -43,6 +44,23 @@ private:
     const int   BUFFER_SIZE = 2048;
     Interface::state_pub_t position_publisher_;
     Interface::state_pub_t orientation_publisher_;
+
+    // Send reset command to the socket
+    void resetDeadReckoning() 
+    {
+        int sock = 0;
+        struct sockaddr_in serv_addr;
+        char buffer[BUFFER_SIZE] = {0};
+
+        sock = connectToSocket(sock, serv_addr);
+        string jsonData = R"({"command" : "reset_dead_reckoning"})"
+        ssize_t bytesWrite = send(sock, jsonData.c_str(), jsonData.length(), 0);
+        
+        if (bytesWrite != static_cast<ssize_t>(jsonData.length())) {
+            std::cerr << "Failed to send data." << std::endl;
+        }
+        close(sock);
+    }
 
     /* This is the loop that runs as long as the node is spun (no timer) */
     void startListener()
@@ -55,7 +73,7 @@ private:
         {
             sock = connectToSocket(sock, serv_addr);
             ssize_t bytesRead = recv(sock, buffer, BUFFER_SIZE, 0);
-            std::string json_stream(buffer, bytesRead);
+            string json_stream(buffer, bytesRead);
             json json_dict = json::parse(json_stream);
             vector<float> a50_data = parseJson(json_dict);
             if (!a50_data.empty()) {publishData(a50_data);}        //Sometimes it gives bad data so be careful
