@@ -7,6 +7,8 @@
  * Of course in C++ because I'm tired of trash languages in this code base 
  */
 
+/* NOTE: If it's not working on a new environment you may need to install this library: sudo apt-get install nlohmann-json3-dev */
+
 #include <chrono>
 #include <iostream>
 #include <memory>
