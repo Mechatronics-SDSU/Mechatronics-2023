@@ -26,7 +26,7 @@ int main(int argc, char * argv[])
     });
 
     QApplication app(argc, argv);
-    QFile styleFile("/home/mechatronics/test/ros2_ws/src/gui_node/styles.qss");
+    QFile styleFile("/home/mechatronics/master/ros2_ws/src/gui_node/styles.qss");
     styleFile.open(QFile::ReadOnly);
     QString style(styleFile.readAll());
     app.setStyleSheet(style);

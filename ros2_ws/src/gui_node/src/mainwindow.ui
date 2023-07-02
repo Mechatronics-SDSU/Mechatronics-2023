@@ -148,13 +148,13 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QDial" name="dial_4"/>
+        <widget class="QDial" name="Kp"/>
        </item>
        <item>
-        <widget class="QDial" name="dial"/>
+        <widget class="QDial" name="Ki"/>
        </item>
        <item>
-        <widget class="QDial" name="dial_2"/>
+        <widget class="QDial" name="Kd"/>
        </item>
       </layout>
      </widget>

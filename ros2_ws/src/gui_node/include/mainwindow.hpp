@@ -17,5 +17,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+private slots:
+    void updateDialValue();
+    
 };
 #endif // MAINWINDOW_H
