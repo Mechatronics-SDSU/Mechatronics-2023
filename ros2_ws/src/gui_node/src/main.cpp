@@ -2,7 +2,7 @@
 #include <QApplication>
 
 #include "rclcpp/rclcpp.hpp"
-#include "mainwindow.h"
+#include "mainwindow.hpp"
 
 class GUI : public rclcpp::Node
 {
