@@ -43,7 +43,7 @@ public:
 private:
     const char* TCP_IP = "192.168.1.4";     // I manually set this in the DVL configuration so if you change that make sure to change this
     const int   TCP_PORT = 16171;           // This is the port that the DVL sends data on 
-    const int   BUFFER_SIZE = 2048;
+    const int   BUFFER_SIZE = 4096;
     Interface::state_pub_t position_publisher_;
     Interface::state_pub_t orientation_publisher_;
 
@@ -69,15 +69,22 @@ private:
         int sock = 0;
         struct sockaddr_in serv_addr;
         char buffer[BUFFER_SIZE] = {0};
+        sock = connectToSocket(sock, serv_addr);
         
         while (true) 
         {
-            sock = connectToSocket(sock, serv_addr);
-            ssize_t bytesRead = recv(sock, buffer, BUFFER_SIZE, 0);
-            string json_stream(buffer, bytesRead);
-            json json_dict = json::parse(json_stream);
-            vector<float> a50_data = parseJson(json_dict);
-            if (!a50_data.empty()) {publishData(a50_data);}        //Sometimes it gives bad data so be careful
+            try {
+                ssize_t bytesRead = recv(sock, buffer, BUFFER_SIZE, 0);
+                string json_stream(buffer, bytesRead);
+                json json_dict = json::parse(json_stream);
+                vector<float> a50_data = parseJson(json_dict);
+                if (!a50_data.empty()) {publishData(a50_data);}        //Sometimes it gives bad data so be careful
+                sleep(.06);
+            }
+            catch(...) {
+                close(sock);
+                startListener();
+            }
         }
     }
 
@@ -127,6 +134,11 @@ private:
         auto position = scion_types::msg::State();
         position.state = {a50_data[3], a50_data[4], a50_data[5]};
         position_publisher_->publish(position);
+
+        RCLCPP_INFO(this->get_logger(), "Publishing State Data:\n yaw: %f\n pitch: %f\n roll: %f",
+        a50_data[0], a50_data[1], a50_data[2]);
+        RCLCPP_INFO(this->get_logger(), "Publishing State Data:\n x: %f\n y: %f\n z: %f",
+        a50_data[3], a50_data[4], a50_data[5]);
     }
 };
 
