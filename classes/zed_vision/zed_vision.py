@@ -5,6 +5,7 @@ import argparse
 import torch
 import cv2
 import sys
+import yaml
 
 # import ogl_viewer.viewer as gl
 
@@ -37,6 +38,8 @@ from time import sleep
 lock = Lock()
 run_signal = False
 exit_signal = False
+with open('yolov5/data/coco128.yaml') as f:
+    items = yaml.load(f, Loader=yaml.FullLoader)
 
 class Zed_Vision():
 
@@ -160,15 +163,22 @@ class Zed_Vision():
         init_params.camera_resolution = sl.RESOLUTION.HD720
         init_params.coordinate_units = sl.UNIT.METER
         init_params.depth_mode = sl.DEPTH_MODE.ULTRA  # QUALITY
-        init_params.coordinate_system = sl.COORDINATE_SYSTEM.RIGHT_HANDED_Y_UP
+        init_params.coordinate_system = sl.COORDINATE_SYSTEM.RIGHT_HANDED_Z_UP_X_FWD
         init_params.depth_maximum_distance = 50
-
+        
         status = zed.open(init_params)
+
+        detection_parameters = sl.ObjectDetectionParameters()
+        detection_parameters.enable_tracking = True # Objects will keep the same ID between frames
+        detection_parameters_rt = sl.ObjectDetectionRuntimeParameters()
+        detection_parameters_rt.detection_confidence_threshold = 25
+        positional_tracking_parameters = sl.PositionalTrackingParameters()
+        zed.enable_positional_tracking(positional_tracking_parameters)
+        zed.enable_object_detection(detection_parameters)
 
         if status != sl.ERROR_CODE.SUCCESS:
             print(repr(status))
             exit()
-
 
         print("Initialized Camera")
 
@@ -176,12 +186,6 @@ class Zed_Vision():
         # If the camera is static, uncomment the following line to have better performances and boxes sticked to the ground.
         # positional_tracking_parameters.set_as_static = True
         zed.enable_positional_tracking(positional_tracking_parameters)
-
-        obj_param = sl.ObjectDetectionParameters()
-        obj_param.detection_model = sl.OBJECT_DETECTION_MODEL.CUSTOM_BOX_OBJECTS
-        obj_param.enable_tracking = True               
-
-        zed.enable_object_detection(obj_param)
 
         return zed ,opt
 
@@ -195,8 +199,6 @@ class Zed_Vision():
         objects = sl.Objects()
         runtime_params = sl.RuntimeParameters()
         obj_runtime_param = sl.ObjectDetectionRuntimeParameters()
-
-
         
         if zed.grab(runtime_params) == sl.ERROR_CODE.SUCCESS:
             """
@@ -224,9 +226,24 @@ class Zed_Vision():
             zed.ingest_custom_box_objects(detections)
             lock.release()
             zed.retrieve_objects(objects, obj_runtime_param)
-
+            """  try:
+                    depth_ocv = depth_map.get_data()
+                    count = 1
+                    total = 0
+                    x = object.bounding_box_2d[0][1]
+                    while x < object.bounding_box_2d[1][0]:
+                        y = object.bounding_box_2d[1][1]
+                        while y < object.bounding_box_2d[2][1]:
+                            total += depth_ocv[x,y]
+                            count += 1
+                            y += 5
+                        x += 5
+                    AVERAGE = total/count """
             for object in objects.object_list:
-                print("{} {} {}".format(object.raw_label, object.position, object.dimensions))
+                print("There is a " + str(items['names'][object.raw_label]) + "(" + str(object.raw_label) + ")" + " about " + str(object.position) + "meters away from me") 
+                # print(object.bounding_box_2d)
+            
+                # print("{} {} {}".format(object.raw_label, object.position, object.dimensions))
 
             return objects.object_list, depth_map, zed_pose, py_translation
            

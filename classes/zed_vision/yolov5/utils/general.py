@@ -821,9 +821,9 @@ def scale_segments(img1_shape, segments, img0_shape, ratio_pad=None, normalize=F
         gain = ratio_pad[0][0]
         pad = ratio_pad[1]
 
-    segments[:, 0] -= pad[0]  # x padding
-    segments[:, 1] -= pad[1]  # y padding
-    segments /= gain
+    segments[:, [0, 2]] -= pad[0]  # x padding
+    segments[:, [1, 3]] -= pad[1]  # y padding
+    segments[:, :4] /= gain
     clip_segments(segments, img0_shape)
     if normalize:
         segments[:, 0] /= img0_shape[1]  # width
