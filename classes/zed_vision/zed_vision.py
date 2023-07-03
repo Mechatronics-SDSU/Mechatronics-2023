@@ -163,7 +163,7 @@ class Zed_Vision():
         init_params.camera_resolution = sl.RESOLUTION.HD720
         init_params.coordinate_units = sl.UNIT.METER
         init_params.depth_mode = sl.DEPTH_MODE.ULTRA  # QUALITY
-        init_params.coordinate_system = sl.COORDINATE_SYSTEM.RIGHT_HANDED_Y_UP
+        init_params.coordinate_system = sl.COORDINATE_SYSTEM.RIGHT_HANDED_Z_UP_X_FWD
         init_params.depth_maximum_distance = 50
         
         status = zed.open(init_params)
@@ -240,7 +240,7 @@ class Zed_Vision():
                         x += 5
                     AVERAGE = total/count """
             for object in objects.object_list:
-                print("There is a " + str(items['names'][object.raw_label]) + "(" + str(object.raw_label) + ")" + " about " + str(object.position[2]) + "meters away from me") 
+                print("There is a " + str(items['names'][object.raw_label]) + "(" + str(object.raw_label) + ")" + " about " + str(object.position) + "meters away from me") 
                 # print(object.bounding_box_2d)
             
                 # print("{} {} {}".format(object.raw_label, object.position, object.dimensions))
