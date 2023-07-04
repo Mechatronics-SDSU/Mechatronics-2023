@@ -16,6 +16,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(scion_types REQUIRED)
+find_package(std_msgs REQUIRED)
 
 include_directories(include)
 
@@ -25,9 +26,10 @@ add_executable(gui_exec src/main.cpp
         src/mainwindow.ui
 )
 
-target_include_directories(gui_exec PUBLIC include)
+target_include_directories(gui_exec PUBLIC include
+                                    ../control_interface/include)
 
-ament_target_dependencies(gui_exec PUBLIC rclcpp scion_types)
+ament_target_dependencies(gui_exec PUBLIC rclcpp scion_types std_msgs)
 
 target_link_libraries(gui_exec PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 

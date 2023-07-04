@@ -3,18 +3,39 @@
 #include <iostream>
 #include <QTimer>
 #include <cstring>
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
-    QObject::connect(ui->Kp, &QDial::valueChanged, this, &MainWindow::updateDialValue);
+    this->node = rclcpp::Node::make_shared("my_node");
+    this->kp_publisher = node->create_publisher<std_msgs::msg::Int32>("kp_dial_data", 10);
+    this->ki_publisher = node->create_publisher<std_msgs::msg::Int32>("ki_dial_data", 10);
+    this->kd_publisher = node->create_publisher<std_msgs::msg::Int32>("kd_dial_data", 10);
 
-    // ui->Kp->
+    ui->setupUi(this);
+    QObject::connect(ui->Kp, &QDial::valueChanged, this, &MainWindow::updateKpValue);
+    QObject::connect(ui->Ki, &QDial::valueChanged, this, &MainWindow::updateKiValue);
+    QObject::connect(ui->Kd, &QDial::valueChanged, this, &MainWindow::updateKdValue);
 }
 
-void MainWindow::updateDialValue()
+void MainWindow::updateKpValue()
 {
-    int value = ui->Kp->value();
-    ui->pingLabel->setText(QString::fromStdString(std::to_string(value)));
+    auto message = std_msgs::msg::Int32();
+    message.data = ui->Kp->value();;
+    kp_publisher->publish(message);
+}
+
+void MainWindow::updateKiValue()
+{
+    auto message = std_msgs::msg::Int32();
+    message.data = ui->Ki->value();;
+    ki_publisher->publish(message);
+}
+
+void MainWindow::updateKdValue()
+{
+    auto message = std_msgs::msg::Int32();
+    message.data = ui->Kd->value();;
+    kd_publisher->publish(message);
 }
 
 MainWindow::~MainWindow()

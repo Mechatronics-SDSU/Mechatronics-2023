@@ -19,6 +19,7 @@
 #include "scion_types/msg/orientation.hpp"
 #include "scion_types/msg/datapoint.hpp"
 #include "scion_types/action/pid.hpp"
+#include "std_msgs/msg/int32.hpp"
 
 
 #define PI 3.14159265
@@ -52,6 +53,7 @@ namespace Interface
     typedef rclcpp::Subscription<scion_types::msg::Position>::SharedPtr                     position_sub_t;
     typedef rclcpp::Subscription<scion_types::msg::Orientation>::SharedPtr                  orientation_sub_t;
     typedef rclcpp::Subscription<scion_types::msg::Datapoint>::SharedPtr                    datapoint_sub_t;
+    typedef rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr                              int_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::Idea>::SharedPtr                            idea_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::State>::SharedPtr                           state_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::Position>::SharedPtr                        position_pub_t;
