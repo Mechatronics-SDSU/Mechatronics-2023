@@ -7,6 +7,9 @@ cp beta      /usr/local/bin
 cp build     /usr/local/bin
 cp launch    /usr/local/bin
 cp s         /usr/local/bin
+cp connect   /usr/local/bin
+cp create    /usr/local/bin
+cp ask       /usr/local/bin
 
 ls /usr/local/bin
 
