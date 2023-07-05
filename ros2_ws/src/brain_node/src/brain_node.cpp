@@ -83,15 +83,108 @@ class Brain : public rclcpp::Node
             return true;
         }
 
+        void stop()
+        {
+            scion_types::msg::Idea idea = scion_types::msg::Idea();
+            idea.code = Interface::Idea::STOP;
+            idea_pub_->publish(idea);
+        }
+
+        void go(float degree)
+        {
+            scion_types::msg::Idea idea = scion_types::msg::Idea();
+            idea.code = Interface::Idea::GO;
+            idea.parameters = std::vector<float>{degree};
+            idea_pub_->publish(idea);
+        }
+
+        void spin(float degree)
+        {
+            scion_types::msg::Idea idea = scion_types::msg::Idea();
+            idea.code = Interface::Idea::SPIN;
+            idea.parameters = std::vector<float>{degree};
+            idea_pub_->publish(idea);
+        }
+
+        void turn(float degree)
+        {
+            scion_types::msg::Idea idea = scion_types::msg::Idea();
+            idea.code = Interface::Idea::TURN;
+            idea.parameters = std::vector<float>{degree};
+            idea_pub_->publish(idea);
+        }
+
+        void pitch(float degree)
+        {
+            scion_types::msg::Idea idea = scion_types::msg::Idea();
+            idea.code = Interface::Idea::PITCH;
+            idea.parameters = std::vector<float>{degree};
+            idea_pub_->publish(idea);
+        }
+
+        void roll(float degree)
+        {
+            scion_types::msg::Idea idea = scion_types::msg::Idea();
+            idea.code = Interface::Idea::ROLL;
+            idea.parameters = std::vector<float>{degree};
+            idea_pub_->publish(idea);
+        }
+
+        void moveForward(float degree)
+        {
+            scion_types::msg::Idea idea = scion_types::msg::Idea();
+            idea.code = Interface::Idea::MOVE;
+            idea.parameters = std::vector<float>{degree};
+            idea_pub_->publish(idea);
+            RCLCPP_INFO(this->get_logger(), "Moving Forward %f meters", degree);
+        }
+
+        void translate(float degree)
+        {
+            scion_types::msg::Idea idea = scion_types::msg::Idea();
+            idea.code = Interface::Idea::TRANSLATE;
+            idea.parameters = std::vector<float>{degree};
+            idea_pub_->publish(idea);
+        }
+
+        void levitate(float degree)
+        {
+            scion_types::msg::Idea idea = scion_types::msg::Idea();
+            idea.code = Interface::Idea::LEVITATE;
+            idea.parameters = std::vector<float>{degree};
+            idea_pub_->publish(idea);
+        }
+
+        void submerge()
+        {
+            levitate(1);
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            RCLCPP_INFO(this->get_logger(), "Submerged");
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        }
+
+        static void keepTurning(int power)
+        {
+            auto logger = rclcpp::get_logger("my_logger");
+            RCLCPP_INFO(logger, "turning with power of %d", power);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        }
+
+
+
+        ////////////////////////////////////////////////////////////////////////////////
+        //                                  MISSION                                   //
+        ////////////////////////////////////////////////////////////////////////////////
+
         void performMission()
         {
-            doUntil(&Brain::gateSeen, [](int power)
-            {
-                auto logger = rclcpp::get_logger("my_logger");
-                RCLCPP_INFO(logger, "sent CAN Command of power %d", power);
-                std::this_thread::sleep_for(std::chrono::milliseconds(500));
-            },  this->gate_seen_, 20);
+            doUntil(&Brain::gateSeen, &keepTurning, this->gate_seen_, 20);
+            submerge();
+            moveForward(1.5);
         }
+
+
+
 
 }; // class Brain
 
@@ -104,6 +197,14 @@ int main(int argc, char * argv[])
   return 0;
 }
 
+
+
+/*          doUntil(&Brain::gateSeen, [](int power)
+            {
+                auto logger = rclcpp::get_logger("my_logger");
+                RCLCPP_INFO(logger, "sent CAN Command of power %d", power);
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            },  this->gate_seen_, 20); */
 
 /* 
     void moveUntil(int power, condition_t condition, bool& condition_global)
