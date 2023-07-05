@@ -61,8 +61,8 @@ class Brain : public rclcpp::Node
             // {   
 
             // }
-            // moveUntil(10, &Brain::gateSeen);
-            gateSeen();
+            moveUntil(10, &Brain::gateSeen);
+            // gateSeen();
         }
     private:
         Interface::idea_pub_t                       idea_pub_;
@@ -71,17 +71,22 @@ class Brain : public rclcpp::Node
         Interface::object_sub_t                     object_sub_;
         std::string                                 mode_param_;
         Interface::ros_sendframe_client_t           can_client_;
+        bool                                        gate_seen_ = false; 
 
-        // void moveUntil(int power, bool (Brain::*condition)())
-        // {
-        //     // vector<unsigned char> motor_power{power, 0, power, 0, power, 0, power, 0};
-        //     while(!condition) 
-        //     {
-        //         // canClient::sendFrame(0x010, 8, motor_power.data(), can_client_);
-        //         cout << "still waiting" << endl;
-        //         sleep(.5);
-        //     }
-        // }
+        void moveUntil(int power, bool (Brain::*condition)())
+        {
+            // vector<unsigned char> motor_power{power, 0, power, 0, power, 0, power, 0};
+
+            auto gateSeen = std::bind(&Brain::gateSeen, this);
+            std::thread(gateSeen).detach();
+
+            while(!this->gate_seen_) //this->gateSeen()
+            {
+                RCLCPP_INFO(this->get_logger(), "sent CAN Command");
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            }
+            this->gate_seen_ = false;
+        }
 
         bool gateSeen()
         {
@@ -92,10 +97,11 @@ class Brain : public rclcpp::Node
             ("zed_object_data", 10, [&temp_node, &gate_seen](const scion_types::msg::VisionObject::SharedPtr msg) {
                     if (msg->object_name == "test") {
                         gate_seen.set_value(true);
-                        RCLCPP_INFO(temp_node->get_logger(), "something");
+                        RCLCPP_INFO(temp_node->get_logger(), "Gate seen");
                     }
             });
             rclcpp::spin_until_future_complete(temp_node, future);
+            this->gate_seen_ = true;
             return true;
         }
 
