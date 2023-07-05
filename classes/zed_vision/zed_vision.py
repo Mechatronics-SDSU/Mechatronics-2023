@@ -11,6 +11,7 @@ import yaml
 import pyzed.sl as sl
 import torch.backends.cudnn as cudnn
 import math
+from dataclasses import dataclass
 
 """from ultralytics import YOLO
 from ultralytics.nn.tasks import attempt_load_weights
@@ -34,11 +35,19 @@ from time import sleep
 # import ogl_viewer.viewer as gl
 # import cv_viewer.tracking_viewer as cv_viewer
 
-with open('yolov5/data/coco128.yaml') as f:
+with open('/home/mechatronics/master/classes/zed_vision/yolov5/data/coco128.yaml') as f:
     items = yaml.load(f, Loader=yaml.FullLoader)
 lock = Lock()
 run_signal = False
 exit_signal = False
+
+@dataclass
+class VisionObject:
+    object_name: str
+    distance: float
+    def __init__(self):
+        self.object_name = ""
+        self.distance = 0
 
 class Zed_Vision():
 
@@ -227,12 +236,14 @@ class Zed_Vision():
             lock.release()
             zed.retrieve_objects(objects, obj_runtime_param)
 
+            visionObjectList = []
             for object in objects.object_list:
-                if object.raw_label == 0:
-                    print("There is a " + str(items['names'][object.raw_label]) + "(" + str(object.raw_label) + ")" + 
-                        " about " + str(round(object.position[0], 1)) + "meters away from me") 
+                visionObject = VisionObject()
+                visionObject.object_name = items['names'][object.raw_label]
+                visionObject.distance = round(object.position[0], 1)
+                visionObjectList.append(visionObject)
 
-            return objects.object_list, depth_map, zed_pose, py_translation
+            return objects.object_list, depth_map, zed_pose, py_translation, visionObjectList
 
 def main():
     global image_net, exit_signal, run_signal, detections
@@ -249,3 +260,8 @@ def main():
 if __name__ == '__main__':
     with torch.no_grad():
         main()
+
+
+""" if object.raw_label == 0:
+        print("There is a " + str(items['names'][object.raw_label]) + "(" + str(object.raw_label) + ")" + 
+        " about " + str(round(object.position[0], 1)) + "meters away from me")  """

@@ -19,6 +19,7 @@ from threading import Thread
 from classes.zed_vision.zed_vision import Zed_Vision
 from scion_types.msg import Idea
 from scion_types.msg import ZedObject
+from scion_types.msg import VisionObject
 from scion_types.msg import Position
 import math
 
@@ -42,7 +43,8 @@ class ZedVision(Node):
         We also need to initialize the camera with the initCamera function which will pass in all the parameters we need
         """
         super().__init__('zed_vision_data')
-        self.vision_publisher = self.create_publisher(ZedObject, 'topic', 10)
+        self.vision_object_publisher = self.create_publisher(VisionObject, 'zed_object_data', 10)
+        self.vision_publisher = self.create_publisher(ZedObject, 'zed_vision_data', 10)
         self.position_publisher = self.create_publisher(Position, 'zed_position_data', 10)
         self.idea_publisher = self.create_publisher(Idea, 'brain_idea_data', 10)
         timer_period = .05  # seconds
@@ -90,25 +92,7 @@ class ZedVision(Node):
         Here we'll query the zed_vision class for the info using updateCamera function and then publish what we need in ROS messages 
         """
         
-        object_list, depth_map, zed_pose, py_translation = self.vision.updateCamera(self.zed)
-        # if object_list:
-        #     for object in object_list:
-        #         msg = ZedObject()
-        #         print(type(object.bounding_box))
-        #         print(object.bounding_box)
-
-                # msg.label = object.label
-                # msg.velocity = [object.velocity[0]. object.velocity[1], object.velocity[2]]
-                # msg.position = [object.position[0], object.position[1], object.position[2]]
-                # self.publisher_.publish(msg)
-                # print(msg.label)
-                # print(object.id)
-                # print(object.label_id)
-                # print(object.position)
-                # self.get_logger().info('Publishing Position Data: "[x: %fy: %fz: %f]"' % (msg.position[0], msg.position[1], msg.position[2]))
-                # self.get_logger().info('Publishing Velocity Data: "x: %f\ny: %f\nz: %f\n"' % (msg.velocity[0], msg.velocity[1], msg.velocity[2]))
-
-        """ Wall/Object avoidance code in progress """        
+        object_list, depth_map, zed_pose, py_translation, vision_object_list = self.vision.updateCamera(self.zed)
 
         self.processDepthData(depth_map)    
         tx =  1 * round(zed_pose.get_translation(py_translation).get()[0], 3)
@@ -118,9 +102,22 @@ class ZedVision(Node):
         position = Position()
         position.position = [tz, tx, ty]
         self.position_publisher.publish(position)
-        self.get_logger().info('Publishing Position Data:\n "x: %f\ny: %f\nz: %f\n"' % (tz,tx,ty))
+        # self.get_logger().info('Publishing Position Data:\n "x: %f\ny: %f\nz: %f\n"' % (tz,tx,ty))
 
-    
+        if object_list:
+            for object in object_list:
+                msg = ZedObject()
+                msg.label_id = object.raw_label
+                msg.position = [object.position[0], object.position[1], object.position[2]]
+                self.vision_publisher.publish(msg)
+                
+        if vision_object_list:
+            for object in vision_object_list:
+                msg = VisionObject()
+                msg.object_name = object.object_name
+                msg.distance = object.distance
+                self.vision_object_publisher.publish(msg)
+
 
 import subprocess
 
