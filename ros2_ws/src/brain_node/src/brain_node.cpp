@@ -61,8 +61,13 @@ class Brain : public rclcpp::Node
             // {   
 
             // }
-            moveUntil(10, &Brain::gateSeen, this->gate_seen_);
-            // gateSeen();
+            doUntil(&Brain::gateSeen, [](int power)
+            {
+                auto logger = rclcpp::get_logger("my_logger");
+                RCLCPP_INFO(logger, "sent CAN Command of power %d", power);
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            },  this->gate_seen_, 10);
+
         }
     private:
         Interface::idea_pub_t                       idea_pub_;
@@ -72,8 +77,23 @@ class Brain : public rclcpp::Node
         std::string                                 mode_param_;
         Interface::ros_sendframe_client_t           can_client_;
         bool                                        gate_seen_ = false; 
+        typedef bool (Brain::*condition_t)();
+        typedef void (action_t)(int);
+        
 
-        void moveUntil(int power, bool (Brain::*condition)(), bool& condition_global)
+        void doUntil(condition_t condition, action_t action, bool& condition_global, int parameter)
+        {
+            auto condition_met = std::bind(condition, this);
+            std::thread(condition_met).detach();
+
+            while(!condition_global) //this->gateSeen()
+            {
+                (action)(parameter);
+            }
+            condition_global = false;
+        }
+
+        void moveUntil(int power, condition_t condition, bool& condition_global)
         {
             // vector<unsigned char> motor_power{power, 0, power, 0, power, 0, power, 0};
             auto condition_met = std::bind(condition, this);
