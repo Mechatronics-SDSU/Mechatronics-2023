@@ -39,35 +39,9 @@ class Brain : public rclcpp::Node
     public:
         explicit Brain(): Node("brain_node")
         {
-            // this->temp_node_ = rclcpp::Node::make_shared("temp_node");
             idea_pub_ = this->create_publisher<scion_types::msg::Idea>("brain_idea_data", 10);
             can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
-            // object_sub_ = this->create_subscription<scion_types::msg::VisionObject>
-            // ("zed_object_data", 10, [this](const scion_types::msg::VisionObject::SharedPtr msg) {
-            //          RCLCPP_INFO(this->get_logger(), "Publishing Idea" );
-            // });
-         
-            this->declare_parameter("mode", MODE);
-            mode_param_ = this->get_parameter("mode").get_parameter_value().get<std::string>();
-            // if (mode_param_ == "Explore")
-            // {
-            //     decision_timer_ = this->create_wall_timer
-            //     (
-            //         std::chrono::milliseconds(25), 
-            //         std::bind(&Brain::make_decision, this)
-            //     );
-            // }
-            // if (mode_param_ == "Mission")
-            // {   
-
-            // }
-            doUntil(&Brain::gateSeen, [](int power)
-            {
-                auto logger = rclcpp::get_logger("my_logger");
-                RCLCPP_INFO(logger, "sent CAN Command of power %d", power);
-                std::this_thread::sleep_for(std::chrono::milliseconds(500));
-            },  this->gate_seen_, 10);
-
+            this->performMission();
         }
     private:
         Interface::idea_pub_t                       idea_pub_;
@@ -79,7 +53,6 @@ class Brain : public rclcpp::Node
         bool                                        gate_seen_ = false; 
         typedef bool (Brain::*condition_t)();
         typedef void (action_t)(int);
-        
 
         void doUntil(condition_t condition, action_t action, bool& condition_global, int parameter)
         {
@@ -91,21 +64,6 @@ class Brain : public rclcpp::Node
                 (action)(parameter);
             }
             condition_global = false;
-        }
-
-        void moveUntil(int power, condition_t condition, bool& condition_global)
-        {
-            // vector<unsigned char> motor_power{power, 0, power, 0, power, 0, power, 0};
-            auto condition_met = std::bind(condition, this);
-            std::thread(condition_met).detach();
-
-            while(!condition_global) //this->gateSeen()
-            {
-                RCLCPP_INFO(this->get_logger(), "sent CAN Command");
-                std::this_thread::sleep_for(std::chrono::milliseconds(500));
-            }
-            condition_global = false;
-            exit(1);
         }
 
         bool gateSeen()
@@ -125,27 +83,14 @@ class Brain : public rclcpp::Node
             return true;
         }
 
-        void initSequence(Interface::idea_vector_t& idea_sequence)
+        void performMission()
         {
-            using namespace Interface;
-            scion_types::msg::Idea idea1 = scion_types::msg::Idea();
-            idea1.code = Idea::RELATIVE_POINT;
-            idea1.parameters = std::vector<float>{0.0F,-0.3F};
-
-            scion_types::msg::Idea idea2 = scion_types::msg::Idea();
-            idea2.code = Idea::RELATIVE_POINT;
-            idea2.parameters = std::vector<float>{0.0F,-0.3F};
-        }
-
-        void publishSequence(Interface::idea_vector_t& idea_sequence)
-        {   
-            using namespace Interface;
-            for (idea_message_t& idea_message : idea_sequence)
+            doUntil(&Brain::gateSeen, [](int power)
             {
-                sleep(1);
-                this->idea_pub_->publish(idea_message);
-            }
-            RCLCPP_INFO(this->get_logger(), "Publishing Idea" );
+                auto logger = rclcpp::get_logger("my_logger");
+                RCLCPP_INFO(logger, "sent CAN Command of power %d", power);
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            },  this->gate_seen_, 20);
         }
 
 }; // class Brain
@@ -158,3 +103,44 @@ int main(int argc, char * argv[])
   rclcpp::shutdown();
   return 0;
 }
+
+
+/* 
+    void moveUntil(int power, condition_t condition, bool& condition_global)
+    {
+        // vector<unsigned char> motor_power{power, 0, power, 0, power, 0, power, 0};
+        auto condition_met = std::bind(condition, this);
+        std::thread(condition_met).detach();
+
+        while(!condition_global) //this->gateSeen()
+        {
+            RCLCPP_INFO(this->get_logger(), "sent CAN Command");
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        }
+        condition_global = false;
+    } */
+
+
+/* void initSequence(Interface::idea_vector_t& idea_sequence)
+    {
+        using namespace Interface;
+        scion_types::msg::Idea idea1 = scion_types::msg::Idea();
+        idea1.code = Idea::RELATIVE_POINT;
+        idea1.parameters = std::vector<float>{0.0F,-0.3F};
+
+        scion_types::msg::Idea idea2 = scion_types::msg::Idea();
+        idea2.code = Idea::RELATIVE_POINT;
+        idea2.parameters = std::vector<float>{0.0F,-0.3F};
+    } */
+
+
+/* void publishSequence(Interface::idea_vector_t& idea_sequence)
+    {   
+            using namespace Interface;
+            for (idea_message_t& idea_message : idea_sequence)
+            {
+                sleep(1);
+                this->idea_pub_->publish(idea_message);
+            }
+            RCLCPP_INFO(this->get_logger(), "Publishing Idea" );
+    } */
