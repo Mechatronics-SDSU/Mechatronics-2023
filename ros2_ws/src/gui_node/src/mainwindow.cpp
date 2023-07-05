@@ -6,7 +6,7 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
-    this->node = rclcpp::Node::make_shared("my_node");
+    this->node = rclcpp::Node::make_shared("gui_node");
     this->kp_publisher = node->create_publisher<std_msgs::msg::Int32>("kp_dial_data", 10);
     this->ki_publisher = node->create_publisher<std_msgs::msg::Int32>("ki_dial_data", 10);
     this->kd_publisher = node->create_publisher<std_msgs::msg::Int32>("kd_dial_data", 10);

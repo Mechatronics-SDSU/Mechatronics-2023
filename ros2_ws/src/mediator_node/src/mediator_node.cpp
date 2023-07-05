@@ -211,26 +211,6 @@ private:
       }
     }
 
-    Interface::command_vector_t relativePoint(float x, float y)
-    {
-        
-    }
-
-    Interface::command_vector_t absolutePoint(float x, float y)
-    {
-        
-    }
-
-    Interface::command_vector_t pureRelativePoint(float x, float y)
-    {
-        
-    }
-
-    Interface::command_vector_t pureAbsolutePoint(float x, float y)
-    {
-        
-    }
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                             // ACTION SERVER // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

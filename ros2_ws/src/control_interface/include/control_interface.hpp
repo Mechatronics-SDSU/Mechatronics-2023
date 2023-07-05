@@ -18,6 +18,7 @@
 #include "scion_types/msg/position.hpp"
 #include "scion_types/msg/orientation.hpp"
 #include "scion_types/msg/datapoint.hpp"
+#include "scion_types/msg/vision_object.hpp"
 #include "scion_types/action/pid.hpp"
 #include "std_msgs/msg/int32.hpp"
 
@@ -53,6 +54,7 @@ namespace Interface
     typedef rclcpp::Subscription<scion_types::msg::Position>::SharedPtr                     position_sub_t;
     typedef rclcpp::Subscription<scion_types::msg::Orientation>::SharedPtr                  orientation_sub_t;
     typedef rclcpp::Subscription<scion_types::msg::Datapoint>::SharedPtr                    datapoint_sub_t;
+    typedef rclcpp::Subscription<scion_types::msg::VisionObject>::SharedPtr                 object_sub_t;
     typedef rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr                              int_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::Idea>::SharedPtr                            idea_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::State>::SharedPtr                           state_pub_t;
@@ -67,6 +69,7 @@ namespace Interface
     /* Function Pointers That Point to Different Commands for Robot */
     typedef desired_state_t (*state_transform_func)(float); //, current_state_t&
     typedef desired_state_t (*simple_movement_func)();
+    typedef bool (*predicate_function)();
 
     /* Brain will Send Ideas to the Mediator Which will Translate Into Commands For the PID Controller */
     enum Idea

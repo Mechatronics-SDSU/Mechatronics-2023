@@ -22,50 +22,74 @@
 
 #include <vector>
 #include <unistd.h>
+#include <iostream>
 
 #include "scion_types/action/pid.hpp"
-#include "scion_types/msg/idea.hpp"
 #include "control_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
-#include "rclcpp_components/register_node_macro.hpp"
 
 #define MODE "Mission"
+
+using namespace std;
 
 class Brain : public rclcpp::Node
 {
     public:
         explicit Brain(): Node("brain_node")
         {
+            idea_pub_ = this->create_publisher<scion_types::msg::Idea>("brain_idea_data", 10);
+            // object_sub_ = this->create_subscription<scion_types::msg::VisionObject>
+            // ("zed_object_data", 10, [this](const scion_types::msg::VisionObject::SharedPtr msg) {
+            //          RCLCPP_INFO(this->get_logger(), "Publishing Idea" );
+            // });
+         
             this->declare_parameter("mode", MODE);
             mode_param = this->get_parameter("mode").get_parameter_value().get<std::string>();
+            // if (mode_param == "Explore")
+            // {
+            //     decision_timer_ = this->create_wall_timer
+            //     (
+            //         std::chrono::milliseconds(25), 
+            //         std::bind(&Brain::make_decision, this)
+            //     );
+            // }
+            // if (mode_param == "Mission")
+            // {   
+            // }
 
-            idea_pub_ = this->create_publisher<scion_types::msg::Idea>("brain_idea_data", 10);
+            seeGate();
             
-            if (mode_param == "Explore")
-            {
-                decision_timer_ = this->create_wall_timer
-                (
-                    std::chrono::milliseconds(25), 
-                    std::bind(&Brain::make_decision, this)
-                );
-            }
-            if (mode_param == "Mission")
-            {   
-                sleep(7);
-                initSequence(idea_sequence_);
-                publishSequence(idea_sequence_);
-            }
         }
     private:
-        rclcpp::Publisher<scion_types::msg::Idea>::SharedPtr idea_pub_;
-        rclcpp::TimerBase::SharedPtr decision_timer_;
+        Interface::idea_pub_t idea_pub_;
+        Interface::ros_timer_t decision_timer_;
         Interface::idea_vector_t idea_sequence_;
         std::string mode_param;
+        Interface::object_sub_t object_sub_;
 
-        void make_decision()
+        void moveUntil(int power, Interface::predicate_function condition)
         {
-            std::cout << "Making A Decision" << std::endl;
+            
+        }
+
+        bool seeGate()
+        {
+            bool gateSeen = false;
+            
+            // Interface::object_sub_t object_sub;
+            object_sub_ = this->create_subscription<scion_types::msg::VisionObject>
+            ("zed_object_data", 10, [this](const scion_types::msg::VisionObject::SharedPtr msg) {
+                // if ("a" == "a") {
+                    RCLCPP_INFO(this->get_logger(), "Publishing Idea" );
+                // }
+            });
+
+            while (!gateSeen)
+            {
+                cout << "No gate" << endl;
+            }
+            return true;
         }
 
         void initSequence(Interface::idea_vector_t& idea_sequence)
@@ -78,53 +102,11 @@ class Brain : public rclcpp::Node
             scion_types::msg::Idea idea2 = scion_types::msg::Idea();
             idea2.code = Idea::RELATIVE_POINT;
             idea2.parameters = std::vector<float>{0.0F,-0.3F};
-
-            // scion_types::msg::Idea idea1 = scion_types::msg::Idea();
-            // idea1.code = Idea::TURN;
-            // idea1.parameters = std::vector<float>{20};
-
-            // scion_types::msg::Idea idea2 = scion_types::msg::Idea();
-            // idea1.code = Idea::MOVE;
-            // idea1.parameters = std::vector<float>{0.1};
-            
-            idea_sequence.push_back(idea1);
-            idea_sequence.push_back(idea2);
-
-            idea_sequence.push_back(idea1);
-            idea_sequence.push_back(idea2);
-
-            idea_sequence.push_back(idea1);
-            idea_sequence.push_back(idea2);
-
-            idea_sequence.push_back(idea1);
-            idea_sequence.push_back(idea2);
-
-            idea_sequence.push_back(idea1);
-            idea_sequence.push_back(idea2);
-
-            idea_sequence.push_back(idea1);
-            idea_sequence.push_back(idea2);
-
-            idea_sequence.push_back(idea1);
-            idea_sequence.push_back(idea2);
-
-            idea_sequence.push_back(idea1);
-            idea_sequence.push_back(idea2);
-
-
         }
 
         void publishSequence(Interface::idea_vector_t& idea_sequence)
         {   
             using namespace Interface;
-            // for (idea_message_t& idea_message : idea_sequence)
-            // {
-            //     std::cout << idea_message.code << std::endl;
-            //     for (float parameter : idea_message.parameters)
-            //     {
-            //         std::cout << parameter << std::endl;
-            //     } 
-            // }
             for (idea_message_t& idea_message : idea_sequence)
             {
                 sleep(1);

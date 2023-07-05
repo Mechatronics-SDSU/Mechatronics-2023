@@ -11,10 +11,8 @@ import sys
 # Python syntax is garbage and I appended these for the relative imports
 sys.path.append("/home/mechatronics/master")
 
-import statistics
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
 from threading import Thread
 from classes.zed_vision.zed_vision import Zed_Vision
 from scion_types.msg import Idea
@@ -104,13 +102,13 @@ class ZedVision(Node):
         self.position_publisher.publish(position)
         # self.get_logger().info('Publishing Position Data:\n "x: %f\ny: %f\nz: %f\n"' % (tz,tx,ty))
 
-        if object_list:
-            for object in object_list:
-                msg = ZedObject()
-                msg.label_id = object.raw_label
-                msg.position = [object.position[0], object.position[1], object.position[2]]
-                self.vision_publisher.publish(msg)
-                
+        # if object_list:
+        #     for object in object_list:
+        #         msg = ZedObject()
+        #         msg.label_id = object.raw_label
+        #         msg.position = [object.position[0], object.position[1], object.position[2]]
+        #         self.vision_publisher.publish(msg)
+
         if vision_object_list:
             for object in vision_object_list:
                 msg = VisionObject()
