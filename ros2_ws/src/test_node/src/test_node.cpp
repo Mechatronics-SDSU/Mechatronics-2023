@@ -35,7 +35,7 @@ private:
     void publishZedObjectTimer()
     {
       scion_types::msg::VisionObject vision_object = scion_types::msg::VisionObject();
-      vision_object.object_name = "test";
+      vision_object.object_name = "gate";
       vision_object.distance = 123.45;
       this->zed_object_pub_->publish(vision_object);
       RCLCPP_INFO(this->get_logger(), "Publishing Test Vision Object" );

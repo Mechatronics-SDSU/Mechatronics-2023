@@ -61,7 +61,7 @@ class Brain : public rclcpp::Node
             // {   
 
             // }
-            moveUntil(10, &Brain::gateSeen);
+            moveUntil(10, &Brain::gateSeen, this->gate_seen_);
             // gateSeen();
         }
     private:
@@ -73,19 +73,19 @@ class Brain : public rclcpp::Node
         Interface::ros_sendframe_client_t           can_client_;
         bool                                        gate_seen_ = false; 
 
-        void moveUntil(int power, bool (Brain::*condition)())
+        void moveUntil(int power, bool (Brain::*condition)(), bool& condition_global)
         {
             // vector<unsigned char> motor_power{power, 0, power, 0, power, 0, power, 0};
+            auto condition_met = std::bind(condition, this);
+            std::thread(condition_met).detach();
 
-            auto gateSeen = std::bind(&Brain::gateSeen, this);
-            std::thread(gateSeen).detach();
-
-            while(!this->gate_seen_) //this->gateSeen()
+            while(!condition_global) //this->gateSeen()
             {
                 RCLCPP_INFO(this->get_logger(), "sent CAN Command");
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
             }
-            this->gate_seen_ = false;
+            condition_global = false;
+            exit(1);
         }
 
         bool gateSeen()
@@ -95,7 +95,7 @@ class Brain : public rclcpp::Node
             Interface::node_t temp_node = rclcpp::Node::make_shared("zed_object_subscriber");;
             Interface::object_sub_t object_sub = temp_node->create_subscription<scion_types::msg::VisionObject>
             ("zed_object_data", 10, [&temp_node, &gate_seen](const scion_types::msg::VisionObject::SharedPtr msg) {
-                    if (msg->object_name == "test") {
+                    if (msg->object_name == "gate") {
                         gate_seen.set_value(true);
                         RCLCPP_INFO(temp_node->get_logger(), "Gate seen");
                     }
