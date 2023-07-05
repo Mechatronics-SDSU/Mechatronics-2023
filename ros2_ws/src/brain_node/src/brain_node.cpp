@@ -36,6 +36,9 @@ using namespace std;
 
 class Brain : public rclcpp::Node
 {
+    typedef bool (Brain::*condition_t)();
+    typedef void (action_t)(int);
+
     public:
         explicit Brain(): Node("brain_node")
         {
@@ -51,9 +54,7 @@ class Brain : public rclcpp::Node
         std::string                                 mode_param_;
         Interface::ros_sendframe_client_t           can_client_;
         bool                                        gate_seen_ = false; 
-        typedef bool (Brain::*condition_t)();
-        typedef void (action_t)(int);
-
+        
         void doUntil(condition_t condition, action_t action, bool& condition_global, int parameter)
         {
             auto condition_met = std::bind(condition, this);
@@ -170,7 +171,22 @@ class Brain : public rclcpp::Node
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
 
-
+        float getDistanceFromCamera(string object)
+        {
+            float distance;
+            std::promise<bool> gate_seen;
+            std::shared_future<bool> future  = gate_seen.get_future();
+            Interface::node_t temp_node = rclcpp::Node::make_shared("zed_object_subscriber");;
+            Interface::object_sub_t object_sub = temp_node->create_subscription<scion_types::msg::VisionObject>
+            ("zed_object_data", 10, [&temp_node, &gate_seen, &object, &distance](const scion_types::msg::VisionObject::SharedPtr msg) {
+                    if (msg->object_name == object) {
+                        gate_seen.set_value(true);
+                        distance = msg->distance;
+                    }
+            });
+            rclcpp::spin_until_future_complete(temp_node, future);
+            return distance;
+        }
 
         ////////////////////////////////////////////////////////////////////////////////
         //                                  MISSION                                   //
@@ -180,7 +196,8 @@ class Brain : public rclcpp::Node
         {
             doUntil(&Brain::gateSeen, &keepTurning, this->gate_seen_, 20);
             submerge();
-            moveForward(1.5);
+            moveForward(this->getDistanceFromCamera("gate"));
+            exit(1);
         }
 
 
