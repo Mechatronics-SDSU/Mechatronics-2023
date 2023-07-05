@@ -23,6 +23,7 @@
 #include <vector>
 #include <unistd.h>
 #include <iostream>
+#include <chrono>
 
 #include "scion_types/action/pid.hpp"
 #include "control_interface.hpp"
@@ -38,15 +39,17 @@ class Brain : public rclcpp::Node
     public:
         explicit Brain(): Node("brain_node")
         {
+            // this->temp_node_ = rclcpp::Node::make_shared("temp_node");
             idea_pub_ = this->create_publisher<scion_types::msg::Idea>("brain_idea_data", 10);
+            can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
             // object_sub_ = this->create_subscription<scion_types::msg::VisionObject>
             // ("zed_object_data", 10, [this](const scion_types::msg::VisionObject::SharedPtr msg) {
             //          RCLCPP_INFO(this->get_logger(), "Publishing Idea" );
             // });
          
             this->declare_parameter("mode", MODE);
-            mode_param = this->get_parameter("mode").get_parameter_value().get<std::string>();
-            // if (mode_param == "Explore")
+            mode_param_ = this->get_parameter("mode").get_parameter_value().get<std::string>();
+            // if (mode_param_ == "Explore")
             // {
             //     decision_timer_ = this->create_wall_timer
             //     (
@@ -54,41 +57,45 @@ class Brain : public rclcpp::Node
             //         std::bind(&Brain::make_decision, this)
             //     );
             // }
-            // if (mode_param == "Mission")
+            // if (mode_param_ == "Mission")
             // {   
-            // }
 
-            seeGate();
-            
+            // }
+            // moveUntil(10, &Brain::gateSeen);
+            gateSeen();
         }
     private:
-        Interface::idea_pub_t idea_pub_;
-        Interface::ros_timer_t decision_timer_;
-        Interface::idea_vector_t idea_sequence_;
-        std::string mode_param;
-        Interface::object_sub_t object_sub_;
+        Interface::idea_pub_t                       idea_pub_;
+        Interface::ros_timer_t                      decision_timer_;
+        Interface::idea_vector_t                    idea_sequence_;
+        Interface::object_sub_t                     object_sub_;
+        std::string                                 mode_param_;
+        Interface::ros_sendframe_client_t           can_client_;
 
-        void moveUntil(int power, Interface::predicate_function condition)
-        {
-            
-        }
+        // void moveUntil(int power, bool (Brain::*condition)())
+        // {
+        //     // vector<unsigned char> motor_power{power, 0, power, 0, power, 0, power, 0};
+        //     while(!condition) 
+        //     {
+        //         // canClient::sendFrame(0x010, 8, motor_power.data(), can_client_);
+        //         cout << "still waiting" << endl;
+        //         sleep(.5);
+        //     }
+        // }
 
-        bool seeGate()
+        bool gateSeen()
         {
-            bool gateSeen = false;
-            
-            // Interface::object_sub_t object_sub;
-            object_sub_ = this->create_subscription<scion_types::msg::VisionObject>
-            ("zed_object_data", 10, [this](const scion_types::msg::VisionObject::SharedPtr msg) {
-                // if ("a" == "a") {
-                    RCLCPP_INFO(this->get_logger(), "Publishing Idea" );
-                // }
+            std::promise<bool> gate_seen;
+            std::shared_future<bool> future  = gate_seen.get_future();
+            Interface::node_t temp_node = rclcpp::Node::make_shared("zed_object_subscriber");;
+            Interface::object_sub_t object_sub = temp_node->create_subscription<scion_types::msg::VisionObject>
+            ("zed_object_data", 10, [&temp_node, &gate_seen](const scion_types::msg::VisionObject::SharedPtr msg) {
+                    if (msg->object_name == "test") {
+                        gate_seen.set_value(true);
+                        RCLCPP_INFO(temp_node->get_logger(), "something");
+                    }
             });
-
-            while (!gateSeen)
-            {
-                cout << "No gate" << endl;
-            }
+            rclcpp::spin_until_future_complete(temp_node, future);
             return true;
         }
 

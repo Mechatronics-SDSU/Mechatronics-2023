@@ -41,6 +41,8 @@ namespace Interface
     typedef std::deque<Command>                                                             command_queue_t;
     typedef std::vector<Command>                                                            command_vector_t;
 
+
+    typedef rclcpp::Node::SharedPtr                                                         node_t;
     typedef rclcpp_action::Client<PIDAction>::SharedPtr                                     pid_action_client_t;
     typedef rclcpp_action::Server<PIDAction>::SharedPtr                                     pid_action_server_t;
     typedef rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr                               ros_trigger_client_t;
@@ -61,6 +63,7 @@ namespace Interface
     typedef rclcpp::Publisher<scion_types::msg::Position>::SharedPtr                        position_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::Orientation>::SharedPtr                     orientation_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::Datapoint>::SharedPtr                       datapoint_pub_t;
+    typedef rclcpp::Publisher<scion_types::msg::VisionObject>::SharedPtr                    object_pub_t;
     typedef std::vector<std::vector<float>>                                                 matrix_t;                                                                            
     typedef rclcpp::TimerBase::SharedPtr                                                    ros_timer_t;
 

@@ -16,6 +16,8 @@ add_executable(test_exec src/test_node.cpp)
 
 ament_target_dependencies(test_exec scion_types rclcpp)
 
+target_include_directories(test_exec PUBLIC ../control_interface/include)
+
 install(TARGETS
   test_exec
   DESTINATION lib/${PROJECT_NAME}

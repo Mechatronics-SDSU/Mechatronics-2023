@@ -1,7 +1,8 @@
-#include "scion_types/srv/send_frame.hpp"
 #include <iterator>
-#include "rclcpp/rclcpp.hpp"
 #include <vector>
+
+#include "control_interface.hpp"
+
 using namespace std::placeholders;
 
 class Test : public rclcpp::Node
@@ -10,18 +11,35 @@ public:
   explicit Test()
   : Node("Test")
   {
-    can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
+    zed_object_pub_ = this->create_publisher<scion_types::msg::VisionObject>("zed_object_data", 10);
+    zed_object_timer_ = this->create_wall_timer
+                (
+                    std::chrono::milliseconds(50), 
+                    std::bind(&Test::publishZedObjectTimer, this)
+                );
 
-    this->timer_ = this->create_wall_timer
+    can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
+    this->can_timer_ = this->create_wall_timer
     (
-      std::chrono::milliseconds(100), 
+      std::chrono::milliseconds(3000), 
       std::bind(&Test::sendFrame, this)
     );
   }
 
 private:
-  rclcpp::Client<scion_types::srv::SendFrame>::SharedPtr can_client_;
-  rclcpp::TimerBase::SharedPtr timer_;
+    Interface::ros_sendframe_client_t can_client_;
+    Interface::ros_timer_t can_timer_;
+    Interface::object_pub_t zed_object_pub_;
+    Interface::ros_timer_t zed_object_timer_;
+
+    void publishZedObjectTimer()
+    {
+      scion_types::msg::VisionObject vision_object = scion_types::msg::VisionObject();
+      vision_object.object_name = "test";
+      vision_object.distance = 123.45;
+      this->zed_object_pub_->publish(vision_object);
+      RCLCPP_INFO(this->get_logger(), "Publishing Test Vision Object" );
+    }
 
     void sendFrame()
     {
