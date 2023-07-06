@@ -34,6 +34,9 @@
 
 using namespace std;
 
+#define SMOOTH_TURN_POWER 15
+#define SUBMERGE_DISTANCE 1.5f
+
 class Brain : public rclcpp::Node
 {
     typedef bool (Brain::*condition_t)();
@@ -55,7 +58,7 @@ class Brain : public rclcpp::Node
         Interface::ros_sendframe_client_t           can_client_;
         bool                                        gate_seen_ = false; 
         
-        void doUntil(condition_t condition, action_t action, bool& condition_global, int parameter)
+        void doUntil(action_t action, condition_t condition, bool& condition_global, int parameter)
         {
             auto condition_met = std::bind(condition, this);
             std::thread(condition_met).detach();
@@ -156,14 +159,6 @@ class Brain : public rclcpp::Node
             idea_pub_->publish(idea);
         }
 
-        void submerge()
-        {
-            levitate(1);
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-            RCLCPP_INFO(this->get_logger(), "Submerged");
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        }
-
         static void keepTurning(int power)
         {
             auto logger = rclcpp::get_logger("my_logger");
@@ -191,16 +186,14 @@ class Brain : public rclcpp::Node
         ////////////////////////////////////////////////////////////////////////////////
         //                                  MISSION                                   //
         ////////////////////////////////////////////////////////////////////////////////
-
+v
         void performMission()
         {
-            doUntil(&Brain::gateSeen, &keepTurning, this->gate_seen_, 20);
-            submerge();
+            doUntil(&keepTurning, &Brain::gateSeen, this->gate_seen_, SMOOTH_TURN_POWER);
+            levitate(SUBMERGE_DISTANCE);
             moveForward(this->getDistanceFromCamera("gate"));
             exit(1);
         }
-
-
 
 
 }; // class Brain
