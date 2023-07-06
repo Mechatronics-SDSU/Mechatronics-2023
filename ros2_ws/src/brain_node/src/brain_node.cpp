@@ -34,13 +34,15 @@
 
 using namespace std;
 
-#define SMOOTH_TURN_POWER 15
+#define SMOOTH_TURN_DEGREE 90.0f
+#define SMOOTH_MOVE_DEGREE 1.0f
 #define SUBMERGE_DISTANCE 1.5f
 
 class Brain : public rclcpp::Node
 {
     typedef bool (Brain::*condition_t)();
-    typedef void (action_t)(int);
+    typedef void (Brain::*action_t)(float);
+    typedef void (Brain::*cleanup_t)();
 
     public:
         explicit Brain(): Node("brain_node")
@@ -58,16 +60,22 @@ class Brain : public rclcpp::Node
         Interface::ros_sendframe_client_t           can_client_;
         bool                                        gate_seen_ = false; 
         
-        void doUntil(action_t action, condition_t condition, bool& condition_global, int parameter)
+
+        ////////////////////////////////////////////////////////////////////////////////
+        //                               ASYNC FUNCTIONS                              //
+        ////////////////////////////////////////////////////////////////////////////////
+
+        void doUntil(action_t action, condition_t condition, cleanup_t cleanup, bool& condition_global, float parameter)
         {
             auto condition_met = std::bind(condition, this);
             std::thread(condition_met).detach();
 
             while(!condition_global) //this->gateSeen()
             {
-                (action)(parameter);
+                (this->*action)(parameter);
             }
             condition_global = false;
+            (this->*cleanup)();
         }
 
         bool gateSeen()
@@ -87,26 +95,32 @@ class Brain : public rclcpp::Node
             return true;
         }
 
+        float getDistanceFromCamera(string object)
+        {
+            float distance;
+            std::promise<bool> gate_seen;
+            std::shared_future<bool> future  = gate_seen.get_future();
+            Interface::node_t temp_node = rclcpp::Node::make_shared("zed_object_subscriber");;
+            Interface::object_sub_t object_sub = temp_node->create_subscription<scion_types::msg::VisionObject>
+            ("zed_object_data", 10, [&temp_node, &gate_seen, &object, &distance](const scion_types::msg::VisionObject::SharedPtr msg) {
+                    if (msg->object_name == object) {
+                        gate_seen.set_value(true);
+                        distance = msg->distance;
+                    }
+            });
+            rclcpp::spin_until_future_complete(temp_node, future);
+            return distance;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        //                               MOVEMENT IDEAS                               //
+        ////////////////////////////////////////////////////////////////////////////////
+
+
         void stop()
         {
             scion_types::msg::Idea idea = scion_types::msg::Idea();
             idea.code = Interface::Idea::STOP;
-            idea_pub_->publish(idea);
-        }
-
-        void go(float degree)
-        {
-            scion_types::msg::Idea idea = scion_types::msg::Idea();
-            idea.code = Interface::Idea::GO;
-            idea.parameters = std::vector<float>{degree};
-            idea_pub_->publish(idea);
-        }
-
-        void spin(float degree)
-        {
-            scion_types::msg::Idea idea = scion_types::msg::Idea();
-            idea.code = Interface::Idea::SPIN;
-            idea.parameters = std::vector<float>{degree};
             idea_pub_->publish(idea);
         }
 
@@ -140,7 +154,7 @@ class Brain : public rclcpp::Node
             idea.code = Interface::Idea::MOVE;
             idea.parameters = std::vector<float>{degree};
             idea_pub_->publish(idea);
-            RCLCPP_INFO(this->get_logger(), "Moving Forward %f meters", degree);
+            RCLCPP_INFO(this->get_logger(), "Moved forward %f meters", degree);
         }
 
         void translate(float degree)
@@ -157,42 +171,33 @@ class Brain : public rclcpp::Node
             idea.code = Interface::Idea::LEVITATE;
             idea.parameters = std::vector<float>{degree};
             idea_pub_->publish(idea);
+            RCLCPP_INFO(this->get_logger(), "Levitated -%f meters", degree);
         }
 
-        static void keepTurning(int power)
+        void keepTurning(float power)
         {
-            auto logger = rclcpp::get_logger("my_logger");
-            RCLCPP_INFO(logger, "turning with power of %d", power);
+            this->turn(power);
+            RCLCPP_INFO(this->get_logger(), "Turning");
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
 
-        float getDistanceFromCamera(string object)
+        void keepMoving(float power)
         {
-            float distance;
-            std::promise<bool> gate_seen;
-            std::shared_future<bool> future  = gate_seen.get_future();
-            Interface::node_t temp_node = rclcpp::Node::make_shared("zed_object_subscriber");;
-            Interface::object_sub_t object_sub = temp_node->create_subscription<scion_types::msg::VisionObject>
-            ("zed_object_data", 10, [&temp_node, &gate_seen, &object, &distance](const scion_types::msg::VisionObject::SharedPtr msg) {
-                    if (msg->object_name == object) {
-                        gate_seen.set_value(true);
-                        distance = msg->distance;
-                    }
-            });
-            rclcpp::spin_until_future_complete(temp_node, future);
-            return distance;
+            this->moveForward(power);
+            RCLCPP_INFO(this->get_logger(), "Moving Forward");
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
 
         ////////////////////////////////////////////////////////////////////////////////
         //                                  MISSION                                   //
         ////////////////////////////////////////////////////////////////////////////////
-v
+
         void performMission()
         {
-            doUntil(&keepTurning, &Brain::gateSeen, this->gate_seen_, SMOOTH_TURN_POWER);
+            doUntil(&Brain::keepTurning, &Brain::gateSeen, &Brain::stop, this->gate_seen_, SMOOTH_TURN_DEGREE);
             levitate(SUBMERGE_DISTANCE);
-            moveForward(this->getDistanceFromCamera("gate"));
-            exit(1);
+            moveForward(this->getDistanceFromCamera("gate") + 1);
+            exit(0);
         }
 
 
@@ -209,12 +214,21 @@ int main(int argc, char * argv[])
 
 
 
-/*          doUntil(&Brain::gateSeen, [](int power)
-            {
-                auto logger = rclcpp::get_logger("my_logger");
-                RCLCPP_INFO(logger, "sent CAN Command of power %d", power);
-                std::this_thread::sleep_for(std::chrono::milliseconds(500));
-            },  this->gate_seen_, 20); */
+        ////////////////////////////////////////////////////////////////////////////////
+        //                                  ARCHIVE                                   //
+        ////////////////////////////////////////////////////////////////////////////////
+
+        // auto logger = rclcpp::get_logger("my_logger");
+        // RCLCPP_INFO(logger, "turning with power of %d", power);
+
+
+
+/*      doUntil(&Brain::gateSeen, [](int power)
+        {
+            auto logger = rclcpp::get_logger("my_logger");
+            RCLCPP_INFO(logger, "sent CAN Command of power %d", power);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        },  this->gate_seen_, 20); */
 
 /* 
     void moveUntil(int power, condition_t condition, bool& condition_global)

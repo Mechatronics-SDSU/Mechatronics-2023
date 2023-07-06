@@ -59,7 +59,6 @@ public:
        std::bind(&Mediator::translateIdea, this, _1)
     );
 
-    // this->populateQueue();
     current_command_ = nullptr;
 
     this->next_command_timer_ = this->create_wall_timer
@@ -241,7 +240,13 @@ private:
     auto cancel_goal_options = rclcpp_action::Client<PIDAction>::CancelRequest();
     this->pid_command_client_->async_cancel_all_goals();
     this->stopRobot();
-    // 
+    this->clearQueue(this->command_queue_);
+  }
+
+  void clearQueue(std::deque<Interface::Command> &q)
+  {
+    std::deque<Interface::Command> empty;
+    std::swap( q, empty );
   }
 
   void goal_response_callback

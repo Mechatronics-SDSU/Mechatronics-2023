@@ -140,19 +140,16 @@ namespace Movements
 {
     using namespace Interface;
 
-    desired_state_t stop()
+    void stop()
     {
-        return desired_state_t{0,0,0,0,0,0};
     }
 
-    desired_state_t go(float seconds)
+    void go(float power)
     {
-        return desired_state_t{0,0,0,0,0,0};
     }
 
-    desired_state_t spin(float seconds)
+    void spin(float power)
     {
-        return desired_state_t{0,0,0,0,0,0};
     }
 
     desired_state_t turn(float degree)

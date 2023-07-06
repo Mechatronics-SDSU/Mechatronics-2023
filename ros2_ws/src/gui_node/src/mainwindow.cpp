@@ -20,21 +20,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 void MainWindow::updateKpValue()
 {
     auto message = std_msgs::msg::Int32();
-    message.data = ui->Kp->value();;
+    message.data = ui->Kp->value();
     kp_publisher->publish(message);
 }
 
 void MainWindow::updateKiValue()
 {
     auto message = std_msgs::msg::Int32();
-    message.data = ui->Ki->value();;
+    message.data = ui->Ki->value();
     ki_publisher->publish(message);
 }
 
 void MainWindow::updateKdValue()
 {
     auto message = std_msgs::msg::Int32();
-    message.data = ui->Kd->value();;
+    message.data = ui->Kd->value();
     kd_publisher->publish(message);
 }
 

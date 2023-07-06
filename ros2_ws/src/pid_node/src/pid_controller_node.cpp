@@ -512,6 +512,7 @@ private:
     {
         unsigned char can_dreq_frame[2] = {0, 0};             
         canClient::sendFrame(MOTOR_ID, motor_count_, can_dreq_frame, this->can_client_);
+        this->desired_state_ = this->current_state_;
     }
 
     void resetState()

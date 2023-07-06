@@ -1,5 +1,6 @@
 #include <iterator>
 #include <vector>
+#include <chrono>
 
 #include "control_interface.hpp"
 
@@ -24,6 +25,13 @@ public:
       std::chrono::milliseconds(3000), 
       std::bind(&Test::sendFrame, this)
     );
+
+    idea_sub_ = this->create_subscription<scion_types::msg::Idea>
+    (
+      "brain_idea_data",
+       10,
+       std::bind(&Test::test_idea_callback, this, _1)
+    );
   }
 
 private:
@@ -31,6 +39,12 @@ private:
     Interface::ros_timer_t can_timer_;
     Interface::object_pub_t zed_object_pub_;
     Interface::ros_timer_t zed_object_timer_;
+    Interface::idea_sub_t  idea_sub_;
+
+    void test_idea_callback(scion_types::msg::Idea::SharedPtr idea)
+    {
+        RCLCPP_INFO(this->get_logger(), "Recieved idea %d for degree %f", idea->code);
+    }
 
     void publishZedObjectTimer()
     {
@@ -38,7 +52,7 @@ private:
       vision_object.object_name = "gate";
       vision_object.distance = 123.45;
       this->zed_object_pub_->publish(vision_object);
-      RCLCPP_INFO(this->get_logger(), "Publishing Test Vision Object" );
+      // RCLCPP_INFO(this->get_logger(), "Publishing Test Vision Object" );
     }
 
     void sendFrame()
