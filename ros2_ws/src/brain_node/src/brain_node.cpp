@@ -31,7 +31,7 @@
 #include "rclcpp_action/rclcpp_action.hpp"
 
 #define MODE "Mission"
-
+#define SLEEP_TIME 50ms
 
 using std::placeholders::_1;
 using std::placeholders::_2;
@@ -61,10 +61,20 @@ class Brain : public rclcpp::Node
         Interface::idea_vector_t                    idea_sequence_;
         Interface::object_sub_t                     object_sub_;
         std::string                                 mode_param_;
+        Interface::ros_trigger_service_t            pid_ready_service_;
         Interface::ros_sendframe_client_t           can_client_;
         Interface::ros_trigger_service_t            pid_ready_service_;
         bool                                        gate_seen_ = false; 
-        
+
+        ////////////////////////////////////////////////////////////////////////////////
+        //                               INIT MISSION                                 //
+        ////////////////////////////////////////////////////////////////////////////////
+
+        void ready(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, 
+                         std::shared_ptr<std_srvs::srv::Trigger::Response> response)
+        {
+            this->performMission();
+        }
 
         ////////////////////////////////////////////////////////////////////////////////
         //                               ASYNC FUNCTIONS                              //
@@ -205,12 +215,6 @@ class Brain : public rclcpp::Node
             exit(0);
         }
 
-
-        void ready(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, 
-                         std::shared_ptr<std_srvs::srv::Trigger::Response> response)
-        {
-            this->performMission();
-        }
 
 }; // class Brain
 

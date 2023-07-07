@@ -111,6 +111,7 @@ public:
         can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
         reset_relative_state_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_state");
         reset_relative_position_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_position");
+        pid_ready_client_ = this->create_client<std_srvs::srv::Trigger>("pid_ready");
         stop_robot_service_ = this->create_service<std_srvs::srv::Trigger>("stop_robot", std::bind(&Controller::stopRobot, this, _1, _2));
         use_position_service_ = this->create_service<std_srvs::srv::SetBool>("use_position", std::bind(&Controller::usePosition, this, _1, _2));
         stabilize_robot_service_ = this->create_service<std_srvs::srv::SetBool>("stabilize_robot", std::bind(&Controller::stabilizeRobot, this, _1, _2));
@@ -135,6 +136,7 @@ private:
     Interface::ros_trigger_service_t            stop_robot_service_;
     Interface::ros_trigger_client_t             reset_relative_state_client_;        
     Interface::ros_trigger_client_t             reset_relative_position_client_;
+    Interface::ros_trigger_client_t             pid_ready_client_;
     Interface::ros_sendframe_client_t           can_client_;
     Interface::matrix_t                         thrust_mapper_;
     Scion_Position_PID_Controller               controller_;
@@ -536,6 +538,12 @@ private:
       auto reset_position_future = this->reset_relative_position_client_->async_send_request(reset_position_request);
     }
     
+    void pidReady()
+    {
+        auto pid_ready_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+        auto pid_ready_future = this->pid_ready_client_->async_send_request(pid_ready_request);
+    }
+
     void usePosition(const  std::shared_ptr<std_srvs::srv::SetBool::Request> request,
                             std::shared_ptr<std_srvs::srv::SetBool::Response> response)
     {
@@ -547,6 +555,7 @@ private:
     {
         this->stabilize_robot_ = request->data;
     }
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                         // SUBSCRIPTION CALLBACKS // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
