@@ -36,6 +36,8 @@ using std::placeholders::_1;
  */
 class Controller : public rclcpp::Node
 {
+    typedef void (Controller::*button_function)();
+
   public:
     Controller() 
     : Node("controller")
@@ -63,6 +65,9 @@ class Controller : public rclcpp::Node
             exit(EXIT_FAILURE);
         }
 
+        buttons_ = vector<bool>{false, false, false};
+        button_functions_ = vector<button_function>{&Controller::killRobot, &Controller::allClear, &Controller::turnOnLight};
+
         canClient::setBotInSafeMode(can_client_);
     }
 
@@ -71,6 +76,8 @@ class Controller : public rclcpp::Node
     Interface::ros_sendframe_client_t                       can_client_;
     vector<vector<float>>                                   thrust_mapper_;
     int                                                     motor_count_ = 8;
+    vector<bool>                                            buttons_;
+    vector<button_function>                                 button_functions_;
     
 
     void controller_subscription_callback(const sensor_msgs::msg::Joy::SharedPtr msg)
@@ -83,19 +90,62 @@ class Controller : public rclcpp::Node
         /* This part randomly changed on me before pool test, I have no idea why, it was working and then I had to change
         the buttons. Before I had it as 0 5 2 3 4 1, but for the version on the day before pool test it is working
         as 0 4 3 2 5 1 */
-        float left_x = -1 * msg->axes[0]; // yaw
-        float right_trigger = msg->axes[5] - 1; // pitch
-        float left_trigger = msg->axes[2] - 1; // roll
-        float right_x = 1 * msg->axes[4]; // x
-        float right_y = -1 * msg->axes[3]; // y
-        float left_y = -1 * msg->axes[1]; // z
-
+        float left_x        = -1 *  msg->axes[0];           // yaw
+        float right_trigger =       msg->axes[5] - 1;       // pitch
+        float left_trigger  =       msg->axes[2] - 1;       // roll
+        float right_x       = 1 *   msg->axes[4];           // x
+        float right_y       = -1 *  msg->axes[3];           // y
+        float left_y        = -1 *  msg->axes[1];           // z
+        
         /* Multiply our 8 x 6 mapper matrix by our 6 x 1 ctrl_vals to get an 8 x 1 vector of thrust values (a vector with 8 values) */
+
         vector<float> ctrl_vals = vector<float>{left_x, right_trigger, left_trigger, right_x, right_y, left_y};
         ctrl_vals = normalizeCtrlVals(ctrl_vals);
         vector<float> thrust_vals = this->thrust_mapper_ * ctrl_vals;
 
+        bool x_button = msg->buttons[0];
+        bool o_button = msg->buttons[1];
+        bool tri_button = msg->buttons[2];
+        vector<bool> button_vals{x_button, o_button, tri_button};
+
         make_CAN_request(thrust_vals);
+        processButtonInputs(button_vals);
+    }
+
+
+    // 0: x, 1: o, 2: tri, 3: square
+    void processButtonInputs(vector<bool>& button_inputs)
+    {
+        for (int i = 0; i < button_inputs.size(); i++)
+        {
+            if (button_inputs[i] && !this->buttons_[i]) 
+            {
+                this->buttons_[i] = 1;
+                (this->*(button_functions_[i]))();
+            }
+            if (!button_inputs[i] && this->buttons_[i]) 
+            {
+                this->buttons_[i] = 0;
+            }
+        }
+    }
+
+    void killRobot()
+    {
+        canClient::sendFrame(0x00, 0, 0, this->can_client_);
+    }
+
+    void allClear()
+    {
+        canClient::sendFrame(0x00A, 0, 0, this->can_client_);
+    }
+
+    void turnOnLight()
+    {
+        vector<unsigned char> lightEnable{0x04, 0x00, 0x00, 0x00, 0x01};
+        canClient::sendFrame(0x22, 5, lightEnable.data(), this->can_client_);
+        vector<unsigned char> lightOn{0x04, 0x00, 0x04, 0x00, 0x64};
+        canClient::sendFrame(0x22, 5, lightOn.data(), this->can_client_);
     }
 
     vector<float> normalizeCtrlVals(vector<float>& ctrl_vals)
