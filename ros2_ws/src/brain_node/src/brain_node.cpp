@@ -31,7 +31,10 @@
 #include "rclcpp_action/rclcpp_action.hpp"
 
 #define MODE "Mission"
+#define SLEEP_TIME 50ms
 
+using std::placeholders::_1;
+using std::placeholders::_2;
 using namespace std;
 
 #define SMOOTH_TURN_DEGREE 90.0f
@@ -49,6 +52,9 @@ class Brain : public rclcpp::Node
         {
             idea_pub_ = this->create_publisher<scion_types::msg::Idea>("brain_idea_data", 10);
             can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
+            pid_ready_service_ = this->create_service<std_srvs::srv::Trigger>("pid_ready", std::bind(&Brain::ready, this, _1, _2));
+            auto initFunction = std::bind(&Brain::pidReady, this);
+            std::thread(initFunction).detach();
             this->performMission();
         }
     private:
@@ -57,9 +63,38 @@ class Brain : public rclcpp::Node
         Interface::idea_vector_t                    idea_sequence_;
         Interface::object_sub_t                     object_sub_;
         std::string                                 mode_param_;
+        Interface::ros_trigger_service_t            pid_ready_service_;
         Interface::ros_sendframe_client_t           can_client_;
+        bool                                        pid_ready_ = false;
         bool                                        gate_seen_ = false; 
-        
+
+        ////////////////////////////////////////////////////////////////////////////////
+        //                               INIT MISSION                                 //
+        ////////////////////////////////////////////////////////////////////////////////
+
+        void ready(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, 
+                         std::shared_ptr<std_srvs::srv::Trigger::Response> response)
+        {
+            this->pid_ready_ = true;
+        }
+
+        void pidReady()
+        {
+            auto pidsReady = std::bind(&Brain::waitForPid, this);
+            std::future<bool> promise = std::async(pidsReady);
+            std::cout << "Waiting for Pid. \n";
+            bool valid = promise.get();
+            std::cout << "Pid ready. \n";
+        }
+
+        bool waitForPid()
+        {
+            while (!pid_ready_)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
+            }
+            return true;
+        }
 
         ////////////////////////////////////////////////////////////////////////////////
         //                               ASYNC FUNCTIONS                              //
