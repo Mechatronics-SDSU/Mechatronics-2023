@@ -107,6 +107,7 @@ public:
         std::bind(&Controller::handle_accepted, this, _1)
         );
 
+        pid_ready_client_ = this->create_client<std_srvs::srv::Trigger>("pid_ready");
         can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
         reset_relative_state_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_state");
         reset_relative_position_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_position");
@@ -138,6 +139,7 @@ private:
     Interface::matrix_t                         thrust_mapper_;
     Scion_Position_PID_Controller               controller_;
     PID_Params                                  pid_params_object_;                      // Passed to controller for tuning
+    Interface::ros_trigger_client_t             pid_ready_client_;
     int                                         motor_count_ = 8;
 
     /* Upon initialization set all values to [0,0,0] */
@@ -176,6 +178,7 @@ private:
         this->desired_state_ = vector<float>{0,0,0,0,0,0};
         while (!this->desired_state_valid_) {this->desired_state_valid_ = true;}
         while (!this->current_state_valid_) {this->current_state_valid_ = true;}
+        this->pidReady();
         return true;
     }
 
@@ -513,6 +516,12 @@ private:
         unsigned char can_dreq_frame[2] = {0, 0};             
         canClient::sendFrame(MOTOR_ID, motor_count_, can_dreq_frame, this->can_client_);
         this->desired_state_ = this->current_state_;
+    }
+
+    void pidReady()
+    {
+        auto pid_ready_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+        auto pid_ready_future = this->pid_ready_client_->async_send_request(pid_ready_request);
     }
 
     void resetState()

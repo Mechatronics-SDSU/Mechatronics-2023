@@ -32,6 +32,9 @@
 
 #define MODE "Mission"
 
+
+using std::placeholders::_1;
+using std::placeholders::_2;
 using namespace std;
 
 #define SMOOTH_TURN_DEGREE 90.0f
@@ -49,7 +52,8 @@ class Brain : public rclcpp::Node
         {
             idea_pub_ = this->create_publisher<scion_types::msg::Idea>("brain_idea_data", 10);
             can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
-            this->performMission();
+            pid_ready_service_ = this->create_service<std_srvs::srv::Trigger>("pid_ready", std::bind(&Brain::ready, this, _1, _2));
+            // this->performMission();
         }
     private:
         Interface::idea_pub_t                       idea_pub_;
@@ -58,6 +62,7 @@ class Brain : public rclcpp::Node
         Interface::object_sub_t                     object_sub_;
         std::string                                 mode_param_;
         Interface::ros_sendframe_client_t           can_client_;
+        Interface::ros_trigger_service_t            pid_ready_service_;
         bool                                        gate_seen_ = false; 
         
 
@@ -200,6 +205,12 @@ class Brain : public rclcpp::Node
             exit(0);
         }
 
+
+        void ready(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, 
+                         std::shared_ptr<std_srvs::srv::Trigger::Response> response)
+        {
+            this->performMission();
+        }
 
 }; // class Brain
 
