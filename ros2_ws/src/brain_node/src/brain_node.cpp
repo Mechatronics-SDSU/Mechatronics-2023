@@ -61,7 +61,6 @@ class Brain : public rclcpp::Node
         Interface::idea_vector_t                    idea_sequence_;
         Interface::object_sub_t                     object_sub_;
         std::string                                 mode_param_;
-        Interface::ros_trigger_service_t            pid_ready_service_;
         Interface::ros_sendframe_client_t           can_client_;
         Interface::ros_trigger_service_t            pid_ready_service_;
         bool                                        gate_seen_ = false; 
