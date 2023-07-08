@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <chrono>
+#include <cmath>
 
 #include "scion_types/action/pid.hpp"
 #include "control_interface.hpp"
@@ -173,7 +174,7 @@ class Brain : public rclcpp::Node
 
         bool areEqual(vector<uint32_t> point_a, vector<uint32_t> point_b)
         {
-
+            return (abs((int)((point_a - point_b))[0]) < 30);
         }
 
         void adjustToCenter(vector<uint32_t> bounding_box_midpoint, vector<uint32_t> camera_frame_midpoint)
@@ -283,10 +284,10 @@ class Brain : public rclcpp::Node
         //                                  CALLBACK                                  //
         ////////////////////////////////////////////////////////////////////////////////
 
-    void update_commands_in_queue_count(const std_msgs::msg::Int32::SharedPtr msg)
-    {
-        this->commands_in_queue_count_ = msg->data;
-    }
+        void update_commands_in_queue_count(const std_msgs::msg::Int32::SharedPtr msg)
+        {
+            this->commands_in_queue_count_ = msg->data;
+        }
 
 
 }; // class Brain
