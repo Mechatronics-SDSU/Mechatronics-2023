@@ -13,6 +13,8 @@
 #include <iostream>
 #include <unistd.h>
 #include <deque>
+#include <chrono>
+
 
 #include "scion_types/action/pid.hpp"
 #include "scion_types/msg/state.hpp"
@@ -23,9 +25,11 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 
+
 using PIDAction = scion_types::action::PID;
 using GoalHandlePIDAction = rclcpp_action::ClientGoalHandle<PIDAction>;
 using namespace std::placeholders;
+using namespace std::literals::chrono_literals;
 
 class Mediator : public rclcpp::Node
 {
@@ -44,6 +48,8 @@ public:
     use_position_client_ = this->create_client<std_srvs::srv::SetBool>("use_position");
     stop_robot_client_ = this->create_client<std_srvs::srv::Trigger>("stop_robot");
     stabilize_robot_client_ = this->create_client<std_srvs::srv::SetBool>("stabilize_robot");
+    commands_in_queue_count_pub_ = this->create_publisher<std_msgs::msg::Int32>("commands_in_queue_data", 10);
+    commands_count_timer_ = this->create_wall_timer(50ms, std::bind(&Mediator::commands_count_timer_callback, this));
 
     current_state_sub_ = this->create_subscription<scion_types::msg::State>
     (
@@ -80,8 +86,9 @@ private:
   Interface::ros_timer_t                  reset_timer_;
   Interface::state_sub_t                  current_state_sub_;
   Interface::command_queue_t              command_queue_;
+  Interface::int_pub_t                    commands_in_queue_count_pub_;
+  Interface::ros_timer_t                  commands_count_timer_;
   Interface::Command*                     current_command_; 
-
   Interface::current_state_t              current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -341,10 +348,15 @@ private:
                                             // CALLBACK FUNCTIONS // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  void current_state_callback(const scion_types::msg::State::SharedPtr msg)
-  {
-      this->current_state_= msg->state; 
-  }
+    void commands_count_timer_callback()
+    {
+        this->commands_in_queue_count_pub_->publish(this->command_queue_.size());
+    }
+
+    void current_state_callback(const scion_types::msg::State::SharedPtr msg)
+    {
+        this->current_state_= msg->state; 
+    }
 
 };  // class Mediator
 

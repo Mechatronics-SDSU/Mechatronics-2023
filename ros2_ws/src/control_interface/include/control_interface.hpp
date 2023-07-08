@@ -52,6 +52,7 @@ namespace Interface
     typedef rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr                              ros_trigger_service_t;
     typedef rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr                              ros_bool_service_t;
     typedef rclcpp::Service<scion_types::srv::SendFrame>::SharedPtr                         ros_sendframe_service_t;
+    typedef rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr                           int_sub_t;
     typedef rclcpp::Subscription<scion_types::msg::Idea>::SharedPtr                         idea_sub_t;
     typedef rclcpp::Subscription<scion_types::msg::State>::SharedPtr                        state_sub_t;
     typedef rclcpp::Subscription<scion_types::msg::Position>::SharedPtr                     position_sub_t;
@@ -68,7 +69,6 @@ namespace Interface
     typedef rclcpp::Publisher<scion_types::msg::VisionObject>::SharedPtr                    object_pub_t;
     typedef std::vector<std::vector<float>>                                                 matrix_t;                                                                            
     typedef rclcpp::TimerBase::SharedPtr                                                    ros_timer_t;
-
 
 
     /* Function Pointers That Point to Different Commands for Robot */

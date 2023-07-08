@@ -54,17 +54,20 @@ class Brain : public rclcpp::Node
             idea_pub_ = this->create_publisher<scion_types::msg::Idea>("brain_idea_data", 10);
             can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
             pid_ready_service_ = this->create_service<std_srvs::srv::Trigger>("pid_ready", std::bind(&Brain::ready, this, _1, _2));
-            // this->performMission();
+            commands_in_queue_sub_ = this->create_subscription<std_msgs::msg::Int32>
+            ("commands_in_queue_data", 10, std::bind(&Brain::update_commands_in_queue_count, this, _1));
         }
     private:
         Interface::idea_pub_t                       idea_pub_;
         Interface::ros_timer_t                      decision_timer_;
         Interface::idea_vector_t                    idea_sequence_;
         Interface::object_sub_t                     object_sub_;
-        std::string                                 mode_param_;
+        Interface::int_sub_t                        commands_in_queue_sub_;
         Interface::ros_sendframe_client_t           can_client_;
         Interface::ros_trigger_service_t            pid_ready_service_;
-        bool                                        gate_seen_ = false; 
+        std::string                                 mode_param_;
+        bool                                        gate_seen_ = false;
+        int                                         commands_in_queue_count_ = 0;
 
         ////////////////////////////////////////////////////////////////////////////////
         //                               INIT MISSION                                 //
@@ -175,13 +178,17 @@ class Brain : public rclcpp::Node
 
         void adjustToCenter(vector<uint32_t> bounding_box_midpoint, vector<uint32_t> camera_frame_midpoint)
         {
-            if (bounding_box_midpoint[0] > camera_frame_midpoint[0]) {turn(15);}
-            else {turn(-15);}
+            if (bounding_box_midpoint[0] > camera_frame_midpoint[0]) {this->turn(15);}
+            else {this->turn(-15);}
             this->waitForEmptyQueue();
         }
 
-        void waitForEmptyQueue() {
-
+        void waitForEmptyQueue() 
+        {
+            while (commands_in_queue_count_ != 0)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            }
         }
         ////////////////////////////////////////////////////////////////////////////////
         //                               MOVEMENT IDEAS                               //
@@ -270,6 +277,16 @@ class Brain : public rclcpp::Node
             moveForward(this->getDistanceFromCamera("gate") + 1);
             exit(0);
         }
+
+
+        ////////////////////////////////////////////////////////////////////////////////
+        //                                  CALLBACK                                  //
+        ////////////////////////////////////////////////////////////////////////////////
+
+    void update_commands_in_queue_count(const std_msgs::msg::Int32::SharedPtr msg)
+    {
+        this->commands_in_queue_count_ = msg->data;
+    }
 
 
 }; // class Brain
