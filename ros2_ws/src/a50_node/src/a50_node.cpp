@@ -37,15 +37,20 @@ public:
         position_publisher_ = this->create_publisher<scion_types::msg::State>("a50_state_data", 10);
         orientation_publisher_ = this->create_publisher<scion_types::msg::State>("ahrs_orientation_data", 10);
         this->resetDeadReckoning();
-        this->startListener();
+        sock_ = connectToSocket(sock_, serv_addr_);
+        get_data_timer_ = this->create_wall_timer(50ms, std::bind(&A50Node::getA50Data, this));
     }
 
 private:
     const char* TCP_IP = "192.168.1.4";     // I manually set this in the DVL configuration so if you change that make sure to change this
     const int   TCP_PORT = 16171;           // This is the port that the DVL sends data on 
-    const int   BUFFER_SIZE = 4096;
+    static const int   BUFFER_SIZE = 4096;
+    int sock_ = 0;
+    struct sockaddr_in serv_addr_;
+    char buffer_[BUFFER_SIZE] = {0};
     Interface::state_pub_t position_publisher_;
     Interface::state_pub_t orientation_publisher_;
+    Interface::ros_timer_t get_data_timer_;
 
     // Send reset command to the socket
     void resetDeadReckoning() 
@@ -54,7 +59,37 @@ private:
         struct sockaddr_in serv_addr;
 
         sock = connectToSocket(sock, serv_addr);
-        string json_command = R"({"command" : "reset_dead_reckoning"})";
+        string json_command = R"({"command" : "{reset_dead_reckoning}"})";
+        ssize_t bytesWrite = send(sock, json_command.c_str(), json_command.length(), 0);
+        
+        if (bytesWrite != static_cast<ssize_t>(json_command.length())) {
+            cerr << "Failed to send data." << endl;
+        }
+        close(sock);
+    }
+
+    void calibrateGryo() 
+    {
+        int sock = 0;
+        struct sockaddr_in serv_addr;
+
+        sock = connectToSocket(sock, serv_addr);
+        string json_command = R"({"command" : "calibrate_gyro"})";
+        ssize_t bytesWrite = send(sock, json_command.c_str(), json_command.length(), 0);
+        
+        if (bytesWrite != static_cast<ssize_t>(json_command.length())) {
+            cerr << "Failed to send data." << endl;
+        }
+        close(sock);
+    }
+
+    void setRangeMode() 
+    {
+        int sock = 0;
+        struct sockaddr_in serv_addr;
+
+        sock = connectToSocket(sock, serv_addr);
+        string json_command = R"({"command":"set_config","parameters":{"range_mode":0<=2}})";
         ssize_t bytesWrite = send(sock, json_command.c_str(), json_command.length(), 0);
         
         if (bytesWrite != static_cast<ssize_t>(json_command.length())) {
@@ -64,27 +99,18 @@ private:
     }
 
     /* This is the loop that runs as long as the node is spun (no timer) */
-    void startListener()
+    void getA50Data()
     {
-        int sock = 0;
-        struct sockaddr_in serv_addr;
-        char buffer[BUFFER_SIZE] = {0};
-        sock = connectToSocket(sock, serv_addr);
-        
-        while (true) 
-        {
-            try {
-                ssize_t bytesRead = recv(sock, buffer, BUFFER_SIZE, 0);
-                string json_stream(buffer, bytesRead);
-                json json_dict = json::parse(json_stream);
-                vector<float> a50_data = parseJson(json_dict);
-                if (!a50_data.empty()) {publishData(a50_data);}        //Sometimes it gives bad data so be careful
-                sleep(.06);
-            }
-            catch(...) {
-                close(sock);
-                startListener();
-            }
+        try {
+            ssize_t bytesRead = recv(this->sock_, this->buffer_, this->BUFFER_SIZE, 0);
+            string json_stream(this->buffer_, bytesRead);
+            json json_dict = json::parse(json_stream);
+            vector<float> a50_data = parseJson(json_dict);
+            if (!a50_data.empty()) {publishData(a50_data);}        //Sometimes it gives bad data so be careful
+        }
+        catch(...) {
+            close(this->sock_);
+            this->sock_ = connectToSocket(this->sock_, this->serv_addr_);
         }
     }
 
@@ -136,9 +162,9 @@ private:
         position_publisher_->publish(position);
 
         RCLCPP_INFO(this->get_logger(), "Publishing State Data:\n yaw: %f\n pitch: %f\n roll: %f",
-        a50_data[0], a50_data[1], a50_data[2]);
+                a50_data[0], a50_data[1], a50_data[2]);
         RCLCPP_INFO(this->get_logger(), "Publishing State Data:\n x: %f\n y: %f\n z: %f",
-        a50_data[3], a50_data[4], a50_data[5]);
+                a50_data[3], a50_data[4], a50_data[5]);
     }
 };
 
