@@ -102,12 +102,13 @@ class ZedVision(Node):
         self.position_publisher.publish(position)
         # self.get_logger().info('Publishing Position Data:\n "x: %f\ny: %f\nz: %f\n"' % (tz,tx,ty))
 
-        # if object_list:
-        #     for object in object_list:
-        #         msg = ZedObject()
-        #         msg.label_id = object.raw_label
-        #         msg.position = [object.position[0], object.position[1], object.position[2]]
-        #         self.vision_publisher.publish(msg)
+        if object_list:
+            for object in object_list:
+                msg = ZedObject()
+                msg.label_id = object.raw_label
+                msg.position = [object.position[0], object.position[1], object.position[2]]
+                msg.corners = object.bounding_box
+                self.vision_publisher.publish(msg)
 
         if vision_object_list:
             for object in vision_object_list:

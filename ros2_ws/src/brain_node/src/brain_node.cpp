@@ -29,6 +29,7 @@
 #include "control_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
+#include "vector_operations.hpp"
 
 #define MODE "Mission"
 #define SLEEP_TIME 50ms
@@ -126,6 +127,62 @@ class Brain : public rclcpp::Node
             return distance;
         }
 
+        void centerRobot()
+        {
+            const int MID_X_PIXEL = 640;
+            const int MID_Y_PIXEL = 360;
+            const int NUM_CORNERS = 4;
+            bool robot_centered_bool;
+            std::promise<bool> robot_centered;
+            std::shared_future<bool> future  = robot_centered.get_future();
+            Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_subscriber");;
+            Interface::vision_sub_t object_sub = temp_node->create_subscription<scion_types::msg::ZedObject>
+            ("zed_vision_data", 10, [this, &temp_node, &robot_centered, &robot_centered_bool](const scion_types::msg::ZedObject::SharedPtr msg) {
+                    while (!robot_centered_bool)
+                    {
+                        std::array<scion_types::msg::Keypoint2Di, 4> bounding_box_from_zed = msg->corners;
+                        vector<vector<uint32_t>> vector_bounding_box;                   // this is to convert from ros object to vector object
+                        for (int i = 0; i < NUM_CORNERS; i++)
+                        {
+                            vector<uint32_t> corner_point {((bounding_box_from_zed[i]).kp)[i], ((bounding_box_from_zed[i]).kp)[i+1]};
+                            vector_bounding_box.push_back(corner_point);
+                        }
+                        vector<uint32_t> bounding_box_midpoint = findMidpoint(vector_bounding_box);
+                        vector<uint32_t> camera_frame_midpoint {MID_X_PIXEL, MID_Y_PIXEL};
+                        if (areEqual(bounding_box_midpoint, camera_frame_midpoint)) {robot_centered_bool = true;}
+                        else {this->adjustToCenter(bounding_box_midpoint, camera_frame_midpoint);}
+                    }
+                    robot_centered.set_value(true);              // jump out of async spin
+            });
+            rclcpp::spin_until_future_complete(temp_node, future);
+        }
+
+        vector<uint32_t> findMidpoint(vector<vector<uint32_t>>& bounding_box)
+        {
+            vector<uint32_t> cornerUL = bounding_box[0];
+            vector<uint32_t> cornerUR = bounding_box[1];
+            vector<uint32_t> cornerBL = bounding_box[2];
+            uint32_t midpoint_x = ((cornerUR + cornerUL)/((uint32_t)2))[0];
+            uint32_t midpoint_y = ((cornerUL + cornerBL)/((uint32_t)2))[1];
+            vector<uint32_t> midpoint {midpoint_x, midpoint_y};
+            return midpoint;
+        }
+
+        bool areEqual(vector<uint32_t> point_a, vector<uint32_t> point_b)
+        {
+
+        }
+
+        void adjustToCenter(vector<uint32_t> bounding_box_midpoint, vector<uint32_t> camera_frame_midpoint)
+        {
+            if (bounding_box_midpoint[0] > camera_frame_midpoint[0]) {turn(15);}
+            else {turn(-15);}
+            this->waitForEmptyQueue();
+        }
+
+        void waitForEmptyQueue() {
+
+        }
         ////////////////////////////////////////////////////////////////////////////////
         //                               MOVEMENT IDEAS                               //
         ////////////////////////////////////////////////////////////////////////////////

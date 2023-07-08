@@ -114,6 +114,15 @@ vector<T> operator*(vector<T> lhs, const T &rhs)
     return lhs;
 }
 
+// Divide each element of vector by number
+template <typename T>
+vector<T> operator/(vector<T> lhs, const T &rhs) 
+{
+    for (vector<double>::size_type i = 0; i < lhs.size(); ++i)
+        lhs[i] /= rhs;
+    return lhs;
+}
+
 // matrix multiplication with two-dimensional and one-dimensional array
 template<typename T>
 vector<T> operator*(vector<vector<T>> lhs, const vector<T> &rhs)
