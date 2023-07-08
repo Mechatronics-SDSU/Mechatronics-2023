@@ -444,7 +444,7 @@ private:
         bool equal = true;
         for (int thrust : thrustVect)
         {
-            if (thrust != 0)
+            if (thrust > 2)
             {
                 equal = false;
             }
@@ -464,10 +464,12 @@ private:
         const auto goal = goal_handle->get_goal();
 
         vector<float> target = vector<float>{current_state_[0], current_state_[1], current_state_[2],0,0,0};
-        while (!areEqual(this->current_state_, target))
-        {
+        int i = 0;
+        while (!areEqual(this->current_state_, target) && i < 3)
+        {   
             this->resetPosition();
             std::this_thread::sleep_for(std::chrono::milliseconds(300));
+            i++;
         }
 
         std::vector<float> desired_state = goal->desired_state;
