@@ -59,7 +59,7 @@ private:
         struct sockaddr_in serv_addr;
 
         sock = connectToSocket(sock, serv_addr);
-        string json_command = R"({"command" : "{reset_dead_reckoning}"})";
+        string json_command = R"({"command" : "reset_dead_reckoning"})";
         ssize_t bytesWrite = send(sock, json_command.c_str(), json_command.length(), 0);
         
         if (bytesWrite != static_cast<ssize_t>(json_command.length())) {
