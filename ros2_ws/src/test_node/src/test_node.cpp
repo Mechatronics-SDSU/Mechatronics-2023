@@ -57,16 +57,23 @@ private:
 
     void testCommandQueueEmptyCallback(std_msgs::msg::Int32::SharedPtr is_command_queue_empty) 
     {
-        (bool)(is_command_queue_empty->data) ?  cout << "Command queue empty" : cout << "Command queue not empty";   
+        if(is_command_queue_empty->data) 
+        {
+            RCLCPP_INFO(this->get_logger(), "Command queue empty" );
+        }
+        else 
+        {
+            RCLCPP_INFO(this->get_logger(), "Command queue not empty" );
+        }
     }
 
     void publishZedObjectTimer()
     {
-      // scion_types::msg::VisionObject vision_object = scion_types::msg::VisionObject();
-      // vision_object.object_name = "gate";
-      // vision_object.distance = 123.45;
-      // this->zed_object_pub_->publish(vision_object);
-      // RCLCPP_INFO(this->get_logger(), "Publishing Test Vision Object" );
+      scion_types::msg::VisionObject vision_object = scion_types::msg::VisionObject();
+      vision_object.object_name = "gate";
+      vision_object.distance = 123.45;
+      this->zed_object_pub_->publish(vision_object);
+      RCLCPP_INFO(this->get_logger(), "Publishing Test Vision Object" );
     }
 
     void sendFrame()

@@ -68,7 +68,7 @@ class Brain : public rclcpp::Node
         Interface::ros_trigger_service_t            pid_ready_service_;
         std::string                                 mode_param_;
         bool                                        gate_seen_ = false;
-        bool                                        command_queue_is_empty = true;
+        bool                                        command_queue_is_empty_ = true;
 
         ////////////////////////////////////////////////////////////////////////////////
         //                               INIT MISSION                                 //
@@ -186,7 +186,7 @@ class Brain : public rclcpp::Node
 
         void waitForEmptyQueue() 
         {
-            while (!command_queue_is_empty)
+            while (!command_queue_is_empty_)
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
             }
@@ -288,7 +288,7 @@ class Brain : public rclcpp::Node
 
         void update_if_command_queue_empty(const std_msgs::msg::Int32::SharedPtr msg)
         {
-            this->command_queue_is_empty = msg->data;
+            this->command_queue_is_empty_ = msg->data;
         }
 
 

@@ -163,13 +163,7 @@ private:
       switch (idea->code)
       {
         case Idea::STOP:
-          if (this->current_command_)
-          {
-          if (this->current_command_->function.transform == &Movements::move)
-            {
-              this->cancel_goal();
-            }
-          }
+            this->cancel_goal();
           break;
         case Idea::GO:
           Translator::go(idea->parameters[0]);
@@ -350,9 +344,9 @@ private:
 
     void commands_count_timer_callback()
     {
-      auto message = std_msgs::msg::Int32();
-      message.data = this->command_queue_.size() == 0 && this->current_command_ == nullptr;
-      this->commands_in_queue_count_pub_->publish(message);
+        auto message = std_msgs::msg::Int32();
+        message.data = (this->command_queue_.size() == 0 && this->current_command_ == nullptr);
+        this->commands_in_queue_count_pub_->publish(message);
     }
 
     void current_state_callback(const scion_types::msg::State::SharedPtr msg)
