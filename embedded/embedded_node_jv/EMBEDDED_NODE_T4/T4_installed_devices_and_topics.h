@@ -7,10 +7,6 @@
 #define RESERVED_DEVICE_CT  0
 #define TOTAL_DEVICE_CT     (INSTALLED_DEVICE_CT + RESERVED_DEVICE_CT)
 
-#define SET_STATUS_BIT(A, B)  A = A | (1 << B)
-#define CLR_STATUS_BIT(A, B)  A = A & ~(1 << B)
-#define CHK_STATUS_BIT(A, B)  ((A & (1 << B))) ? 1 : 0
-
 typedef void (**device_ptr_array_t)( CAN_message_t &msg);
 typedef void (*topic_ptr_array_t)( CAN_message_t &msg);
 

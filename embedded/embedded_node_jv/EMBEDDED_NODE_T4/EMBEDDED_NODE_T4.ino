@@ -7,6 +7,10 @@ Please Note: Tab/file names that match CAN message types
   document.
 */
 
+#define SET_STATUS_BIT(A, B)  A = A | (1 << B)
+#define CLR_STATUS_BIT(A, B)  A = A & ~(1 << B)
+#define CHK_STATUS_BIT(A, B)  ((A & (1 << B))) ? 1 : 0
+
 // CAN Interface code, non-blocking. Tonton81
 #include <FlexCAN_T4.h>
 
@@ -94,8 +98,11 @@ void setup() {
   // Enable leak detection
   setup_leak_detection_pins_and_isr();
 
-  // Enable soft kill button input
+  // Enable kill button input
   startup_kill_button();
+
+  // Enable Auto Mode Set Button
+  startup_auto_button();
 
   // Startup moved to per device messaging
 
