@@ -233,7 +233,6 @@ class Brain : public rclcpp::Node
             idea.code = Interface::Idea::MOVE;
             idea.parameters = std::vector<float>{degree};
             idea_pub_->publish(idea);
-            RCLCPP_INFO(this->get_logger(), "Moved forward %f meters", degree);
         }
 
         void translate(float degree)
@@ -250,7 +249,6 @@ class Brain : public rclcpp::Node
             idea.code = Interface::Idea::LEVITATE;
             idea.parameters = std::vector<float>{degree};
             idea_pub_->publish(idea);
-            RCLCPP_INFO(this->get_logger(), "Levitated -%f meters", degree);
         }
 
         void keepTurning(float power)
@@ -280,7 +278,6 @@ class Brain : public rclcpp::Node
             this->centerRobot();
             exit(0);
         }
-
 
         ////////////////////////////////////////////////////////////////////////////////
         //                                  CALLBACK                                  //
