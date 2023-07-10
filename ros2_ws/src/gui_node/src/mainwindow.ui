@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1386</width>
-    <height>663</height>
+    <width>1494</width>
+    <height>905</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,6 +18,97 @@
     <bool>true</bool>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
+    <item row="3" column="0">
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string/>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QComboBox" name="comboBox">
+         <property name="minimumSize">
+          <size>
+           <width>217</width>
+           <height>23</height>
+          </size>
+         </property>
+         <item>
+          <property name="text">
+           <string>Yaw</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Pitch</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Roll</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>x_pos</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>y_pos</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>z_pos</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCommandLinkButton" name="rosButton">
+         <property name="text">
+          <string>ros2 topic list</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCommandLinkButton" name="commandLinkButton_5">
+         <property name="text">
+          <string>Ping Robot</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCommandLinkButton" name="pingButton">
+         <property name="text">
+          <string>SSH Into Robot</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCommandLinkButton" name="sshButton">
+         <property name="text">
+          <string>Run motors</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCommandLinkButton" name="commandLinkButton_4">
+         <property name="text">
+          <string>Check Sensors</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCommandLinkButton" name="commandLinkButton_6">
+         <property name="text">
+          <string>Launch</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
     <item row="0" column="0">
      <widget class="QGroupBox" name="groupBox_3">
       <property name="title">
@@ -148,64 +239,20 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QDial" name="Kp"/>
+        <widget class="QDial" name="Kp">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>100</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QDial" name="Ki"/>
        </item>
        <item>
         <widget class="QDial" name="Kd"/>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QGroupBox" name="groupBox_2">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QCommandLinkButton" name="rosButton">
-         <property name="text">
-          <string>ros2 topic list</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCommandLinkButton" name="commandLinkButton_5">
-         <property name="text">
-          <string>Ping Robot</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCommandLinkButton" name="pingButton">
-         <property name="text">
-          <string>SSH Into Robot</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCommandLinkButton" name="sshButton">
-         <property name="text">
-          <string>Run motors</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCommandLinkButton" name="commandLinkButton_4">
-         <property name="text">
-          <string>Check Sensors</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCommandLinkButton" name="commandLinkButton_6">
-         <property name="text">
-          <string>Launch</string>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>
@@ -217,8 +264,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1386</width>
-     <height>22</height>
+     <width>1494</width>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

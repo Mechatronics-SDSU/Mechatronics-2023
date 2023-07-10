@@ -23,8 +23,10 @@ private:
     rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr kp_publisher;
     rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr ki_publisher; 
     rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr kd_publisher;  
+    int axis;  
 
 private slots:
+    void handleIndexChanged();
     void updateKpValue();
     void updateKiValue();
     void updateKdValue();
