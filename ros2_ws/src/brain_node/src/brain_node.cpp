@@ -32,7 +32,9 @@
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "vector_operations.hpp"
 
-#define MODE "Mission"
+#define TO_THE_RIGHT 15.0f
+#define TO_THE_LEFT -15.0f
+#define PIXEL_ERROR_THRESHOLD 50
 #define SLEEP_TIME 50ms
 
 using std::placeholders::_1;
@@ -174,13 +176,14 @@ class Brain : public rclcpp::Node
 
         bool areEqual(vector<uint32_t> point_a, vector<uint32_t> point_b)
         {
-            return (abs((int)((point_a - point_b))[0]) < 30);
+            return (abs((int)((point_a - point_b))[0]) < PIXEL_ERROR_THRESHOLD);
         }
 
         void adjustToCenter(vector<uint32_t> bounding_box_midpoint, vector<uint32_t> camera_frame_midpoint)
-        {
-            if (bounding_box_midpoint[0] > camera_frame_midpoint[0]) {this->turn(15);}
-            else {this->turn(-15);}
+        {   
+            bool bounding_box_is_to_the_right_of_center_pixel = bounding_box_midpoint[0] > camera_frame_midpoint[0];
+            if (bounding_box_is_to_the_right_of_center_pixel) {this->turn(TO_THE_RIGHT);}
+            else {this->turn(TO_THE_LEFT);}
             this->waitForEmptyQueue();
         }
 
