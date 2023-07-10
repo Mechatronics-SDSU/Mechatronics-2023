@@ -34,15 +34,30 @@
 // us equivalents provided for print debug functions,
 //  they serve no integral purpose
 #define MID_US      1500      //  1500us mid freq
+
+#define BRESC
+
+#ifdef BRESC
+#define MAX_US      1900
+#define MIN_US      1100
+#else
 #define MAX_US      2000
 #define MIN_US      1000
+#endif
 
 #define PWM_RES     16                    // 16 bit range
 #define MAX_16      65535                 // 16 bit range
 #define CT_PER_US   26.214f               // Timer counts per microsecond
 #define MID_CT      39322                 // 1500 us
+
+#ifdef BRESC
+#define MAX_CT      49807                 // 1900 us
+#define MIN_CT      28835                 // 1100 us
+#else
 #define MAX_CT      52428                 // 2000 us
 #define MIN_CT      26214                 // 1000 us
+#endif
+
 #define DEAD_CT     (DEADZONE * MID_CT)
 #define DEAD_HI_CT  (MID_CT + DEAD_CT)
 #define DEAD_LO_CT  (MID_CT - DEAD_CT)
@@ -111,9 +126,15 @@ struct CONTROL{
 #define LEAK_DET_PIN_2  32
 #define LEAK_DET_PIN_3  33
 
-// Soft Kill Button input, trigger on HI
+// Kill Button input, trigger on HI
 #define KILL_BUTTON_PIN   38
 #define KILL_BUTTON_DEBOUNCE_TIMEOUT  500000
+
+// Auto Mode Button input, trigger on HI
+#define AUTO_BUTTON_PIN   39
+#define MODE_SET_ID       0x007
+#define MANUAL_MODE       0x00
+#define AUTO_MODE         0x04
 
 // Light PWM pins
 #define BRLIGHT_PWM_FREQ    400
@@ -171,6 +192,11 @@ struct CONTROL{
 
 #define EMBSYS_DREQ_ERRCHK  0
 #define EMBSYS_DREQ_RDBK    1
+
+#define EMBSYS_OPERATION_STAT_0   28      // For auto and manual mode setting
+#define EMBSYS_OPERATION_STAT_1   29      // See above for state IDs
+#define EMBSYS_OPERATION_STAT_2   30
+#define EMBSYS_OPERATION_STAT_3   31
 
 
 #define EMBSYS_DFL_STATE   ( (1ul << EMBSYS_DREQ_RDBK) | (1ul << EMBSYS_DREQ_ERRCHK) )

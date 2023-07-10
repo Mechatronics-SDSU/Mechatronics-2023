@@ -99,6 +99,34 @@ void set_comp2_dac(uint8_t val){  // Set DAC, max 64
 }
 
 
+// Auto button
+void startup_auto_button(){               // Button on A15 with 4k7, 100n RCLP
+  CCM_CCGR3 |= CCM_CCGR3_ACMP3(CCM_CCGR_ON);  // Enable ACMP3 Clock
+
+  // CMP3 Setup for A15 Input vs. Internal DAC
+  CMP3_CR0 = 0b01000011; // Set Filter count and Hysteresis controls
+  CMP3_CR1 = 0b00000001; // Mode 4B
+  CMP3_FPR = 64;         // Divide periph clock to COMP sample
+  //CMP3_DACCR = (1 << 7) | (0 << 6) | 31; // Enable DAC, set threshold
+  set_comp3_dac(2);
+  CMP3_SCR = 0b00010000;  // Enable ISR
+  CMP3_MUXCR = 0b00110111;  // +in = A15, -in = DAC
+
+  pinMode(AUTO_BUTTON_PIN, INPUT_PULLDOWN);
+
+  // Setup IRQ, ACMP3 ISR -> 124
+  attachInterruptVector(IRQ_ACMP3, &auto_button_triggered);
+  NVIC_CLEAR_PENDING(IRQ_ACMP3);
+  NVIC_ENABLE_IRQ(IRQ_ACMP3);
+
+  __enable_irq();
+}
+
+void set_comp3_dac(uint8_t val){  // Set DAC, max 64
+  CMP3_DACCR = (uint8_t)((1 << 7) | (val & 0b111111));
+}
+
+
 //////////////////////////////////////////////////////
 //          Hard Kill Relay Output, Active High 
 //////////////////////////////////////////////////////

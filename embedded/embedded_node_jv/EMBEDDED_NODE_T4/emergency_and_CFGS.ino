@@ -50,6 +50,7 @@ void shutdownSystem(){      // Immediate shutdown of motors, release claw
 #endif
   
 #ifdef NEW_ESC_RESET_PROCEDURE
+  commsTimeoutWDT.feed();
   for(int n = 0; n < ACTIVE_THRUSTERS; n++){
     motor_signal_reset(control.thruster[n].pin);
   }
@@ -59,6 +60,7 @@ void shutdownSystem(){      // Immediate shutdown of motors, release claw
   //CPU_RESET_CYCLECOUNTER;
   uint32_t start_val = ARM_DWT_CYCCNT;
   while((ARM_DWT_CYCCNT - start_val) < ESC_SIGNAL_RESET_CYCLES);
+  commsTimeoutWDT.feed();
 #endif
   
 
