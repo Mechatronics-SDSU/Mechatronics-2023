@@ -5,6 +5,7 @@
 #include "control_interface.hpp"
 
 using namespace std::placeholders;
+using namespace std;
 
 class Test : public rclcpp::Node
 {
@@ -30,7 +31,14 @@ public:
     (
       "brain_idea_data",
        10,
-       std::bind(&Test::test_idea_callback, this, _1)
+       std::bind(&Test::testIdeaCallback, this, _1)
+    );
+
+    command_queue_is_empty_sub_ = this->create_subscription<std_msgs::msg::Int32>
+    (
+      "is_command_queue_empty",
+       10,
+       std::bind(&Test::testCommandQueueEmptyCallback, this, _1)
     );
   }
 
@@ -40,10 +48,23 @@ private:
     Interface::object_pub_t zed_object_pub_;
     Interface::ros_timer_t zed_object_timer_;
     Interface::idea_sub_t  idea_sub_;
+    Interface::int_sub_t command_queue_is_empty_sub_;
 
-    void test_idea_callback(scion_types::msg::Idea::SharedPtr idea)
+    void testIdeaCallback(scion_types::msg::Idea::SharedPtr idea)
     {
-        RCLCPP_INFO(this->get_logger(), "Recieved idea %d for degree %f", idea->code);
+        // RCLCPP_INFO(this->get_logger(), "Recieved idea %d for degree %f", idea->code);
+    }
+
+    void testCommandQueueEmptyCallback(std_msgs::msg::Int32::SharedPtr is_command_queue_empty) 
+    {
+        if(is_command_queue_empty->data) 
+        {
+            RCLCPP_INFO(this->get_logger(), "Command queue empty" );
+        }
+        else 
+        {
+            RCLCPP_INFO(this->get_logger(), "Command queue not empty" );
+        }
     }
 
     void publishZedObjectTimer()
@@ -52,7 +73,7 @@ private:
       vision_object.object_name = "gate";
       vision_object.distance = 123.45;
       this->zed_object_pub_->publish(vision_object);
-      // RCLCPP_INFO(this->get_logger(), "Publishing Test Vision Object" );
+      RCLCPP_INFO(this->get_logger(), "Publishing Test Vision Object" );
     }
 
     void sendFrame()

@@ -24,13 +24,17 @@
 #include <unistd.h>
 #include <iostream>
 #include <chrono>
+#include <cmath>
 
 #include "scion_types/action/pid.hpp"
 #include "control_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
+#include "vector_operations.hpp"
 
-#define MODE "Mission"
+#define TO_THE_RIGHT 15.0f
+#define TO_THE_LEFT -15.0f
+#define PIXEL_ERROR_THRESHOLD 50
 #define SLEEP_TIME 50ms
 
 using std::placeholders::_1;
@@ -53,17 +57,20 @@ class Brain : public rclcpp::Node
             idea_pub_ = this->create_publisher<scion_types::msg::Idea>("brain_idea_data", 10);
             can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
             pid_ready_service_ = this->create_service<std_srvs::srv::Trigger>("pid_ready", std::bind(&Brain::ready, this, _1, _2));
-            // this->performMission();
+            commands_in_queue_sub_ = this->create_subscription<std_msgs::msg::Int32>
+            ("is_command_queue_empty", 10, std::bind(&Brain::update_if_command_queue_empty, this, _1));
         }
     private:
         Interface::idea_pub_t                       idea_pub_;
         Interface::ros_timer_t                      decision_timer_;
         Interface::idea_vector_t                    idea_sequence_;
         Interface::object_sub_t                     object_sub_;
-        std::string                                 mode_param_;
+        Interface::int_sub_t                        commands_in_queue_sub_;
         Interface::ros_sendframe_client_t           can_client_;
         Interface::ros_trigger_service_t            pid_ready_service_;
-        bool                                        gate_seen_ = false; 
+        std::string                                 mode_param_;
+        bool                                        gate_seen_ = false;
+        bool                                        command_queue_is_empty_ = true;
 
         ////////////////////////////////////////////////////////////////////////////////
         //                               INIT MISSION                                 //
@@ -126,6 +133,67 @@ class Brain : public rclcpp::Node
             return distance;
         }
 
+        void centerRobot()
+        {
+            const int MID_X_PIXEL = 640;
+            const int MID_Y_PIXEL = 360;
+            const int NUM_CORNERS = 4;
+            bool robot_centered_bool;
+            std::promise<bool> robot_centered;
+            std::shared_future<bool> future  = robot_centered.get_future();
+            Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_subscriber");;
+            Interface::vision_sub_t object_sub = temp_node->create_subscription<scion_types::msg::ZedObject>
+            ("zed_vision_data", 10, [this, &temp_node, &robot_centered, &robot_centered_bool](const scion_types::msg::ZedObject::SharedPtr msg) {
+                    while (!robot_centered_bool)
+                    {
+                        std::array<scion_types::msg::Keypoint2Di, 4> bounding_box_from_zed = msg->corners;
+                        vector<vector<uint32_t>> vector_bounding_box;                   // this is to convert from ros object to vector object
+                        for (int i = 0; i < NUM_CORNERS; i++)
+                        {
+                            vector<uint32_t> corner_point {((bounding_box_from_zed[i]).kp)[i], ((bounding_box_from_zed[i]).kp)[i+1]};
+                            vector_bounding_box.push_back(corner_point);
+                        }
+                        vector<uint32_t> bounding_box_midpoint = findMidpoint(vector_bounding_box);
+                        vector<uint32_t> camera_frame_midpoint {MID_X_PIXEL, MID_Y_PIXEL};
+                        if (areEqual(bounding_box_midpoint, camera_frame_midpoint)) {robot_centered_bool = true;}
+                        else {this->adjustToCenter(bounding_box_midpoint, camera_frame_midpoint);}
+                    }
+                    robot_centered.set_value(true);              // jump out of async spin
+            });
+            rclcpp::spin_until_future_complete(temp_node, future);
+        }
+
+        vector<uint32_t> findMidpoint(vector<vector<uint32_t>>& bounding_box)
+        {
+            vector<uint32_t> cornerUL = bounding_box[0];
+            vector<uint32_t> cornerUR = bounding_box[1];
+            vector<uint32_t> cornerBL = bounding_box[2];
+            uint32_t midpoint_x = ((cornerUR + cornerUL)/((uint32_t)2))[0];
+            uint32_t midpoint_y = ((cornerUL + cornerBL)/((uint32_t)2))[1];
+            vector<uint32_t> midpoint {midpoint_x, midpoint_y};
+            return midpoint;
+        }
+
+        bool areEqual(vector<uint32_t> point_a, vector<uint32_t> point_b)
+        {
+            return (abs((int)((point_a - point_b))[0]) < PIXEL_ERROR_THRESHOLD);
+        }
+
+        void adjustToCenter(vector<uint32_t> bounding_box_midpoint, vector<uint32_t> camera_frame_midpoint)
+        {   
+            bool bounding_box_is_to_the_right_of_center_pixel = bounding_box_midpoint[0] > camera_frame_midpoint[0];
+            if (bounding_box_is_to_the_right_of_center_pixel) {this->turn(TO_THE_RIGHT);}
+            else {this->turn(TO_THE_LEFT);}
+            this->waitForEmptyQueue();
+        }
+
+        void waitForEmptyQueue() 
+        {
+            while (!command_queue_is_empty_)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            }
+        }
         ////////////////////////////////////////////////////////////////////////////////
         //                               MOVEMENT IDEAS                               //
         ////////////////////////////////////////////////////////////////////////////////
@@ -168,7 +236,6 @@ class Brain : public rclcpp::Node
             idea.code = Interface::Idea::MOVE;
             idea.parameters = std::vector<float>{degree};
             idea_pub_->publish(idea);
-            RCLCPP_INFO(this->get_logger(), "Moved forward %f meters", degree);
         }
 
         void translate(float degree)
@@ -185,7 +252,6 @@ class Brain : public rclcpp::Node
             idea.code = Interface::Idea::LEVITATE;
             idea.parameters = std::vector<float>{degree};
             idea_pub_->publish(idea);
-            RCLCPP_INFO(this->get_logger(), "Levitated -%f meters", degree);
         }
 
         void keepTurning(float power)
@@ -210,8 +276,19 @@ class Brain : public rclcpp::Node
         {
             doUntil(&Brain::keepTurning, &Brain::gateSeen, &Brain::stop, this->gate_seen_, SMOOTH_TURN_DEGREE);
             levitate(SUBMERGE_DISTANCE);
-            moveForward(this->getDistanceFromCamera("gate") + 1);
+            moveForward(this->getDistanceFromCamera("gate"));
+            this->waitForEmptyQueue();
+            this->centerRobot();
             exit(0);
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        //                                  CALLBACK                                  //
+        ////////////////////////////////////////////////////////////////////////////////
+
+        void update_if_command_queue_empty(const std_msgs::msg::Int32::SharedPtr msg)
+        {
+            this->command_queue_is_empty_ = msg->data;
         }
 
 
@@ -225,6 +302,49 @@ int main(int argc, char * argv[])
   rclcpp::shutdown();
   return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

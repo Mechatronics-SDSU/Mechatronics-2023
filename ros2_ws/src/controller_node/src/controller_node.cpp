@@ -39,8 +39,7 @@ class Controller : public rclcpp::Node
     typedef void (Controller::*button_function)();
 
   public:
-    Controller() 
-    : Node("controller")
+    Controller() : Node("controller")
     {
         controller_sub_ = this->create_subscription<sensor_msgs::msg::Joy>
         ("/joy", 10, std::bind(&Controller::controller_subscription_callback, this, _1));
@@ -65,8 +64,14 @@ class Controller : public rclcpp::Node
             exit(EXIT_FAILURE);
         }
 
-        buttons_ = vector<bool>{false, false, false};
-        button_functions_ = vector<button_function>{&Controller::killRobot, &Controller::allClear, &Controller::turnOnLight};
+        /* x_button, o_button, tri_button */
+        buttons_ = vector<bool>{false, false, false, false};
+        button_functions_ = vector<button_function> {
+                                                        &Controller::killRobot, 
+                                                        &Controller::allClear, 
+                                                        &Controller::turnOnLight,
+                                                        &Controller::turnOffLight
+                                                    };
 
         canClient::setBotInSafeMode(can_client_);
     }
@@ -106,7 +111,8 @@ class Controller : public rclcpp::Node
         bool x_button = msg->buttons[0];
         bool o_button = msg->buttons[1];
         bool tri_button = msg->buttons[2];
-        vector<bool> button_vals{x_button, o_button, tri_button};
+        bool square_button = msg->buttons[3];
+        vector<bool> button_vals{x_button, o_button, tri_button, square_button};
 
         make_CAN_request(thrust_vals);
         processButtonInputs(button_vals);
@@ -146,6 +152,12 @@ class Controller : public rclcpp::Node
         canClient::sendFrame(0x22, 5, lightEnable.data(), this->can_client_);
         vector<unsigned char> lightOn{0x04, 0x00, 0x04, 0x00, 0x64};
         canClient::sendFrame(0x22, 5, lightOn.data(), this->can_client_);
+    }
+
+    void turnOffLight()
+    {
+        vector<unsigned char> lightOff{0x04, 0x00, 0x04, 0x00, 0x00};
+        canClient::sendFrame(0x22, 5, lightOff.data(), this->can_client_);
     }
 
     vector<float> normalizeCtrlVals(vector<float>& ctrl_vals)

@@ -61,9 +61,9 @@ PID_Params::PID_Params()
     
     this->x_pos =
     {
-        {"kp", 0.05},
-        {"ki", 0.01},
-        {"kd", 0.01},
+        {"kp", 0.080},
+        {"ki", 0.005},
+        {"kd", 0.010},
         {"ctrl_val_offset", 0.0},
         {"ctrl_val_max", MAX},
         {"ctrl_val_min", MIN},
@@ -73,9 +73,9 @@ PID_Params::PID_Params()
 
     this->y_pos = 
     {
-        {"kp", 0.05},
-        {"ki", 0.01},
-        {"kd", 0.02},
+        {"kp", 0.080},
+        {"ki", 0.005},
+        {"kd", 0.010},
         {"ctrl_val_offset", 0.0},
         {"ctrl_val_max", MAX},
         {"ctrl_val_min", MIN},
@@ -85,7 +85,7 @@ PID_Params::PID_Params()
 
     this->z_pos =
     {
-        {"kp", 0.17},
+        {"kp", 0.200},
         {"ki", 0.003},
         {"kd", 0.002},
         {"ctrl_val_offset", 0.0},

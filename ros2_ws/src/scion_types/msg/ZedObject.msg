@@ -35,3 +35,6 @@ int8 action_state
 
 # 3D dimensions (width, height, lenght)
 float32[3] dimensions_3d
+
+# 2D bounding box that I had to manually yank in here because zed github is trash
+Keypoint2Di[4] corners
