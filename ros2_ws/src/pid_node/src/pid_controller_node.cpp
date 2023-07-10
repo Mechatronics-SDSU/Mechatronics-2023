@@ -34,7 +34,7 @@
 #include "scion_types/action/pid.hpp"
 #include "scion_types/msg/state.hpp"
 #include "scion_pid_controller.hpp"                // PID Class
-
+#include "pid_controller.hpp"   
 using std::placeholders::_1;
 using std::placeholders::_2;
 using namespace std;
@@ -64,7 +64,6 @@ using GoalHandlePIDAction = rclcpp_action::ServerGoalHandle<PIDAction>;
 **/
 class Controller : public rclcpp::Node
 {
-
 public:
     explicit Controller(): Node("pid_controller")
     {
@@ -94,6 +93,20 @@ public:
 
         current_state_sub_ = this->create_subscription<scion_types::msg::State>
         ("relative_current_state_data", 10, std::bind(&Controller::current_state_callback, this, _1));
+
+        axis_tuning_map_ = std::map<int, string> 
+        ({
+            {0, "yaw"  }, 
+            {1, "pitch"},
+            {2, "roll" },
+            {3, "x_pos"},
+            {4, "y_pos"},
+            {5, "z_pos"},
+        });
+
+        kp_tuning_sub_ = this->create_subscription<scion_types::msg::PidTuning>("kp_dial_data", 10, std::bind(&Controller::kp_tuning_callback, this, _1));
+        ki_tuning_sub_ = this->create_subscription<scion_types::msg::PidTuning>("ki_dial_data", 10, std::bind(&Controller::ki_tuning_callback, this, _1));
+        kd_tuning_sub_ = this->create_subscription<scion_types::msg::PidTuning>("kd_dial_data", 10, std::bind(&Controller::kd_tuning_callback, this, _1));
 
         // desired_state_sub_ = this->create_subscription<scion_types::msg::State>
         // ("desired_state_data", 10, std::bind(&Controller::desired_state_callback, this, _1));
@@ -129,6 +142,9 @@ private:
     Interface::ros_timer_t                      print_timer_;
     Interface::state_sub_t                      current_state_sub_;
     Interface::state_sub_t                      desired_state_sub_;
+    Interface::tune_pid_sub_t                   kp_tuning_sub_;
+    Interface::tune_pid_sub_t                   ki_tuning_sub_;
+    Interface::tune_pid_sub_t                   kd_tuning_sub_;
     Interface::pid_action_server_t              pid_command_server_;
     Interface::ros_bool_service_t               use_position_service_;
     Interface::ros_bool_service_t               stabilize_robot_service_;
@@ -141,6 +157,7 @@ private:
     PID_Params                                  pid_params_object_;                      // Passed to controller for tuning
     Interface::ros_trigger_client_t             pid_ready_client_;
     int                                         motor_count_ = 8;
+    std::map<int, string>                       axis_tuning_map_;
 
     /* Upon initialization set all values to [0,0,0] */
     
@@ -569,6 +586,28 @@ private:
     {
         if (!this->current_state_valid_) {this->current_state_valid_ = true;}
         this->current_state_= msg->state; 
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+                                        // GUI TUNING CONTROLS CALLBACKS // 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    void kp_tuning_callback(const scion_types::msg::PidTuning::SharedPtr msg) 
+    {
+        shared_ptr<PID_Controller> axis = this->controller_.controllers[axis_tuning_map_[msg->axis]];
+        axis->set_gains(msg->data, axis->k_i, axis->k_d);
+    }
+
+    void ki_tuning_callback(const scion_types::msg::PidTuning::SharedPtr msg) 
+    {
+        shared_ptr<PID_Controller> axis = this->controller_.controllers[axis_tuning_map_[msg->axis]];
+        axis->set_gains(axis->k_p, msg->data, axis->k_d);
+    }
+
+    void kd_tuning_callback(const scion_types::msg::PidTuning::SharedPtr msg) 
+    {
+        shared_ptr<PID_Controller> axis = this->controller_.controllers[axis_tuning_map_[msg->axis]];
+        axis->set_gains(axis->k_p, axis->k_i, msg->data);
     }
 };
 

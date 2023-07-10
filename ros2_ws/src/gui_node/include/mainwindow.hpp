@@ -24,7 +24,7 @@ private:
     rclcpp::Publisher<scion_types::msg::PidTuning>::SharedPtr kp_publisher;
     rclcpp::Publisher<scion_types::msg::PidTuning>::SharedPtr ki_publisher; 
     rclcpp::Publisher<scion_types::msg::PidTuning>::SharedPtr kd_publisher;  
-    int axis;  
+    int axis = 0;  
 
 private slots:
     void handleIndexChanged();
