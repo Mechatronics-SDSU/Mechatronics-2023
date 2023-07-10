@@ -25,46 +25,6 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QComboBox" name="comboBox">
-         <property name="minimumSize">
-          <size>
-           <width>217</width>
-           <height>23</height>
-          </size>
-         </property>
-         <item>
-          <property name="text">
-           <string>Yaw</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Pitch</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Roll</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>x_pos</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>y_pos</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>z_pos</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item>
         <widget class="QCommandLinkButton" name="rosButton">
          <property name="text">
           <string>ros2 topic list</string>
@@ -162,6 +122,51 @@
          <property name="title">
           <string/>
          </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QComboBox" name="comboBox">
+            <property name="minimumSize">
+             <size>
+              <width>217</width>
+              <height>23</height>
+             </size>
+            </property>
+            <property name="editable">
+             <bool>false</bool>
+            </property>
+            <item>
+             <property name="text">
+              <string>Yaw</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Pitch</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Roll</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>x_pos</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>y_pos</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>z_pos</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
