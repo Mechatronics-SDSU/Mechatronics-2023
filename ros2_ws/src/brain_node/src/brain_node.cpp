@@ -56,7 +56,7 @@ class Brain : public rclcpp::Node
             can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
             pid_ready_service_ = this->create_service<std_srvs::srv::Trigger>("pid_ready", std::bind(&Brain::ready, this, _1, _2));
             commands_in_queue_sub_ = this->create_subscription<std_msgs::msg::Int32>
-            ("commands_in_queue_data", 10, std::bind(&Brain::update_commands_in_queue_count, this, _1));
+            ("is_command_queue_empty", 10, std::bind(&Brain::update_if_command_queue_empty, this, _1));
         }
     private:
         Interface::idea_pub_t                       idea_pub_;
@@ -68,7 +68,7 @@ class Brain : public rclcpp::Node
         Interface::ros_trigger_service_t            pid_ready_service_;
         std::string                                 mode_param_;
         bool                                        gate_seen_ = false;
-        int                                         commands_in_queue_count_ = 0;
+        bool                                        command_queue_is_empty = true;
 
         ////////////////////////////////////////////////////////////////////////////////
         //                               INIT MISSION                                 //
@@ -186,7 +186,7 @@ class Brain : public rclcpp::Node
 
         void waitForEmptyQueue() 
         {
-            while (commands_in_queue_count_ != 0)
+            while (!command_queue_is_empty)
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
             }
@@ -275,7 +275,9 @@ class Brain : public rclcpp::Node
         {
             doUntil(&Brain::keepTurning, &Brain::gateSeen, &Brain::stop, this->gate_seen_, SMOOTH_TURN_DEGREE);
             levitate(SUBMERGE_DISTANCE);
-            moveForward(this->getDistanceFromCamera("gate") + 1);
+            moveForward(this->getDistanceFromCamera("gate"));
+            this->waitForEmptyQueue();
+            this->centerRobot();
             exit(0);
         }
 
@@ -284,9 +286,9 @@ class Brain : public rclcpp::Node
         //                                  CALLBACK                                  //
         ////////////////////////////////////////////////////////////////////////////////
 
-        void update_commands_in_queue_count(const std_msgs::msg::Int32::SharedPtr msg)
+        void update_if_command_queue_empty(const std_msgs::msg::Int32::SharedPtr msg)
         {
-            this->commands_in_queue_count_ = msg->data;
+            this->command_queue_is_empty = msg->data;
         }
 
 
@@ -300,6 +302,49 @@ int main(int argc, char * argv[])
   rclcpp::shutdown();
   return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

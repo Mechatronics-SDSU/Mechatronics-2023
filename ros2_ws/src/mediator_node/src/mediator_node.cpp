@@ -48,7 +48,7 @@ public:
     use_position_client_ = this->create_client<std_srvs::srv::SetBool>("use_position");
     stop_robot_client_ = this->create_client<std_srvs::srv::Trigger>("stop_robot");
     stabilize_robot_client_ = this->create_client<std_srvs::srv::SetBool>("stabilize_robot");
-    commands_in_queue_count_pub_ = this->create_publisher<std_msgs::msg::Int32>("commands_in_queue_data", 10);
+    commands_in_queue_count_pub_ = this->create_publisher<std_msgs::msg::Int32>("is_command_queue_empty", 10);
     commands_count_timer_ = this->create_wall_timer(50ms, std::bind(&Mediator::commands_count_timer_callback, this));
 
     current_state_sub_ = this->create_subscription<scion_types::msg::State>
@@ -350,7 +350,9 @@ private:
 
     void commands_count_timer_callback()
     {
-        this->commands_in_queue_count_pub_->publish(this->command_queue_.size());
+      auto message = std_msgs::msg::Int32();
+      message.data = this->command_queue_.size() == 0 && this->current_command_ == nullptr;
+      this->commands_in_queue_count_pub_->publish(message);
     }
 
     void current_state_callback(const scion_types::msg::State::SharedPtr msg)
