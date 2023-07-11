@@ -180,12 +180,12 @@ private:
           case Idea::STOP:
               this->cancel_goal();
             break;
-          case Idea::GO:
-            Translator::go(idea->parameters[0]);
-            break;
-          case Idea::SPIN:
-            Translator::spin(idea->parameters[0]);
-            break;
+          // case Idea::GO:
+          //   Translator::go(idea->parameters[0]);
+          //   break;
+          // case Idea::SPIN:
+          //   Translator::spin(idea->parameters[0]);
+          //   break;
           case Idea::TURN:
             command_vector = Translator::turn(idea->parameters[0]);
             addToQueue(command_vector);

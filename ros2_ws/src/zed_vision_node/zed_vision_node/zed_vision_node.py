@@ -82,7 +82,7 @@ class ZedVision(Node):
     def stop_idea(self):
         idea = Idea()
         idea.code = 0
-        self.idea_publisher.publish(idea)
+        # self.idea_publisher.publish(idea)
 
 
     def timer_callback(self):

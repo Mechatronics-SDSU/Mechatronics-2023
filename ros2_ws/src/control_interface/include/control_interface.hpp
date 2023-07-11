@@ -144,18 +144,6 @@ namespace Movements
 {
     using namespace Interface;
 
-    void stop()
-    {
-    }
-
-    void go(float power)
-    {
-    }
-
-    void spin(float power)
-    {
-    }
-
     desired_state_t turn(float degree)
     {
         return desired_state_t{degree,0,0,0,0,0};
@@ -192,21 +180,6 @@ namespace Translator
 {
     using namespace Interface;
     
-    command_vector_t stop()
-    {
-        return command_vector_t{};
-    }
-
-    command_vector_t go(float seconds)
-    {
-        return command_vector_t{};
-    }
-
-    command_vector_t spin(float seconds)
-    {
-        return command_vector_t{};
-    }
-
     command_vector_t turn(float degree)
     {
         Interface::Command command1;
@@ -350,3 +323,39 @@ namespace canClient
         sendFrame(0x022, 5, safeModeFrame.data(), can_client);
     }
 }
+
+
+
+
+
+
+/* void stop()
+    {
+    }
+
+    void go(float power)
+    {
+    }
+
+    void spin(float power)
+    {
+    } */
+
+
+
+/*  command_vector_t stop()
+    {
+        return command_vector_t{};
+    }
+
+    command_vector_t go(float seconds)
+    {
+        return command_vector_t{};
+    }
+
+    command_vector_t spin(float seconds)
+    {
+        return command_vector_t{};
+    }
+ */
+
