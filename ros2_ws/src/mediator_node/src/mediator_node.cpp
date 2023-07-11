@@ -15,7 +15,7 @@
 #include <deque>
 #include <chrono>
 
-
+#include "vector_operations.hpp"
 #include "scion_types/action/pid.hpp"
 #include "scion_types/msg/state.hpp"
 #include "scion_types/msg/idea.hpp"
@@ -97,119 +97,134 @@ private:
 
   void nextCommandPrep(Interface::state_transform_func command)
   {
-    if (command == &Movements::turn)
+        if (command == &Movements::turn || command == &Movements::pitch || command == &Movements::roll) 
         {
-          usePositionRequest(false);
-          stabilizeRobotRequest(false);
+            usePositionRequest(false);
         }
+        this->stabilizeRobotRequest(false);
         this->resetPosition();
   }
 
   Interface::desired_state_t adjustDesiredState(Interface::desired_state_t& desired_state, Interface::state_transform_func command_function)
   {
-    if (command_function == &Movements::move)
-    {
-        float xError = desired_state[3];
-        desired_state[3] = xError * cos(this->current_state_[0] * (M_PI/180));
-        desired_state[4] = xError * sin(this->current_state_[0] * (M_PI/180));
-    }
-    if (command_function == &Movements::translate)
-    {
-        float yError = desired_state[4];
-        desired_state[3] = yError * sin(this->current_state_[0] * (M_PI/180));
-        desired_state[4] = yError * cos(this->current_state_[0] * (M_PI/180));
-    }
+      if (command_function == &Movements::move)
+      {
+          float xError = desired_state[3];
+          desired_state[3] = xError * cos(this->current_state_[0] * (M_PI/180));
+          desired_state[4] = xError * sin(this->current_state_[0] * (M_PI/180));
+      }
+      if (command_function == &Movements::translate)
+      {
+          float yError = desired_state[4];
+          desired_state[3] = yError * sin(this->current_state_[0] * (M_PI/180));
+          desired_state[4] = yError * cos(this->current_state_[0] * (M_PI/180));
+      }
 
-    return desired_state;
+      return desired_state;
   }
 
   void commandCleanup()
   {
-    /* Success State */
-    sleep(.02); // Sleep after reaching desired state for a split second before taking out current command
-    usePositionRequest(true);
-    stabilizeRobotRequest(true);
-    current_command_ = nullptr;
+      /* Success State */
+      sleep(.02); // Sleep after reaching desired state for a split second before taking out current command
+      usePositionRequest(true);
+      stabilizeRobotRequest(true);
+      current_command_ = nullptr;
   }
 
   void nextCommand()
   {
-    using namespace Interface;
-    if (this->command_queue_.size() > 0 && current_command_ == nullptr) // && controlInit == true
-    {
-        this->current_command_ = &command_queue_[0];
-        this->command_queue_.pop_front();
-        
-        state_transform_func command_function = current_command_->function.transform;
-        this->nextCommandPrep(command_function);
-        desired_state_t desired = (*command_function)(current_command_->params.degree);
-        desired = adjustDesiredState(desired, command_function);
-        this->send_goal(desired);
-    }
+      using namespace Interface;
+      if (this->command_queue_.size() > 0 && current_command_ == nullptr) // && controlInit == true
+      {
+          this->current_command_ = &command_queue_[0];
+          this->command_queue_.pop_front();
+          
+          state_transform_func command_function = current_command_->function.transform;
+          this->nextCommandPrep(command_function);
+          desired_state_t desired = (*command_function)(current_command_->params.degree);
+          desired = adjustDesiredState(desired, command_function);
+          current_state_t current = getCurrentState();
+          desired += current;
+          this->send_goal(desired);
+      }
+  }
+
+  Interface::current_state_t getCurrentState()
+  {
+      std::promise<Interface::current_state_t> current_state;
+      std::shared_future<Interface::current_state_t> future  = current_state.get_future();
+      Interface::node_t temp_node = rclcpp::Node::make_shared("temp_state_subscriber");;
+      Interface::state_sub_t current_state_sub = temp_node->create_subscription<scion_types::msg::State>
+      ("relative_current_state_data", 10, [&temp_node, &current_state](const scion_types::msg::State::SharedPtr msg) {
+              current_state.set_value(msg->state);
+      });
+      rclcpp::spin_until_future_complete(temp_node, future);
+      return future.get();
   }
 
   void addToQueue(Interface::command_vector_t& command_vector)
   {
-    for (Interface::Command command : command_vector)
-    {
-      this->command_queue_.push_back(command);
-    }
+      for (Interface::Command command : command_vector)
+      {
+        this->command_queue_.push_back(command);
+      }
   }
 
   void translateIdea(scion_types::msg::Idea::SharedPtr idea)
-    {
+  {
       using namespace Interface;
       Interface::command_vector_t command_vector;
       switch (idea->code)
       {
-        case Idea::STOP:
-            this->cancel_goal();
-          break;
-        case Idea::GO:
-          Translator::go(idea->parameters[0]);
-          break;
-        case Idea::SPIN:
-          Translator::spin(idea->parameters[0]);
-          break;
-        case Idea::TURN:
-          command_vector = Translator::turn(idea->parameters[0]);
-          addToQueue(command_vector);
-          break;
-        case Idea::PITCH:
-          command_vector = Translator::pitch(idea->parameters[0]);
-          addToQueue(command_vector);
-          break;
-        case Idea::ROLL:
-          command_vector = Translator::roll(idea->parameters[0]);
-          addToQueue(command_vector);
-          break;
-        case Idea::MOVE:
-          command_vector = Translator::move(idea->parameters[0]);
-          addToQueue(command_vector);
-          break;
-        case Idea::TRANSLATE:
-          command_vector = Translator::translate(idea->parameters[0]);
-          addToQueue(command_vector);
-          break;
-        case Idea::LEVITATE:
-          command_vector = Translator::levitate(idea->parameters[0]);
-          addToQueue(command_vector);
-          break;
-        case Idea::RELATIVE_POINT:
-          command_vector = Translator::relativePoint(idea->parameters[0], idea->parameters[1]);
-          addToQueue(command_vector);
-          break;
-        case Idea::ABSOLUTE_POINT:
-          Translator::absolutePoint(idea->parameters[0], idea->parameters[1]);
-          break;
-        case Idea::PURE_RELATIVE_POINT:
-          Translator::pureRelativePoint(idea->parameters[0], idea->parameters[1]);
-          break;
-        case Idea::PURE_ABSOLUTE_POINT:
-          Translator::pureAbsolutePoint(idea->parameters[0], idea->parameters[1]);
-          break;
+          case Idea::STOP:
+              this->cancel_goal();
+            break;
+          case Idea::GO:
+            Translator::go(idea->parameters[0]);
+            break;
+          case Idea::SPIN:
+            Translator::spin(idea->parameters[0]);
+            break;
+          case Idea::TURN:
+            command_vector = Translator::turn(idea->parameters[0]);
+            addToQueue(command_vector);
+            break;
+          case Idea::PITCH:
+            command_vector = Translator::pitch(idea->parameters[0]);
+            addToQueue(command_vector);
+            break;
+          case Idea::ROLL:
+            command_vector = Translator::roll(idea->parameters[0]);
+            addToQueue(command_vector);
+            break;
+          case Idea::MOVE:
+            command_vector = Translator::move(idea->parameters[0]);
+            addToQueue(command_vector);
+            break;
+          case Idea::TRANSLATE:
+            command_vector = Translator::translate(idea->parameters[0]);
+            addToQueue(command_vector);
+            break;
+          case Idea::LEVITATE:
+            command_vector = Translator::levitate(idea->parameters[0]);
+            addToQueue(command_vector);
+            break;
+          case Idea::RELATIVE_POINT:
+            command_vector = Translator::relativePoint(idea->parameters[0], idea->parameters[1]);
+            addToQueue(command_vector);
+            break;
+          case Idea::ABSOLUTE_POINT:
+            Translator::absolutePoint(idea->parameters[0], idea->parameters[1]);
+            break;
+          case Idea::PURE_RELATIVE_POINT:
+            Translator::pureRelativePoint(idea->parameters[0], idea->parameters[1]);
+            break;
+          case Idea::PURE_ABSOLUTE_POINT:
+            Translator::pureAbsolutePoint(idea->parameters[0], idea->parameters[1]);
+            break;
       }
-    }
+  }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                             // ACTION SERVER // 

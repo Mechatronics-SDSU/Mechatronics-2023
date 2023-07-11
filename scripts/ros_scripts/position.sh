@@ -1,3 +1,3 @@
 echo "Publishing ros message of position..."
 
-ros2 topic pub -1 zed_position_data scion_types/msg/Position "{position: [$1, $2, $3]}"
+ros2 topic pub -1 a50_state_data scion_types/msg/State "{state: [$1, $2, $3]}"

@@ -435,7 +435,7 @@ private:
 
     bool areEqual(std::vector<float>& current_state, std::vector<float>& desired_state)
     {
-        #define ORIENTATION_TOLERANCE 1.0f
+        #define ORIENTATION_TOLERANCE 4.0f
         #define POSITION_TOLERANCE 0.05f
 
         bool equal = true;
@@ -480,18 +480,7 @@ private:
         std::shared_ptr<PIDAction::Result> result = std::make_shared<PIDAction::Result>();
         const auto goal = goal_handle->get_goal();
 
-        vector<float> target = vector<float>{current_state_[0], current_state_[1], current_state_[2],0,0,0};
-        int i = 0;
-        while (!areEqual(this->current_state_, target) && i < 3)
-        {   
-            this->resetPosition();
-            std::this_thread::sleep_for(std::chrono::milliseconds(300));
-            i++;
-        }
-
-        std::vector<float> desired_state = goal->desired_state;
-        desired_state += this->current_state_;
-        this->desired_state_ = desired_state;
+        this->desired_state_ = goal->desired_state;
 
         /* Init States */
         std::vector<float>& state = feedback->current_state;
@@ -502,7 +491,7 @@ private:
             state.push_back((float)thrust);
         }
 
-        /* Feedback Loop */
+        /* Feedback Loop - Stop Conditions is that all Thrusts are close to zero*/
         while (!this->equalToZero(thrustInts)) {
         //   Check if there is a cancel request
         if (goal_handle->is_canceling()) {
@@ -522,6 +511,27 @@ private:
         goal_handle->publish_feedback(feedback);
         loop_rate.sleep();
         }
+
+
+
+
+        /* 
+                    ARCHIVE
+         // vector<float> target = vector<float>{current_state_[0], current_state_[1], current_state_[2],0,0,0};
+        // int i = 0;
+        // while (!areEqual(this->current_state_, target) && i < 3)
+        // {   
+        //     this->resetPosition();
+        //     std::this_thread::sleep_for(std::chrono::milliseconds(300));
+        //     i++;
+        // }
+
+        std::vector<float> desired_state = goal->desired_state;
+        desired_state += current_state_;
+        this->desired_state_ = desired_state; */
+
+
+
 
     }
 

@@ -29,7 +29,8 @@ add_executable(mediator_exec src/mediator_node.cpp)
 
 ament_target_dependencies(mediator_exec scion_types rclcpp rclcpp_action std_srvs)
 
-target_include_directories(mediator_exec PUBLIC ../control_interface/include)
+target_include_directories(mediator_exec PUBLIC ../../../classes/pid_controller/include
+                                                ../control_interface/include)
 
 install(TARGETS
   mediator_exec
