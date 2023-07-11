@@ -252,35 +252,35 @@ private:
 
   void cancel_goal()
   {
-    using namespace std::placeholders;
-    auto cancel_goal_options = rclcpp_action::Client<PIDAction>::CancelRequest();
-    this->pid_command_client_->async_cancel_all_goals();
-    this->stopRobot();
-    this->clearQueue(this->command_queue_);
+      using namespace std::placeholders;
+      auto cancel_goal_options = rclcpp_action::Client<PIDAction>::CancelRequest();
+      this->pid_command_client_->async_cancel_all_goals();
+      this->stopRobot();
+      this->clearQueue(this->command_queue_);
   }
 
   void clearQueue(std::deque<Interface::Command> &q)
   {
-    std::deque<Interface::Command> empty;
-    std::swap( q, empty );
+      std::deque<Interface::Command> empty;
+      std::swap( q, empty );
   }
 
   void goal_response_callback
   (
-    std::shared_future<GoalHandlePIDAction::SharedPtr> future
+      std::shared_future<GoalHandlePIDAction::SharedPtr> future
   )
   {
-    auto goal_handle = future.get();
-    if (!goal_handle) {
-      RCLCPP_ERROR(this->get_logger(), "Goal was rejected by server");
-    } else {
-      RCLCPP_INFO(this->get_logger(), "Goal accepted by server, waiting for result");
-    }
+      auto goal_handle = future.get();
+      if (!goal_handle) {
+        RCLCPP_ERROR(this->get_logger(), "Goal was rejected by server");
+      } else {
+        RCLCPP_INFO(this->get_logger(), "Goal accepted by server, waiting for result");
+      }
   }
 
   void feedback_callback
   (
-    GoalHandlePIDAction::SharedPtr, const std::shared_ptr<const PIDAction::Feedback> feedback
+      GoalHandlePIDAction::SharedPtr, const std::shared_ptr<const PIDAction::Feedback> feedback
   )
   {
     // std::stringstream ss;
@@ -293,27 +293,27 @@ private:
 
   void result_callback
   (
-    const GoalHandlePIDAction::WrappedResult & result
+      const GoalHandlePIDAction::WrappedResult & result
   )
   {
-    switch (result.code) 
-    {
-      case rclcpp_action::ResultCode::SUCCEEDED:
-        break;
-      case rclcpp_action::ResultCode::ABORTED:
-        this->commandCleanup();
-        RCLCPP_INFO(this->get_logger(), "Goal was aborted");
-        break;
-      case rclcpp_action::ResultCode::CANCELED:
-        RCLCPP_INFO(this->get_logger(), "Goal was canceled");
-        this->commandCleanup();
-        break;
-      default:
-        RCLCPP_INFO(this->get_logger(), "Unknown result code");
-        break;
-    }
+      switch (result.code) 
+      {
+        case rclcpp_action::ResultCode::SUCCEEDED:
+          break;
+        case rclcpp_action::ResultCode::ABORTED:
+          this->commandCleanup();
+          RCLCPP_INFO(this->get_logger(), "Goal was aborted");
+          break;
+        case rclcpp_action::ResultCode::CANCELED:
+          RCLCPP_INFO(this->get_logger(), "Goal was canceled");
+          this->commandCleanup();
+          break;
+        default:
+          RCLCPP_INFO(this->get_logger(), "Unknown result code");
+          break;
+      }
 
-    this->commandCleanup();
+      this->commandCleanup();
   }
 
 
@@ -321,37 +321,37 @@ private:
                                             // MEDIATION SERVICES // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  void stopRobot()
-  {
-      auto stop_robot_request = std::make_shared<std_srvs::srv::Trigger::Request>();
-      auto stop_robot_future = this->stop_robot_client_->async_send_request(stop_robot_request);
-  }
+    void stopRobot()
+    {
+        auto stop_robot_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+        auto stop_robot_future = this->stop_robot_client_->async_send_request(stop_robot_request);
+    }
 
-  void resetState()
-  {     
-      auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
-      auto reset_state_future = this->reset_relative_state_client_->async_send_request(reset_state_request);
-  }
+    void resetState()
+    {     
+        auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+        auto reset_state_future = this->reset_relative_state_client_->async_send_request(reset_state_request);
+    }
 
-  void resetPosition()
-  {     
-      auto reset_position_request = std::make_shared<std_srvs::srv::Trigger::Request>();
-      auto reset_position_future = this->reset_relative_position_client_->async_send_request(reset_position_request);
-  }
+    void resetPosition()
+    {     
+        auto reset_position_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+        auto reset_position_future = this->reset_relative_position_client_->async_send_request(reset_position_request);
+    }
 
-  void usePositionRequest(bool request)
-  {
-      auto use_position_request = std::make_shared<std_srvs::srv::SetBool::Request>();
-      use_position_request->data = request;
-      auto use_position_result = this->use_position_client_->async_send_request(use_position_request);
-  }
+    void usePositionRequest(bool request)
+    {
+        auto use_position_request = std::make_shared<std_srvs::srv::SetBool::Request>();
+        use_position_request->data = request;
+        auto use_position_result = this->use_position_client_->async_send_request(use_position_request);
+    }
 
-  void stabilizeRobotRequest(bool request)
-  {
-      auto stabilize_robot_request = std::make_shared<std_srvs::srv::SetBool::Request>();
-      stabilize_robot_request->data = request;
-      auto stabilize_robot_result = this->stabilize_robot_client_->async_send_request(stabilize_robot_request);
-  }
+    void stabilizeRobotRequest(bool request)
+    {
+        auto stabilize_robot_request = std::make_shared<std_srvs::srv::SetBool::Request>();
+        stabilize_robot_request->data = request;
+        auto stabilize_robot_result = this->stabilize_robot_client_->async_send_request(stabilize_robot_request);
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                             // CALLBACK FUNCTIONS // 
