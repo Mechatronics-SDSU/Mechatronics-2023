@@ -350,7 +350,7 @@ QFontComboBox {
 }
 QComboBox {
         color: #880808;
-        background-color: #880808;
+        background-color: #4fa08b;
         border-width: 1px;
         border-style: solid;
         border-color: #4fa08b;

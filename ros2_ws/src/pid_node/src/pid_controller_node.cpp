@@ -584,19 +584,22 @@ private:
     void kp_tuning_callback(const scion_types::msg::PidTuning::SharedPtr msg) 
     {
         shared_ptr<PID_Controller> axis = this->controller_.controllers[axis_tuning_map_[msg->axis]];
-        axis->set_gains(msg->data, axis->k_i, axis->k_d);
+        float scale_factor = axis->angle_wrap ? .0001 : .001;
+        axis->set_gains(scale_factor * msg->data, axis->k_i, axis->k_d);
     }
 
     void ki_tuning_callback(const scion_types::msg::PidTuning::SharedPtr msg) 
     {
         shared_ptr<PID_Controller> axis = this->controller_.controllers[axis_tuning_map_[msg->axis]];
-        axis->set_gains(axis->k_p, msg->data, axis->k_d);
+        float scale_factor = axis->angle_wrap ? .0001 : .001;
+        axis->set_gains(axis->k_p, scale_factor * msg->data, axis->k_d);
     }
 
     void kd_tuning_callback(const scion_types::msg::PidTuning::SharedPtr msg) 
     {
         shared_ptr<PID_Controller> axis = this->controller_.controllers[axis_tuning_map_[msg->axis]];
-        axis->set_gains(axis->k_p, axis->k_i, msg->data);
+        float scale_factor = axis->angle_wrap ? .0001 : .001;
+        axis->set_gains(axis->k_p, axis->k_i, scale_factor * msg->data);
     }
 };
 

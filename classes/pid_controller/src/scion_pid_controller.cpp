@@ -120,6 +120,7 @@ void Scion_Position_PID_Controller::getStatus()
     cout << endl;
     cout << "Scion PID Last Generated Control Values: ";
     printVector(this->current_ctrl_vals);
+    for (auto controller : this->controllers) {controller.second->getStatus();}
 }
 
 //main for testing
