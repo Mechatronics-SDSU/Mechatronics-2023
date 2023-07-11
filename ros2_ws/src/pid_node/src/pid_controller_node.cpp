@@ -241,9 +241,9 @@ private:
      * STEP 1: Update the PID Controller (meaning call the ScionPIDController object's
      * update function which generates ctrl_vals and show its status on the screen 
      */
+        sendNothingAndWait();
         if (stabilize_robot_ && current_state_valid_ && desired_state_valid_)
         {
-            sendNothingAndWait();
             vector<float> thrusts(motor_count_, 0);
             thrusts = this->getThrusts(this->current_state_, this->desired_state_);
             make_CAN_request(thrusts);
@@ -290,8 +290,6 @@ private:
     vector<float> adjustErrors(vector<float>& errors)
     {
         float yaw = current_state_[0];
-        // float pitch = current_state_[1];
-        // float roll =  current_state_[2];
 
         float x = errors[3];
         float y = errors[4];
@@ -303,19 +301,9 @@ private:
         float yawAdjustedX = absoluteDistance * cos((absoluteAngle - yaw) * M_PI/180);
         float yawAdjustedY = absoluteDistance * sin((absoluteAngle - yaw) * M_PI/180);
 
-        // float pitchAdjustedX = absoluteDistance * cos(absoluteAngle - pitch);
-        // float pitchAdjustedZ = absoluteDistance * sin(absoluteAngle - pitch);
-
-        // float rollAdjustedY = absoluteDistance * cos(absoluteAngle - roll);
-        // float rollAdjustedZ = absoluteDistance * sin(absoluteAngle - roll);
-
         float adjustedX = yawAdjustedX;
         float adjustedY = yawAdjustedY;
         float adjustedZ = z;
-
-        //, pitchAdjustedX
-        // distanceBetweenHereAndPoint(yawAdjustedY, rollAdjustedY);
-        // distanceBetweenHereAndPoint(rollAdjustedZ, pitchAdjustedZ);
                 
         vector<float> adjustedErrors = vector<float>
         {
@@ -349,8 +337,6 @@ private:
         }
     
     }
-
-    
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                     // CAN REQUESTS FOR MOTOR CONTROL // 
@@ -512,9 +498,6 @@ private:
         loop_rate.sleep();
         }
 
-
-
-
         /* 
                     ARCHIVE
          // vector<float> target = vector<float>{current_state_[0], current_state_[1], current_state_[2],0,0,0};
@@ -529,10 +512,6 @@ private:
         std::vector<float> desired_state = goal->desired_state;
         desired_state += current_state_;
         this->desired_state_ = desired_state; */
-
-
-
-
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -628,3 +607,30 @@ int main(int argc, char * argv[])
     rclcpp::shutdown();
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ARCHIVE 
+        // float pitch = current_state_[1];
+        // float roll =  current_state_[2];
+    // float pitchAdjustedX = absoluteDistance * cos(absoluteAngle - pitch);
+        // float pitchAdjustedZ = absoluteDistance * sin(absoluteAngle - pitch);
+
+        // float rollAdjustedY = absoluteDistance * cos(absoluteAngle - roll);
+        // float rollAdjustedZ = absoluteDistance * sin(absoluteAngle - roll);
+//, pitchAdjustedX
+        // distanceBetweenHereAndPoint(yawAdjustedY, rollAdjustedY);
+        // distanceBetweenHereAndPoint(rollAdjustedZ, pitchAdjustedZ); */
