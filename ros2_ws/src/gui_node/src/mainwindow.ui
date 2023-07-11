@@ -32,35 +32,35 @@
         </widget>
        </item>
        <item>
-        <widget class="QCommandLinkButton" name="commandLinkButton_5">
+        <widget class="QCommandLinkButton" name="pingButton">
          <property name="text">
           <string>Ping Robot</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCommandLinkButton" name="pingButton">
+        <widget class="QCommandLinkButton" name="sshButton">
          <property name="text">
           <string>SSH Into Robot</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCommandLinkButton" name="sshButton">
+        <widget class="QCommandLinkButton" name="motorButton">
          <property name="text">
           <string>Run motors</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCommandLinkButton" name="commandLinkButton_4">
+        <widget class="QCommandLinkButton" name="sensorButton">
          <property name="text">
           <string>Check Sensors</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCommandLinkButton" name="commandLinkButton_6">
+        <widget class="QCommandLinkButton" name="launchButton">
          <property name="text">
           <string>Launch</string>
          </property>
@@ -90,9 +90,16 @@
         </widget>
        </item>
        <item row="0" column="2">
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="launchLabel">
          <property name="text">
           <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Control System GUI</string>
          </property>
         </widget>
        </item>
@@ -270,7 +277,7 @@
      <x>0</x>
      <y>0</y>
      <width>1494</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

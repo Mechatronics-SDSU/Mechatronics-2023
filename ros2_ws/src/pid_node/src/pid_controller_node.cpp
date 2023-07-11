@@ -113,11 +113,11 @@ public:
 
         this->pid_command_server_ = rclcpp_action::create_server<PIDAction>
         (
-        this,
-        "PIDAction",
-        std::bind(&Controller::handle_goal, this, _1, _2),
-        std::bind(&Controller::handle_cancel, this, _1),
-        std::bind(&Controller::handle_accepted, this, _1)
+            this,
+            "PIDAction",
+            std::bind(&Controller::handle_goal, this, _1, _2),
+            std::bind(&Controller::handle_cancel, this, _1),
+            std::bind(&Controller::handle_accepted, this, _1)
         );
 
         can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");

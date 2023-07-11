@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QLabel>
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/int32.hpp"
 #include "scion_types/msg/pid_tuning.hpp"
@@ -31,6 +32,9 @@ private slots:
     void updateKpValue();
     void updateKiValue();
     void updateKdValue();
-    
+    void executeCommand(const char* command, QLabel* label);
+    void pingButtonClicked();
+    void rosButtonClicked();
+    void launchButtonClicked();
 };
 #endif // MAINWINDOW_H
