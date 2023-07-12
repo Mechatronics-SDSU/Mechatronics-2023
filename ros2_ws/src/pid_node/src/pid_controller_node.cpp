@@ -39,7 +39,7 @@ using std::placeholders::_1;
 using std::placeholders::_2;
 using namespace std;
 
-#define SLEEP_TIME 500
+#define SLEEP_TIME 300
 #define UPDATE_PERIOD 100ms
 #define UPDATE_PERIOD_RAW 10
 #define PRINT_PERIOD 500ms

@@ -106,7 +106,7 @@ class Brain : public rclcpp::Node
             Interface::node_t temp_node = rclcpp::Node::make_shared("zed_object_subscriber");;
             Interface::object_sub_t object_sub = temp_node->create_subscription<scion_types::msg::VisionObject>
             ("zed_object_data", 10, [&temp_node, &gate_seen](const scion_types::msg::VisionObject::SharedPtr msg) {
-                    if (msg->object_name == "gate") {
+                    if (msg->object_name == "Underwater-Gate") {
                         gate_seen.set_value(true);
                         RCLCPP_INFO(temp_node->get_logger(), "Gate seen");
                     }
