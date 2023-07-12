@@ -123,13 +123,13 @@ namespace Interface
     std::vector<std::vector<float>> percy_thrust_mapper
     {
         { 0, -1, -1,  0,  0,  1},                   
-        { 1,  0,  0,  1,  1,  0},
+        {-1,  0,  0, -1, -1,  0},
         { 0,  1, -1,  0,  0,  1},
-        { 1,  0,  0,  1, -1,  0},
+        {-1,  0,  0, -1,  1,  0},
         { 0,  1,  1,  0,  0,  1},
-        {-1,  0,  0,  1,  1,  0},
+        { 1,  0,  0, -1, -1,  0},
         { 0, -1,  1,  0,  0,  1},
-        {-1,  0,  0,  1, -1,  0}
+        { 1,  0,  0, -1,  1,  0}
     };
 
     std::vector<std::vector<float>> junebug_thrust_mapper
