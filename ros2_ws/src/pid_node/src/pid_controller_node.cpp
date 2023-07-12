@@ -45,6 +45,7 @@ using namespace std;
 #define PRINT_PERIOD 500ms
 #define PID_ERROR_THRESHOLD 0.01f
 #define MOTOR_ID 0x010
+#define ENABLE_BYTE 0x00A
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
                                     // MEMBER VARIABLE DECLARATIONS // 
@@ -131,8 +132,6 @@ public:
         controller_ = Scion_Position_PID_Controller(pid_params_object_.get_pid_params());
         controller_.getStatus();
 
-        canClient::setBotInSafeMode(can_client_);
-
         auto initFunction = std::bind(&Controller::initDesiredState, this);
         std::thread(initFunction).detach();
     }
@@ -163,7 +162,7 @@ private:
     
     Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
     Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
-    vector<unsigned char> nothing_ = vector<unsigned char> {101,101,101,101,101,101,101,101}; // Commands over 100 don't change motor power
+    vector<unsigned char> nothing_ = vector<unsigned char> {}; // Commands over 100 don't change motor power
     bool current_state_valid_ = false;
     bool desired_state_valid_ = false;
     bool use_position_ = true;
@@ -195,6 +194,8 @@ private:
         this->desired_state_ = vector<float>{0,0,0,0,0,0};
         while (!this->desired_state_valid_) {this->desired_state_valid_ = true;}
         while (!this->current_state_valid_) {this->current_state_valid_ = true;}
+        canClient::sendFrame(ENABLE_BYTE, 0, nothing_.data(), can_client_);
+        canClient::setBotInSafeMode(can_client_);
         this->pidReady();
         return true;
     }
@@ -487,7 +488,7 @@ private:
                 RCLCPP_INFO(this->get_logger(), "Goal canceled");
                 return;
             }
-            equal(current_state_, desired_state_) ? cycles_at_set_point++ : cycles_at_set_point=0; 
+            this->areEqual(current_state_, desired_state_) ? cycles_at_set_point++ : cycles_at_set_point=0; 
 
             /* Update at Every Loop */
             thrusts = update_PID(this->current_state_, this->desired_state_);
