@@ -163,7 +163,7 @@ private:
     
     Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
     Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
-    vector<unsigned char> safe_mode_ = vector<unsigned char> {0x00A};
+    vector<unsigned char> nothing_ = vector<unsigned char> {101,101,101,101,101,101,101,101}; // Commands over 100 don't change motor power
     bool current_state_valid_ = false;
     bool desired_state_valid_ = false;
     bool use_position_ = true;
@@ -209,7 +209,7 @@ private:
 
     void sendNothingAndWait()
     {
-        canClient::sendFrame(0x00A, 0, safe_mode_.data(), can_client_); // Keep from exiting safe mode by sending 0 command
+        canClient::sendFrame(0x010, 8, nothing_.data(), can_client_); // Keep from exiting safe mode by sending 0 command
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -241,7 +241,7 @@ private:
      * STEP 1: Update the PID Controller (meaning call the ScionPIDController object's
      * update function which generates ctrl_vals and show its status on the screen 
      */
-        sendNothingAndWait();
+        // sendNothingAndWait();
         if (stabilize_robot_ && current_state_valid_ && desired_state_valid_)
         {
             vector<float> thrusts(motor_count_, 0);
