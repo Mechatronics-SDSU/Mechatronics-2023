@@ -421,8 +421,8 @@ private:
 
     bool areEqual(std::vector<float>& current_state, std::vector<float>& desired_state)
     {
-        #define ORIENTATION_TOLERANCE 4.0f
-        #define POSITION_TOLERANCE 0.05f
+        #define ORIENTATION_TOLERANCE 8.0f
+        #define POSITION_TOLERANCE 0.12f
 
         bool equal = true;
         for (std::vector<float>::size_type i = 0; i < 3; i++)
@@ -447,7 +447,7 @@ private:
         bool equal = true;
         for (int thrust : thrustVect)
         {
-            if (thrust > 2)
+            if (thrust > 1)
             {
                 equal = false;
             }
@@ -477,25 +477,28 @@ private:
             state.push_back((float)thrust);
         }
 
+        int cycles_at_set_point = 0;
         /* Feedback Loop - Stop Conditions is that all Thrusts are close to zero*/
-        while (!this->equalToZero(thrustInts)) {
-        //   Check if there is a cancel request
-        if (goal_handle->is_canceling()) {
-            goal_handle->canceled(result);
-            RCLCPP_INFO(this->get_logger(), "Goal canceled");
-            return;
-        }
+        while (!this->equalToZero(thrustInts) || (cycles_at_set_point >= 10)) 
+        {
+            //   Check if there is a cancel request
+            if (goal_handle->is_canceling()) {
+                goal_handle->canceled(result);
+                RCLCPP_INFO(this->get_logger(), "Goal canceled");
+                return;
+            }
+            equal(current_state_, desired_state_) ? cycles_at_set_point++ : cycles_at_set_point=0; 
 
-        /* Update at Every Loop */
-        thrusts = update_PID(this->current_state_, this->desired_state_);
-        thrustInts = this->make_CAN_request(thrusts);
-        for (int i = 0; i < thrustInts.size(); i++)
-        { 
-            state[i] = ((float)thrustInts[i]);
-        }
+            /* Update at Every Loop */
+            thrusts = update_PID(this->current_state_, this->desired_state_);
+            thrustInts = this->make_CAN_request(thrusts);
+            for (int i = 0; i < thrustInts.size(); i++)
+            { 
+                state[i] = ((float)thrustInts[i]);
+            }
 
-        goal_handle->publish_feedback(feedback);
-        loop_rate.sleep();
+            goal_handle->publish_feedback(feedback);
+            loop_rate.sleep();
         }
 
         /* 
