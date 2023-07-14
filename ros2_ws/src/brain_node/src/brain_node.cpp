@@ -276,9 +276,10 @@ class Brain : public rclcpp::Node
         {
             doUntil(&Brain::keepTurning, &Brain::gateSeen, &Brain::stop, this->gate_seen_, SMOOTH_TURN_DEGREE);
             levitate(SUBMERGE_DISTANCE);
-            moveForward(this->getDistanceFromCamera("gate"));
+            moveForward(this->getDistanceFromCamera("Underwater-Gate"));
             this->waitForEmptyQueue();
             this->centerRobot();
+            moveForward(3);
             exit(0);
         }
 

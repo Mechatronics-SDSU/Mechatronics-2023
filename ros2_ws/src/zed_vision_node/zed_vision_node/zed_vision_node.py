@@ -107,7 +107,7 @@ class ZedVision(Node):
                 msg = ZedObject()
                 msg.label_id = object.raw_label
                 msg.position = [object.position[0], object.position[1], object.position[2]]
-                msg.corners = object.bounding_box
+                # msg.corners = object.bounding_box
                 self.vision_publisher.publish(msg)
 
         if vision_object_list:
