@@ -97,11 +97,7 @@ private:
 
   void nextCommandPrep(Interface::state_transform_func command)
   {
-        if (command == &Movements::turn || command == &Movements::pitch || command == &Movements::roll) 
-        {
-            usePositionRequest(false);
-        }
-        this->stabilizeRobotRequest(false);
+        // this->stabilizeRobotRequest(false); 
         this->resetPosition();
   }
 
@@ -126,9 +122,8 @@ private:
   void commandCleanup()
   {
       /* Success State */
-      sleep(.02); // Sleep after reaching desired state for a split second before taking out current command
-      usePositionRequest(true);
-      stabilizeRobotRequest(true);
+      sleep(.01); // Sleep after reaching desired state for a split second before taking out current command
+      // stabilizeRobotRequest(true);
       current_command_ = nullptr;
   }
 
@@ -139,7 +134,6 @@ private:
       {
           this->current_command_ = &command_queue_[0];
           this->command_queue_.pop_front();
-          
           state_transform_func command_function = current_command_->function.transform;
           this->nextCommandPrep(command_function);
           desired_state_t desired = (*command_function)(current_command_->params.degree);
@@ -180,12 +174,6 @@ private:
           case Idea::STOP:
               this->cancel_goal();
             break;
-          // case Idea::GO:
-          //   Translator::go(idea->parameters[0]);
-          //   break;
-          // case Idea::SPIN:
-          //   Translator::spin(idea->parameters[0]);
-          //   break;
           case Idea::TURN:
             command_vector = Translator::turn(idea->parameters[0]);
             addToQueue(command_vector);
@@ -299,6 +287,7 @@ private:
       switch (result.code) 
       {
         case rclcpp_action::ResultCode::SUCCEEDED:
+          this->commandCleanup();
           break;
         case rclcpp_action::ResultCode::ABORTED:
           this->commandCleanup();
@@ -311,11 +300,8 @@ private:
         default:
           RCLCPP_INFO(this->get_logger(), "Unknown result code");
           break;
-      }
-
-      this->commandCleanup();
+      }   
   }
-
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                             // MEDIATION SERVICES // 
@@ -378,3 +364,20 @@ int main(int argc, char * argv[])
   rclcpp::shutdown();
   return 0;
 }
+
+
+/*      
+    ARCHIVE
+// if (command == &Movements::turn || command == &Movements::pitch || command == &Movements::roll) 
+        // {
+        //     usePositionRequest(false);
+        // } 
+
+           // case Idea::GO:
+          //   Translator::go(idea->parameters[0]);
+          //   break;
+          // case Idea::SPIN:
+          //   Translator::spin(idea->parameters[0]);
+          //   break
+            // usePositionRequest(true);
+*/

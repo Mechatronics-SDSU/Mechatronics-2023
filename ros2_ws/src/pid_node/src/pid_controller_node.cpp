@@ -162,7 +162,7 @@ private:
     
     Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
     Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
-    vector<unsigned char> nothing_ = vector<unsigned char> {}; // Commands over 100 don't change motor power
+    vector<unsigned char> nothing_ = vector<unsigned char> {0x00}; // Commands over 100 don't change motor power
     bool current_state_valid_ = false;
     bool desired_state_valid_ = false;
     bool use_position_ = true;
@@ -190,7 +190,7 @@ private:
             std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
         }
         this->resetState();
-        std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
+        // std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
         this->desired_state_ = vector<float>{0,0,0,0,0,0};
         while (!this->desired_state_valid_) {this->desired_state_valid_ = true;}
         while (!this->current_state_valid_) {this->current_state_valid_ = true;}
@@ -251,7 +251,7 @@ private:
         }
     }
 
-    vector<float> getErrors(vector<float> current_state, vector<float> desired_state) 
+    vector<float> getErrors(vector<float>& current_state, vector<float>& desired_state) 
     {
         return desired_state - current_state;
     }    
@@ -422,7 +422,7 @@ private:
 
     bool areEqual(std::vector<float>& current_state, std::vector<float>& desired_state)
     {
-        #define ORIENTATION_TOLERANCE 8.0f
+        #define ORIENTATION_TOLERANCE 6.0f
         #define POSITION_TOLERANCE 0.12f
 
         bool equal = true;
@@ -469,6 +469,7 @@ private:
 
         this->desired_state_ = goal->desired_state;
 
+        this->stabilize_robot_ = false;
         /* Init States */
         std::vector<float>& state = feedback->current_state;
         vector<float> thrusts = this->update_PID(this->current_state_, this->desired_state_);
@@ -480,7 +481,7 @@ private:
 
         int cycles_at_set_point = 0;
         /* Feedback Loop - Stop Conditions is that all Thrusts are close to zero*/
-        while (!this->equalToZero(thrustInts) || (cycles_at_set_point >= 10)) 
+        while (!this->equalToZero(thrustInts) || (cycles_at_set_point <= 10)) 
         {
             //   Check if there is a cancel request
             if (goal_handle->is_canceling()) {
@@ -501,7 +502,8 @@ private:
             goal_handle->publish_feedback(feedback);
             loop_rate.sleep();
         }
-
+        this->stabilize_robot_ = true;
+        
         /* 
                     ARCHIVE
          // vector<float> target = vector<float>{current_state_[0], current_state_[1], current_state_[2],0,0,0};
@@ -525,8 +527,6 @@ private:
     void stopRobot(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
                          std::shared_ptr<std_srvs::srv::Trigger::Response> response)
     {
-        unsigned char can_dreq_frame[2] = {0, 0};             
-        canClient::sendFrame(MOTOR_ID, motor_count_, can_dreq_frame, this->can_client_);
         this->desired_state_ = this->current_state_;
     }
 
@@ -640,4 +640,8 @@ int main(int argc, char * argv[])
         // float rollAdjustedZ = absoluteDistance * sin(absoluteAngle - roll);
 //, pitchAdjustedX
         // distanceBetweenHereAndPoint(yawAdjustedY, rollAdjustedY);
-        // distanceBetweenHereAndPoint(rollAdjustedZ, pitchAdjustedZ); */
+        // distanceBetweenHereAndPoint(rollAdjustedZ, pitchAdjustedZ); 
+        
+        unsigned char can_dreq_frame[2] = {0, 0};             
+        canClient::sendFrame(MOTOR_ID, motor_count_, can_dreq_frame, this->can_client_);
+        */
