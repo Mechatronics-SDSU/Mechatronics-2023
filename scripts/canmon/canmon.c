@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 // Connor Larmer                                                             //
-// 15 June 2023	                                                             //
+// 16 July 2023	                                                             //
 // SDSU MECHATRONICS CAN MONITOR                                             //
 // The purpose of this program is to provide                                 //
 // a low-overhead method of monitoring all                                   //
@@ -44,7 +44,7 @@ enum HW_DEV_ID
 };
 
 const float TICK_INTERVAL = 250;	// HOW FAST TO UPDATE DISPLAY (MILLISECONDS)
-const char SHOW_MOTOR_AILIAS = 1;	// SHOW MOTOR NAMES (SEE BELOW)
+const char SHOW_MOTOR_AILIAS = 0;	// SHOW MOTOR NAMES (SEE BELOW)
 const char MOTOR_ALIAS[8][24] =		// MOTOR NAMES (SHOULD BE CONFIGURED)
 {
 	"0 FRONT LEFT    (XY)",	
@@ -58,7 +58,7 @@ const char MOTOR_ALIAS[8][24] =		// MOTOR NAMES (SHOULD BE CONFIGURED)
 };
 
 // CAN BUS TO OPEN !!! SHOULD BE CHANGED !!!
-const char* CAN_BUS_INTERFACE = "vcan0";	
+const char* CAN_BUS_INTERFACE = "can0";	
 
 // Don't worry about these warnings lol
 // These are just some can frames, nothing to be done here!
@@ -78,6 +78,14 @@ char* SCRIPT_EXT = ".sh";		// script filetype
 ///////////////////////////////////////////////////////////////////////////////
 // This is where the actual code starts
 
+enum SUB_STATE
+{
+	SUB_E_STOP 	= 0b0001,	
+	SUB_LEAK 	= 0b0010,
+	SUB_HOST	= 0b0100,	
+	SUB_CLEAR	= 0b1000,	
+};
+
 /*
  * struct frame_data
  *
@@ -85,6 +93,7 @@ char* SCRIPT_EXT = ".sh";		// script filetype
  *	quick way to split up and hold all the datapoints
  * 	that a frame describes.
  */
+
 struct frame_data
 {
 	u_int8_t id;	
@@ -103,7 +112,8 @@ struct frame_data
  */
 struct
 {
-	int can_bus;
+	int general_bus;
+	int motor_bus;
 	struct can_frame frame;
 	struct frame_data data;
 	struct termios tty;
@@ -114,6 +124,7 @@ struct
 	char script_error;
 	char script_mode_en;
 	char script_idx;
+	char sub_state;
 } canmon;
 
 /*
@@ -191,6 +202,7 @@ int exec_script();
 ///////////////////////////////////////////////////////////
 // CAN //
 int init_can(int* can_sock);
+int filter_can(int* can_sock, struct can_filter filter);
 int send_can(int* can_sock, struct can_frame* frame);
 int recv_can(int* can_sock, struct can_frame* frame);
 ///////////////////////////////////////////////////////////
@@ -222,7 +234,9 @@ void draw_script_buf(int x, int y);
 // Program start point and execution loop
 int main()
 {
-	init_can(&canmon.can_bus);
+
+	struct can_filter motor_filter = {0x10, 0xFFF}; 
+	struct can_filter general_filter = {(0x010 | CAN_INV_FILTER), 0xFFF}; 
 	atexit(kill); // clean up after yourself :)
 
 	/////////////////////////////////////////
@@ -243,8 +257,16 @@ int main()
 	canmon.script_idx = 0;
 
 	// Stuff that will fail, probably
-	canmon.can_error = init_can(&canmon.can_bus);
 	canmon.script_error = init_script();
+	canmon.can_error = init_can(&canmon.general_bus);
+	canmon.can_error += init_can(&canmon.motor_bus);
+
+	int bufsz = sizeof(struct can_frame);
+	setsockopt(canmon.motor_bus, SOL_SOCKET, SO_RCVBUF,
+		 &bufsz, sizeof(bufsz));
+	
+	filter_can(&canmon.general_bus, general_filter);
+	filter_can(&canmon.motor_bus, motor_filter);
 	
 	init_screen();
 
@@ -333,7 +355,8 @@ void kill()
 	clear();
 	write(STDOUT_FILENO, "\x1b[?25h", 6);
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &canmon.tty);
-	close(canmon.can_bus);
+	close(canmon.motor_bus);
+	close(canmon.general_bus);
 	free(screen.buf);
 }
 
@@ -365,15 +388,15 @@ void handle_input(char* c)
 	switch(*c)
 	{
 		case 'k':	// EMERGENCY STOP
-			send_can(&canmon.can_bus, &STOP_FRAME);
+			send_can(&canmon.general_bus, &STOP_FRAME);
 			set_last_action(" Sent STOP Frame ");
 			break;
 		case 'a':	// SEND ALL CLEAR
-			send_can(&canmon.can_bus, &AC_FRAME);
+			send_can(&canmon.general_bus, &AC_FRAME);
 			set_last_action(" Sent ALL CLEAR Frame ");
 			break;
 		case 'm':	// KILL MOTORS
-			send_can(&canmon.can_bus, &MOT_FRAME);
+			send_can(&canmon.general_bus, &MOT_FRAME);
 			set_last_action(" Set Motor Throttle to ZERO ");	
 			break;
 		case 's':	// ENTER SCRIPT MODE
@@ -465,9 +488,10 @@ int cur_line = 0;
 void draw_to_buf()
 {
 	// All drawing goes here
+	memset(screen.buf, ' ', screen.len);
 	writeb( (screen.w - sizeof(header))/2, 0, header, sizeof(header));			// HEADER
 	draw_hline(1);																// HEADER LINE
-	draw_hline(screen.h-2);														// FOOTER LINE
+	draw_hline(screen.h-3);														// FOOTER LINE
 	writeb(0,screen.h-1, footer, sizeof(footer));								// FOOTER
 	writeb(16, screen.h-1, canmon.last_action, 32);								// FOOTER DATA
 	writeb(66, screen.h-1, (char*)CAN_BUS_INTERFACE, 6);						// FOOTER DATA
@@ -496,6 +520,23 @@ void draw_to_buf()
 	draw_scripts(0,cur_line += 1);
 	draw_script_buf(32, cur_line);
 	cur_line += scripts.n;
+
+	// Dirty implementation of Sub State info
+	writeb(0,screen.h-2, "SUB STATE: [", 12);
+	writeb(45,screen.h-2, "]", 1);
+	if( canmon.sub_state & SUB_E_STOP)
+		writeb(12,screen.h-2, " !ESTP! ",8);
+		
+	if( canmon.sub_state & SUB_LEAK)
+		writeb(20,screen.h-2, " !LEAK! ",8);
+		
+	if( canmon.sub_state & SUB_HOST)
+		writeb(28,screen.h-2, "  AUTO  ",8);
+	else
+		writeb(28,screen.h-2, " MANUAL ",8);	
+			
+	if( canmon.sub_state & SUB_CLEAR)
+		writeb(36,screen.h-2, " ALLCLR ",8);
 
 	// Draw error messages (blinky blinky red)
 	if(canmon.can_error != 0)
@@ -755,13 +796,42 @@ void handle_can()
 {
 	struct frame_data data;
 	memset(&data, 0, sizeof(data));
-	if(recv_can(&canmon.can_bus, &canmon.frame) != 0)
+
+	struct can_frame _motor_frame;
+	memset(&_motor_frame, 0, sizeof(_motor_frame));
+	if(recv_can(&canmon.motor_bus, &_motor_frame) == 0)
+		for(int i = 0; i < _motor_frame.can_dlc; i++)
+			hw_data.motor_val[i] = (int8_t)_motor_frame.data[i];
+	if(recv_can(&canmon.general_bus, &canmon.frame) != 0)
 		return;
 	switch(canmon.frame.can_id)
 	{
-		case 0x010:	// MOTOR
-			for(int i = 0; i < canmon.frame.can_dlc; i++)
-				hw_data.motor_val[i] = (int8_t)canmon.frame.data[i];
+		case 0x000:	// E STOP
+			canmon.sub_state |= SUB_E_STOP;
+			canmon.sub_state &= (~SUB_CLEAR);
+			break;
+		case 0x001: // LEAK DETECT
+			canmon.sub_state |= SUB_LEAK;
+			canmon.sub_state &= (~SUB_CLEAR);
+			break;
+		case 0x007: // HOST MODE
+			switch(canmon.frame.data[0])
+			{
+				case 0x00:	// Manual
+					canmon.sub_state &= ~SUB_HOST;				
+					break;
+				case 0x04:	// Auto (Button)
+					canmon.sub_state |= SUB_HOST;
+					break;
+				case 0x05:	// Auto (External)
+					canmon.sub_state |= SUB_HOST;
+					break;
+			};		
+			break;
+		case 0x00A: // ALL CLEAR
+			canmon.sub_state |= SUB_CLEAR;
+			canmon.sub_state &= ~(SUB_E_STOP);
+			canmon.sub_state &= ~(SUB_LEAK);
 			break;
 		case 0x021: // DRES
 			if(canmon.frame.can_dlc != 8) return;
@@ -782,7 +852,6 @@ void handle_can()
 					break;
 			}		
 			break;
-		default:
 	}
 }
 
@@ -807,7 +876,7 @@ void handle_can()
 int init_can(int* can_sock)
 {
 	int _ret = 0;
-	struct can_filter _filter = {0x000, 0x000};
+	// struct can_filter _filter = {0x010 | CAN_INV_FILTER, 0xFFF};
 	struct sockaddr_can _can_addr;
 	struct ifreq ifr;
 
@@ -821,10 +890,22 @@ int init_can(int* can_sock)
 	_can_addr.can_ifindex = ifr.ifr_ifindex;
 	_ret += bind(*can_sock, (struct sockaddr*)&_can_addr,
 		sizeof(&_can_addr));
-	_ret += setsockopt(*can_sock, SOL_CAN_RAW,
-		CAN_RAW_FILTER, &_filter, sizeof(&_filter));
+	// _ret += setsockopt(*can_sock, SOL_CAN_RAW,
+		// CAN_RAW_FILTER, &_filter, sizeof(&_filter));
 
 	return _ret;
+}
+
+/*
+ * filter_can():
+ *	
+ *	Applies a filter to the target CAN interface.
+ *	If successful, the function will return 0.
+ */
+int filter_can(int* can_sock, struct can_filter filter)
+{
+	return setsockopt(*can_sock, SOL_CAN_RAW,	
+		CAN_RAW_FILTER, &filter, sizeof(&filter));
 }
 
 /*
