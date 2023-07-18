@@ -12,6 +12,7 @@ import pyzed.sl as sl
 import torch.backends.cudnn as cudnn
 import math
 from dataclasses import dataclass
+from matplotlib import pyplot as plt
 
 """from ultralytics import YOLO
 from ultralytics.nn.tasks import attempt_load_weights
@@ -35,7 +36,7 @@ from time import sleep
 # import ogl_viewer.viewer as gl
 # import cv_viewer.tracking_viewer as cv_viewer
 
-with open('/home/mechatronics/master/classes/zed_vision/yolov5/data/underwater.yaml') as f:
+with open('/home/mechatronics/master/classes/zed_vision/yolov5/data/coco128.yaml') as f:
     items = yaml.load(f, Loader=yaml.FullLoader)
 lock = Lock()
 run_signal = False
@@ -153,7 +154,7 @@ class Zed_Vision():
 
     def initCamera(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument('--weights', nargs='+', type=str, default='/home/mechatronics/master/classes/zed_vision/underwater_m.pt', help='model.pt path(s)') #where we put weights at
+        parser.add_argument('--weights', nargs='+', type=str, default='yolov5m.pt', help='model.pt path(s)') #where we put weights at
         parser.add_argument('--svo', type=str, default=None, help='optional svo file')
         parser.add_argument('--img_size', type=int, default=416, help='inference size (pixels)')
         parser.add_argument('--conf_thres', type=float, default=0.4, help='object confidence threshold')
@@ -238,11 +239,12 @@ class Zed_Vision():
 
             visionObjectList = []
             for object in objects.object_list:
-                print("There is a " + str(items['names'][object.raw_label]) + "(" + str(object.raw_label) + ")" + " about " + str(round(object.position[0], 1)) + "meters away from me")
-                visionObject = VisionObject()
-                visionObject.object_name = items['names'][object.raw_label]
-                visionObject.distance = round(object.position[0], 1)
-                visionObjectList.append(visionObject)
+                if object.raw_label == 41:
+                    print("There is a " + str(items['names'][object.raw_label]) + "(" + str(object.raw_label) + ")" + " about " + str(round(object.position[0], 1)) + "meters away from me")
+                    visionObject = VisionObject()
+                    visionObject.object_name = items['names'][object.raw_label]
+                    visionObject.distance = round(object.position[0], 1)
+                    visionObjectList.append(visionObject)
 
             return objects.object_list, depth_map, zed_pose, py_translation, visionObjectList
 
