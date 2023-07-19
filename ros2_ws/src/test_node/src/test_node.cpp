@@ -58,6 +58,7 @@ private:
     Interface::ros_timer_t zed_vision_timer_;
     Interface::idea_sub_t  idea_sub_;
     Interface::int_sub_t command_queue_is_empty_sub_;
+    int count_ = 0;
 
     void testIdeaCallback(scion_types::msg::Idea::SharedPtr idea)
     {
@@ -91,8 +92,8 @@ private:
       std::array<scion_types::msg::Keypoint2Di, 4> bounding_box_from_zed;
 
       scion_types::msg::Keypoint2Di keypoint = scion_types::msg::Keypoint2Di();
-      keypoint.kp[0] = 10;
-      keypoint.kp[1] = 10;
+      keypoint.kp[0] = count_;
+      keypoint.kp[1] = count_;
       bounding_box_from_zed[0] = keypoint;
       bounding_box_from_zed[1] = keypoint;
       bounding_box_from_zed[2] = keypoint;
@@ -100,7 +101,8 @@ private:
 
       vision_object.corners =  bounding_box_from_zed;
       this->zed_vision_pub_->publish(vision_object);
-      RCLCPP_INFO(this->get_logger(), "Publishing Test Vision Bounding Box" );
+      count_ ++;
+      RCLCPP_INFO(this->get_logger(), "Publishing Test Vision Bounding Box with point %d", count_);
     }
 
     void sendFrame()

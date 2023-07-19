@@ -163,25 +163,28 @@ class Brain : public rclcpp::Node
 
         void centerRobot()
         {
-            bool robot_centered_bool;
+            unique_ptr<Filter> moving_average_filter = populateFilterBuffer();
+
             std::promise<bool> robot_centered;
             std::shared_future<bool> future  = robot_centered.get_future();
             Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_subscriber");
-            
-            unique_ptr<Filter> moving_average_filter = populateFilterBuffer();
-            moving_average_filter->print_coefficients();
-
             Interface::vision_sub_t object_sub = temp_node->create_subscription<scion_types::msg::ZedObject>
-            ("zed_vision_data", 10, [this, &temp_node, &robot_centered, &robot_centered_bool, &moving_average_filter](const scion_types::msg::ZedObject::SharedPtr msg) {
-                    unique_ptr<vector<vector<uint32_t>>>ros_bounding_box = zed_to_ros_bounding_box(msg->corners);
+            ("zed_vision_data", 10, [this, &temp_node, &robot_centered, &moving_average_filter](const scion_types::msg::ZedObject::SharedPtr msg) {
+                    if (isCommandQueueEmpty()) 
+                    {unique_ptr<vector<vector<uint32_t>>>ros_bounding_box = zed_to_ros_bounding_box(msg->corners);
                     vector<uint32_t> bounding_box_midpoint = findMidpoint(*ros_bounding_box);
                     float filtered_bounding_box_midpoint = moving_average_filter->smooth(moving_average_filter->data_streams[0], (float)bounding_box_midpoint[0]);
                     
                     vector<uint32_t> camera_frame_midpoint {MID_X_PIXEL, MID_Y_PIXEL};
                     if (areEqual(bounding_box_midpoint, camera_frame_midpoint)) {robot_centered.set_value(true);}
-                    else { 
-                        waitForCommandQueueEmpty();
-                        this->adjustToCenter(bounding_box_midpoint, camera_frame_midpoint);
+                    else {
+                        
+                        // waitForCommandQueueEmpty();
+                        {
+                            RCLCPP_INFO(this->get_logger(), "Looking at bounding box with value %d", (*ros_bounding_box)[0][0]);
+                            this->adjustToCenter(bounding_box_midpoint, camera_frame_midpoint);
+                        }
+                    }
                     }
             });
             rclcpp::spin_until_future_complete(temp_node, future);
@@ -233,6 +236,22 @@ class Brain : public rclcpp::Node
                     if (msg->data) {command_queue_empty.set_value(true);}
             });
             rclcpp::spin_until_future_complete(temp_node, future);
+        }
+
+        bool isCommandQueueEmpty()
+        {
+            bool isEmpty;
+            std::promise<bool> command_queue_empty;
+            std::shared_future<bool> future  = command_queue_empty.get_future();
+            Interface::node_t temp_node = rclcpp::Node::make_shared("command_queue_empty");
+
+            Interface::int_sub_t command_queue_empty_sub = temp_node->create_subscription<std_msgs::msg::Int32>
+            ("is_command_queue_empty", 10, [this, &temp_node, &isEmpty, &command_queue_empty](const std_msgs::msg::Int32::SharedPtr msg) {
+                    command_queue_empty.set_value(msg->data);
+                    isEmpty = msg->data;
+            });
+            rclcpp::spin_until_future_complete(temp_node, future);
+            return isEmpty;
         }
 
         void waitForEmptyQueue() 
@@ -323,13 +342,12 @@ class Brain : public rclcpp::Node
 
         void performMission()
         {
-            centerRobot();
-            doUntil(&Brain::keepTurning, &Brain::gateSeen, &Brain::stop, this->gate_seen_, SMOOTH_TURN_DEGREE);
-            levitate(SUBMERGE_DISTANCE);
-            moveForward(this->getDistanceFromCamera("Underwater-Gate"));
-            this->waitForEmptyQueue();
             this->centerRobot();
-            moveForward(3);
+            doUntil(&Brain::keepTurning, &Brain::gateSeen, &Brain::stop, this->gate_seen_, SMOOTH_TURN_DEGREE);
+            this->centerRobot();
+            levitate(SUBMERGE_DISTANCE);
+            moveForward(this->getDistanceFromCamera("Underwater-Gate")/2);
+            this->centerRobot();
             exit(0);
         }
 
