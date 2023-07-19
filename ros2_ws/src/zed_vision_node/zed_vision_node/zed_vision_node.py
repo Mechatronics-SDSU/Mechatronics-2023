@@ -171,6 +171,22 @@ class ZedVision(Node):
                     plt.show()                                                                  # [0,0], [1,1], [], []
                     plt.pause(.01)
                     plt.clf()
+
+                    # Recomment to here - joseph
+                    #print(object.bounding_box_2d)
+                    #corners = []
+
+                    for point in object.bounding_box_2d:
+                        kp = Keypoint2Di()
+                        kp.kp = []
+                        kp.kp.append(int(point[0]))
+                        kp.kp.append(int(point[1]))
+                        corners.append(kp)
+                    msg.corners = corners
+                    
+                    # print(object.bounding_box_2d)
+                    ##self.vision_publisher.publish(msg)
+        
                     
                     # print(object.bounding_box_2d)
                     self.vision_publisher.publish(msg)
