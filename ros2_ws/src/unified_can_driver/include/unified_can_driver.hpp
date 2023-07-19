@@ -13,6 +13,7 @@
 #include "mbox_can.hpp"
 #include "module_loader.hpp"
 #include "send_command_service.hpp"
+#include "state_decoder.hpp"
 
 /*
  * MailboxTopic Class:
@@ -85,8 +86,8 @@ class UnifiedCanDriver : public rclcpp::Node
 		MailboxTopic* heartbeat_mb;		/* likely unused */
 		CanSendService* can_service;
 		SendCommandService* command_service;
+		StateDecoder* sub_state_pub;
 
-		//Dres::Decoder::DresDecoder* dres_decoder;
 		Module::ModuleLoader* module_loader;
 		Mailbox::MboxCan* _dres_mb;
 };

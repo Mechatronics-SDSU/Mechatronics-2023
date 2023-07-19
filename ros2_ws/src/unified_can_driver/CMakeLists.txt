@@ -30,6 +30,7 @@ add_executable(
 	src/base_driver/can_send_service.cpp
 	src/base_driver/can_mailbox_topic.cpp
 	src/base_driver/send_command_service.cpp
+	src/base_driver/state_decoder.cpp
 	src/mbox_can.cpp
 	src/module_loader.cpp
 # Modules:

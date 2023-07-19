@@ -11,10 +11,10 @@ ModuleLoader::ModuleLoader(rclcpp::Node* ctx, struct ifreq* ifr)
 	std::fill(module_list.begin(), module_list.end(),nullptr);
 
 
-	load_module<DVLModule>(dvl, MODULE_DVL_ENABLE);
+//	load_module<DVLModule>(dvl, MODULE_DVL_ENABLE); 				!!! Yea we don't use this DVL anymore
 	load_module<MS5837Module>(ms5837, MODULE_MS5837_ENABLE);
 	load_module<BRLIGHTModule>(brlight, MODULE_BRLIGHT_ENABLE);
-	// load_module<BRPING1Module>(brping1, MODULE_BRPING1_ENABLE); 	!!! DISABLED FOR SAFETY, NO USE
+//  load_module<BRPING1Module>(brping1, MODULE_BRPING1_ENABLE); 	!!! DISABLED FOR SAFETY, NO TOUCH
 	
 	RCLCPP_INFO(node_context->get_logger(),"[ModuleLoader] Initialized.");
 }
@@ -61,16 +61,16 @@ void ModuleLoader::module_decode_dres(struct can_frame* frame)
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-	// if(device < module_ct
-	// 	&& module_list[device] != nullptr
-	// 	&& module_list[device]->module_enable_dres
-	// 	&& module_list[device]->module_hw_info != 0)
-	// {
+	 if(device < module_ct
+	 	&& module_list[device] != nullptr
+	 	&& module_list[device]->module_enable_dres
+	 	&& module_list[device]->module_hw_info != 0)
+	 {
 		module_list[device]->dres_handle(frame);
-	// }
-	// else
-	// {
-	// 	RCLCPP_INFO(node_context->get_logger(),
-	// 		"[ModuleLoader::module_decode_dres] Device 0x%04X does not exist/disabled/no dres support. Ignoring");
-	// }
+	 }
+	 else
+	 {
+	 	RCLCPP_INFO(node_context->get_logger(),
+	 		"[ModuleLoader::module_decode_dres] Device 0x%04X does not exist/disabled/no dres support. Ignoring");
+	 }
 }
