@@ -23,7 +23,7 @@ public:
     zed_vision_pub_ = this->create_publisher<scion_types::msg::ZedObject>("zed_vision_data", 10);
     zed_vision_timer_ = this->create_wall_timer
                 (
-                    std::chrono::milliseconds(500), 
+                    std::chrono::milliseconds(50), 
                     std::bind(&Test::publishZedVisionTimer, this)
                 );
 

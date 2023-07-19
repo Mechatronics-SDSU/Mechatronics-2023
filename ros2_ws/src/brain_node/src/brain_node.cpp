@@ -61,8 +61,8 @@ class Brain : public rclcpp::Node
             idea_pub_ = this->create_publisher<scion_types::msg::Idea>("brain_idea_data", 10);
             can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
             pid_ready_service_ = this->create_service<std_srvs::srv::Trigger>("pid_ready", std::bind(&Brain::ready, this, _1, _2));
-            commands_in_queue_sub_ = this->create_subscription<std_msgs::msg::Int32>
-            ("is_command_queue_empty", 10, std::bind(&Brain::update_if_command_queue_empty, this, _1));
+            // commands_in_queue_sub_ = this->create_subscription<std_msgs::msg::Int32>
+            // ("is_command_queue_empty", 10, std::bind(&Brain::update_if_command_queue_empty, this, _1));
             performMission();
         }
     private:
@@ -75,7 +75,7 @@ class Brain : public rclcpp::Node
         Interface::ros_trigger_service_t            pid_ready_service_;
         std::string                                 mode_param_;
         bool                                        gate_seen_ = false;
-        bool                                        command_queue_is_empty_ = true;
+        // bool                                        command_queue_is_empty_ = true;
 
         ////////////////////////////////////////////////////////////////////////////////
         //                               INIT MISSION                                 //
@@ -164,27 +164,25 @@ class Brain : public rclcpp::Node
         void centerRobot()
         {
             unique_ptr<Filter> moving_average_filter = populateFilterBuffer();
+            RCLCPP_INFO(this->get_logger(), "Filter Buffer Filled");
 
             std::promise<bool> robot_centered;
             std::shared_future<bool> future  = robot_centered.get_future();
             Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_subscriber");
             Interface::vision_sub_t object_sub = temp_node->create_subscription<scion_types::msg::ZedObject>
             ("zed_vision_data", 10, [this, &temp_node, &robot_centered, &moving_average_filter](const scion_types::msg::ZedObject::SharedPtr msg) {
-                    if (isCommandQueueEmpty()) 
-                    {unique_ptr<vector<vector<uint32_t>>>ros_bounding_box = zed_to_ros_bounding_box(msg->corners);
+                    unique_ptr<vector<vector<uint32_t>>>ros_bounding_box = zed_to_ros_bounding_box(msg->corners);
                     vector<uint32_t> bounding_box_midpoint = findMidpoint(*ros_bounding_box);
                     float filtered_bounding_box_midpoint = moving_average_filter->smooth(moving_average_filter->data_streams[0], (float)bounding_box_midpoint[0]);
                     
                     vector<uint32_t> camera_frame_midpoint {MID_X_PIXEL, MID_Y_PIXEL};
                     if (areEqual(bounding_box_midpoint, camera_frame_midpoint)) {robot_centered.set_value(true);}
                     else {
-                        
-                        // waitForCommandQueueEmpty();
+                        if (isCommandQueueEmpty())
                         {
                             RCLCPP_INFO(this->get_logger(), "Looking at bounding box with value %d", (*ros_bounding_box)[0][0]);
                             this->adjustToCenter(bounding_box_midpoint, camera_frame_midpoint);
                         }
-                    }
                     }
             });
             rclcpp::spin_until_future_complete(temp_node, future);
@@ -222,7 +220,6 @@ class Brain : public rclcpp::Node
             bool bounding_box_is_to_the_right_of_center_pixel = bounding_box_midpoint[0] > camera_frame_midpoint[0];
             if (bounding_box_is_to_the_right_of_center_pixel) {this->turn(TO_THE_RIGHT);}
             else {this->turn(TO_THE_LEFT);}
-            this->waitForEmptyQueue();
         }
 
         void waitForCommandQueueEmpty()
@@ -230,7 +227,6 @@ class Brain : public rclcpp::Node
             std::promise<bool> command_queue_empty;
             std::shared_future<bool> future  = command_queue_empty.get_future();
             Interface::node_t temp_node = rclcpp::Node::make_shared("command_queue_empty");
-
             Interface::int_sub_t command_queue_empty_sub = temp_node->create_subscription<std_msgs::msg::Int32>
             ("is_command_queue_empty", 10, [this, &temp_node, &command_queue_empty](const std_msgs::msg::Int32::SharedPtr msg) {
                     if (msg->data) {command_queue_empty.set_value(true);}
@@ -244,7 +240,6 @@ class Brain : public rclcpp::Node
             std::promise<bool> command_queue_empty;
             std::shared_future<bool> future  = command_queue_empty.get_future();
             Interface::node_t temp_node = rclcpp::Node::make_shared("command_queue_empty");
-
             Interface::int_sub_t command_queue_empty_sub = temp_node->create_subscription<std_msgs::msg::Int32>
             ("is_command_queue_empty", 10, [this, &temp_node, &isEmpty, &command_queue_empty](const std_msgs::msg::Int32::SharedPtr msg) {
                     command_queue_empty.set_value(msg->data);
@@ -254,13 +249,13 @@ class Brain : public rclcpp::Node
             return isEmpty;
         }
 
-        void waitForEmptyQueue() 
-        {
-            while (!command_queue_is_empty_)
-            {
-                std::this_thread::sleep_for(std::chrono::milliseconds(50));
-            }
-        }
+        // void waitForEmptyQueue() 
+        // {
+        //     while (!command_queue_is_empty_)
+        //     {
+        //         std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        //     }
+        // }
         ////////////////////////////////////////////////////////////////////////////////
         //                               MOVEMENT IDEAS                               //
         ////////////////////////////////////////////////////////////////////////////////
@@ -355,11 +350,11 @@ class Brain : public rclcpp::Node
         //                                  CALLBACK                                  //
         ////////////////////////////////////////////////////////////////////////////////
 
-        void update_if_command_queue_empty(const std_msgs::msg::Int32::SharedPtr msg)
-        {
-            this->command_queue_is_empty_ = msg->data;
-            RCLCPP_INFO(this->get_logger(), "%d", this->command_queue_is_empty_);
-        }
+        // void update_if_command_queue_empty(const std_msgs::msg::Int32::SharedPtr msg)
+        // {
+        //     this->command_queue_is_empty_ = msg->data;
+        //     RCLCPP_INFO(this->get_logger(), "%d", this->command_queue_is_empty_);
+        // }
 
 
 }; // class Brain
