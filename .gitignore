@@ -32,3 +32,9 @@ wheels/
 
 # Vision stuff
 *.jpg
+
+# Cmake
+CMake*
+!CMakeLists.txt
+*cmake
+Makefile
