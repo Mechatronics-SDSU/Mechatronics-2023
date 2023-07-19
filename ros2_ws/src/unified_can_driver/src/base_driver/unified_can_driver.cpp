@@ -59,7 +59,7 @@ UnifiedCanDriver::UnifiedCanDriver()
 		"do_module_polling").get_parameter_value().get<bool>();
 
 	RCLCPP_INFO(this->get_logger(), "################################################");
-	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] Unified CAN Driver ver. 0.0.5");
+	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] Unified CAN Driver ver. 0.0.6");
 	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] [Config] Connected Interface: %s", can_bus_interface.c_str());
 	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] [Config] Module Enable Field: %d", module_enabled_field);
 	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] [Config] POLLING ENABLED: %s", do_device_polling ? "true":"false" );
@@ -79,14 +79,12 @@ UnifiedCanDriver::UnifiedCanDriver()
 	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] Starting CAN command service. . .");
 	command_service = new SendCommandService((rclcpp::Node*)this, &ifr);
 
+	RCLCPP_INFO(this->get_logger(), "[UnifiedCanDriver] Starting Sub State Decoder. . .");
+	sub_state_pub = new StateDecoder((rclcpp::Node*)this, &ifr);
+	
 	_dres_mb = new Mailbox::MboxCan(&ifr, "dres");
 	Mailbox::MboxCan::set_filter(_dres_mb, {0x021, 0xfff});
 	RCLCPP_INFO(this->get_logger(), "################################################");
-
-	//////// Leftover from an earlier part of the driver. ////////
-	// emergency_mb = new MailboxTopic((rclcpp::Node*)this, &ifr, "emergency", {0x000,0xff0});
-	// heartbeat_mb = new MailboxTopic((rclcpp::Node*)this, &ifr, "heartbeat", {0x010,0xff0});
-	// dres_mb = new MailboxTopic((rclcpp::Node*)this, &ifr, "dres", {0x021,0xff1});
 }
 
 /*
@@ -96,14 +94,12 @@ UnifiedCanDriver::UnifiedCanDriver()
  */		
 void UnifiedCanDriver::can_timer_callback()
 {
+	sub_state_pub->check_state();
 	struct can_frame dres_frame;
 	if(Mailbox::MboxCan::read_mbox(_dres_mb, &dres_frame) == 0)
 	{
 		module_loader->module_decode_dres(&dres_frame);
 	}
-	// emergency_mb->mailbox_cb();
-	// heartbeat_mb->mailbox_cb();
-	// dres_mb->mailbox_cb();
 }
 
 
@@ -116,12 +112,8 @@ void UnifiedCanDriver::shutdown_node()
 {
 	Mailbox::MboxCan::close_mbox(_dres_mb);
 	delete _dres_mb;
-	//delete dres_decoder;
 	delete module_loader;
-	// emergency_mb->shutdown_cb();
-	// heartbeat_mb->shutdown_cb();
-	// dres_mb->shutdown_cb();
-
+	delete sub_state_pub;
 }
 
 

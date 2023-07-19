@@ -43,8 +43,6 @@ MailboxTopic::MailboxTopic(
 		node_context->get_logger(),
 		"[MailboxTopic] Topic <%s> Created.",
 		mailbox->mbox_name->c_str());
-
-	
 }
 /* MailboxTopic update callback. This function is intended to be called
  * whenever the mailbox should be updated, whether by timer or otherwise.

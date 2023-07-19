@@ -40,7 +40,7 @@ MboxCan::MboxCan(struct ifreq* ifr, const std::string name)
 void MboxCan::set_filter(MboxCan* mbox, struct can_filter filter)
 {
 	mbox->mbox_filter = filter;
-	setsockopt(mbox->can_sock, SOL_CAN_RAW, CAN_RAW_FILTER, &filter, sizeof(&filter));
+	setsockopt(mbox->can_sock, SOL_CAN_RAW, CAN_RAW_FILTER, &filter, sizeof(filter));
 }
 
 /* Reads a mailbox and outputs any data into a can_frame struct. If there

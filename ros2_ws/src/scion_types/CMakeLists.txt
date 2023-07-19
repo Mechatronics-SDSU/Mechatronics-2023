@@ -28,6 +28,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/PidTuning.msg"
   "msg/Position.msg"
   "msg/State.msg"
+  "msg/SubState.msg"
   "msg/VisionObject.msg"
   "msg/ZedObject.msg"
   "srv/CanCommand.srv"
