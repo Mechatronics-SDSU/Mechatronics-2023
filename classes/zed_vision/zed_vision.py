@@ -36,7 +36,7 @@ from time import sleep
 # import ogl_viewer.viewer as gl
 # import cv_viewer.tracking_viewer as cv_viewer
 
-with open('/home/mechatronics/master/classes/zed_vision/yolov5/data/coco128.yaml') as f:
+with open('/home/mechatronics/master/classes/zed_vision/new_gate.yaml') as f:
     items = yaml.load(f, Loader=yaml.FullLoader)
 lock = Lock()
 run_signal = False
@@ -154,9 +154,9 @@ class Zed_Vision():
 
     def initCamera(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument('--weights', nargs='+', type=str, default='yolov5m.pt', help='model.pt path(s)') #where we put weights at
+        parser.add_argument('--weights', nargs='+', type=str, default='/home/mechatronics/master/classes/zed_vision/new_gate.pt', help='model.pt path(s)') #where we put weights at
         parser.add_argument('--svo', type=str, default=None, help='optional svo file')
-        parser.add_argument('--img_size', type=int, default=416, help='inference size (pixels)')
+        parser.add_argument('--img_size', type=int, default=640, help='inference size (pixels)')
         parser.add_argument('--conf_thres', type=float, default=0.4, help='object confidence threshold')
         opt = parser.parse_args()
         print("Initializing Camera...")
