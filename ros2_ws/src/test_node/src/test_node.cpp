@@ -13,11 +13,18 @@ public:
   explicit Test()
   : Node("Test")
   {
-    zed_object_pub_ = this->create_publisher<scion_types::msg::VisionObject>("zed_object_data", 10);
-    zed_object_timer_ = this->create_wall_timer
+    // zed_object_pub_ = this->create_publisher<scion_types::msg::VisionObject>("zed_object_data", 10);
+    // zed_object_timer_ = this->create_wall_timer
+    //             (
+    //                 std::chrono::milliseconds(50), 
+    //                 std::bind(&Test::publishZedObjectTimer, this)
+    //             );
+
+    zed_vision_pub_ = this->create_publisher<scion_types::msg::ZedObject>("zed_vision_data", 10);
+    zed_vision_timer_ = this->create_wall_timer
                 (
-                    std::chrono::milliseconds(50), 
-                    std::bind(&Test::publishZedObjectTimer, this)
+                    std::chrono::milliseconds(500), 
+                    std::bind(&Test::publishZedVisionTimer, this)
                 );
 
     can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
@@ -46,7 +53,9 @@ private:
     Interface::ros_sendframe_client_t can_client_;
     Interface::ros_timer_t can_timer_;
     Interface::object_pub_t zed_object_pub_;
+    Interface::vision_pub_t zed_vision_pub_;
     Interface::ros_timer_t zed_object_timer_;
+    Interface::ros_timer_t zed_vision_timer_;
     Interface::idea_sub_t  idea_sub_;
     Interface::int_sub_t command_queue_is_empty_sub_;
 
@@ -74,6 +83,24 @@ private:
       vision_object.distance = 123.45;
       this->zed_object_pub_->publish(vision_object);
       RCLCPP_INFO(this->get_logger(), "Publishing Test Vision Object" );
+    }
+
+     void publishZedVisionTimer()
+    {
+      scion_types::msg::ZedObject vision_object = scion_types::msg::ZedObject();
+      std::array<scion_types::msg::Keypoint2Di, 4> bounding_box_from_zed;
+
+      scion_types::msg::Keypoint2Di keypoint = scion_types::msg::Keypoint2Di();
+      keypoint.kp[0] = 10;
+      keypoint.kp[1] = 10;
+      bounding_box_from_zed[0] = keypoint;
+      bounding_box_from_zed[1] = keypoint;
+      bounding_box_from_zed[2] = keypoint;
+      bounding_box_from_zed[3] = keypoint;
+
+      vision_object.corners =  bounding_box_from_zed;
+      this->zed_vision_pub_->publish(vision_object);
+      RCLCPP_INFO(this->get_logger(), "Publishing Test Vision Bounding Box" );
     }
 
     void sendFrame()

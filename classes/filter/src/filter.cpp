@@ -56,6 +56,10 @@ float Filter::smooth(deque<float>& static_deque, float in_x)
 void Filter::read_coeffs_from_file(std::vector<float>& coeffs, const std::string& filename)
 {
     std::ifstream coeffs_file(filename);
+    if (!coeffs_file) {
+        std::cout << "Failed to open coefficients file." << std::endl;
+        return;
+    }
     float element;
     while (coeffs_file >> element) 
     {
@@ -73,42 +77,42 @@ void Filter::print_coefficients()
 
 
 // @Test - Tracks two different points, fills buffer and then prints input and output data stream with filtering
-int main()
-{
-    size_t data_streams = 2;
-    string coeff_file = "coefficients.txt";
+// int main()
+// {
+//     size_t data_streams = 2;
+//     string coeff_file = "coefficients.txt";
 
-    unique_ptr<Filter> moving_average_filter = make_unique<Filter>(data_streams, coeff_file);
-    moving_average_filter->print_coefficients();
+//     unique_ptr<Filter> moving_average_filter = make_unique<Filter>(data_streams, coeff_file);
+//     moving_average_filter->print_coefficients();
 
-    vector<float> fill_buffer_data {10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
-    vector<float> test_sensor_data {11, 12, 13, 12, 9, 7, 4, 5, 8, 14, 11, 12, 10, 12, 8, 7, 2, 7, 7, 8, 9, 14, 10, 15};
-    vector<float> test_sensor_data2 {7, 2, 7, 7, 8, 9, 14, 10, 15, 9, 7, 4, 5, 8, 14, 11, 12, 10, 1, 11, 12, 13, 12, 9};
-    vector<float> test_output_data;
-    vector<float> test_output_data2;
+//     vector<float> fill_buffer_data {10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
+//     vector<float> test_sensor_data {11, 12, 13, 12, 9, 7, 4, 5, 8, 14, 11, 12, 10, 12, 8, 7, 2, 7, 7, 8, 9, 14, 10, 15};
+//     vector<float> test_sensor_data2 {7, 2, 7, 7, 8, 9, 14, 10, 15, 9, 7, 4, 5, 8, 14, 11, 12, 10, 1, 11, 12, 13, 12, 9};
+//     vector<float> test_output_data;
+//     vector<float> test_output_data2;
 
-    for (float input : fill_buffer_data)
-    {
-        moving_average_filter->smooth(moving_average_filter->data_streams[0], input);
-        moving_average_filter->smooth(moving_average_filter->data_streams[1], input);
-    }
-    for (float input : test_sensor_data) 
-    {
-        test_output_data.push_back(moving_average_filter->smooth(moving_average_filter->data_streams[0], input));
-    }
-    for (float input : test_sensor_data2) 
-    {
-        test_output_data2.push_back(moving_average_filter->smooth(moving_average_filter->data_streams[1], input));
-    }
+//     for (float input : fill_buffer_data)
+//     {
+//         moving_average_filter->smooth(moving_average_filter->data_streams[0], input);
+//         moving_average_filter->smooth(moving_average_filter->data_streams[1], input);
+//     }
+//     for (float input : test_sensor_data) 
+//     {
+//         test_output_data.push_back(moving_average_filter->smooth(moving_average_filter->data_streams[0], input));
+//     }
+//     for (float input : test_sensor_data2) 
+//     {
+//         test_output_data2.push_back(moving_average_filter->smooth(moving_average_filter->data_streams[1], input));
+//     }
 
-    cout << endl << "Input Data 1: ";
-    printVector(test_sensor_data);
-    cout << "Output Data 1: ";
-    printVector(test_output_data);
+//     cout << endl << "Input Data 1: ";
+//     printVector(test_sensor_data);
+//     cout << "Output Data 1: ";
+//     printVector(test_output_data);
 
-    cout << endl << "Input Data 2: ";
-    printVector(test_sensor_data2);
-    cout << "Output Data 2: ";
-    printVector(test_output_data2);
+//     cout << endl << "Input Data 2: ";
+//     printVector(test_sensor_data2);
+//     cout << "Output Data 2: ";
+//     printVector(test_output_data2);
 
-}
+// }

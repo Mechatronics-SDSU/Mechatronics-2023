@@ -28,7 +28,8 @@ find_package(rclcpp_action REQUIRED)
 include_directories(include)
 
 # Must include headers and source files from pid_controller class in classses/
-add_executable(brain_exec src/brain_node.cpp)
+add_executable(brain_exec src/brain_node.cpp
+                            ../../../classes/filter/src/filter.cpp)
                               
 ament_target_dependencies(brain_exec rclcpp scion_types std_msgs std_srvs rclcpp_action)
 
@@ -37,6 +38,7 @@ install(TARGETS
   DESTINATION lib/${PROJECT_NAME})
 
 target_include_directories(brain_exec PUBLIC ../../../classes/pid_controller/include
+                                             ../../../classes/filter/include
                                              ../control_interface/include)
 
 ament_package()

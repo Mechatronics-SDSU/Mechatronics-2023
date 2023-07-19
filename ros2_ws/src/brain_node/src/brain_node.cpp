@@ -31,19 +31,23 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "vector_operations.hpp"
-
-#define TO_THE_RIGHT 15.0f
-#define TO_THE_LEFT -15.0f
-#define PIXEL_ERROR_THRESHOLD 50
-#define SLEEP_TIME 50ms
+#include "filter.hpp"
 
 using std::placeholders::_1;
 using std::placeholders::_2;
 using namespace std;
 
+#define TO_THE_RIGHT 15.0f
+#define TO_THE_LEFT -15.0f
+#define PIXEL_ERROR_THRESHOLD 50
+#define SLEEP_TIME 50ms
 #define SMOOTH_TURN_DEGREE 90.0f
 #define SMOOTH_MOVE_DEGREE 1.0f
 #define SUBMERGE_DISTANCE 1.5f
+#define MID_X_PIXEL 640
+#define MID_Y_PIXEL 360
+#define NUM_CORNERS 4
+
 
 class Brain : public rclcpp::Node
 {
@@ -59,6 +63,7 @@ class Brain : public rclcpp::Node
             pid_ready_service_ = this->create_service<std_srvs::srv::Trigger>("pid_ready", std::bind(&Brain::ready, this, _1, _2));
             commands_in_queue_sub_ = this->create_subscription<std_msgs::msg::Int32>
             ("is_command_queue_empty", 10, std::bind(&Brain::update_if_command_queue_empty, this, _1));
+            performMission();
         }
     private:
         Interface::idea_pub_t                       idea_pub_;
@@ -133,34 +138,64 @@ class Brain : public rclcpp::Node
             return distance;
         }
 
+        unique_ptr<Filter> populateFilterBuffer()
+        {
+            size_t data_streams_num = 1;
+            string coeff_file = "/home/mechatronics/master/ros2_ws/src/brain_node/coefficients.txt";
+            unique_ptr<Filter> moving_average_filter = std::make_unique<Filter>(data_streams_num, coeff_file);
+
+            std::promise<bool> buffer_filled;
+            std::shared_future<bool> future  = buffer_filled.get_future();
+            Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_subscriber");
+            Interface::vision_sub_t object_sub = temp_node->create_subscription<scion_types::msg::ZedObject>
+            ("zed_vision_data", 10, [this, &temp_node, &buffer_filled, &moving_average_filter](const scion_types::msg::ZedObject::SharedPtr msg) {
+                    unique_ptr<vector<vector<uint32_t>>>ros_bounding_box = zed_to_ros_bounding_box(msg->corners);
+                    vector<uint32_t> bounding_box_midpoint = findMidpoint(*ros_bounding_box);
+                    moving_average_filter->smooth(moving_average_filter->data_streams[0], (float)bounding_box_midpoint[0]);
+                    if (moving_average_filter->data_streams[0][10] != 0)
+                    {
+                        buffer_filled.set_value(true);              // jump out of async spin
+                    }
+            });
+            rclcpp::spin_until_future_complete(temp_node, future);
+            return moving_average_filter;
+        }
+
         void centerRobot()
         {
-            const int MID_X_PIXEL = 640;
-            const int MID_Y_PIXEL = 360;
-            const int NUM_CORNERS = 4;
             bool robot_centered_bool;
             std::promise<bool> robot_centered;
             std::shared_future<bool> future  = robot_centered.get_future();
-            Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_subscriber");;
+            Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_subscriber");
+            
+            unique_ptr<Filter> moving_average_filter = populateFilterBuffer();
+            moving_average_filter->print_coefficients();
+
             Interface::vision_sub_t object_sub = temp_node->create_subscription<scion_types::msg::ZedObject>
-            ("zed_vision_data", 10, [this, &temp_node, &robot_centered, &robot_centered_bool](const scion_types::msg::ZedObject::SharedPtr msg) {
-                    while (!robot_centered_bool)
-                    {
-                        std::array<scion_types::msg::Keypoint2Di, 4> bounding_box_from_zed = msg->corners;
-                        vector<vector<uint32_t>> vector_bounding_box;                   // this is to convert from ros object to vector object
-                        for (int i = 0; i < NUM_CORNERS; i++)
-                        {
-                            vector<uint32_t> corner_point {((bounding_box_from_zed[i]).kp)[i], ((bounding_box_from_zed[i]).kp)[i+1]};
-                            vector_bounding_box.push_back(corner_point);
-                        }
-                        vector<uint32_t> bounding_box_midpoint = findMidpoint(vector_bounding_box);
-                        vector<uint32_t> camera_frame_midpoint {MID_X_PIXEL, MID_Y_PIXEL};
-                        if (areEqual(bounding_box_midpoint, camera_frame_midpoint)) {robot_centered_bool = true;}
-                        else {this->adjustToCenter(bounding_box_midpoint, camera_frame_midpoint);}
+            ("zed_vision_data", 10, [this, &temp_node, &robot_centered, &robot_centered_bool, &moving_average_filter](const scion_types::msg::ZedObject::SharedPtr msg) {
+                    unique_ptr<vector<vector<uint32_t>>>ros_bounding_box = zed_to_ros_bounding_box(msg->corners);
+                    vector<uint32_t> bounding_box_midpoint = findMidpoint(*ros_bounding_box);
+                    float filtered_bounding_box_midpoint = moving_average_filter->smooth(moving_average_filter->data_streams[0], (float)bounding_box_midpoint[0]);
+                    
+                    vector<uint32_t> camera_frame_midpoint {MID_X_PIXEL, MID_Y_PIXEL};
+                    if (areEqual(bounding_box_midpoint, camera_frame_midpoint)) {robot_centered.set_value(true);}
+                    else { 
+                        waitForCommandQueueEmpty();
+                        this->adjustToCenter(bounding_box_midpoint, camera_frame_midpoint);
                     }
-                    robot_centered.set_value(true);              // jump out of async spin
             });
             rclcpp::spin_until_future_complete(temp_node, future);
+        }
+
+        std::unique_ptr<vector<vector<uint32_t>>> zed_to_ros_bounding_box(std::array<scion_types::msg::Keypoint2Di, 4>& zed_bounding_box)
+        {
+            vector<vector<uint32_t>> ros_bounding_box;                   // this is to convert from ros object to vector object
+            for (int i = 0; i < NUM_CORNERS; i++)
+            {
+                vector<uint32_t> corner_point {((zed_bounding_box[i]).kp)[i], ((zed_bounding_box[i]).kp)[i+1]};
+                ros_bounding_box.push_back(corner_point);
+            }
+            return std::make_unique<vector<vector<uint32_t>>>(ros_bounding_box);
         }
 
         vector<uint32_t> findMidpoint(vector<vector<uint32_t>>& bounding_box)
@@ -169,7 +204,7 @@ class Brain : public rclcpp::Node
             vector<uint32_t> cornerUR = bounding_box[1];
             vector<uint32_t> cornerBL = bounding_box[2];
             uint32_t midpoint_x = ((cornerUR + cornerUL)/((uint32_t)2))[0];
-            uint32_t midpoint_y = ((cornerUL + cornerBL)/((uint32_t)2))[1];
+            uint32_t midpoint_y = (720 - ((cornerUL + cornerBL)/((uint32_t)2))[1]);
             vector<uint32_t> midpoint {midpoint_x, midpoint_y};
             return midpoint;
         }
@@ -185,6 +220,19 @@ class Brain : public rclcpp::Node
             if (bounding_box_is_to_the_right_of_center_pixel) {this->turn(TO_THE_RIGHT);}
             else {this->turn(TO_THE_LEFT);}
             this->waitForEmptyQueue();
+        }
+
+        void waitForCommandQueueEmpty()
+        {
+            std::promise<bool> command_queue_empty;
+            std::shared_future<bool> future  = command_queue_empty.get_future();
+            Interface::node_t temp_node = rclcpp::Node::make_shared("command_queue_empty");
+
+            Interface::int_sub_t command_queue_empty_sub = temp_node->create_subscription<std_msgs::msg::Int32>
+            ("is_command_queue_empty", 10, [this, &temp_node, &command_queue_empty](const std_msgs::msg::Int32::SharedPtr msg) {
+                    if (msg->data) {command_queue_empty.set_value(true);}
+            });
+            rclcpp::spin_until_future_complete(temp_node, future);
         }
 
         void waitForEmptyQueue() 
@@ -212,6 +260,7 @@ class Brain : public rclcpp::Node
             idea.code = Interface::Idea::TURN;
             idea.parameters = std::vector<float>{degree};
             idea_pub_->publish(idea);
+            RCLCPP_INFO(this->get_logger(), "Turning %f Degrees", degree);
         }
 
         void pitch(float degree)
@@ -274,6 +323,7 @@ class Brain : public rclcpp::Node
 
         void performMission()
         {
+            centerRobot();
             doUntil(&Brain::keepTurning, &Brain::gateSeen, &Brain::stop, this->gate_seen_, SMOOTH_TURN_DEGREE);
             levitate(SUBMERGE_DISTANCE);
             moveForward(this->getDistanceFromCamera("Underwater-Gate"));
@@ -290,6 +340,7 @@ class Brain : public rclcpp::Node
         void update_if_command_queue_empty(const std_msgs::msg::Int32::SharedPtr msg)
         {
             this->command_queue_is_empty_ = msg->data;
+            RCLCPP_INFO(this->get_logger(), "%d", this->command_queue_is_empty_);
         }
 
 

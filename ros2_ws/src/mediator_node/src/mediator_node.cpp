@@ -138,7 +138,7 @@ private:
           this->nextCommandPrep(command_function);
           desired_state_t desired = (*command_function)(current_command_->params.degree);
           desired = adjustDesiredState(desired, command_function);
-          current_state_t current = getCurrentState();
+          current_state_t current = current_state_t{0,0,0,0,0,0};
           desired += current;
           this->send_goal(desired);
       }
