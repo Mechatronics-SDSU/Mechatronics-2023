@@ -35,5 +35,6 @@ wheels/
 
 # Cmake
 CMake*
+!CMakeLists.txt
 *cmake
 Makefile
