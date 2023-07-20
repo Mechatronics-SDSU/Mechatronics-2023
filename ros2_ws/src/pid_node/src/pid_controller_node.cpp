@@ -48,6 +48,7 @@ using namespace std;
 #define ENABLE_BYTE 0x00A
 #define ORIENTATION_TOLERANCE 4.0f
 #define POSITION_TOLERANCE 0.06f
+#define LOW_SLEW_VALUE 144
 /////////////////////////////////////////////////////////////////////////////////////////////////////
                                     // MEMBER VARIABLE DECLARATIONS // 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,9 +154,9 @@ private:
     Interface::ros_trigger_client_t             reset_relative_position_client_;
     Interface::ros_sendframe_client_t           can_client_;
     Interface::matrix_t                         thrust_mapper_;
+    Interface::ros_trigger_client_t             pid_ready_client_;
     Scion_Position_PID_Controller               controller_;
     PID_Params                                  pid_params_object_;                      // Passed to controller for tuning
-    Interface::ros_trigger_client_t             pid_ready_client_;
     int                                         motor_count_ = 8;
     std::map<int, string>                       axis_tuning_map_;
 

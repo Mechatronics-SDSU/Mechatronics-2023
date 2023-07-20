@@ -13,8 +13,6 @@ using namespace std;
 
 class PID_Controller
 {
-    private:
-
     public:
         float k_p;
         float k_i;
@@ -28,6 +26,7 @@ class PID_Controller
         float integral = 0.0;
         float previous_error = 0.0;
         float curr_ctrl_val = 0.0;
+        float enabled = true;
         
         PID_Controller() {};
 
@@ -47,6 +46,8 @@ class PID_Controller
         void set_gains(float k_p, float k_i, float k_d);
 
         float update(float error, float dt);
+
+        void disable();
 
         void getStatus();
 };

@@ -18,13 +18,12 @@ Scion_Position_PID_Controller::Scion_Position_PID_Controller()
   */
 
     // Angle wrapping set to true for roll-pitch-yaw PID controllers
-    this->yaw_pid = std::make_shared<PID_Controller>(0.0, 0.0, 0.0, true);
-    this->pitch_pid = std::make_shared<PID_Controller>(0.0, 0.0, 0.0, true);
-    this->roll_pid = std::make_shared<PID_Controller>(0.0, 0.0, 0.0, true);
-
-    this->x_pos_pid = std::make_shared<PID_Controller>(0.0, 0.0, 0.0);
-    this->y_pos_pid = std::make_shared<PID_Controller>(0.0, 0.0, 0.0);
-    this->z_pos_pid = std::make_shared<PID_Controller>(0.0, 0.0, 0.0);
+    this->yaw_pid =     std::make_shared<PID_Controller>(0.0, 0.0, 0.0, true);
+    this->pitch_pid =   std::make_shared<PID_Controller>(0.0, 0.0, 0.0, true);
+    this->roll_pid =    std::make_shared<PID_Controller>(0.0, 0.0, 0.0, true);
+    this->x_pos_pid =   std::make_shared<PID_Controller>(0.0, 0.0, 0.0);
+    this->y_pos_pid =   std::make_shared<PID_Controller>(0.0, 0.0, 0.0);
+    this->z_pos_pid =   std::make_shared<PID_Controller>(0.0, 0.0, 0.0);
     
 
     // Map strings to PID_Controller pointer to be able to refer to controller by name
@@ -64,53 +63,46 @@ Scion_Position_PID_Controller::Scion_Position_PID_Controller(map<string, map<str
      * if we decide to load our PID_Params from a dictionary, we can set each controllers' values to 
      * the values stored in the hashmap from pid_params.cpp 
      */
-    for (auto ctrl_type : this->controllers) // one row with string : unique_ptr<PID_Controller>
+    for (const auto& [name, controller] : this->controllers) // one row with string : unique_ptr<PID_Controller>
     {
-        ctrl_type.second->k_p = pid_params[ctrl_type.first]["kp"];
-        ctrl_type.second->k_i = pid_params[ctrl_type.first]["ki"];
-        ctrl_type.second->k_d = pid_params[ctrl_type.first]["kd"];
-        ctrl_type.second->ctrl_val_offset = pid_params[ctrl_type.first]["ctrl_val_offset"];
-        ctrl_type.second->ctrl_val_max = pid_params[ctrl_type.first]["ctrl_val_max"];
-        ctrl_type.second->ctrl_val_min = pid_params[ctrl_type.first]["ctrl_val_min"];
-        ctrl_type.second->i_max = pid_params[ctrl_type.first]["i_max"];
-        ctrl_type.second->i_min = pid_params[ctrl_type.first]["i_min"];
+        controller->k_p = pid_params[name]["kp"];
+        controller->k_i = pid_params[name]["ki"];
+        controller->k_d = pid_params[name]["kd"];
+        controller->ctrl_val_offset = pid_params[name]["ctrl_val_offset"];
+        controller->ctrl_val_max = pid_params[name]["ctrl_val_max"];
+        controller->ctrl_val_min = pid_params[name]["ctrl_val_min"];
+        controller->i_max = pid_params[name]["i_max"];
+        controller->i_min = pid_params[name]["i_min"];
     }
 }
 
-     /* 
-      * Every time we have new data on our current and desired position, we can tell each PID_Controller
-      * to update their current state 
-      */
+/* 
+* Every time we have new data on our current and desired position, we can tell each PID_Controller
+* to update their current state 
+*/
 
-    vector<float> Scion_Position_PID_Controller::update
-    (
-        vector<float> errors,
-        float dt
-    ) 
-    {
-        /**
-        Perform PID controller update step and return the thrust to each of the 6 thrusters.
-        
-        :param set_point - The desired state of the vehicle [roll, pitch, yaw, x, y, z] 
-        :param process_point - The current state of the vehicle [roll, pitch, yaw, x, y, z] 
-        :param dt - Update interval in seconds (float)
-        
-        :return thrusts - A list of length 6 of the thrusts to apply to each motor: Range [-100, 100] 
-        */
-            
-       float yaw_ctrl =    this->yaw_pid->     update(errors[0], dt);
-       float pitch_ctrl =  this->pitch_pid->   update(errors[1], dt);
-       float roll_ctrl =   this->roll_pid->    update(errors[2], dt);
-       float x_pos_ctrl =  this->x_pos_pid->   update(errors[3], dt);
-       float y_pos_ctrl =  this->y_pos_pid->   update(errors[4], dt);
-       float z_pos_ctrl =  this->z_pos_pid->   update(errors[5], dt);
-
-        vector<float> ctrl_vals = vector<float>{yaw_ctrl, pitch_ctrl, roll_ctrl, x_pos_ctrl, y_pos_ctrl, z_pos_ctrl};
-        this->current_ctrl_vals = ctrl_vals; 
-       
-        return ctrl_vals;
+vector<float> Scion_Position_PID_Controller::update
+(
+    vector<float> errors,
+    float dt
+) 
+{
+    /**
+    Perform PID controller update step and return the thrust to each of the 6 thrusters.
+    
+    :param set_point - The desired state of the vehicle [roll, pitch, yaw, x, y, z] 
+    :param process_point - The current state of the vehicle [roll, pitch, yaw, x, y, z] 
+    :param dt - Update interval in seconds (float)
+    
+    :return thrusts - A list of length 6 of the thrusts to apply to each motor: Range [-100, 100] 
+    */
+    vector<float> ctrl_vals;
+    for (const auto& [name, controller] : controllers) {
+        float ctrl_val = controller->enabled ? controller->update(errors[ctrl_vals.size()], dt) : 0.0F;
+        ctrl_vals.push_back(ctrl_val);
     }
-
+    return ctrl_vals;
+}
 
 // View the current state of all the PIDs on Scion and the latest ctrl_vals it has generated
 void Scion_Position_PID_Controller::getStatus()
@@ -119,8 +111,15 @@ void Scion_Position_PID_Controller::getStatus()
     cout << "--------------------------------------------------------------------------------------" << endl;
     cout << endl;
     cout << "Scion PID Last Generated Control Values: ";
-    printVector(this->current_ctrl_vals);
     for (auto controller : this->controllers) {controller.second->getStatus();}
+}
+
+void Scion_Position_PID_Controller::disable(vector<string>& axes_to_disable)
+{
+    for (string axis_name : axes_to_disable)
+    {
+        this->controllers["axix_name"]->disable();
+    }
 }
 
 //main for testing

@@ -7,6 +7,7 @@
 #include <tuple>
 #include <memory>
 #include <cmath>
+#include <cstring>
 
 #include "pid_controller.hpp"
 #include "pid_params.hpp"
@@ -23,18 +24,15 @@ using namespace std;
 class Scion_Position_PID_Controller
 {
     private:
-
-    public:
         shared_ptr<PID_Controller> yaw_pid;
         shared_ptr<PID_Controller> pitch_pid;
         shared_ptr<PID_Controller> roll_pid;
         shared_ptr<PID_Controller> x_pos_pid;
         shared_ptr<PID_Controller> y_pos_pid;
         shared_ptr<PID_Controller> z_pos_pid;
+
+    public:
         std::map<string, shared_ptr<PID_Controller>> controllers;
-        vector<float> current_ctrl_vals;
-        vector<float> current_thrust_values;
-        vector<vector<float>> pid_thrust_mapper;
 
         // Default constructor to tune PID manually
         Scion_Position_PID_Controller();
@@ -48,6 +46,8 @@ class Scion_Position_PID_Controller
             vector<float> errors,
             float dt
         );
+
+        void disable(vector<string>& axes_to_disable);
 
         // Print status of all PIDs to console
         void getStatus();

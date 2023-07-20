@@ -143,6 +143,11 @@ void PID_Controller::getStatus()
     // cout << "control_value: " << this->curr_ctrl_val << endl;
 }
 
+void PID_Controller::disable()
+{
+    this->enabled = false;
+}
+
 // main for testing 
 
 // int main()
