@@ -46,7 +46,8 @@ using namespace std;
 #define PID_ERROR_THRESHOLD 0.01f
 #define MOTOR_ID 0x010
 #define ENABLE_BYTE 0x00A
-
+#define ORIENTATION_TOLERANCE 4.0f
+#define POSITION_TOLERANCE 0.06f
 /////////////////////////////////////////////////////////////////////////////////////////////////////
                                     // MEMBER VARIABLE DECLARATIONS // 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,9 +126,9 @@ public:
         reset_relative_state_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_state");
         reset_relative_position_client_ = this->create_client<std_srvs::srv::Trigger>("reset_relative_position");
         pid_ready_client_ = this->create_client<std_srvs::srv::Trigger>("pid_ready");
-        stop_robot_service_ = this->create_service<std_srvs::srv::Trigger>("stop_robot", std::bind(&Controller::stopRobot, this, _1, _2));
-        use_position_service_ = this->create_service<std_srvs::srv::SetBool>("use_position", std::bind(&Controller::usePosition, this, _1, _2));
-        stabilize_robot_service_ = this->create_service<std_srvs::srv::SetBool>("stabilize_robot", std::bind(&Controller::stabilizeRobot, this, _1, _2));
+        stop_robot_service_ = this->create_service<std_srvs::srv::Trigger>("stop_robot", std::bind(&Controller::stopRobotRequest, this, _1, _2));
+        use_position_service_ = this->create_service<std_srvs::srv::SetBool>("use_position", std::bind(&Controller::usePositionRequest, this, _1, _2));
+        stabilize_robot_service_ = this->create_service<std_srvs::srv::SetBool>("stabilize_robot", std::bind(&Controller::stabilizeRobotRequest, this, _1, _2));
 
         controller_ = Scion_Position_PID_Controller(pid_params_object_.get_pid_params());
         controller_.getStatus();
@@ -189,14 +190,13 @@ private:
             this->sendNothingAndWait();
             std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
         }
-        this->resetState();
-        // std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
+        this->resetStateRequest();
         this->desired_state_ = vector<float>{0,0,0,0,0,0};
         while (!this->desired_state_valid_) {this->desired_state_valid_ = true;}
         while (!this->current_state_valid_) {this->current_state_valid_ = true;}
         canClient::sendFrame(ENABLE_BYTE, 0, nothing_.data(), can_client_);
         canClient::setBotInSafeMode(can_client_);
-        this->pidReady();
+        this->pidReadyRequest();
         return true;
     }
 
@@ -233,28 +233,33 @@ private:
     /* Essential callback set to update PID state at certain interval */
     void update_timer_callback()
     {
-        update_current_state();
+        stabilizeRobotState();
     }
 
-    void update_current_state() // ** Important Function **
+    void stabilizeRobotState()
     {    
-    /* 
-     * STEP 1: Update the PID Controller (meaning call the ScionPIDController object's
-     * update function which generates ctrl_vals and show its status on the screen 
-     */
-        // sendNothingAndWait();
-        if (stabilize_robot_ && current_state_valid_ && desired_state_valid_)
+        if (stabilize_robot_) {updateRobot();}
+    }
+
+    vector<int> updateRobot()
+    {   
+        if (!current_state_valid_ || !desired_state_valid_) 
         {
-            vector<float> thrusts(motor_count_, 0);
-            thrusts = this->getThrusts(this->current_state_, this->desired_state_);
-            make_CAN_request(thrusts);
+            return vector<int>(motor_count_, 0);
         }
+        vector<float> thrusts = this->getThrusts(this->current_state_, this->desired_state_);
+        return make_CAN_request(thrusts);
     }
 
     vector<float> getErrors(vector<float>& current_state, vector<float>& desired_state) 
     {
         return desired_state - current_state;
-    }    
+    }
+
+    vector<float> ctrlValsToThrusts(vector<float>& ctrl_vals)
+    {
+        return this->thrust_mapper_ * ctrl_vals;
+    }
 
     vector<float> getThrusts(vector<float>& current_state, vector<float>& desired_state)
     {
@@ -267,11 +272,6 @@ private:
         ctrl_vals = this->controller_.update(adjustedErrors, (float)UPDATE_PERIOD_RAW / 1000);
         return ctrlValsToThrusts(ctrl_vals);
     }    
-
-    vector<float> ctrlValsToThrusts(vector<float>& ctrl_vals)
-    {
-        return this->thrust_mapper_ * ctrl_vals;
-    }
 
     float angleBetweenHereAndPoint(float x, float y)
     {
@@ -307,35 +307,10 @@ private:
                 
         vector<float> adjustedErrors = vector<float>
         {
-            errors[0],
-            errors[1],
-            errors[2],
-            adjustedX,
-            adjustedY,
-            adjustedZ
+            errors[0], errors[1], errors[2],
+            adjustedX, adjustedY, adjustedZ
         };
         return adjustedErrors;
-    }
-
-    vector<float> update_PID(Interface::current_state_t& current_state, Interface::desired_state_t& desired_state)
-    {
-        using namespace Interface;
-        if (!this->current_state_valid_ || !this->desired_state_valid_) 
-        {
-            return vector<float>(this->motor_count_, 0);
-        }
-
-        if (this->use_position_)
-        {
-            return this->getThrusts(current_state, desired_state); 
-        }
-        else
-        {
-            current_state_t current_state_no_position = current_state_t{current_state[0], current_state[1], current_state[2], 0, 0, 0};
-            desired_state_t desired_state_no_position = desired_state_t{desired_state[0], desired_state[1], desired_state[2], 0, 0, 0};
-            return this->getThrusts(current_state_no_position, desired_state_no_position);    
-        }
-    
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -421,23 +396,14 @@ private:
 
     bool areEqual(std::vector<float>& current_state, std::vector<float>& desired_state)
     {
-        #define ORIENTATION_TOLERANCE 6.0f
-        #define POSITION_TOLERANCE 0.12f
-
         bool equal = true;
         for (std::vector<float>::size_type i = 0; i < 3; i++)
         {
-            if (!areEqual(current_state[i], desired_state[i], ORIENTATION_TOLERANCE)) //.05*current_state[i])
-            {
-                equal = false;
-            }
+            if (!areEqual(current_state[i], desired_state[i], ORIENTATION_TOLERANCE)) {equal = false;}
         }
         for (std::vector<float>::size_type j = 3; j < 6; j++)
         {
-            if (!areEqual(current_state[j], desired_state[j], POSITION_TOLERANCE)) //.05*current_state[i])
-            {
-                equal = false;
-            }
+            if (!areEqual(current_state[j], desired_state[j], POSITION_TOLERANCE)) {equal = false;}
         }
         return equal;
     }
@@ -447,113 +413,115 @@ private:
         bool equal = true;
         for (int thrust : thrustVect)
         {
-            if (thrust > 1)
-            {
-                equal = false;
-            }
+            if (thrust > 1) {equal = false;}
         }
         return equal;
     }
 
+     bool isSlewRateLow(int totalSlewRate)
+    {
+        return totalSlewRate < LOW_SLEW_VALUE;
+    }
+
+    int calculateTotalSlew(deque<vector<int>>& slew_buffer)
+    {
+        int slew_rate = 0;
+        for (size_t i = 0; i < slew_buffer.size() - 1; i++)
+        {   
+            vector<int> difference = abs(slew_buffer[i]) - abs(slew_buffer[i+1]);
+            slew_rate += abs(sum(difference));
+        }
+        return slew_rate;
+    }
 
     void execute(const std::shared_ptr<GoalHandlePIDAction> goal_handle)
     {
-        /* Goal Initialization */
+        //      Goal Initialization     //
         RCLCPP_INFO(this->get_logger(), "Executing goal");
         rclcpp::Rate loop_rate(20);
-
         std::shared_ptr<PIDAction::Feedback> feedback = std::make_shared<PIDAction::Feedback>();
         std::shared_ptr<PIDAction::Result> result = std::make_shared<PIDAction::Result>();
         const auto goal = goal_handle->get_goal();
-
         this->desired_state_ = goal->desired_state;
 
+        //      Prepare State        //
         this->stabilize_robot_ = false;
-        /* Init States */
         std::vector<float>& state = feedback->current_state;
-        vector<float> thrusts = this->update_PID(this->current_state_, this->desired_state_);
-        vector<int> thrustInts = this->make_CAN_request(thrusts);
+        vector<int> thrustInts = updateRobot();
         for (int thrust : thrustInts)
         {
             state.push_back((float)thrust);
         }
-
         int cycles_at_set_point = 0;
-        /* Feedback Loop - Stop Conditions is that all Thrusts are close to zero*/
-        while (!this->equalToZero(thrustInts) || (cycles_at_set_point <= 10)) 
+        deque<vector<int>> slew_buffer;
+        bool slew_rate_low = false;
+
+        //                                  **FEEDBACK LOOP**                               //
+        while (!this->equalToZero(thrustInts) && (cycles_at_set_point <= 5) && !slew_rate_low) 
         {
-            //   Check if there is a cancel request
+            // Check if there is a cancel request //
             if (goal_handle->is_canceling()) {
                 goal_handle->canceled(result);
                 RCLCPP_INFO(this->get_logger(), "Goal canceled");
                 return;
             }
-            this->areEqual(current_state_, desired_state_) ? cycles_at_set_point++ : cycles_at_set_point=0; 
 
-            /* Update at Every Loop */
-            thrusts = update_PID(this->current_state_, this->desired_state_);
-            thrustInts = this->make_CAN_request(thrusts);
-            for (int i = 0; i < thrustInts.size(); i++)
-            { 
-                state[i] = ((float)thrustInts[i]);
+            //      Update Stop Conditions      //
+            this->areEqual(current_state_, desired_state_) ? cycles_at_set_point++ : cycles_at_set_point=0; 
+            slew_buffer.push_front(thrustInts);
+            if (slew_buffer.size() > 20) {
+                slew_buffer.pop_back();
+                slew_rate_low = isSlewRateLow(calculateTotalSlew(slew_buffer));
             }
 
+            //       Update at Every Loop      //
+            thrustInts = updateRobot();
+            for (int i = 0; i < thrustInts.size(); i++) { 
+                state[i] = ((float)thrustInts[i]);
+            }
             goal_handle->publish_feedback(feedback);
             loop_rate.sleep();
         }
+        //      Cleanup     //
         this->stabilize_robot_ = true;
-        
-        /* 
-                    ARCHIVE
-         // vector<float> target = vector<float>{current_state_[0], current_state_[1], current_state_[2],0,0,0};
-        // int i = 0;
-        // while (!areEqual(this->current_state_, target) && i < 3)
-        // {   
-        //     this->resetPosition();
-        //     std::this_thread::sleep_for(std::chrono::milliseconds(300));
-        //     i++;
-        // }
-
-        std::vector<float> desired_state = goal->desired_state;
-        desired_state += current_state_;
-        this->desired_state_ = desired_state; */
+        RCLCPP_INFO(this->get_logger(), "Slew Rate: %d", calculateTotalSlew(slew_buffer));
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                             // CONTROL SERVICES // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void stopRobot(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+    void stopRobotRequest(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
                          std::shared_ptr<std_srvs::srv::Trigger::Response> response)
     {
         this->desired_state_ = this->current_state_;
     }
 
-    void pidReady()
+    void pidReadyRequest()
     {
         auto pid_ready_request = std::make_shared<std_srvs::srv::Trigger::Request>();
         auto pid_ready_future = this->pid_ready_client_->async_send_request(pid_ready_request);
     }
 
-    void resetState()
+    void resetStateRequest()
     {
         auto reset_state_request = std::make_shared<std_srvs::srv::Trigger::Request>();
         auto reset_state_future = this->reset_relative_state_client_->async_send_request(reset_state_request);
     }
 
-    void resetPosition()
+    void resetPositionRequest()
     {     
       auto reset_position_request = std::make_shared<std_srvs::srv::Trigger::Request>();
       auto reset_position_future = this->reset_relative_position_client_->async_send_request(reset_position_request);
     }
 
-    void usePosition(const  std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+    void usePositionRequest(const  std::shared_ptr<std_srvs::srv::SetBool::Request> request,
                             std::shared_ptr<std_srvs::srv::SetBool::Response> response)
     {
         this->use_position_ = request->data;
     }
 
-    void stabilizeRobot(const   std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+    void stabilizeRobotRequest(const   std::shared_ptr<std_srvs::srv::SetBool::Request> request,
                                 std::shared_ptr<std_srvs::srv::SetBool::Response> response)
     {
         this->stabilize_robot_ = request->data;
@@ -562,17 +530,6 @@ private:
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                         // SUBSCRIPTION CALLBACKS // 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // void desired_state_callback(const scion_types::msg::State::SharedPtr msg)
-    // /** 
-    //  * You can use this subscription to manually send a desired state at command line
-    //  **/ 
-    // {
-    //     if (!this->desired_state_valid_) {this->desired_state_valid_ = true;}
-    //     // RCLCPP_INFO(this->get_logger(), "Received Desired Position Data:");
-    //     printVector(msg->state);
-    //     this->desired_state_= msg->state; 
-    // }
 
     void current_state_callback(const scion_types::msg::State::SharedPtr msg)
     {
@@ -613,18 +570,6 @@ int main(int argc, char * argv[])
     rclcpp::shutdown();
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
