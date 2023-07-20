@@ -143,6 +143,7 @@ class ZedVision(Node):
                 msg = ZedObject()
                 msg.label_id = object.raw_label
                 msg.position = [object.position[0], object.position[1], object.position[2]]
+                corners = []
                 for point in object.bounding_box_2d:
                     kp = Keypoint2Di()
                     kp.kp = []

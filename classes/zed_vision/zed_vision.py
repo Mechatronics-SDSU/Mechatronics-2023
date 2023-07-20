@@ -241,13 +241,12 @@ class Zed_Vision():
 
             visionObjectList = []
             for object in objects.object_list:
-                if object.raw_label == 41:
+                if object.raw_label == 0:
                     print("There is a " + str(items['names'][object.raw_label]) + "(" + str(object.raw_label) + ")" + " about " + str(round(object.position[0], 1)) + "meters away from me")
                     visionObject = VisionObject()
                     visionObject.object_name = items['names'][object.raw_label]
                     visionObject.distance = round(object.position[0], 1)
                     visionObjectList.append(visionObject)
-
             return objects.object_list, depth_map, zed_pose, py_translation, visionObjectList
 
 def main():

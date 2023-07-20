@@ -134,7 +134,7 @@ class Brain : public rclcpp::Node
             return distance;
         }
 
-        unique_ptr<Filter> populateFilterBuffer()
+        unique_ptr<Filter> populateFilterBuffer(int object_identifier)
         {
             size_t data_streams_num = 1;
             string coeff_file = "/home/mechatronics/master/ros2_ws/src/brain_node/coefficients.txt";
@@ -144,7 +144,8 @@ class Brain : public rclcpp::Node
             std::shared_future<bool> future  = buffer_filled.get_future();
             Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_subscriber");
             Interface::vision_sub_t object_sub = temp_node->create_subscription<scion_types::msg::ZedObject>
-            ("zed_vision_data", 10, [this, &temp_node, &buffer_filled, &moving_average_filter](const scion_types::msg::ZedObject::SharedPtr msg) {
+            ("zed_vision_data", 10, [this, &temp_node, &buffer_filled, &moving_average_filter, &object_identifier](const scion_types::msg::ZedObject::SharedPtr msg) {
+                    if (msg->label_id != object_identifier) {return;}
                     unique_ptr<vector<vector<uint32_t>>>ros_bounding_box = zed_to_ros_bounding_box(msg->corners);
                     vector<uint32_t> bounding_box_midpoint = findMidpoint(*ros_bounding_box);
                     moving_average_filter->smooth(moving_average_filter->data_streams[0], (float)bounding_box_midpoint[0]);
@@ -157,9 +158,9 @@ class Brain : public rclcpp::Node
             return moving_average_filter;
         }
 
-        void centerRobot()
+        void centerRobot(int object_identifier)
         {
-            unique_ptr<Filter> moving_average_filter = populateFilterBuffer();
+            unique_ptr<Filter> moving_average_filter = populateFilterBuffer(object_identifier);
             RCLCPP_INFO(this->get_logger(), "Filter Buffer Filled");
             vector<uint32_t> camera_frame_midpoint {MID_X_PIXEL, MID_Y_PIXEL};
 
@@ -167,7 +168,8 @@ class Brain : public rclcpp::Node
             std::shared_future<bool> future  = robot_centered.get_future();
             Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_subscriber");
             Interface::vision_sub_t object_sub = temp_node->create_subscription<scion_types::msg::ZedObject>
-            ("zed_vision_data", 10, [this, &temp_node, &camera_frame_midpoint, &robot_centered, &moving_average_filter](const scion_types::msg::ZedObject::SharedPtr msg) {
+            ("zed_vision_data", 10, [this, &temp_node, &camera_frame_midpoint, &robot_centered, &moving_average_filter, &object_identifier](const scion_types::msg::ZedObject::SharedPtr msg) {
+                    if (msg->label_id != object_identifier) {return;}
                     unique_ptr<vector<vector<uint32_t>>>ros_bounding_box = zed_to_ros_bounding_box(msg->corners);
                     vector<uint32_t> bounding_box_midpoint = findMidpoint(*ros_bounding_box);
                     float filtered_bounding_box_midpoint = moving_average_filter->smooth(moving_average_filter->data_streams[0], (float)bounding_box_midpoint[0]);
@@ -326,12 +328,12 @@ class Brain : public rclcpp::Node
 
         void performMission()
         {
-            this->centerRobot();
+            this->centerRobot(0);       // 0 is identifier of gate
             doUntil(&Brain::keepTurning, &Brain::gateSeen, &Brain::stop, this->gate_seen_, SMOOTH_TURN_DEGREE);
-            this->centerRobot();
+            this->centerRobot(0);
             levitate(SUBMERGE_DISTANCE);
-            moveForward(this->getDistanceFromCamera("Underwater-Gate")/2);
-            this->centerRobot();
+            moveForward(this->getDistanceFromCamera("Full- Gate")/2);
+            this->centerRobot(0);
             exit(0);
         }
 
