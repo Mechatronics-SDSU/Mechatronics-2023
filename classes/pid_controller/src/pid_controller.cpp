@@ -148,6 +148,11 @@ void PID_Controller::disable()
     this->enabled = false;
 }
 
+void PID_Controller::enable()
+{
+    this->enabled = true;
+}
+
 // main for testing 
 
 // int main()

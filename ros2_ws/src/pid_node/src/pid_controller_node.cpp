@@ -132,7 +132,7 @@ public:
         stabilize_robot_service_ = this->create_service<std_srvs::srv::SetBool>("stabilize_robot", std::bind(&Controller::stabilizeRobotRequest, this, _1, _2));
 
         controller_ = Scion_Position_PID_Controller(pid_params_object_.get_pid_params());
-        controller_.getStatus();
+        // controller_.disable(axes_to_disable);
 
         auto initFunction = std::bind(&Controller::initDesiredState, this);
         std::thread(initFunction).detach();
@@ -161,7 +161,7 @@ private:
     std::map<int, string>                       axis_tuning_map_;
 
     /* Upon initialization set all values to [0,0,0] */
-    
+    vector<string> axes_to_disable{"yaw", "z_pos"};
     Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 
     Interface::desired_state_t desired_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // Desired state is that everything is set to 0 except that its 1 meter below the water {0,0,0,0,0,1}
     vector<unsigned char> nothing_ = vector<unsigned char> {0x00}; // Commands over 100 don't change motor power

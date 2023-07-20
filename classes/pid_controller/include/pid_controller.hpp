@@ -49,6 +49,8 @@ class PID_Controller
 
         void disable();
 
+        void enable();
+
         void getStatus();
 };
 

@@ -49,6 +49,8 @@ class Scion_Position_PID_Controller
 
         void disable(vector<string>& axes_to_disable);
 
+        void enable(vector<string>& axes_to_enable);
+
         // Print status of all PIDs to console
         void getStatus();
 

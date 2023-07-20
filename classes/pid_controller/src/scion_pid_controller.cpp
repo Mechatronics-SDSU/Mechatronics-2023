@@ -63,16 +63,16 @@ Scion_Position_PID_Controller::Scion_Position_PID_Controller(map<string, map<str
      * if we decide to load our PID_Params from a dictionary, we can set each controllers' values to 
      * the values stored in the hashmap from pid_params.cpp 
      */
-    for (const auto& [name, controller] : this->controllers) // one row with string : unique_ptr<PID_Controller>
+    for (const auto& [axis_name, controller] : this->controllers) // one row with string : unique_ptr<PID_Controller>
     {
-        controller->k_p = pid_params[name]["kp"];
-        controller->k_i = pid_params[name]["ki"];
-        controller->k_d = pid_params[name]["kd"];
-        controller->ctrl_val_offset = pid_params[name]["ctrl_val_offset"];
-        controller->ctrl_val_max = pid_params[name]["ctrl_val_max"];
-        controller->ctrl_val_min = pid_params[name]["ctrl_val_min"];
-        controller->i_max = pid_params[name]["i_max"];
-        controller->i_min = pid_params[name]["i_min"];
+        controller->k_p = pid_params[axis_name]["kp"];
+        controller->k_i = pid_params[axis_name]["ki"];
+        controller->k_d = pid_params[axis_name]["kd"];
+        controller->ctrl_val_offset = pid_params[axis_name]["ctrl_val_offset"];
+        controller->ctrl_val_max = pid_params[axis_name]["ctrl_val_max"];
+        controller->ctrl_val_min = pid_params[axis_name]["ctrl_val_min"];
+        controller->i_max = pid_params[axis_name]["i_max"];
+        controller->i_min = pid_params[axis_name]["i_min"];
     }
 }
 
@@ -118,7 +118,15 @@ void Scion_Position_PID_Controller::disable(vector<string>& axes_to_disable)
 {
     for (string axis_name : axes_to_disable)
     {
-        this->controllers["axix_name"]->disable();
+        this->controllers[axis_name]->disable();
+    }
+}
+
+void Scion_Position_PID_Controller::enable(vector<string>& axes_to_enable)
+{
+    for (string axis_name : axes_to_enable)
+    {
+        this->controllers[axis_name]->enable();
     }
 }
 
