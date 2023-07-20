@@ -36,7 +36,8 @@ from time import sleep
 # import ogl_viewer.viewer as gl
 # import cv_viewer.tracking_viewer as cv_viewer
 
-with open('/home/mechatronics/master/classes/zed_vision/new_gate.yaml') as f:
+with open('/home/mechatronics/master/vision/new_gate.yaml') as f:
+#with open('/home/mechatronics/master/vision/underwater.yaml') as f:
     items = yaml.load(f, Loader=yaml.FullLoader)
 lock = Lock()
 run_signal = False
