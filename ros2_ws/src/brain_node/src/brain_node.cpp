@@ -61,9 +61,6 @@ class Brain : public rclcpp::Node
             idea_pub_ = this->create_publisher<scion_types::msg::Idea>("brain_idea_data", 10);
             can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
             pid_ready_service_ = this->create_service<std_srvs::srv::Trigger>("pid_ready", std::bind(&Brain::ready, this, _1, _2));
-            // commands_in_queue_sub_ = this->create_subscription<std_msgs::msg::Int32>
-            // ("is_command_queue_empty", 10, std::bind(&Brain::update_if_command_queue_empty, this, _1));
-            performMission();
         }
     private:
         Interface::idea_pub_t                       idea_pub_;
@@ -75,7 +72,6 @@ class Brain : public rclcpp::Node
         Interface::ros_trigger_service_t            pid_ready_service_;
         std::string                                 mode_param_;
         bool                                        gate_seen_ = false;
-        // bool                                        command_queue_is_empty_ = true;
 
         ////////////////////////////////////////////////////////////////////////////////
         //                               INIT MISSION                                 //
@@ -249,13 +245,6 @@ class Brain : public rclcpp::Node
             return isEmpty;
         }
 
-        // void waitForEmptyQueue() 
-        // {
-        //     while (!command_queue_is_empty_)
-        //     {
-        //         std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        //     }
-        // }
         ////////////////////////////////////////////////////////////////////////////////
         //                               MOVEMENT IDEAS                               //
         ////////////////////////////////////////////////////////////////////////////////
@@ -350,11 +339,6 @@ class Brain : public rclcpp::Node
         //                                  CALLBACK                                  //
         ////////////////////////////////////////////////////////////////////////////////
 
-        // void update_if_command_queue_empty(const std_msgs::msg::Int32::SharedPtr msg)
-        // {
-        //     this->command_queue_is_empty_ = msg->data;
-        //     RCLCPP_INFO(this->get_logger(), "%d", this->command_queue_is_empty_);
-        // }
 
 
 }; // class Brain
