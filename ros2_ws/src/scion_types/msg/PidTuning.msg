@@ -1,3 +1,3 @@
 int32 axis
 
-int32 data
+float32 data
