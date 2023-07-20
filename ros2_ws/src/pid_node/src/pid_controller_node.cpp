@@ -270,8 +270,7 @@ private:
 
     vector<float> ctrlValsToThrusts(vector<float>& ctrl_vals)
     {
-        vector<float> thrusts = this->thrust_mapper_ * ctrl_vals;
-        return thrusts;
+        return this->thrust_mapper_ * ctrl_vals;
     }
 
     float angleBetweenHereAndPoint(float x, float y)

@@ -165,17 +165,17 @@ class Brain : public rclcpp::Node
         {
             unique_ptr<Filter> moving_average_filter = populateFilterBuffer();
             RCLCPP_INFO(this->get_logger(), "Filter Buffer Filled");
+            vector<uint32_t> camera_frame_midpoint {MID_X_PIXEL, MID_Y_PIXEL};
 
             std::promise<bool> robot_centered;
             std::shared_future<bool> future  = robot_centered.get_future();
             Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_subscriber");
             Interface::vision_sub_t object_sub = temp_node->create_subscription<scion_types::msg::ZedObject>
-            ("zed_vision_data", 10, [this, &temp_node, &robot_centered, &moving_average_filter](const scion_types::msg::ZedObject::SharedPtr msg) {
+            ("zed_vision_data", 10, [this, &temp_node, &camera_frame_midpoint, &robot_centered, &moving_average_filter](const scion_types::msg::ZedObject::SharedPtr msg) {
                     unique_ptr<vector<vector<uint32_t>>>ros_bounding_box = zed_to_ros_bounding_box(msg->corners);
                     vector<uint32_t> bounding_box_midpoint = findMidpoint(*ros_bounding_box);
                     float filtered_bounding_box_midpoint = moving_average_filter->smooth(moving_average_filter->data_streams[0], (float)bounding_box_midpoint[0]);
                     
-                    vector<uint32_t> camera_frame_midpoint {MID_X_PIXEL, MID_Y_PIXEL};
                     if (areEqual(bounding_box_midpoint, camera_frame_midpoint)) {robot_centered.set_value(true);}
                     else {
                         if (isCommandQueueEmpty())

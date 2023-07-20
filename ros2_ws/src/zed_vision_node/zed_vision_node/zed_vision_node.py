@@ -140,56 +140,54 @@ class ZedVision(Node):
 
         if object_list:
             for object in object_list:
-                if object.raw_label == 41: #cup
-                    msg = ZedObject()
-                    msg.label_id = object.raw_label
-                    msg.position = [object.position[0], object.position[1], object.position[2]]
-                    
-                    x = [object.bounding_box_2d[0][0], object.bounding_box_2d[1][0], object.bounding_box_2d[2][0], object.bounding_box_2d[3][0], (object.bounding_box_2d[0][0] + object.bounding_box_2d[1][0]) / 2]
-                    y = [object.bounding_box_2d[0][1], object.bounding_box_2d[1][1], object.bounding_box_2d[2][1], object.bounding_box_2d[3][1], (object.bounding_box_2d[0][1] + object.bounding_box_2d[2][1]) / 2]
-                    smooth_x = []
-                    smooth_y = []
-                    for index, x_point in enumerate(x):
-                        tmp_x = self.smoother.smooth(self.smoother.points[index], coeffs, x_point)
-                        smooth_x.append(tmp_x)
-                    for index, y_point in enumerate(y):
-                        tmp_y = self.smoother.smooth(self.smoother.points[index + 5], coeffs, y_point)
-                        smooth_y.append(tmp_y)
+                msg = ZedObject()
+                msg.label_id = object.raw_label
+                msg.position = [object.position[0], object.position[1], object.position[2]]
+                for point in object.bounding_box_2d:
+                    kp = Keypoint2Di()
+                    kp.kp = []
+                    kp.kp.append(int(point[0]))
+                    kp.kp.append(int(point[1]))
+                    corners.append(kp)
+                msg.corners = corners
 
-                    x = (object.bounding_box_2d[0][0] + object.bounding_box_2d[3][0]) / 2
-                    y = 720 - ((object.bounding_box_2d[0][1] + object.bounding_box_2d[2][1]) / 2)
-                    smooth_x = self.smoother.smooth(self.smoother.x_avg_fir, coeffs, x)
-                    smooth_y = self.smoother.smooth(self.smoother.y_avg_fir, coeffs, y)
+                    # x = [object.bounding_box_2d[0][0], object.bounding_box_2d[1][0], object.bounding_box_2d[2][0], object.bounding_box_2d[3][0], (object.bounding_box_2d[0][0] + object.bounding_box_2d[1][0]) / 2]
+                    # y = [object.bounding_box_2d[0][1], object.bounding_box_2d[1][1], object.bounding_box_2d[2][1], object.bounding_box_2d[3][1], (object.bounding_box_2d[0][1] + object.bounding_box_2d[2][1]) / 2]
+                    # smooth_x = []
+                    # smooth_y = []
+                    # for index, x_point in enumerate(x):
+                    #     tmp_x = self.smoother.smooth(self.smoother.points[index], coeffs, x_point)
+                    #     smooth_x.append(tmp_x)
+                    # for index, y_point in enumerate(y):
+                    #     tmp_y = self.smoother.smooth(self.smoother.points[index + 5], coeffs, y_point)
+                    #     smooth_y.append(tmp_y)
+
+                    # x = (object.bounding_box_2d[0][0] + object.bounding_box_2d[3][0]) / 2
+                    # y = 720 - ((object.bounding_box_2d[0][1] + object.bounding_box_2d[2][1]) / 2)
+                    # smooth_x = self.smoother.smooth(self.smoother.x_avg_fir, coeffs, x)
+                    # smooth_y = self.smoother.smooth(self.smoother.y_avg_fir, coeffs, y)
                     # print(x,y)
 
-                    matplotlib.use('TkAgg')
-                    plt.axis([0, 1280, 0, 720])
-                    plt.plot(smooth_x,smooth_y,'b*', markersize=20)
-                    plt.plot(x,y,'r*', markersize=20)
-                    plt.grid()
-                    plt.ion()
-                    plt.show()                                                                  # [0,0], [1,1], [], []
-                    plt.pause(.01)
-                    plt.clf()
+                    # matplotlib.use('TkAgg')
+                    # plt.axis([0, 1280, 0, 720])
+                    # plt.plot(smooth_x,smooth_y,'b*', markersize=20)
+                    # plt.plot(x,y,'r*', markersize=20)
+                    # plt.grid()
+                    # plt.ion()
+                    # plt.show()                                                                  # [0,0], [1,1], [], []
+                    # plt.pause(.01)
+                    # plt.clf()
 
                     # Recomment to here - joseph
                     #print(object.bounding_box_2d)
                     #corners = []
 
-                    for point in object.bounding_box_2d:
-                        kp = Keypoint2Di()
-                        kp.kp = []
-                        kp.kp.append(int(point[0]))
-                        kp.kp.append(int(point[1]))
-                        corners.append(kp)
-                    msg.corners = corners
-                    
                     # print(object.bounding_box_2d)
                     ##self.vision_publisher.publish(msg)
         
                     
                     # print(object.bounding_box_2d)
-                    self.vision_publisher.publish(msg)
+                self.vision_publisher.publish(msg)
         
 
         if vision_object_list:
