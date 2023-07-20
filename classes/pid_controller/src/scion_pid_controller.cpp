@@ -118,7 +118,7 @@ void Scion_Position_PID_Controller::disable(vector<string>& axes_to_disable)
 {
     for (string axis_name : axes_to_disable)
     {
-        this->controllers[axis_name]->disable();
+        (this->controllers[axis_name])->disable();
     }
 }
 
@@ -126,7 +126,7 @@ void Scion_Position_PID_Controller::enable(vector<string>& axes_to_enable)
 {
     for (string axis_name : axes_to_enable)
     {
-        this->controllers[axis_name]->enable();
+        (this->controllers[axis_name])->enable();
     }
 }
 

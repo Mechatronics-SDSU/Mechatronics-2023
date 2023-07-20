@@ -51,6 +51,8 @@ PID_Controller::PID_Controller
         this->angle_wrap = angle_wrap;
         this->integral = 0.0;                       // Keeps track of integral over time
         this->previous_error = 0.0;                 // Helps in derivative calculation
+        this->enabled = true;
+
     }
 
 void PID_Controller::set_gains(float k_p, float k_i, float k_d)
