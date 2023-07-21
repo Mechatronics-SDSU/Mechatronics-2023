@@ -3,8 +3,8 @@
 
 #include <FlexCAN_T4.h>
  
-#define INSTALLED_DEVICE_CT 5
-#define RESERVED_DEVICE_CT  0
+#define INSTALLED_DEVICE_CT 6
+#define RESERVED_DEVICE_CT  11
 #define TOTAL_DEVICE_CT     (INSTALLED_DEVICE_CT + RESERVED_DEVICE_CT)
 
 typedef void (**device_ptr_array_t)( CAN_message_t &msg);
@@ -211,6 +211,35 @@ topic_ptr_array_t dreq_BRLIGHT[BRLIGHT_TOPIC_CT] =
   };
 
 ////////////////////////////////////////////////////////////////////////////////////////
+// 0x0010 M64MODM Waterlinked M64 Modem
+#define M64MODM_DEVICE_ID   0x0010
+#define M64MODM_BIT         0x0010
+#define M64MODM_TOPIC_CT    11
+
+ void m64modm_info( CAN_message_t &msg);        // 0x0000
+ void m64modm_chan( CAN_message_t &msg);        // 0x0001
+ void m64modm_role( CAN_message_t &msg);        // 0x0002
+ void m64modm_link( CAN_message_t &msg);        // 0x0003
+ void m64modm_commstat( CAN_message_t &msg);    // 0x0004
+ void m64modm_msgct( CAN_message_t &msg);       // 0x0009
+ void m64modm_packet( CAN_message_t &msg);      // 0x000A
+
+topic_ptr_array_t dreq_M64MODM[M64MODM_TOPIC_CT] =
+  {
+    m64modm_info,
+    m64modm_chan,
+    m64modm_role,
+    m64modm_link,
+    m64modm_commstat,
+    dreq_res,
+    dreq_res,
+    dreq_res,
+    dreq_res,
+    m64modm_msgct,
+    m64modm_packet
+  };
+
+////////////////////////////////////////////////////////////////////////////////////////
 // 0x0012 BRPING1  Blue Robotics Ping 1 SONAR
 #define BRPING1_DEVICE_ID    0x12
 #define BRPING1_BIT           0x12
@@ -225,7 +254,7 @@ topic_ptr_array_t data_BRPING1[BRPING1_TOPIC_CT] =
     dreq_res,
     dreq_res,
     dreq_res,
-    brping1_distance_simple
+    brping1_distance_simple,
   };
 
 
@@ -240,11 +269,23 @@ topic_ptr_array_t data_RESERVED[RESERVED_TOPIC_COUNT] =
 // Device Array // Add RES and brping into this !!
 device_ptr_array_t dreq_device[TOTAL_DEVICE_CT] =
   {
-    dreq_EMBSYS,
-    dreq_PWRSYS,
-    dreq_WAYFDVL,
-    dreq_MS5837,
-    dreq_BRLIGHT
+    dreq_EMBSYS,        // 0x0000
+    dreq_PWRSYS,        // 0x0001
+    dreq_WAYFDVL,       // 0x0002
+    dreq_MS5837,        // 0x0003
+    dreq_BRLIGHT,       // 0x0004
+    data_RESERVED,      // 0x0005
+    data_RESERVED,      // 0x0006
+    data_RESERVED,      // 0x0007
+    data_RESERVED,      // 0x0008
+    data_RESERVED,      // 0x0009
+    data_RESERVED,      // 0x000A
+    data_RESERVED,      // 0x000B
+    data_RESERVED,      // 0x000C
+    data_RESERVED,      // 0x000D
+    data_RESERVED,      // 0x000E
+    data_RESERVED,      // 0x000F
+    dreq_M64MODM        // 0x0010
   };
 
 // Out of bounds safety array
@@ -254,7 +295,19 @@ uint16_t vmmio_limits[TOTAL_DEVICE_CT] =
     sizeof(dreq_PWRSYS)   / sizeof(void *),
     sizeof(dreq_WAYFDVL)  / sizeof(void *),
     sizeof(dreq_MS5837)   / sizeof(void *),
-    sizeof(dreq_BRLIGHT)  / sizeof(void *)
+    sizeof(dreq_BRLIGHT)  / sizeof(void *),
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    sizeof(dreq_M64MODM)  / sizeof(void *)
   };
 
 // Super important wrapper macro for easy nested array access

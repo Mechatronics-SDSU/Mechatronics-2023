@@ -119,11 +119,12 @@ void kill_button_triggered(){
   
   digitalToggle(DEBUG_LED);       // Blink Debug LED
   soft_kill_system_message();     // Send CAN0 Message indicating shutdown button press
-  //CMP2_SCR |= (1 << 2);           // Clear COMP2 trig flag
+  
 
 
 
   mode_set_message(MANUAL_MODE);
+  CMP3_SCR |= (1 << 2);           // Clear COMP2 trig flag
   NVIC_CLEAR_PENDING(IRQ_ACMP3);
   NVIC_ENABLE_IRQ(IRQ_ACMP3);     // Re-Enable Auto Mode set on Kill Trigger
   // Return to 0 State (Manual)

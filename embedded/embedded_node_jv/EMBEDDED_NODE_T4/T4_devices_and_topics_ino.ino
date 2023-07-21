@@ -350,6 +350,38 @@ void brlight_front_brightness( CAN_message_t &msg){
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
+// 0x0010 M64MODM Modem for inter-sub communications
+
+void m64modm_info( CAN_message_t &msg){         // 0x0000
+  
+}
+
+void m64modm_chan( CAN_message_t &msg){         // 0x0001
+
+}
+
+void m64modm_role( CAN_message_t &msg){         // 0x0002
+
+}
+
+void m64modm_link( CAN_message_t &msg){         // 0x0003
+
+}
+
+void m64modm_commstat( CAN_message_t &msg){     // 0x0004
+
+}
+
+// 11x res
+void m64modm_msgct( CAN_message_t &msg){        // 0x0009
+
+}
+
+void m64modm_packet( CAN_message_t &msg){       // 0x000A
+  
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
 
 // Addressing function to find correct jump table address
 /*  

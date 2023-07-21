@@ -93,7 +93,7 @@
 #define ACTIVE_THRUSTERS  8
 #define THRUSTER_PWM_FREQ 400
 
-#define NEW_ESC_RESET_PROCEDURE
+
 /*  600MHz cyc period -> 1.6666 ns
  *  50ms / 1.666ns = 30E6 = 30M
  */
@@ -186,6 +186,7 @@ struct CONTROL{
 
 #define INVALID_ACCESS_ID 0x24
 
+#define RESET_ESC_ID  0x18
 
 
 // EMBSYS Internal Status Bitfield

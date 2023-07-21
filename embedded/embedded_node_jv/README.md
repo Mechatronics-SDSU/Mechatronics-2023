@@ -25,6 +25,7 @@ and guaranteed to follow the core design requirements of the embedded subsystem.
 - `IntervalTimer` Provides ISR triggering interval timer bindings
 - [WDT_T4](https://github.com/tonton81/WDT_T4) Provides Watchdog Timer interfaces
 - [teensy4_i2c](https://github.com/Richard-Gemmell/teensy4_i2c) Teensy i2c library, Richard Gemmel
+- [T4_WL_M64_MODEM](https://github.com/4n3m4i1/T4_WL_M64_Modem) Driver for Waterlinked Acoustic Modems
 
 ## T4 Design Requirements
 - No polling or blocking. All processes should leverage the asynchronous nature of peripherals and priority driven interrupts
@@ -39,6 +40,8 @@ of the current on-board pinout that is being used at any given time.
 Many pin assignments are subject to change over time and future plans for  
 boards should only be done after consulting Joseph to ensure the most  
 current pinout is posted.
+
+- Note: 07/21/2023 This image is super outdated, do not cite.
   
 ## RP2040 Dependencies
 - RP2040 C SDK

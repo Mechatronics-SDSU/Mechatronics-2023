@@ -22,7 +22,7 @@ void emergency_CFGS_handler(const CAN_message_t &msg){
 #ifdef DEBUG_MODE
         Serial.printf("\nState Errors Clear, All Good!\n");
 #endif
-        //OA_STATE = ALL_GOOD_STATE;
+        commsTimeoutWDT.feed();
         OA_STATE = LAST_GOOD_STATE;
         set_hard_kill_relay_state(RELAY_ON);
       break;
@@ -47,22 +47,7 @@ void shutdownSystem(){      // Immediate shutdown of motors, release claw
   cli();                    // Control ISRs
 #ifdef DEBUG_MODE
   Serial.println("Shutdown!!");
-#endif
-  
-#ifdef NEW_ESC_RESET_PROCEDURE
-  commsTimeoutWDT.feed();
-  for(int n = 0; n < ACTIVE_THRUSTERS; n++){
-    motor_signal_reset(control.thruster[n].pin);
-  }
-  // Must utilize isr independent counters, thus using cycle counter
-  //  Resetting counter has some weird issues every once in a while,
-  //  falling back to standard unsigned subtraction
-  //CPU_RESET_CYCLECOUNTER;
-  uint32_t start_val = ARM_DWT_CYCCNT;
-  while((ARM_DWT_CYCCNT - start_val) < ESC_SIGNAL_RESET_CYCLES);
-  commsTimeoutWDT.feed();
-#endif
-  
+#endif  
 
   for(int n = 0; n < ACTIVE_THRUSTERS; n++){
     // motorGo(uint8_t motor__, uint8_t percent)

@@ -18,6 +18,16 @@ Please Note: Tab/file names that match CAN message types
 #include "T4_nodeConstants.h"
 #include "device_data_structs.h"
 
+#ifdef ENABLE_M64_MODEM
+// Modem M64
+#include <HardwareSerial.h>
+#include "T4_WL_M64.h"
+
+struct M64_MODEM_INST modem;
+char M64_BUFFER[8][8] = {0x00};
+uint8_t M64_BUFFER_PTR = 0;
+#endif
+
 // Interval Timer
 #include <IntervalTimer.h>
 
@@ -157,12 +167,25 @@ void setup() {
 }
 
 
+// Main Loop
 void loop() {
   // Need to have this here
   Can0.events();
   
 #ifdef ENABLE_DVL
   if(CHK_STATUS_BIT(bank0_device_status, WAYFDVL_BIT)) DVL_DATA_UPDATE();    // Returns status of DVL serial data update
+#endif
+
+#ifdef ENABLE_M64_MODEM
+  char a = M64_Events(&modem);
+  switch(a){
+    case M64_PACKET_RX:
+      if(M64_BUFFER_PTR < 8){
+        for(uint16_t n = 0; n < 8; n++) M64_BUFFER[n][M64_BUFFER_PTR] = modem.rx_q[n];
+        M64_BUFFER_PTR += 1; 
+      }
+    break;
+  }
 #endif
 
 

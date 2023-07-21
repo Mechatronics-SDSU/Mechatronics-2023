@@ -18,6 +18,10 @@ void motor_impulse_handler(const CAN_message_t &msg){
       case 0x12:
         // Direct set motor val
       break;
+
+      case RESET_ESC_ID:
+        reset_esc_procedure();  // This takes a ton of time and stalls the system. Please don't call this unless you know what you're doing.
+      break;
     }
   }
 }
@@ -60,4 +64,28 @@ void thruster_slew_driver(const CAN_message_t &msg){
     }
     delayMicroseconds(500);
   }
+}
+
+
+
+
+void reset_esc_procedure(){
+  cli();                      // IMPORTANT PLEASE NOTE THIS DOES THIS IF YOU ARE UNSURE OF WHAT YOU'RE DOING
+  commsTimeoutWDT.feed();
+  for(int n = 0; n < ACTIVE_THRUSTERS; n++){
+    motor_signal_reset(control.thruster[n].pin);
+  }
+  // Must utilize isr independent counters, thus using cycle counter
+  //  Resetting counter has some weird issues every once in a while,
+  //  falling back to standard unsigned subtraction
+  //CPU_RESET_CYCLECOUNTER;
+  uint32_t start_val = ARM_DWT_CYCCNT;
+  while((ARM_DWT_CYCCNT - start_val) < ESC_SIGNAL_RESET_CYCLES);
+  commsTimeoutWDT.feed();
+
+  for(int n = 0; n < ACTIVE_THRUSTERS; n++){
+    // motorGo(uint8_t motor__, uint8_t percent)
+    control.thruster[n].value = motorGo(control.thruster[n].pin, 0);
+  }
+  sei();                    // SEE ABOVE ALL CAPS MESSAGE
 }
