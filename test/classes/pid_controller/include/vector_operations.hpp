@@ -114,18 +114,6 @@ vector<T> operator*(vector<T> lhs, const T &rhs)
     return lhs;
 }
 
-// Add two vectors
-template <typename T>
-bool operator== (vector<T> lhs, const vector<T> &rhs) 
-{
-    bool equal = true;
-    for (vector<double>::size_type i = 0; i < lhs.size(); ++i)
-    {
-        if (lhs[i] != rhs[i]) {equal = false;}
-    }
-    return equal;
-}
-
 // Divide each element of vector by number
 template <typename T>
 vector<T> operator/(vector<T> lhs, const T &rhs) 
