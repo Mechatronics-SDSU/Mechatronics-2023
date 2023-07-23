@@ -67,7 +67,6 @@ class Smoother:
         return tmp_x
     
 
-
 class ZedVision(Node):
 
     def __init__(self):
@@ -146,7 +145,7 @@ class ZedVision(Node):
                 corners = []
                 for point in object.bounding_box_2d:
                     kp = Keypoint2Di()
-                    kp.kp = []
+                    kp.kp = [0,0]
                     kp.kp.append(int(point[0]))
                     kp.kp.append(int(point[1]))
                     corners.append(kp)
