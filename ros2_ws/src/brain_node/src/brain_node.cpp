@@ -179,7 +179,7 @@ class Brain : public rclcpp::Node
                         if (isCommandQueueEmpty())
                         {
                             RCLCPP_INFO(this->get_logger(), "Looking at bounding box with value %f", filtered_bounding_box_midpoint);
-                            this->adjustToCenter(bounding_box_midpoint, camera_frame_midpoint[0]);
+                            this->adjustToCenter(filtered_bounding_box_midpoint, camera_frame_midpoint[0]);
                         }
                     }
             });
