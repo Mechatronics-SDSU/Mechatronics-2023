@@ -174,12 +174,12 @@ class Brain : public rclcpp::Node
                     vector<uint32_t> bounding_box_midpoint = findMidpoint(*ros_bounding_box);
                     float filtered_bounding_box_midpoint = moving_average_filter->smooth(moving_average_filter->data_streams[0], (float)bounding_box_midpoint[0]);
                     
-                    if (areEqual(bounding_box_midpoint, camera_frame_midpoint)) {robot_centered.set_value(true);}
+                    if (areEqual(filtered_bounding_box_midpoint, camera_frame_midpoint[0])) {robot_centered.set_value(true);}
                     else {
                         if (isCommandQueueEmpty())
                         {
-                            RCLCPP_INFO(this->get_logger(), "Looking at bounding box with value %d", (*ros_bounding_box)[0][0]);
-                            this->adjustToCenter(bounding_box_midpoint, camera_frame_midpoint);
+                            RCLCPP_INFO(this->get_logger(), "Looking at bounding box with value %f", filtered_bounding_box_midpoint);
+                            this->adjustToCenter(bounding_box_midpoint, camera_frame_midpoint[0]);
                         }
                     }
             });
@@ -213,9 +213,21 @@ class Brain : public rclcpp::Node
             return (abs((int)((point_a - point_b))[0]) < PIXEL_ERROR_THRESHOLD);
         }
 
+        bool areEqual(float point_a, float point_b)
+        {
+            return (abs(((point_a - point_b))) < PIXEL_ERROR_THRESHOLD);
+        }
+
         void adjustToCenter(vector<uint32_t> bounding_box_midpoint, vector<uint32_t> camera_frame_midpoint)
         {   
             bool bounding_box_is_to_the_right_of_center_pixel = bounding_box_midpoint[0] > camera_frame_midpoint[0];
+            if (bounding_box_is_to_the_right_of_center_pixel) {this->turn(TO_THE_RIGHT);}
+            else {this->turn(TO_THE_LEFT);}
+        }
+
+        void adjustToCenter(float bounding_box_midpoint, float camera_frame_midpoint)
+        {   
+            bool bounding_box_is_to_the_right_of_center_pixel = bounding_box_midpoint > camera_frame_midpoint;
             if (bounding_box_is_to_the_right_of_center_pixel) {this->turn(TO_THE_RIGHT);}
             else {this->turn(TO_THE_LEFT);}
         }

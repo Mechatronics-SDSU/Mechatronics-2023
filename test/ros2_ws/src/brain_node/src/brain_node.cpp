@@ -12,6 +12,9 @@
 #include "rclcpp/rclcpp.hpp"
 #include "vector_operations.hpp"
 
+#define MID_X_PIXEL 640
+#define MID_Y_PIXEL 360
+
 std::unique_ptr<std::vector<std::vector<uint32_t>>> zed_to_ros_bounding_box(std::array<scion_types::msg::Keypoint2Di, 4>& zed_bounding_box)
 {
     std::vector<std::vector<uint32_t>> ros_bounding_box;                   // this is to convert from ros object to std::vector object
@@ -58,11 +61,72 @@ unique_ptr<Filter> populateFilterBuffer(int object_identifier)
     return moving_average_filter;
 }
 
+void centerRobot(int object_identifier)
+{
+    unique_ptr<Filter> moving_average_filter = populateFilterBuffer(object_identifier);
+    vector<uint32_t> camera_frame_midpoint {MID_X_PIXEL, MID_Y_PIXEL};
+
+    std::promise<bool> robot_centered;
+    std::shared_future<bool> future  = robot_centered.get_future();
+    Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_subscriber");
+    Interface::vision_sub_t object_sub = temp_node->create_subscription<scion_types::msg::ZedObject>
+    ("zed_vision_data", 10, [temp_node, &camera_frame_midpoint, &robot_centered, &moving_average_filter, &object_identifier](const scion_types::msg::ZedObject::SharedPtr msg) {
+            if (msg->label_id != object_identifier) {return;}
+            unique_ptr<vector<vector<uint32_t>>>ros_bounding_box = zed_to_ros_bounding_box(msg->corners);
+            vector<uint32_t> bounding_box_midpoint = findMidpoint(*ros_bounding_box);
+            float filtered_bounding_box_midpoint = moving_average_filter->smooth(moving_average_filter->data_streams[0], (float)bounding_box_midpoint[0]);
+            if ((filtered_bounding_box_midpoint - camera_frame_midpoint[0]) < .05) 
+            {
+                robot_centered.set_value(true);
+                RCLCPP_INFO(temp_node->get_logger(), "Looking at bounding box with value %f", filtered_bounding_box_midpoint);
+                RCLCPP_INFO(temp_node->get_logger(), "Test Passed");
+                return;
+            }
+            else
+            {
+                RCLCPP_INFO(temp_node->get_logger(), "Looking at bounding box with value %f", filtered_bounding_box_midpoint);
+                RCLCPP_INFO(temp_node->get_logger(), "Test Failed");
+                return;
+            }
+    });
+    rclcpp::spin_until_future_complete(temp_node, future);
+}
+
+void centerRobotRight(int object_identifier)
+{
+    unique_ptr<Filter> moving_average_filter = populateFilterBuffer(object_identifier);
+    vector<uint32_t> camera_frame_midpoint {MID_X_PIXEL, MID_Y_PIXEL};
+
+    std::promise<bool> robot_centered;
+    std::shared_future<bool> future  = robot_centered.get_future();
+    Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_subscriber");
+    Interface::vision_sub_t object_sub = temp_node->create_subscription<scion_types::msg::ZedObject>
+    ("zed_vision_data", 10, [temp_node, &camera_frame_midpoint, &robot_centered, &moving_average_filter, &object_identifier](const scion_types::msg::ZedObject::SharedPtr msg) {
+            if (msg->label_id != object_identifier) {return;}
+            unique_ptr<vector<vector<uint32_t>>>ros_bounding_box = zed_to_ros_bounding_box(msg->corners);
+            vector<uint32_t> bounding_box_midpoint = findMidpoint(*ros_bounding_box);
+            float filtered_bounding_box_midpoint = moving_average_filter->smooth(moving_average_filter->data_streams[0], (float)bounding_box_midpoint[0]);
+            if ((filtered_bounding_box_midpoint - camera_frame_midpoint[0]) < .05) 
+            {
+                robot_centered.set_value(true);
+                RCLCPP_INFO(temp_node->get_logger(), "Looking at bounding box with value %f", filtered_bounding_box_midpoint);
+                RCLCPP_INFO(temp_node->get_logger(), "Test Failed");
+                return;
+            }
+            else
+            {
+                RCLCPP_INFO(temp_node->get_logger(), "Looking at bounding box with value %f", filtered_bounding_box_midpoint);
+                RCLCPP_INFO(temp_node->get_logger(), "Test Passed");
+                return;
+            }
+    });
+    rclcpp::spin_until_future_complete(temp_node, future);
+}
+
 void custom_assert(bool condition) {
     if (!condition) {
         std::cerr << "Assertion failed: " << std::endl;
     }
-    exit(EXIT_FAILURE);
 }
 
 std::vector<uint32_t> findMidpointTest()
@@ -89,7 +153,7 @@ std::vector<uint32_t> findMidpointTest()
     return expected_midpoint;
 }
 
-std::unique_ptr<std::vector<std::vector<uint32_t>>> ros_bounding_box ZedToRosBoundingBoxTest()
+std::unique_ptr<std::vector<std::vector<uint32_t>>> ZedToRosBoundingBoxTest()
 {
     scion_types::msg::Keypoint2Di cornerUL;
     scion_types::msg::Keypoint2Di cornerUR;
@@ -147,7 +211,7 @@ unique_ptr<Filter> populateFilterBufferTest()
 
     Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_publisher");
     Interface::vision_pub_t object_pub = temp_node->create_publisher<scion_types::msg::ZedObject>("zed_vision_data", 10);
-    Interface::ros_timer_t object_timer = temp_node->create_wall_timer(50ms, [&object_pub, &zed_bounding_box](){
+    Interface::ros_timer_t object_timer = temp_node->create_wall_timer(200ms, [&object_pub, &zed_bounding_box](){
         scion_types::msg::ZedObject msg1 = scion_types::msg::ZedObject();
         msg1.label_id = 0;
         msg1.corners = zed_bounding_box;
@@ -162,17 +226,87 @@ unique_ptr<Filter> populateFilterBufferTest()
     unique_ptr<Filter> moving_average_filter = populateFilterBuffer(0);
     for (float value : moving_average_filter->data_streams[0])
     {
+        RCLCPP_INFO(temp_node->get_logger(), "%f", value);
         custom_assert(abs(value - 50) < .05);
     }
-    std::cout << "populateFilterBufferTest Passed";
+    RCLCPP_INFO(temp_node->get_logger(), "populateFilterBufferTest Passed");
 }
 
-int main()
+void centerRobotTest()
 {
+    scion_types::msg::Keypoint2Di cornerUL;
+    scion_types::msg::Keypoint2Di cornerUR;
+    scion_types::msg::Keypoint2Di cornerBL;
+    scion_types::msg::Keypoint2Di cornerBR;
+    cornerUL.kp[0] = 0;
+    cornerUL.kp[1] = 100;
+    cornerUR.kp[0] = 100;
+    cornerUR.kp[1] = 100;
+    cornerBL.kp[0] = 0;
+    cornerBL.kp[1] = 200;
+    cornerBR.kp[0] = 100;
+    cornerBR.kp[1] = 200;
+    std::array<scion_types::msg::Keypoint2Di, 4> zed_bounding_box = {cornerUL, cornerUR, cornerBL, cornerBR};
+    Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_publisher");
+    Interface::vision_pub_t object_pub = temp_node->create_publisher<scion_types::msg::ZedObject>("zed_vision_data", 10);
+    Interface::ros_timer_t object_timer = temp_node->create_wall_timer(200ms, [&object_pub, &zed_bounding_box](){
+        scion_types::msg::ZedObject msg1 = scion_types::msg::ZedObject();
+        msg1.label_id = 0;
+        msg1.corners = zed_bounding_box;
+        object_pub->publish(msg1);
+    });
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(temp_node);
+    std::thread([&executor]() {
+        executor.spin();
+    }).detach();
+    centerRobot(0);
+}
+
+void centerRobotRightTest()
+{
+    scion_types::msg::Keypoint2Di cornerUL;
+    scion_types::msg::Keypoint2Di cornerUR;
+    scion_types::msg::Keypoint2Di cornerBL;
+    scion_types::msg::Keypoint2Di cornerBR;
+    cornerUL.kp[0] = 700;
+    cornerUL.kp[1] = 100;
+    cornerUR.kp[0] = 900;
+    cornerUR.kp[1] = 100;
+    cornerBL.kp[0] = 700;
+    cornerBL.kp[1] = 200;
+    cornerBR.kp[0] = 900;
+    cornerBR.kp[1] = 200;
+    std::array<scion_types::msg::Keypoint2Di, 4> zed_bounding_box = {cornerUL, cornerUR, cornerBL, cornerBR};
+    Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_publisher");
+    Interface::vision_pub_t object_pub = temp_node->create_publisher<scion_types::msg::ZedObject>("zed_vision_data", 10);
+    Interface::ros_timer_t object_timer = temp_node->create_wall_timer(200ms, [&object_pub, &zed_bounding_box](){
+        scion_types::msg::ZedObject msg1 = scion_types::msg::ZedObject();
+        msg1.label_id = 0;
+        msg1.corners = zed_bounding_box;
+        object_pub->publish(msg1);
+    });
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(temp_node);
+    std::thread([&executor]() {
+        executor.spin();
+    }).detach();
+    centerRobotRight(0);
+}
+
+int main(int argc, char** argv)
+{
+    rclcpp::init(argc, argv);
+    std::cout << "____________________________________________________________________________" << std::endl;
     findMidpointTest();
     std::cout << std::endl;
     ZedToRosBoundingBoxTest();
     std::cout << std::endl;
     populateFilterBufferTest();
+    std::cout << std::endl;
+    centerRobotTest();
+    std::cout << std::endl;
+    centerRobotRightTest();
+    rclcpp::shutdown();
     return 0;
 }
