@@ -18,7 +18,7 @@ from time import sleep
 parser = argparse.ArgumentParser()
 parser.add_argument('-folder', help='Folder path to save images', required=True)
 parser.add_argument('-date', help='Folder path to save date of images', required=False)
-SAVE_TO_DIRECTORY = os.chdir('/home/mechatronics/vision')
+SAVE_TO_DIRECTORY = os.chdir('/home/mechatronics')
 
 args = parser.parse_args()
 
