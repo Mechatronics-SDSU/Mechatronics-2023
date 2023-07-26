@@ -33,11 +33,12 @@
 #include "vector_operations.hpp"
 #include "filter.hpp"
 
-Brain::Brain(): Node("brain_node")
+Brain::Brain() : Node("brain_node")
 {
     idea_pub_ = this->create_publisher<scion_types::msg::Idea>("brain_idea_data", 10);
     can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
     pid_ready_service_ = this->create_service<std_srvs::srv::Trigger>("pid_ready", std::bind(&Brain::ready, this, _1, _2));
+    int_ = 2;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

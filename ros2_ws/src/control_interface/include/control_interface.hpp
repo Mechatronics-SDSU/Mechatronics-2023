@@ -1,4 +1,5 @@
-/* @author Zix
+/* 
+ * @author Zix
  * Organizes massive amount of declarations I need for the control system
  */
 
@@ -23,13 +24,12 @@
 #include "scion_types/msg/vision_object.hpp"
 #include "scion_types/msg/zed_object.hpp"
 #include "scion_types/msg/pid_tuning.hpp"
-#include "scion_types/action/pid.hpp"
+// #include "scion_types/action/pid.hpp"
 #include "std_msgs/msg/int32.hpp"
-
 
 #define PI 3.14159265
 
-using PIDAction = scion_types::action::PID;
+// using PIDAction = scion_types::action::PID;
 
 namespace Interface
 {
@@ -46,8 +46,8 @@ namespace Interface
     typedef std::vector<Command>                                                            command_vector_t;
 
     typedef rclcpp::Node::SharedPtr                                                         node_t;
-    typedef rclcpp_action::Client<PIDAction>::SharedPtr                                     pid_action_client_t;
-    typedef rclcpp_action::Server<PIDAction>::SharedPtr                                     pid_action_server_t;
+    // typedef rclcpp_action::Client<PIDAction>::SharedPtr                                     pid_action_client_t;
+    // typedef rclcpp_action::Server<PIDAction>::SharedPtr                                     pid_action_server_t;
     typedef rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr                               ros_trigger_client_t;
     typedef rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr                               ros_bool_client_t;
     typedef rclcpp::Client<scion_types::srv::SendFrame>::SharedPtr                          ros_sendframe_client_t;
@@ -123,9 +123,9 @@ namespace Interface
         Params params;               // The magnitude to pass into that function (30 degrees)
     };
 
-    extern std::vector<std::vector<float>> percy_thrust_mapper;
+    extern matrix_t percy_thrust_mapper;
 
-    extern std::vector<std::vector<float>> junebug_thrust_mapper;
+    extern matrix_t junebug_thrust_mapper;
 }
 
 /* Defines Possible Commands to Be Given to the PID Controller */

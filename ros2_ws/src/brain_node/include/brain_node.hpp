@@ -60,6 +60,7 @@ class Brain : public rclcpp::Node
 
     public:
         explicit Brain();
+        int                                         int_;
 
     private:
         Interface::idea_pub_t                       idea_pub_;

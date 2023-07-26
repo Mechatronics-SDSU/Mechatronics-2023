@@ -2,7 +2,6 @@
  * Organizes massive amount of declarations I need for the control system
  */
 
-
 #include <vector>
 #include <iostream>
 #include <deque>
@@ -10,7 +9,8 @@
 #include <cmath>
 #include "control_interface.hpp"
 
-std::vector<std::vector<float>> Interface::percy_thrust_mapper = std::vector<std::vector<float>> 
+
+Interface::matrix_t Interface::percy_thrust_mapper = Interface::matrix_t 
 {
     { 0, -1, -1,  0,  0,  1},                   
     {-1,  0,  0, -1, -1,  0},
@@ -22,7 +22,7 @@ std::vector<std::vector<float>> Interface::percy_thrust_mapper = std::vector<std
     { 1,  0,  0, -1,  1,  0}
 };
 
-std::vector<std::vector<float>> Interface::junebug_thrust_mapper = std::vector<std::vector<float>> 
+Interface::matrix_t Interface::junebug_thrust_mapper = Interface::matrix_t 
 {
     {-1,  0,  0,  1,  0,  0},                   
     { 1,  0,  0,  1,  0,  0},
@@ -31,32 +31,32 @@ std::vector<std::vector<float>> Interface::junebug_thrust_mapper = std::vector<s
 
 /* Defines Possible Commands to Be Given to the PID Controller */
 
-Movements::desired_state_t turn(float degree)
+Interface::desired_state_t Movements::turn(float degree)
 {
     return desired_state_t{degree,0,0,0,0,0};
 }
 
-Movements::desired_state_t pitch(float degree)
+Interface::desired_state_t Movements::pitch(float degree)
 {
     return desired_state_t{0,degree,0,0,0,0};
 }
 
-Movements::desired_state_t roll(float degree)
+Interface::desired_state_t Movements::roll(float degree)
 {
     return desired_state_t{0,0,degree,0,0,0};
 }
 
-Movements::desired_state_t move(float degree)
+Interface::desired_state_t Movements::move(float degree)
 {
     return desired_state_t{0,0,0,degree,0,0};
 }
 
-Movements::desired_state_t translate(float degree)
+Interface::desired_state_t Movements::translate(float degree)
 {
     return desired_state_t{0,0,0,0,degree,0};
 }
 
-Movements::desired_state_t levitate(float degree)
+Interface::desired_state_t Movements::levitate(float degree)
 {
     return desired_state_t{0,0,0,0,0,degree};
 }
@@ -64,7 +64,7 @@ Movements::desired_state_t levitate(float degree)
 
 /* All Translator Functions take an idea and translate it into a series of commands to add to mediator queue */
 
-Translator::command_vector_t turn(float degree)
+Interface::command_vector_t Translator::turn(float degree)
 {
     Interface::Command command1;
     command1.function.transform = &Movements::turn;
@@ -72,7 +72,7 @@ Translator::command_vector_t turn(float degree)
     return command_vector_t{command1};
 }
 
-Translator::command_vector_t roll(float degree)
+Interface::command_vector_t Translator::roll(float degree)
 {
     Interface::Command command1;
     command1.function.transform = &Movements::roll;
@@ -80,7 +80,7 @@ Translator::command_vector_t roll(float degree)
     return command_vector_t{command1};
 }
 
-Translator::command_vector_t pitch(float degree)
+Interface::command_vector_t Translator::pitch(float degree)
 {
     Interface::Command command1;
     command1.function.transform = &Movements::pitch;
@@ -88,7 +88,7 @@ Translator::command_vector_t pitch(float degree)
     return command_vector_t{command1};
 }
 
-Translator::command_vector_t move(float degree)
+Interface::command_vector_t Translator::move(float degree)
 {
     Interface::Command command1;
     command1.function.transform = &Movements::move;
@@ -96,7 +96,7 @@ Translator::command_vector_t move(float degree)
     return command_vector_t{command1};
 }
 
-Translator::command_vector_t translate(float degree)
+Interface::command_vector_t Translator::translate(float degree)
 {
     Interface::Command command1;
     command1.function.transform = &Movements::translate;
@@ -104,7 +104,7 @@ Translator::command_vector_t translate(float degree)
     return command_vector_t{command1};
 }
 
-Translator::command_vector_t levitate(float degree)
+Interface::command_vector_t Translator::levitate(float degree)
 {
     Interface::Command command1;
     command1.function.transform = &Movements::levitate;
@@ -112,7 +112,7 @@ Translator::command_vector_t levitate(float degree)
     return command_vector_t{command1};
 }
 
-Translator::command_vector_t relativePoint(float x, float y)
+Interface::command_vector_t Translator::relativePoint(float x, float y)
 {
     float point_angle_radians = atan(x / y);
     float point_angle_degrees = point_angle_radians * (180/PI);
@@ -133,7 +133,7 @@ Translator::command_vector_t relativePoint(float x, float y)
     return command_vector_t{command1, command2};
 }
 
-Translator::command_vector_t absolutePoint(float x, float y)
+Interface::command_vector_t Translator::absolutePoint(float x, float y)
 {
     float point_angle_radians = atan(y / x);
     float point_angle_degrees = point_angle_radians * (180/PI);
@@ -150,7 +150,7 @@ Translator::command_vector_t absolutePoint(float x, float y)
     return command_vector_t{command1, command2};
 }
 
-Translator::command_vector_t pureRelativePoint(float x, float y)
+Interface::command_vector_t Translator::pureRelativePoint(float x, float y)
 {
     float point_angle_radians = atan(y / x);
     float point_angle_degrees = point_angle_radians * (180/PI);
@@ -167,7 +167,7 @@ Translator::command_vector_t pureRelativePoint(float x, float y)
     return command_vector_t{command1, command2};
 }
 
-Translator::command_vector_t pureAbsolutePoint(float x, float y)
+Interface::command_vector_t Translator::pureAbsolutePoint(float x, float y)
 {
     float point_angle_radians = atan(y / x);
     float point_angle_degrees = point_angle_radians * (180/PI);
