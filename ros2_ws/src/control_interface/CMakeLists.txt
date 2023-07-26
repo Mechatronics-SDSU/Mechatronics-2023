@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(brain_node)
+project(control_interface)
 
 # add_compile_options(-g)
 
@@ -28,19 +28,14 @@ find_package(rclcpp_action REQUIRED)
 include_directories(include)
 
 # Must include headers and source files from pid_controller class in classses/
-add_executable(brain_exec src/brain_node.cpp
-                          src/main.cpp
-                            ../../../classes/filter/src/filter.cpp)
+add_executable(control_interface_exec src/control_interface.cpp)
                               
-ament_target_dependencies(brain_exec rclcpp scion_types std_msgs std_srvs rclcpp_action)
+ament_target_dependencies(control_interface_exec rclcpp scion_types std_msgs std_srvs rclcpp_action)
 
 install(TARGETS
-  brain_exec
+  control_interface_exec
   DESTINATION lib/${PROJECT_NAME})
 
-target_include_directories(brain_exec PUBLIC include
-                                             ../../../classes/pid_controller/include
-                                             ../../../classes/filter/include
-                                             ../control_interface/include)
+target_include_directories(control_interface_exec PUBLIC include)
 
 ament_package()

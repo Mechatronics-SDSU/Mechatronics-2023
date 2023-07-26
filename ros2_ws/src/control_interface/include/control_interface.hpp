@@ -2,6 +2,8 @@
  * Organizes massive amount of declarations I need for the control system
  */
 
+#ifndef CONTROL_INTERFACE_H
+#define CONTROL_INTERFACE_H
 
 #include <vector>
 #include <iostream>
@@ -121,23 +123,9 @@ namespace Interface
         Params params;               // The magnitude to pass into that function (30 degrees)
     };
 
-    std::vector<std::vector<float>> percy_thrust_mapper
-    {
-        { 0, -1, -1,  0,  0,  1},                   
-        {-1,  0,  0, -1, -1,  0},
-        { 0,  1, -1,  0,  0,  1},
-        {-1,  0,  0, -1,  1,  0},
-        { 0,  1,  1,  0,  0,  1},
-        { 1,  0,  0, -1, -1,  0},
-        { 0, -1,  1,  0,  0,  1},
-        { 1,  0,  0, -1,  1,  0}
-    };
+    extern std::vector<std::vector<float>> percy_thrust_mapper;
 
-    std::vector<std::vector<float>> junebug_thrust_mapper
-    {
-        {-1,  0,  0,  1,  0,  0},                   
-        { 1,  0,  0,  1,  0,  0},
-    };
+    extern std::vector<std::vector<float>> junebug_thrust_mapper;
 }
 
 /* Defines Possible Commands to Be Given to the PID Controller */
@@ -145,35 +133,17 @@ namespace Movements
 {
     using namespace Interface;
 
-    desired_state_t turn(float degree)
-    {
-        return desired_state_t{degree,0,0,0,0,0};
-    }
+    desired_state_t turn(float degree);
 
-    desired_state_t pitch(float degree)
-    {
-        return desired_state_t{0,degree,0,0,0,0};
-    }
+    desired_state_t pitch(float degree);
 
-    desired_state_t roll(float degree)
-    {
-        return desired_state_t{0,0,degree,0,0,0};
-    }
+    desired_state_t roll(float degree);
 
-    desired_state_t move(float degree)
-    {
-        return desired_state_t{0,0,0,degree,0,0};
-    }
+    desired_state_t move(float degree);
 
-    desired_state_t translate(float degree)
-    {
-        return desired_state_t{0,0,0,0,degree,0};
-    }
+    desired_state_t translate(float degree);
 
-    desired_state_t levitate(float degree)
-    {
-        return desired_state_t{0,0,0,0,0,degree};
-    }
+    desired_state_t levitate(float degree);
 }
 
 /* All Translator Functions take an idea and translate it into a series of commands to add to mediator queue */
@@ -181,182 +151,31 @@ namespace Translator
 {
     using namespace Interface;
     
-    command_vector_t turn(float degree)
-    {
-        Interface::Command command1;
-        command1.function.transform = &Movements::turn;
-        command1.params.degree = degree;
-        return command_vector_t{command1};
-    }
+    command_vector_t turn(float degree);
 
-    command_vector_t roll(float degree)
-    {
-        Interface::Command command1;
-        command1.function.transform = &Movements::roll;
-        command1.params.degree = degree;
-        return command_vector_t{command1};
-    }
+    command_vector_t roll(float degree);
 
-    command_vector_t pitch(float degree)
-    {
-        Interface::Command command1;
-        command1.function.transform = &Movements::pitch;
-        command1.params.degree = degree;
-        return command_vector_t{command1};
-    }
+    command_vector_t pitch(float degree);
 
-    command_vector_t move(float degree)
-    {
-        Interface::Command command1;
-        command1.function.transform = &Movements::move;
-        command1.params.degree = degree;
-        return command_vector_t{command1};
-    }
+    command_vector_t move(float degree);
 
-    command_vector_t translate(float degree)
-    {
-        Interface::Command command1;
-        command1.function.transform = &Movements::translate;
-        command1.params.degree = degree;
-        return command_vector_t{command1};
-    }
+    command_vector_t translate(float degree);
 
-    command_vector_t levitate(float degree)
-    {
-        Interface::Command command1;
-        command1.function.transform = &Movements::levitate;
-        command1.params.degree = degree;
-        return command_vector_t{command1};
-    }
+    command_vector_t levitate(float degree);
 
-    command_vector_t relativePoint(float x, float y)
-    {
-        float point_angle_radians = atan(x / y);
-        float point_angle_degrees = point_angle_radians * (180/PI);
-        if (y < 0)
-        {
-            point_angle_degrees += 180;
-        }
-        float point_distance_meters = sqrt(pow(x,2) + pow(y,2));
+    command_vector_t relativePoint(float x, float y);
 
-        Interface::Command command1;
-        command1.function.transform = &Movements::turn;
-        command1.params.degree = point_angle_degrees;
+    command_vector_t absolutePoint(float x, float y);
 
-        Interface::Command command2;
-        command2.function.transform = &Movements::move;
-        command2.params.degree = point_distance_meters;
+    command_vector_t pureRelativePoint(float x, float y);
 
-        return command_vector_t{command1, command2};
-    }
-
-    command_vector_t absolutePoint(float x, float y)
-    {
-        float point_angle_radians = atan(y / x);
-        float point_angle_degrees = point_angle_radians * (180/PI);
-        float point_distance_meters = sqrt(pow(x,2) + pow(y,2));
-
-        Interface::Command command1;
-        command1.function.transform = &Movements::turn;
-        command1.params.degree = point_angle_degrees;
-
-        Interface::Command command2;
-        command2.function.transform = &Movements::move;
-        command2.params.degree = point_distance_meters;
-
-        return command_vector_t{command1, command2};
-    }
-
-    command_vector_t pureRelativePoint(float x, float y)
-    {
-        float point_angle_radians = atan(y / x);
-        float point_angle_degrees = point_angle_radians * (180/PI);
-        float point_distance_meters = sqrt(pow(x,2) + pow(y,2));
-
-        Interface::Command command1;
-        command1.function.transform = &Movements::turn;
-        command1.params.degree = point_angle_degrees;
-
-        Interface::Command command2;
-        command2.function.transform = &Movements::move;
-        command2.params.degree = point_distance_meters;
-
-        return command_vector_t{command1, command2};
-    }
-
-    command_vector_t pureAbsolutePoint(float x, float y)
-    {
-        float point_angle_radians = atan(y / x);
-        float point_angle_degrees = point_angle_radians * (180/PI);
-        float point_distance_meters = sqrt(pow(x,2) + pow(y,2));
-
-        Interface::Command command1;
-        command1.function.transform = &Movements::turn;
-        command1.params.degree = point_angle_degrees;
-
-        Interface::Command command2;
-        command2.function.transform = &Movements::move;
-        command2.params.degree = point_distance_meters;
-
-        return command_vector_t{command1, command2};
-    }
+    command_vector_t pureAbsolutePoint(float x, float y);
 }
 
 namespace canClient
 {
-    void sendFrame(int32_t can_id, int8_t can_dlc, unsigned char can_data[], Interface::ros_sendframe_client_t can_client)
-    {
-      auto can_request = std::make_shared<scion_types::srv::SendFrame::Request>();
-      can_request->can_id = can_id;
-      can_request->can_dlc = can_dlc;
-      std::copy
-      (
-          can_data,
-          can_data + can_dlc,
-          can_request->can_data.begin()
-      );
-      auto can_future = can_client->async_send_request(can_request);
-    }
-
-    void setBotInSafeMode(Interface::ros_sendframe_client_t can_client)
-    {
-        std::vector<unsigned char> safeModeFrame{0,0,0,0,0x04};
-        sendFrame(0x022, 5, safeModeFrame.data(), can_client);
-    }
+    void sendFrame(int32_t can_id, int8_t can_dlc, unsigned char can_data[], Interface::ros_sendframe_client_t can_client);
+    void setBotInSafeMode(Interface::ros_sendframe_client_t can_client);
 }
 
-
-
-
-
-
-/* void stop()
-    {
-    }
-
-    void go(float power)
-    {
-    }
-
-    void spin(float power)
-    {
-    } */
-
-
-
-/*  command_vector_t stop()
-    {
-        return command_vector_t{};
-    }
-
-    command_vector_t go(float seconds)
-    {
-        return command_vector_t{};
-    }
-
-    command_vector_t spin(float seconds)
-    {
-        return command_vector_t{};
-    }
- */
-
+#endif
