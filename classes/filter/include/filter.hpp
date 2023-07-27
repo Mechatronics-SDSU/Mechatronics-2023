@@ -1,3 +1,6 @@
+#ifndef FILTER_H
+#define FILTER_H
+
 #include <vector>
 #include <deque>
 #include <array>
@@ -14,3 +17,4 @@ class Filter
         void read_coeffs_from_file(std::vector<float>&, const std::string& filename);
 };
 
+#endif
