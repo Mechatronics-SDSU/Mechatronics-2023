@@ -1,1 +1,0 @@
-/usr/bin/c++   -I/usr/local/zed/include -I/usr/local/cuda-11/include/ -I/usr/local/cuda-11/include/ -O3 -DNDEBUG   CMakeFiles/zed_position.dir/src/zed_position.cpp.o CMakeFiles/zed_position.dir/src/GLViewer.cpp.o  -o zed_position   -L/usr/local/zed/lib 
