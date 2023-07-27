@@ -24,19 +24,34 @@ find_package(scion_types REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(rclcpp_action REQUIRED)
+find_package(ament_cmake_gtest REQUIRED)
 
 include_directories(include)
 
 # Must include headers and source files from pid_controller class in classses/
-add_executable(brain_exec src/brain_node.cpp)
-                              
+add_executable(brain_exec src/brain_node.cpp
+                          src/brain_test.cpp
+                          ../control_interface/src/control_interface.cpp
+                          ../../../classes/filter/src/filter.cpp)
+
+ament_add_gtest(brain_test src/brain_test.cpp src/brain_node.cpp)  # Need to link .cpp file under test
+
+add_subdirectory(../googletest)
+target_link_libraries(brain_exec
+  gtest
+  gtest_main
+  ${rclcpp_LIBRARIES}
+)
+
 ament_target_dependencies(brain_exec rclcpp scion_types std_msgs std_srvs rclcpp_action)
 
 install(TARGETS
   brain_exec
   DESTINATION lib/${PROJECT_NAME})
 
-target_include_directories(brain_exec PUBLIC ../../../classes/pid_controller/include
+target_include_directories(brain_exec PUBLIC include
+                                             ../../../classes/pid_controller/include
+                                             ../../../classes/filter/include
                                              ../control_interface/include)
 
 ament_package()
