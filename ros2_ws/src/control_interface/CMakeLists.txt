@@ -28,7 +28,11 @@ find_package(rclcpp_action REQUIRED)
 include_directories(include)
 
 # Must include headers and source files from pid_controller class in classses/
-add_executable(control_interface_exec src/control_interface.cpp)
+add_executable(
+    control_interface_exec 
+    src/control_interface.cpp
+    src/main.cpp
+)
                               
 ament_target_dependencies(control_interface_exec rclcpp scion_types std_msgs std_srvs rclcpp_action)
 
@@ -36,6 +40,6 @@ install(TARGETS
   control_interface_exec
   DESTINATION lib/${PROJECT_NAME})
 
-target_include_directories(control_interface_exec PUBLIC include)
+target_include_directories(control_interface_exec PUBLIC include ${CMAKE_CURRENT_SOURCE_DIR})
 
 ament_package()
