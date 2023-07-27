@@ -1,4 +1,5 @@
-/* @author Zix
+/* 
+ * @author Zix
  * Organizes massive amount of declarations I need for the control system
  */
 

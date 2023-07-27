@@ -1,25 +1,3 @@
-/*
- * @author Conner Sommerfield - Zix on Discord
- * Brain node will send sequence of commands to the PIDs 
- * Commands can be pre-loaded or create with navigation logic
- * 
- * Robot will keep track of a "command queue"
- * This command queue will be abstracted as an vector/queue of Commands
- * Each command will be a function pointer to the action to perform 
- * and any parameters to pass to the function
- * 
- * The main ROS2 purpose of this node is to send a desired state to the
- * PIDs. It's the brain that tells the PIDs where the robot wants to go.
- * 
- * It will do this by taking the next out of the queue
- * 
- * A decision maker will be responsible for loading commands into the queue
- * 
- * PIDs will have to send command completion status for the queue mediator
- * to take out the next command.
- * 
- */
-
 #ifndef BRAIN_H
 #define BRAIN_H
 
@@ -62,7 +40,7 @@ class Brain : public rclcpp::Node
         explicit Brain();
         int                                         int_;
 
-    private:
+    
         Interface::idea_pub_t                       idea_pub_;
         Interface::ros_timer_t                      decision_timer_;
         Interface::idea_vector_t                    idea_sequence_;

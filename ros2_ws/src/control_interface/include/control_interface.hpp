@@ -1,8 +1,3 @@
-/* 
- * @author Zix
- * Organizes massive amount of declarations I need for the control system
- */
-
 #ifndef CONTROL_INTERFACE_H
 #define CONTROL_INTERFACE_H
 

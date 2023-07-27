@@ -1,15 +1,4 @@
-/* 
- * @author Zix
- * A50 sensor is the love of my life and gives a lot of information
- * That data can be grabbed from a web server (that is on the DVL) using tcp/ip (sockets baby)
- * If you type nc -v 192.168.1.4 16171 in the command line you can see the data (assuming your ip has the same subnet mask)
- * Here we will take that information, parse the json for what we want, and regurgitate it out
- * Of course in C++ because I'm tired of trash languages in this code base 
- */
-
-/* NOTE: If it's not working on a new environment you may need to install this library: sudo apt-get install nlohmann-json3-dev */
-
-#ifndef A50_H
+ifndef A50_H
 #define A50_H
 
 #include <memory>

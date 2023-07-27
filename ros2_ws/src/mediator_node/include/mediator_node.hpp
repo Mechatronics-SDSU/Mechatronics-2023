@@ -1,8 +1,3 @@
-/* 
- * @author Zix
- * Command Queue Node, translates ideas and puts them into a queue to give a desired state to PIDs
- */
-
 #ifndef MEDIATOR_H
 #define MEDIATOR_H
 

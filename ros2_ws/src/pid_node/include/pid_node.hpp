@@ -1,18 +1,3 @@
-/* 
- * @author Conner Sommerfield - Zix on Discord
- * The infamous PID Controller Node
- * Subscribes to all sensor data needed for control system and throws it into a PID object
- * to output ctrl and thrust values.
- * Refer to classes/pid_controller for more info
- * 
- * Every time the subscription callback is triggered, the current state will be updated
- * Current state is stored in member variables of the Node
- * There is a timer that updates every x amount of ms based on what user inputs
- * This calls the PID update function which will use that sensor data to get ctrl/thrust values
- * Then it makes a CAN Request using that array of thrust_vals to send to motors
- * CAN Request is of ID #010
- */
-
 #ifndef PID_H
 #define PID_H
 
