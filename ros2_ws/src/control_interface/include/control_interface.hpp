@@ -23,7 +23,7 @@
 #include "scion_types/msg/datapoint.hpp"
 #include "scion_types/msg/vision_object.hpp"
 #include "scion_types/msg/zed_object.hpp"
-#include "scion_types/msg/pid_tuning.hpp"
+// #include "scion_types/msg/pid_tuning.hpp"
 // #include "scion_types/action/pid.hpp"
 #include "std_msgs/msg/int32.hpp"
 
@@ -55,7 +55,7 @@ namespace Interface
     typedef rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr                              ros_bool_service_t;
     typedef rclcpp::Service<scion_types::srv::SendFrame>::SharedPtr                         ros_sendframe_service_t;
     typedef rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr                           int_sub_t;
-    typedef rclcpp::Subscription<scion_types::msg::PidTuning>::SharedPtr                    tune_pid_sub_t;
+    // typedef rclcpp::Subscription<scion_types::msg::PidTuning>::SharedPtr                    tune_pid_sub_t;
     typedef rclcpp::Subscription<scion_types::msg::Idea>::SharedPtr                         idea_sub_t;
     typedef rclcpp::Subscription<scion_types::msg::State>::SharedPtr                        state_sub_t;
     typedef rclcpp::Subscription<scion_types::msg::Position>::SharedPtr                     position_sub_t;
@@ -64,7 +64,7 @@ namespace Interface
     typedef rclcpp::Subscription<scion_types::msg::VisionObject>::SharedPtr                 object_sub_t;
     typedef rclcpp::Subscription<scion_types::msg::ZedObject>::SharedPtr                    vision_sub_t;
     typedef rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr                              int_pub_t;
-    typedef rclcpp::Publisher<scion_types::msg::PidTuning>::SharedPtr                       tune_pid_pub_t;
+    // typedef rclcpp::Publisher<scion_types::msg::PidTuning>::SharedPtr                       tune_pid_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::Idea>::SharedPtr                            idea_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::State>::SharedPtr                           state_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::Position>::SharedPtr                        position_pub_t;
