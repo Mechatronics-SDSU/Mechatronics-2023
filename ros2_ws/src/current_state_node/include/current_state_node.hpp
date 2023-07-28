@@ -28,7 +28,7 @@ class CurrentStateNode : public rclcpp::Node
   public:
     CurrentStateNode();
 
-  private:    
+  // private:    
     Interface::position_sub_t           position_sub_;
     Interface::state_sub_t              orientation_sub_;
     Interface::datapoint_sub_t          depth_sub_;

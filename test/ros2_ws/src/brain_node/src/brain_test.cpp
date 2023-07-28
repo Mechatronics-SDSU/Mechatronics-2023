@@ -1,14 +1,8 @@
 #include "brain_node.hpp"
 #include "gtest/gtest.h"
 
-class TestableBrain : public Brain {
-public:
-    friend class Brain;
-    using Brain::findMidpoint;
-};
-
 class ROBOT_TEST_SUITE : public ::testing::Test {
-protected:
+public:
     friend class Brain;
 
     static void SetUpTestSuite() {

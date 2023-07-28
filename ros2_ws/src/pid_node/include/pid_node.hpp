@@ -33,7 +33,7 @@ class Controller : public rclcpp::Node
 public:
     explicit Controller();
 
-private:
+// private:
     Interface::ros_timer_t                      update_timer_;
     Interface::ros_timer_t                      print_timer_;
     Interface::state_sub_t                      current_state_sub_;
