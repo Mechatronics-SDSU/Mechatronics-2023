@@ -158,7 +158,7 @@ std::unique_ptr<vector<vector<uint32_t>>> Brain::zed_to_ros_bounding_box(std::ar
     vector<vector<uint32_t>> ros_bounding_box;                   // this is to convert from ros object to vector object
     for (int i = 0; i < NUM_CORNERS; i++)
     {
-        vector<uint32_t> corner_point {((zed_bounding_box[i]).kp)[i], ((zed_bounding_box[i]).kp)[i+1]};
+        vector<uint32_t> corner_point {((zed_bounding_box[i]).kp)[0], ((zed_bounding_box[i]).kp)[1]};
         ros_bounding_box.push_back(corner_point);
     }
     return std::make_unique<vector<vector<uint32_t>>>(ros_bounding_box);
