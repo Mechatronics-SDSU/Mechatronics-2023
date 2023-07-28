@@ -38,7 +38,6 @@ Brain::Brain() : Node("brain_node")
     idea_pub_ = this->create_publisher<scion_types::msg::Idea>("brain_idea_data", 10);
     can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
     pid_ready_service_ = this->create_service<std_srvs::srv::Trigger>("pid_ready", std::bind(&Brain::ready, this, _1, _2));
-    int_ = 2;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -55,33 +54,33 @@ void Brain::ready(const std::shared_ptr<std_srvs::srv::Trigger::Request> request
 //                               ASYNC FUNCTIONS                              //
 ////////////////////////////////////////////////////////////////////////////////
 
-void Brain::doUntil(action_t action, condition_t condition, cleanup_t cleanup, bool& condition_global, float parameter)
+void Brain::doUntil(action_t action, condition_t condition, cleanup_t cleanup, bool& condition_global, string condition_param, float action_param)
 {
-    auto condition_met = std::bind(condition, this);
+    auto condition_met = std::bind(condition, this, condition_param);
     std::thread(condition_met).detach();
 
     while(!condition_global) //this->gateSeen()
     {
-        (this->*action)(parameter);
+        (this->*action)(action_param);
     }
     condition_global = false;
     (this->*cleanup)();
 }
 
-bool Brain::gateSeen()
+bool Brain::objectSeen(string object)
 {
-    std::promise<bool> gate_seen;
-    std::shared_future<bool> future  = gate_seen.get_future();
+    std::promise<bool> object_seen;
+    std::shared_future<bool> future  = object_seen.get_future();
     Interface::node_t temp_node = rclcpp::Node::make_shared("zed_object_subscriber");;
     Interface::object_sub_t object_sub = temp_node->create_subscription<scion_types::msg::VisionObject>
-    ("zed_object_data", 10, [&temp_node, &gate_seen](const scion_types::msg::VisionObject::SharedPtr msg) {
-            if (msg->object_name == "Underwater-Gate") {
-                gate_seen.set_value(true);
-                RCLCPP_INFO(temp_node->get_logger(), "Gate seen");
+    ("zed_object_data", 10, [&temp_node, &object_seen, &object](const scion_types::msg::VisionObject::SharedPtr msg) {
+            if (msg->object_name == object) {
+                object_seen.set_value(true);
+                RCLCPP_INFO(temp_node->get_logger(), "%s seen", object.c_str());
             }
     });
     rclcpp::spin_until_future_complete(temp_node, future);
-    this->gate_seen_ = true;
+    this->object_seen_ = true;
     return true;
 }
 
@@ -296,11 +295,12 @@ void Brain::keepMoving(float power)
 
 void Brain::performMission()
 {
+    string GATE_NAME = "Full- Gate";
     this->centerRobot(0);       // 0 is identifier of gate
-    doUntil(&Brain::keepTurning, &Brain::gateSeen, &Brain::stop, this->gate_seen_, SMOOTH_TURN_DEGREE);
+    doUntil(&Brain::keepTurning, &Brain::objectSeen, &Brain::stop, this->object_seen_, GATE_NAME, SMOOTH_TURN_DEGREE);
     this->centerRobot(0);
     levitate(SUBMERGE_DISTANCE);
-    moveForward(this->getDistanceFromCamera("Full- Gate")/2);
+    moveForward(this->getDistanceFromCamera(GATE_NAME)/2);
     this->centerRobot(0);
     exit(0);
 } 

@@ -32,15 +32,14 @@ using namespace std;
 
 class Brain : public rclcpp::Node
 {
-    typedef bool (Brain::*condition_t)();
+    typedef bool (Brain::*condition_t)(string);
     typedef void (Brain::*action_t)(float);
     typedef void (Brain::*cleanup_t)();
 
     public:
         explicit Brain();
-        int                                         int_;
 
-    
+    // private:
         Interface::idea_pub_t                       idea_pub_;
         Interface::ros_timer_t                      decision_timer_;
         Interface::idea_vector_t                    idea_sequence_;
@@ -49,8 +48,7 @@ class Brain : public rclcpp::Node
         Interface::ros_sendframe_client_t           can_client_;
         Interface::ros_trigger_service_t            pid_ready_service_;
         std::string                                 mode_param_;
-        bool                                        gate_seen_ = false;
-
+        bool                                        object_seen_ = false;
         ////////////////////////////////////////////////////////////////////////////////
         //                               INIT MISSION                                 //
         ////////////////////////////////////////////////////////////////////////////////
@@ -61,8 +59,8 @@ class Brain : public rclcpp::Node
         //                               ASYNC FUNCTIONS                              //
         ////////////////////////////////////////////////////////////////////////////////
 
-        void doUntil(action_t action, condition_t condition, cleanup_t cleanup, bool& condition_global, float parameter);
-        bool gateSeen();
+        void doUntil(action_t action, condition_t condition, cleanup_t cleanup, bool& condition_global, string condition_param, float action_param);
+        bool objectSeen(string object);
         float getDistanceFromCamera(string object);
         unique_ptr<Filter> populateFilterBuffer(int object_identifier);
         void centerRobot(int object_identifier);
