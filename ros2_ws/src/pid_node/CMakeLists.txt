@@ -19,6 +19,12 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+get_filename_component(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}" DIRECTORY)
+get_filename_component(ROS_DIR "${SRC_DIR}" DIRECTORY)
+get_filename_component(ROOT_DIR "${ROS_DIR}" DIRECTORY)
+
+add_subdirectory(${ROOT_DIR}/classes classes_binary)
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -29,24 +35,30 @@ find_package(rclcpp_action REQUIRED)
 
 include_directories(include)
 
-#../ - src
-#../../ - ros2_ws
-#../../../ - Project directory
+add_executable(
+  pid_exec 
+  src/pid_node.cpp
+  src/main.cpp
+  ${SRC_DIR}/control_interface/src/control_interface.cpp
+)
+  
+ament_target_dependencies(pid_exec scion_types rclcpp rclcpp_action std_msgs std_srvs)
 
-# Must include headers and source files from pid_controller class in classses/
-add_executable(pid_exec src/pid_controller_node.cpp
-                        ../../../classes/pid_controller/src/pid_controller.cpp
-                        ../../../classes/pid_controller/src/scion_pid_controller.cpp
-                        ../../../classes/pid_controller/src/pid_params.cpp)
-                              
+target_link_libraries(
+    pid_exec
+    classes
+    ${rclcpp_LIBRARIES}
+)
 
-ament_target_dependencies(pid_exec rclcpp scion_types std_msgs std_srvs rclcpp_action)
-
-target_include_directories(pid_exec PUBLIC ../../../classes/pid_controller/include
-                                           ../control_interface/include)
+target_include_directories(
+    pid_exec PUBLIC include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${SRC_DIR}/control_interface/include
+)
 
 install(TARGETS
   pid_exec
-  DESTINATION lib/${PROJECT_NAME})
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 ament_package()

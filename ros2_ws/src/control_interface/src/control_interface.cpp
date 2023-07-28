@@ -1,14 +1,9 @@
-/* @author Zix
+/* 
+ * @author Zix
  * Organizes massive amount of declarations I need for the control system
  */
 
-#include <vector>
-#include <iostream>
-#include <deque>
-#include <unordered_map>
-#include <cmath>
 #include "control_interface.hpp"
-
 
 Interface::matrix_t Interface::percy_thrust_mapper = Interface::matrix_t 
 {
