@@ -26,7 +26,7 @@ add_library(
     # ${SRC_DIR}/controller_node/src/controller_node.cpp
     # ${SRC_DIR}/current_state_node/src/current_state_node.cpp
     # ${SRC_DIR}/mediator_node/src/mediator_node.cpp
-    # ${SRC_DIR}/pid_node/src/pid_node.cpp
+    ${SRC_DIR}/pid_node/src/pid_node.cpp
 )
 
 # Link gtest and other libraries to  executable
@@ -41,9 +41,9 @@ target_include_directories(
     ${SRC_DIR}/control_interface/include
     # ${SRC_DIR}/controller_node/include
     # ${SRC_DIR}/current_state_node/include
-    ${SRC_DIR}/gui_node/include
+    # ${SRC_DIR}/gui_node/include
     # ${SRC_DIR}/mediator_node/include
-    # ${SRC_DIR}/pid_node/include
+    ${SRC_DIR}/pid_node/include
 )
 
 ament_target_dependencies(nodes scion_types rclcpp rclcpp_action std_srvs std_msgs)

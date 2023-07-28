@@ -37,6 +37,7 @@ add_subdirectory(${ROOT_DIR}/ros2_ws/src/library nodes_binary/)
 add_executable(
     test_exec 
     ${SRC_DIR}/brain_node/src/brain_test.cpp
+    ${SRC_DIR}/pid_node/src/pid_test.cpp
 )
 
 # Link gtest and other libraries to  executable
@@ -49,9 +50,9 @@ target_link_libraries(test_exec
 
 # target_include_directories(
 #     test_exec PUBLIC 
-#     # ${SRC_DIR}brain_node/include
-#     # ${SRC_DIR}control_interface/include 
-#     )
+#     ${SRC_DIR}/brain_node/include
+#     ${SRC_DIR}/pid_node/include 
+# )
 
 ament_target_dependencies(test_exec scion_types rclcpp rclcpp_action std_srvs std_msgs)
 

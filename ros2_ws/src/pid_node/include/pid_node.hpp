@@ -107,6 +107,8 @@ public:
     bool areEqual(float float1, float float2, float epsilon);
     bool areEqual(std::vector<float>& current_state, std::vector<float>& desired_state);
     bool equalToZero(std::vector<int> thrustVect);
+    bool isSlewRateLow(int totalSlewRate);
+    int calculateTotalSlew(deque<vector<int>>& slew_buffer);
     void execute(const std::shared_ptr<rclcpp_action::ServerGoalHandle<scion_types::action::PID>> goal_handle);
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

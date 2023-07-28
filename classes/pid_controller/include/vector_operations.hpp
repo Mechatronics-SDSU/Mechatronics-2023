@@ -154,4 +154,25 @@ vector<T> operator*(vector<vector<T>> lhs, const vector<T> &rhs)
     return matrix;
 }
 
+template<typename T>
+vector<T> abs(vector<T>& vect)
+{
+    for (T& value : vect)
+    {
+        value = abs(value);
+    }
+    return vect;
+}
+
+template<typename T>
+T sum(vector<T>& vect)
+{
+    T sum = 0;
+    for (T& value : vect)
+    {
+        sum += value;
+    }
+    return sum;
+}
+
 #endif /* VECTOR_OPERATIONS_H */

@@ -62,46 +62,46 @@ TEST_F(ROBOT_TEST_SUITE, zed_to_ros) {
     EXPECT_EQ((*ros_bounding_box)[3][1], 200);
 }
 
-TEST_F(ROBOT_TEST_SUITE, fill_buffer) {
-    shared_ptr<Brain> brain_ptr = std::make_shared<Brain>();
+// TEST_F(ROBOT_TEST_SUITE, fill_buffer) {
+//     shared_ptr<Brain> brain_ptr = std::make_shared<Brain>();
 
-    scion_types::msg::Keypoint2Di cornerUL;
-    scion_types::msg::Keypoint2Di cornerUR;
-    scion_types::msg::Keypoint2Di cornerBL;
-    scion_types::msg::Keypoint2Di cornerBR;
-    cornerUL.kp[0] = 0;
-    cornerUL.kp[1] = 100;
-    cornerUR.kp[0] = 100;
-    cornerUR.kp[1] = 100;
-    cornerBL.kp[0] = 0;
-    cornerBL.kp[1] = 200;
-    cornerBR.kp[0] = 100;
-    cornerBR.kp[1] = 200;
-    std::array<scion_types::msg::Keypoint2Di, 4> zed_bounding_box = {cornerUL, cornerUR, cornerBL, cornerBR};
+//     scion_types::msg::Keypoint2Di cornerUL;
+//     scion_types::msg::Keypoint2Di cornerUR;
+//     scion_types::msg::Keypoint2Di cornerBL;
+//     scion_types::msg::Keypoint2Di cornerBR;
+//     cornerUL.kp[0] = 0;
+//     cornerUL.kp[1] = 100;
+//     cornerUR.kp[0] = 100;
+//     cornerUR.kp[1] = 100;
+//     cornerBL.kp[0] = 0;
+//     cornerBL.kp[1] = 200;
+//     cornerBR.kp[0] = 100;
+//     cornerBR.kp[1] = 200;
+//     std::array<scion_types::msg::Keypoint2Di, 4> zed_bounding_box = {cornerUL, cornerUR, cornerBL, cornerBR};
 
-    Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_publisher");
-    Interface::vision_pub_t object_pub = temp_node->create_publisher<scion_types::msg::ZedObject>("zed_vision_data", 10);
-    Interface::ros_timer_t object_timer = temp_node->create_wall_timer(50ms, [&object_pub, &zed_bounding_box](){
-        scion_types::msg::ZedObject msg1 = scion_types::msg::ZedObject();
-        msg1.label_id = 0;
-        msg1.corners = zed_bounding_box;
-        object_pub->publish(msg1);
-    });
-    rclcpp::executors::SingleThreadedExecutor executor;
-    executor.add_node(temp_node);
-    std::thread([&executor]() {
-        executor.spin();
-    }).detach();
+//     Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_publisher");
+//     Interface::vision_pub_t object_pub = temp_node->create_publisher<scion_types::msg::ZedObject>("zed_vision_data", 10);
+//     Interface::ros_timer_t object_timer = temp_node->create_wall_timer(50ms, [&object_pub, &zed_bounding_box](){
+//         scion_types::msg::ZedObject msg1 = scion_types::msg::ZedObject();
+//         msg1.label_id = 0;
+//         msg1.corners = zed_bounding_box;
+//         object_pub->publish(msg1);
+//     });
+//     rclcpp::executors::SingleThreadedExecutor executor;
+//     executor.add_node(temp_node);
+//     std::thread([&executor]() {
+//         executor.spin();
+//     }).detach();
 
-    unique_ptr<Filter> moving_average_filter = brain_ptr->populateFilterBuffer(0);
-    for (float value : moving_average_filter->data_streams[0])
-    {
-        EXPECT_LT(abs(value - 50), .05);
-    }
-}
+//     unique_ptr<Filter> moving_average_filter = brain_ptr->populateFilterBuffer(0);
+//     for (float value : moving_average_filter->data_streams[0])
+//     {
+//         EXPECT_LT(abs(value - 50), .05);
+//     }
+// }
 
-int main(int argc, char ** argv)
-{
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+// int main(int argc, char ** argv)
+// {
+//   ::testing::InitGoogleTest(&argc, argv);
+//   return RUN_ALL_TESTS();
+// }

@@ -366,8 +366,8 @@ bool Controller::areEqual(float float1, float float2, float epsilon)
 
 bool Controller::areEqual(std::vector<float>& current_state, std::vector<float>& desired_state)
 {
-    #define ORIENTATION_TOLERANCE 6.0f
-    #define POSITION_TOLERANCE 0.12f
+    #define ORIENTATION_TOLERANCE 4.0f
+    #define POSITION_TOLERANCE 0.06f
 
     bool equal = true;
     for (std::vector<float>::size_type i = 0; i < 3; i++)
@@ -392,14 +392,27 @@ bool Controller::equalToZero(vector<int> thrustVect)
     bool equal = true;
     for (int thrust : thrustVect)
     {
-        if (thrust > 1)
-        {
-            equal = false;
-        }
+        if (thrust > 1) {equal = false;}
     }
     return equal;
 }
 
+bool Controller::isSlewRateLow(int totalSlewRate)
+{
+    #define LOW_SLEW_VALUE 5;
+    return totalSlewRate < LOW_SLEW_VALUE;
+}
+
+int Controller::calculateTotalSlew(deque<vector<int>>& slew_buffer)
+{
+    int slew_rate = 0;
+    for (size_t i = 0; i < slew_buffer.size() - 1; i++)
+    {   
+        vector<int> difference = abs(slew_buffer[i]) - abs(slew_buffer[i+1]);
+        slew_rate += abs(sum(difference));
+    }
+    return slew_rate;
+}
 
 void Controller::execute(const std::shared_ptr<GoalHandlePIDAction> goal_handle)
 {
@@ -424,9 +437,10 @@ void Controller::execute(const std::shared_ptr<GoalHandlePIDAction> goal_handle)
     }
 
     int cycles_at_set_point = 0;
+    deque<vector<int>> slew_buffer;
+    bool slew_rate_low = false;
     /* Feedback Loop - Stop Conditions is that all Thrusts are close to zero*/
-    while (!this->equalToZero(thrustInts) || (cycles_at_set_point <= 10)) 
-    {
+    while (!this->equalToZero(thrustInts) && (cycles_at_set_point <= 5) && !slew_rate_low)     {
         //   Check if there is a cancel request
         if (goal_handle->is_canceling()) {
             goal_handle->canceled(result);
@@ -434,7 +448,11 @@ void Controller::execute(const std::shared_ptr<GoalHandlePIDAction> goal_handle)
             return;
         }
         this->areEqual(current_state_, desired_state_) ? cycles_at_set_point++ : cycles_at_set_point=0; 
-
+        slew_buffer.push_front(thrustInts);
+            if (slew_buffer.size() > 20) {
+                slew_buffer.pop_back();
+                slew_rate_low = isSlewRateLow(calculateTotalSlew(slew_buffer));
+            }
         /* Update at Every Loop */
         thrusts = update_PID(this->current_state_, this->desired_state_);
         thrustInts = this->make_CAN_request(thrusts);
@@ -447,21 +465,6 @@ void Controller::execute(const std::shared_ptr<GoalHandlePIDAction> goal_handle)
         loop_rate.sleep();
     }
     this->stabilize_robot_ = true;
-    
-    /* 
-                ARCHIVE
-        // vector<float> target = vector<float>{current_state_[0], current_state_[1], current_state_[2],0,0,0};
-    // int i = 0;
-    // while (!areEqual(this->current_state_, target) && i < 3)
-    // {   
-    //     this->resetPosition();
-    //     std::this_thread::sleep_for(std::chrono::milliseconds(300));
-    //     i++;
-    // }
-
-    std::vector<float> desired_state = goal->desired_state;
-    desired_state += current_state_;
-    this->desired_state_ = desired_state; */
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -508,17 +511,6 @@ void Controller::stabilizeRobot(const   std::shared_ptr<std_srvs::srv::SetBool::
                                     // SUBSCRIPTION CALLBACKS // 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// void Controller::desired_state_callback(const scion_types::msg::State::SharedPtr msg)
-// /** 
-//  * You can use this subscription to manually send a desired state at command line
-//  **/ 
-// {
-//     if (!this->desired_state_valid_) {this->desired_state_valid_ = true;}
-//     // RCLCPP_INFO(this->get_logger(), "Received Desired Position Data:");
-//     printVector(msg->state);
-//     this->desired_state_= msg->state; 
-// }
-
 void Controller::current_state_callback(const scion_types::msg::State::SharedPtr msg)
 {
     if (!this->current_state_valid_) {this->current_state_valid_ = true;}
@@ -555,35 +547,3 @@ void Controller::kd_tuning_callback(const scion_types::msg::PidTuning::SharedPtr
 
     axis->set_gains(axis->k_d, axis->k_i, msg->data);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ARCHIVE 
-        // float pitch = current_state_[1];
-        // float roll =  current_state_[2];
-    // float pitchAdjustedX = absoluteDistance * cos(absoluteAngle - pitch);
-        // float pitchAdjustedZ = absoluteDistance * sin(absoluteAngle - pitch);
-
-        // float rollAdjustedY = absoluteDistance * cos(absoluteAngle - roll);
-        // float rollAdjustedZ = absoluteDistance * sin(absoluteAngle - roll);
-//, pitchAdjustedX
-        // distanceBetweenHereAndPoint(yawAdjustedY, rollAdjustedY);
-        // distanceBetweenHereAndPoint(rollAdjustedZ, pitchAdjustedZ); 
-        
-        unsigned char can_dreq_frame[2] = {0, 0};             
-        canClient::sendFrame(MOTOR_ID, motor_count_, can_dreq_frame, this->can_client_);
-        */
