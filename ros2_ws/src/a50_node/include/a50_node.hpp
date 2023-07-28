@@ -1,4 +1,4 @@
-ifndef A50_H
+#ifndef A50_H
 #define A50_H
 
 #include <memory>
