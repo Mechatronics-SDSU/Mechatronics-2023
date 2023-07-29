@@ -37,7 +37,8 @@ Brain::Brain() : Node("brain_node")
 {
     idea_pub_ = this->create_publisher<scion_types::msg::Idea>("brain_idea_data", 10);
     can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
-    pid_ready_service_ = this->create_service<std_srvs::srv::Trigger>("pid_ready", std::bind(&Brain::ready, this, _1, _2));
+    // pid_ready_service_ = this->create_service<std_srvs::srv::Trigger>("pid_ready", std::bind(&Brain::ready, this, _1, _2));
+    vision_ready_service_ = this->create_service<std_srvs::srv::Trigger>("vision_ready", std::bind(&Brain::ready, this, _1, _2));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -48,6 +49,8 @@ void Brain::ready(const std::shared_ptr<std_srvs::srv::Trigger::Request> request
                     std::shared_ptr<std_srvs::srv::Trigger::Response> response)
 {
     this->performMission();
+    RCLCPP_INFO(this->get_logger(), "vision stuff works");
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -130,13 +133,15 @@ void Brain::centerRobot(int object_identifier)
     unique_ptr<Filter> moving_average_filter = populateFilterBuffer(object_identifier);
     RCLCPP_INFO(this->get_logger(), "Filter Buffer Filled");
     vector<uint32_t> camera_frame_midpoint {MID_X_PIXEL, MID_Y_PIXEL};
+    int blind_cycles = 0;
 
     std::promise<bool> robot_centered;
     std::shared_future<bool> future  = robot_centered.get_future();
     Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_subscriber");
     Interface::vision_sub_t object_sub = temp_node->create_subscription<scion_types::msg::ZedObject>
-    ("zed_vision_data", 10, [this, &temp_node, &camera_frame_midpoint, &robot_centered, &moving_average_filter, &object_identifier](const scion_types::msg::ZedObject::SharedPtr msg) {
+    ("zed_vision_data", 10, [this, &temp_node, &camera_frame_midpoint, &robot_centered, &moving_average_filter, &object_identifier, &blind_cycles](const scion_types::msg::ZedObject::SharedPtr msg) {
             if (msg->label_id != object_identifier) {return;}
+            if (!msg->tracking_available) {blind_cycles++;}
             unique_ptr<vector<vector<uint32_t>>>ros_bounding_box = zed_to_ros_bounding_box(msg->corners);
             vector<uint32_t> bounding_box_midpoint = findMidpoint(*ros_bounding_box);
             float filtered_bounding_box_midpoint = moving_average_filter->smooth(moving_average_filter->data_streams[0], (float)bounding_box_midpoint[0]);
@@ -151,6 +156,11 @@ void Brain::centerRobot(int object_identifier)
             }
     });
     rclcpp::spin_until_future_complete(temp_node, future);
+}
+
+void adjust()
+{
+
 }
 
 std::unique_ptr<vector<vector<uint32_t>>> Brain::zed_to_ros_bounding_box(std::array<scion_types::msg::Keypoint2Di, 4>& zed_bounding_box)
@@ -296,21 +306,15 @@ void Brain::keepMoving(float power)
 void Brain::performMission()
 {
     string GATE_NAME = "Full- Gate";
-    this->centerRobot(0);       // 0 is identifier of gate
+    const int object_identifier = 0;
+    this->centerRobot(object_identifier);
     doUntil(&Brain::keepTurning, &Brain::objectSeen, &Brain::stop, this->object_seen_, GATE_NAME, SMOOTH_TURN_DEGREE);
-    this->centerRobot(0);
+    this->centerRobot(object_identifier);
     levitate(SUBMERGE_DISTANCE);
     moveForward(this->getDistanceFromCamera(GATE_NAME)/2);
-    this->centerRobot(0);
+    this->centerRobot(object_identifier);
     exit(0);
 } 
-
-
-
-
-
-
-
 
 
 

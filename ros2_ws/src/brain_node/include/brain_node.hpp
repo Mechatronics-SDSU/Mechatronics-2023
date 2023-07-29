@@ -18,17 +18,17 @@ using std::placeholders::_1;
 using std::placeholders::_2;
 using namespace std;
 
-#define TO_THE_RIGHT 15.0f
-#define TO_THE_LEFT -15.0f
-#define PIXEL_ERROR_THRESHOLD 50
+#define TO_THE_RIGHT 4.0f
+#define TO_THE_LEFT -4.0f
+#define PIXEL_ERROR_THRESHOLD 100
 #define SLEEP_TIME 50ms
-#define SMOOTH_TURN_DEGREE 90.0f
+#define SMOOTH_TURN_DEGREE 25.0f
 #define SMOOTH_MOVE_DEGREE 1.0f
 #define SUBMERGE_DISTANCE 1.5f
 #define MID_X_PIXEL 640
 #define MID_Y_PIXEL 360
 #define NUM_CORNERS 4
-
+#define BLIND_THRESHOLD 20
 
 class Brain : public rclcpp::Node
 {
@@ -47,6 +47,7 @@ class Brain : public rclcpp::Node
         Interface::int_sub_t                        commands_in_queue_sub_;
         Interface::ros_sendframe_client_t           can_client_;
         Interface::ros_trigger_service_t            pid_ready_service_;
+        Interface::ros_trigger_service_t            vision_ready_service_;
         std::string                                 mode_param_;
         bool                                        object_seen_ = false;
         ////////////////////////////////////////////////////////////////////////////////

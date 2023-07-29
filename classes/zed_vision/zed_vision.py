@@ -23,7 +23,7 @@ from ultralytics.yolo.data.dataloaders.v5augmentations import letterbox
 from ultralytics.yolo.utils.checks import check_imgsz
 """
 
-sys.path.append("/home/mechatronics/master/classes/zed_vision/yolov5")
+# sys.path.append("/home/mechatronics/master/classes/zed_vision/yolov5")
 from models.experimental import attempt_load
 from utils.general import check_img_size, non_max_suppression, scale_boxes, xyxy2xywh
 from utils.torch_utils import select_device
@@ -32,12 +32,12 @@ from utils.augmentations import letterbox
 from threading import Lock, Thread
 from time import sleep
 
-YAML_FILE = '/home/mechatronics/master/vision/new_gate.yaml'
-MODEL_FILE = '/home/mechatronics/new_gate.pt'
+# YAML_FILE = '/home/mechatronics/master/vision/new_gate.yaml'
+# MODEL_FILE = '/home/mechatronics/new_gate.pt'
 
 '/home/mechatronics/master/vision/underwater.yaml'
 
-with open(YAML_FILE) as f:
+with open("/home/mechatronics/master/classes/zed_vision/yolov5/data/coco128.yaml") as f:
     items = yaml.load(f, Loader=yaml.FullLoader)
 lock = Lock()
 run_signal = False
@@ -155,8 +155,8 @@ class Zed_Vision():
 
     def initCamera(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument('--weights', nargs='+', type=str, default=MODEL_FILE, help='model.pt path(s)') #where we put weights at
-        #parser.add_argument('--weights', nargs='+', type=str, default='/home/mechatronics/underwater_m.pt', help='model.pt path(s)')
+        # parser.add_argument('--weights', nargs='+', type=str, default=yolov, help='model.pt path(s)') #where we put weights at
+        parser.add_argument('--weights', nargs='+', type=str, default='yolov5m.pt', help='model.pt path(s)')
         parser.add_argument('--svo', type=str, default=None, help='optional svo file')
         parser.add_argument('--img_size', type=int, default=640, help='inference size (pixels)')
         parser.add_argument('--conf_thres', type=float, default=0.4, help='object confidence threshold')
@@ -234,7 +234,7 @@ class Zed_Vision():
 
             # Wait for detections
             lock.acquire()
-            # -- Ingest detections
+            # -- Ingest detectionss
             zed.ingest_custom_box_objects(detections)
             lock.release()
             zed.retrieve_objects(objects, obj_runtime_param)

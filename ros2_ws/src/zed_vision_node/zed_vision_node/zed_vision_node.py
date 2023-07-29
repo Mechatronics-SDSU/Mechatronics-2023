@@ -13,6 +13,7 @@ sys.path.append("/home/mechatronics/master")
 
 import rclpy
 from rclpy.node import Node
+from std_srvs.srv import Trigger
 from threading import Thread
 from classes.zed_vision.zed_vision import Zed_Vision
 from scion_types.msg import Idea
@@ -82,9 +83,12 @@ class ZedVision(Node):
         self.smoother = Smoother(10, len(coeffs))
         timer_period = .05  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
-
+        self.vision_ready_service = self.create_client(Trigger, 'vision_ready')
+        self.request = Trigger.Request()
+    
         self.vision = Zed_Vision()
         self.zed, self.opt = self.vision.initCamera()
+        self.vision_ready_service.call_async(self.request)
         capture_thread = Thread(target=self.vision.torch_thread,
                                 kwargs={'weights': self.opt.weights, 'img_size': self.opt.img_size, "conf_thres": self.opt.conf_thres})
         capture_thread.start()
@@ -137,9 +141,9 @@ class ZedVision(Node):
         self.position_publisher.publish(position)
         # self.get_logger().info('Publishing Position Data:\n "x: %f\ny: %f\nz: %f\n"' % (tz,tx,ty))
 
+        msg = ZedObject()
         if object_list:
             for object in object_list:
-                msg = ZedObject()
                 msg.label_id = object.raw_label
                 msg.position = [object.position[0], object.position[1], object.position[2]]
                 corners = []
@@ -150,6 +154,8 @@ class ZedVision(Node):
                     kp.kp.append(int(point[1]))
                     corners.append(kp)
                 msg.corners = corners
+                msg.tracking_available = True
+                
 
                     # x = [object.bounding_box_2d[0][0], object.bounding_box_2d[1][0], object.bounding_box_2d[2][0], object.bounding_box_2d[3][0], (object.bounding_box_2d[0][0] + object.bounding_box_2d[1][0]) / 2]
                     # y = [object.bounding_box_2d[0][1], object.bounding_box_2d[1][1], object.bounding_box_2d[2][1], object.bounding_box_2d[3][1], (object.bounding_box_2d[0][1] + object.bounding_box_2d[2][1]) / 2]
@@ -186,8 +192,12 @@ class ZedVision(Node):
                     ##self.vision_publisher.publish(msg)
         
                     
+            else:
+                msg.tracking_available = False
                     # print(object.bounding_box_2d)
-                self.vision_publisher.publish(msg)
+
+
+            self.vision_publisher.publish(msg)
         
 
         if vision_object_list:
