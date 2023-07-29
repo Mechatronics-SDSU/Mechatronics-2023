@@ -40,6 +40,7 @@ add_subdirectory(../googletest)
 target_link_libraries(brain_exec
   gtest
   gtest_main
+  gmock
   ${rclcpp_LIBRARIES}
 )
 

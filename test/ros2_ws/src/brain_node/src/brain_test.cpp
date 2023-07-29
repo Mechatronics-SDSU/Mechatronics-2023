@@ -1,16 +1,14 @@
 #include "brain_node.hpp"
 #include "pid_node.hpp"
 #include "gtest/gtest.h"
-#include "gmock/gmock.h"
+// #include "gmock/gmock.h"
 
-using ::testing::AtLeast;                         // #1
-
-class MockBrain : public Brain
-{
-public:
-    MOCK_METHOD(void, ready, (const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response), (override));
-    MOCK_METHOD(void, centerRobot, (int object_identifier), (override));
-};
+// class MockBrain : public Brain
+// {
+// public:
+//     MOCK_METHOD(void, ready, (const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response), (override));
+//     MOCK_METHOD(void, centerRobot, (int object_identifier), (override));
+// };
 
 class ROBOT_TEST_SUITE : public ::testing::Test {
 public:

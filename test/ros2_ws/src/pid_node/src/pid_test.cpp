@@ -27,8 +27,8 @@ TEST_F(ROBOT_TEST_SUITE, slew_rate) {
     EXPECT_EQ(total_slew, 60);
 }
 
-int main(int argc, char ** argv)
-{
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+// int main(int argc, char ** argv)
+// {
+//   ::testing::InitGoogleTest(&argc, argv);
+//   return RUN_ALL_TESTS();
+// }
