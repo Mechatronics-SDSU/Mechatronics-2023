@@ -168,12 +168,12 @@ void Brain::centerRobot(int object_identifier)
             float filtered_bounding_box_midpoint = moving_average_filter->smooth(moving_average_filter->data_streams[0], (float)bounding_box_midpoint[0]);
             this->lastFilteredMidpoint_ = filtered_bounding_box_midpoint;
             
-            if (areEqual(bounding_box_midpoint, camera_frame_midpoint)) {robot_centered.set_value(true);}
+            if (areEqual(filtered_bounding_box_midpoint, camera_frame_midpoint[0])) {robot_centered.set_value(true);}
             else {
                 if (isCommandQueueEmpty())
                 {
-                    RCLCPP_INFO(this->get_logger(), "Looking at bounding box with value %d", (*ros_bounding_box)[0][0]);
-                    this->adjustToCenter(bounding_box_midpoint, camera_frame_midpoint);
+                    RCLCPP_INFO(this->get_logger(), "Looking at bounding box with value %f", filtered_bounding_box_midpoint);
+                    this->adjustToCenter(filtered_bounding_box_midpoint, camera_frame_midpoint[0]);
                 }
             }
     });
@@ -205,6 +205,11 @@ vector<uint32_t> Brain::findMidpoint(vector<vector<uint32_t>>& bounding_box)
 bool Brain::areEqual(vector<uint32_t> point_a, vector<uint32_t> point_b)
 {
     return (abs((int)((point_a - point_b))[0]) < PIXEL_ERROR_THRESHOLD);
+}
+
+bool Brain::areEqual(float point_a, float point_b)
+{
+	return (abs(((point_a - point_b))) < PIXEL_ERROR_THRESHOLD);
 }
 
 void Brain::adjustToCenter(vector<uint32_t> bounding_box_midpoint, vector<uint32_t> camera_frame_midpoint)

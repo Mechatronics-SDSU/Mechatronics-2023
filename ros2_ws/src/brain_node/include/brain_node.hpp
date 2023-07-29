@@ -73,6 +73,7 @@ class Brain : public rclcpp::Node
         std::unique_ptr<vector<vector<uint32_t>>> zed_to_ros_bounding_box(std::array<scion_types::msg::Keypoint2Di, 4>& zed_bounding_box);
         vector<uint32_t> findMidpoint(vector<vector<uint32_t>>& bounding_box);
         bool areEqual(vector<uint32_t> point_a, vector<uint32_t> point_b);
+        bool areEqual(float point_a, float point_b);
         void adjustToCenter(float bounding_box_midpoint, float camera_frame_midpoint);
         void adjustToCenter(vector<uint32_t> bounding_box_midpoint, vector<uint32_t> camera_frame_midpoint);
         void waitForCommandQueueEmpty();
