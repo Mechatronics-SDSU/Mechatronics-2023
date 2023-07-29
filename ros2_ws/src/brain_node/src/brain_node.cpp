@@ -48,9 +48,9 @@ Brain::Brain() : Node("brain_node")
 void Brain::ready(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, 
                     std::shared_ptr<std_srvs::srv::Trigger::Response> response)
 {
+    RCLCPP_INFO(this->get_logger(), "Camera is On");
+    this->waitForReady();
     this->performMission();
-    RCLCPP_INFO(this->get_logger(), "vision stuff works");
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -70,11 +70,26 @@ void Brain::doUntil(action_t action, condition_t condition, cleanup_t cleanup, b
     (this->*cleanup)();
 }
 
+void Brain::waitForReady()
+{
+    std::promise<bool> auto_button_pressed;
+    std::shared_future<bool> future  = auto_button_pressed.get_future();
+    Interface::node_t temp_node = rclcpp::Node::make_shared("temp_submarine_state_subscriber");
+    Interface::sub_state_sub_t object_sub = temp_node->create_subscription<scion_types::msg::SubState>
+    ("submarine_state", 10, [&temp_node, &auto_button_pressed](const scion_types::msg::SubState::SharedPtr msg) {
+            if (msg->host_mode == BUTTON_PRESS || msg->host_mode == EXTERNAL_MESSAGE )
+            {
+                auto_button_pressed.set_value(true);
+            }
+    });
+    rclcpp::spin_until_future_complete(temp_node, future);
+}
+
 bool Brain::objectSeen(string object)
 {
     std::promise<bool> object_seen;
     std::shared_future<bool> future  = object_seen.get_future();
-    Interface::node_t temp_node = rclcpp::Node::make_shared("zed_object_subscriber");;
+    Interface::node_t temp_node = rclcpp::Node::make_shared("zed_object_subscriber");
     Interface::object_sub_t object_sub = temp_node->create_subscription<scion_types::msg::VisionObject>
     ("zed_object_data", 10, [&temp_node, &object_seen, &object](const scion_types::msg::VisionObject::SharedPtr msg) {
             if (msg->object_name == object) {
@@ -92,7 +107,7 @@ float Brain::getDistanceFromCamera(string object)
     float distance;
     std::promise<bool> gate_seen;
     std::shared_future<bool> future  = gate_seen.get_future();
-    Interface::node_t temp_node = rclcpp::Node::make_shared("zed_object_subscriber");;
+    Interface::node_t temp_node = rclcpp::Node::make_shared("zed_object_subscriber");
     Interface::object_sub_t object_sub = temp_node->create_subscription<scion_types::msg::VisionObject>
     ("zed_object_data", 10, [&temp_node, &gate_seen, &object, &distance](const scion_types::msg::VisionObject::SharedPtr msg) {
             if (msg->object_name == object) {
@@ -109,15 +124,20 @@ unique_ptr<Filter> Brain::populateFilterBuffer(int object_identifier)
     size_t data_streams_num = 1;
     string coeff_file = "/home/mechatronics/master/ros2_ws/src/brain_node/coefficients.txt";
     unique_ptr<Filter> moving_average_filter = std::make_unique<Filter>(data_streams_num, coeff_file);
+    vector<uint32_t> camera_frame_midpoint {MID_X_PIXEL, MID_Y_PIXEL};
+    int blind_cycles = 0;
 
     std::promise<bool> buffer_filled;
     std::shared_future<bool> future  = buffer_filled.get_future();
     Interface::node_t temp_node = rclcpp::Node::make_shared("zed_vision_subscriber");
     Interface::vision_sub_t object_sub = temp_node->create_subscription<scion_types::msg::ZedObject>
-    ("zed_vision_data", 10, [this, &temp_node, &buffer_filled, &moving_average_filter, &object_identifier](const scion_types::msg::ZedObject::SharedPtr msg) {
+    ("zed_vision_data", 10, [this, &temp_node, &buffer_filled, &moving_average_filter, &object_identifier, &blind_cycles, &camera_frame_midpoint](const scion_types::msg::ZedObject::SharedPtr msg) {
             if (msg->label_id != object_identifier) {return;}
+            // if (!msg->tracking_available) {blind_cycles++;} else {blind_cycles = 0;}
+            // if (blind_cycles > BLIND_THRESHOLD) {this->adjustToCenter(this->lastUnFilteredMidpoint_, camera_frame_midpoint[0]); return;}
             unique_ptr<vector<vector<uint32_t>>>ros_bounding_box = zed_to_ros_bounding_box(msg->corners);
             vector<uint32_t> bounding_box_midpoint = findMidpoint(*ros_bounding_box);
+            this->lastUnFilteredMidpoint_ = bounding_box_midpoint[0];
             moving_average_filter->smooth(moving_average_filter->data_streams[0], (float)bounding_box_midpoint[0]);
             if (moving_average_filter->data_streams[0][10] != 0)
             {
@@ -141,10 +161,12 @@ void Brain::centerRobot(int object_identifier)
     Interface::vision_sub_t object_sub = temp_node->create_subscription<scion_types::msg::ZedObject>
     ("zed_vision_data", 10, [this, &temp_node, &camera_frame_midpoint, &robot_centered, &moving_average_filter, &object_identifier, &blind_cycles](const scion_types::msg::ZedObject::SharedPtr msg) {
             if (msg->label_id != object_identifier) {return;}
-            if (!msg->tracking_available) {blind_cycles++;}
+            // if (!msg->tracking_available) {blind_cycles++;} else {blind_cycles = 0;}
+            // if (blind_cycles > BLIND_THRESHOLD) {this->adjustToCenter(this->lastFilteredMidpoint_, camera_frame_midpoint[0]);}
             unique_ptr<vector<vector<uint32_t>>>ros_bounding_box = zed_to_ros_bounding_box(msg->corners);
             vector<uint32_t> bounding_box_midpoint = findMidpoint(*ros_bounding_box);
             float filtered_bounding_box_midpoint = moving_average_filter->smooth(moving_average_filter->data_streams[0], (float)bounding_box_midpoint[0]);
+            this->lastFilteredMidpoint_ = filtered_bounding_box_midpoint;
             
             if (areEqual(bounding_box_midpoint, camera_frame_midpoint)) {robot_centered.set_value(true);}
             else {
@@ -156,11 +178,6 @@ void Brain::centerRobot(int object_identifier)
             }
     });
     rclcpp::spin_until_future_complete(temp_node, future);
-}
-
-void adjust()
-{
-
 }
 
 std::unique_ptr<vector<vector<uint32_t>>> Brain::zed_to_ros_bounding_box(std::array<scion_types::msg::Keypoint2Di, 4>& zed_bounding_box)
@@ -193,6 +210,13 @@ bool Brain::areEqual(vector<uint32_t> point_a, vector<uint32_t> point_b)
 void Brain::adjustToCenter(vector<uint32_t> bounding_box_midpoint, vector<uint32_t> camera_frame_midpoint)
 {   
     bool bounding_box_is_to_the_right_of_center_pixel = bounding_box_midpoint[0] > camera_frame_midpoint[0];
+    if (bounding_box_is_to_the_right_of_center_pixel) {this->turn(TO_THE_RIGHT);}
+    else {this->turn(TO_THE_LEFT);}
+}
+
+void Brain::adjustToCenter(float bounding_box_midpoint, float camera_frame_midpoint)
+{   
+    bool bounding_box_is_to_the_right_of_center_pixel = bounding_box_midpoint > camera_frame_midpoint;
     if (bounding_box_is_to_the_right_of_center_pixel) {this->turn(TO_THE_RIGHT);}
     else {this->turn(TO_THE_LEFT);}
 }

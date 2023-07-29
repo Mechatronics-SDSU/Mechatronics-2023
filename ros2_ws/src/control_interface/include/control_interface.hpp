@@ -19,6 +19,7 @@
 #include "scion_types/msg/vision_object.hpp"
 #include "scion_types/msg/zed_object.hpp"
 #include "scion_types/msg/pid_tuning.hpp"
+#include "scion_types/msg/sub_state.hpp"
 #include "scion_types/action/pid.hpp"
 #include "std_msgs/msg/int32.hpp"
 
@@ -58,6 +59,7 @@ namespace Interface
     typedef rclcpp::Subscription<scion_types::msg::Datapoint>::SharedPtr                    datapoint_sub_t;
     typedef rclcpp::Subscription<scion_types::msg::VisionObject>::SharedPtr                 object_sub_t;
     typedef rclcpp::Subscription<scion_types::msg::ZedObject>::SharedPtr                    vision_sub_t;
+    typedef rclcpp::Subscription<scion_types::msg::SubState>::SharedPtr                     sub_state_sub_t;
     typedef rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr                              int_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::PidTuning>::SharedPtr                       tune_pid_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::Idea>::SharedPtr                            idea_pub_t;
@@ -67,6 +69,7 @@ namespace Interface
     typedef rclcpp::Publisher<scion_types::msg::Datapoint>::SharedPtr                       datapoint_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::VisionObject>::SharedPtr                    object_pub_t;
     typedef rclcpp::Publisher<scion_types::msg::ZedObject>::SharedPtr                       vision_pub_t;
+    typedef rclcpp::Publisher<scion_types::msg::SubState>::SharedPtr                        sub_state_pub_t;
     typedef std::vector<std::vector<float>>                                                 matrix_t;                                                                            
     typedef rclcpp::TimerBase::SharedPtr                                                    ros_timer_t;
 

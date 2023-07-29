@@ -1,6 +1,7 @@
 #include <linux/can.h>
 #include <linux/can/raw.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 #include "mainwindow.hpp"
 #include "./ui_mainwindow.h"
@@ -41,6 +42,8 @@ void MainWindow::executeCommand(const char* command, QLabel* label)
     char buffer[128];
     fgets(buffer, sizeof(buffer), pipe);
     label->setText(buffer);
+    sleep(6);
+    pclose(pipe);
 }
 
 void MainWindow::launchButtonClicked()

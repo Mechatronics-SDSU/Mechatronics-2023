@@ -18,17 +18,19 @@ using std::placeholders::_1;
 using std::placeholders::_2;
 using namespace std;
 
-#define TO_THE_RIGHT 4.0f
-#define TO_THE_LEFT -4.0f
-#define PIXEL_ERROR_THRESHOLD 100
-#define SLEEP_TIME 50ms
-#define SMOOTH_TURN_DEGREE 25.0f
-#define SMOOTH_MOVE_DEGREE 1.0f
-#define SUBMERGE_DISTANCE 1.5f
-#define MID_X_PIXEL 640
-#define MID_Y_PIXEL 360
-#define NUM_CORNERS 4
-#define BLIND_THRESHOLD 20
+#define TO_THE_RIGHT            4.0f
+#define TO_THE_LEFT             -4.0f
+#define PIXEL_ERROR_THRESHOLD   100
+#define SLEEP_TIME              50ms
+#define SMOOTH_TURN_DEGREE      25.0f
+#define SMOOTH_MOVE_DEGREE      1.0f
+#define SUBMERGE_DISTANCE       1.5f
+#define MID_X_PIXEL             640
+#define MID_Y_PIXEL             360
+#define NUM_CORNERS             4
+#define BLIND_THRESHOLD         50
+#define BUTTON_PRESS            4
+#define EXTERNAL_MESSAGE        5
 
 class Brain : public rclcpp::Node
 {
@@ -48,6 +50,8 @@ class Brain : public rclcpp::Node
         Interface::ros_sendframe_client_t           can_client_;
         Interface::ros_trigger_service_t            pid_ready_service_;
         Interface::ros_trigger_service_t            vision_ready_service_;
+        float                                       lastFilteredMidpoint_;
+        float                                       lastUnFilteredMidpoint_;
         std::string                                 mode_param_;
         bool                                        object_seen_ = false;
         ////////////////////////////////////////////////////////////////////////////////
@@ -61,6 +65,7 @@ class Brain : public rclcpp::Node
         ////////////////////////////////////////////////////////////////////////////////
 
         void doUntil(action_t action, condition_t condition, cleanup_t cleanup, bool& condition_global, string condition_param, float action_param);
+        void waitForReady();
         bool objectSeen(string object);
         float getDistanceFromCamera(string object);
         unique_ptr<Filter> populateFilterBuffer(int object_identifier);
@@ -68,6 +73,7 @@ class Brain : public rclcpp::Node
         std::unique_ptr<vector<vector<uint32_t>>> zed_to_ros_bounding_box(std::array<scion_types::msg::Keypoint2Di, 4>& zed_bounding_box);
         vector<uint32_t> findMidpoint(vector<vector<uint32_t>>& bounding_box);
         bool areEqual(vector<uint32_t> point_a, vector<uint32_t> point_b);
+        void adjustToCenter(float bounding_box_midpoint, float camera_frame_midpoint);
         void adjustToCenter(vector<uint32_t> bounding_box_midpoint, vector<uint32_t> camera_frame_midpoint);
         void waitForCommandQueueEmpty();
         bool isCommandQueueEmpty();
