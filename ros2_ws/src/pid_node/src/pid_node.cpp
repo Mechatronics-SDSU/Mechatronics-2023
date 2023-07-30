@@ -399,7 +399,7 @@ bool Controller::equalToZero(vector<int> thrustVect)
 
 bool Controller::isSlewRateLow(int totalSlewRate)
 {
-    #define LOW_SLEW_VALUE 5;
+    #define LOW_SLEW_VALUE 1;
     return totalSlewRate < LOW_SLEW_VALUE;
 }
 
@@ -449,7 +449,7 @@ void Controller::execute(const std::shared_ptr<GoalHandlePIDAction> goal_handle)
         }
         this->areEqual(current_state_, desired_state_) ? cycles_at_set_point++ : cycles_at_set_point=0; 
         slew_buffer.push_front(thrustInts);
-            if (slew_buffer.size() > 20) {
+            if (slew_buffer.size() > 10) {
                 slew_buffer.pop_back();
                 slew_rate_low = isSlewRateLow(calculateTotalSlew(slew_buffer));
             }
