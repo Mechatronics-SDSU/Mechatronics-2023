@@ -50,6 +50,7 @@ class Brain : public rclcpp::Node
         Interface::ros_sendframe_client_t           can_client_;
         Interface::ros_trigger_service_t            pid_ready_service_;
         Interface::ros_trigger_service_t            vision_ready_service_;
+        Interface::sub_state_sub_t                  submarine_state_sub_;
         float                                       lastFilteredMidpoint_;
         float                                       lastUnFilteredMidpoint_;
         std::string                                 mode_param_;

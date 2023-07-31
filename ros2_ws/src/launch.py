@@ -25,9 +25,9 @@ def generate_launch_description():
     all the nodes are placed here as well as Zed Node launch arguments
     """
     return LaunchDescription([
-         # launch_ros.actions.Node(
-        #     package='a50_node', executable='a50_exec', output='screen'
-        #     ),
+         launch_ros.actions.Node(
+             package='a50_node', executable='a50_exec', output='screen'
+             ),
         # launch_ros.actions.Node(
         #     package='ahrs_node', executable='ahrs_exec', output='screen'
         #     ),

@@ -199,4 +199,17 @@ void canClient::setBotInSafeMode(Interface::ros_sendframe_client_t can_client)
     sendFrame(0x022, 5, safeModeFrame.data(), can_client);
 }
 
+void canClient::turnOnLight(Interface::ros_sendframe_client_t can_client) 
+{
+    std::vector<unsigned char> lightEnable{0x04, 0x00, 0x00, 0x00, 0x01};
+    canClient::sendFrame(0x22, 5, lightEnable.data(), can_client);
+    std::vector<unsigned char> lightOn{0x04, 0x00, 0x04, 0x00, 0x64};
+    canClient::sendFrame(0x22, 5, lightOn.data(), can_client);
+}
+
+void canClient::turnOffLight(Interface::ros_sendframe_client_t can_client) 
+{
+    std::vector<unsigned char> lightOn{0x04, 0x00, 0x04, 0x00, 0x00};
+    canClient::sendFrame(0x22, 5, lightOn.data(), can_client);
+}
 

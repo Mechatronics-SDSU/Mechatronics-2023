@@ -27,7 +27,7 @@
 #include <cmath>
 #include "brain_node.hpp"
 #include "scion_types/action/pid.hpp"
-#include "control_interface.hpp"
+// #include "control_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "vector_operations.hpp"
@@ -37,8 +37,12 @@ Brain::Brain() : Node("brain_node")
 {
     idea_pub_ = this->create_publisher<scion_types::msg::Idea>("brain_idea_data", 10);
     can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
-    // pid_ready_service_ = this->create_service<std_srvs::srv::Trigger>("pid_ready", std::bind(&Brain::ready, this, _1, _2));
-    vision_ready_service_ = this->create_service<std_srvs::srv::Trigger>("vision_ready", std::bind(&Brain::ready, this, _1, _2));
+    pid_ready_service_ = this->create_service<std_srvs::srv::Trigger>("pid_ready", std::bind(&Brain::ready, this, _1, _2));
+    // vision_ready_service_ = this->create_service<std_srvs::srv::Trigger>("vision_ready", std::bind(&Brain::ready, this, _1, _2));
+    submarine_state_sub_ = this->create_subscription<scion_types::msg::SubState>("submarine_state", 10, [this](const scion_types::msg::SubState::SharedPtr msg)
+    {
+        if (msg->host_mode == 0) {canClient::turnOffLight(this->can_client_);}
+    });
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -48,6 +52,7 @@ Brain::Brain() : Node("brain_node")
 void Brain::ready(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, 
                     std::shared_ptr<std_srvs::srv::Trigger::Response> response)
 {
+    canClient::turnOnLight(this->can_client_);
     RCLCPP_INFO(this->get_logger(), "Camera is On");
     this->waitForReady();
     this->performMission();

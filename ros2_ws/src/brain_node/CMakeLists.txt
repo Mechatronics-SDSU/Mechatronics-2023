@@ -38,6 +38,8 @@ add_executable(
     brain_exec 
     src/brain_node.cpp
     src/main.cpp
+    ${SRC_DIR}/control_interface/src/control_interface.cpp
+
 )
 
 target_link_libraries(
