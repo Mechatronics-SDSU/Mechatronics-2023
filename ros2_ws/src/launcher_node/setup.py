@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'ahrs_node'
+package_name = 'launcher_node'
 
 setup(
     name=package_name,
