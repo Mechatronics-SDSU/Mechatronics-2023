@@ -6,7 +6,7 @@ from scion_types.msg import SubState
 class RobotLauncher(Node):
     def __init__(self):
         super().__init__('launch_subscriber')
-        self.sub_state_sub = self.create_subscription(SubState, 'sub_state', self.sub_state_callback, 10)
+        self.sub_state_sub = self.create_subscription(SubState, 'submarine_state', self.sub_state_callback, 10)
         self.child = None
     def sub_state_callback(self, msg):
         if msg.host_mode == 4:
