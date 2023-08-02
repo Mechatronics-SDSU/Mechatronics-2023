@@ -13,7 +13,8 @@ class RobotLauncher(Node):
             self.child = subprocess.Popen(["ros2", "launch", "launch.py"])
         if msg.host_mode == 0:
             self.child.terminate()
-
+            self.child = None
+            
 def main(args=None):
     rclpy.init(args=args)
     sub_state_node = RobotLauncher()

@@ -41,7 +41,10 @@ Brain::Brain() : Node("brain_node")
     // vision_ready_service_ = this->create_service<std_srvs::srv::Trigger>("vision_ready", std::bind(&Brain::ready, this, _1, _2));
     submarine_state_sub_ = this->create_subscription<scion_types::msg::SubState>("submarine_state", 10, [this](const scion_types::msg::SubState::SharedPtr msg)
     {
-        if (msg->host_mode == 0) {canClient::turnOffLight(this->can_client_);}
+        if (msg->host_mode == 0) 
+        {
+            exit(EXIT_SUCCESS);
+        }
     });
 }
 

@@ -22,7 +22,14 @@ CurrentStateNode::CurrentStateNode() : Node("current_state_node")
         orientation_valid_ = false;
     }
 
-   
+    submarine_state_sub_ = this->create_subscription<scion_types::msg::SubState>("submarine_state", 10, [this](const scion_types::msg::SubState::SharedPtr msg)
+    {
+        if (msg->host_mode == 0) 
+        {
+            exit(EXIT_SUCCESS);
+        }
+    });
+
     orientation_sub_ = this->create_subscription<scion_types::msg::State>
     ("ahrs_orientation_data", 10, std::bind(&CurrentStateNode::orientation_sub_callback, this, _1));
 

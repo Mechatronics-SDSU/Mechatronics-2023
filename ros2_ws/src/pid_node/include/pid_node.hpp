@@ -53,8 +53,9 @@ public:
     PID_Params                                  pid_params_object_;                      // Passed to controller for tuning
     Interface::ros_trigger_client_t             pid_ready_client_;
     std::map<int, string>                       axis_tuning_map_;
+    Interface::sub_state_sub_t                  submarine_state_sub_;
     int                                         motor_count_ = 8;
-
+     
     /* Upon initialization set all values to [0,0,0] */
     
     Interface::current_state_t current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F}; // State described by yaw, pitch, roll, x, y, z 

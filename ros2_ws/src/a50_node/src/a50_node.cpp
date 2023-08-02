@@ -24,6 +24,13 @@ A50Node::A50Node(): Node("a50_node")
     this->resetDeadReckoning();
     sock_ = connectToSocket(sock_, serv_addr_);
     get_data_timer_ = this->create_wall_timer(50ms, std::bind(&A50Node::getA50Data, this));
+    submarine_state_sub_ = this->create_subscription<scion_types::msg::SubState>("submarine_state", 10, [this](const scion_types::msg::SubState::SharedPtr msg)
+    {
+        if (msg->host_mode == 0) 
+        {
+            exit(EXIT_SUCCESS);
+        }
+    });
 }
 
 // Send reset command to the socket

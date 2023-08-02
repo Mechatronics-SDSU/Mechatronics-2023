@@ -30,6 +30,8 @@ private:
     Interface::state_pub_t position_publisher_;
     Interface::state_pub_t orientation_publisher_;
     Interface::ros_timer_t get_data_timer_;
+    Interface::sub_state_sub_t                  submarine_state_sub_;
+
 
     void resetDeadReckoning();
     void getA50Data();

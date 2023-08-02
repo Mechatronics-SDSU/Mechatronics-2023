@@ -107,6 +107,14 @@ Controller::Controller(): Node("pid_controller")
     use_position_service_ = this->create_service<std_srvs::srv::SetBool>("use_position", std::bind(&Controller::usePosition, this, _1, _2));
     stabilize_robot_service_ = this->create_service<std_srvs::srv::SetBool>("stabilize_robot", std::bind(&Controller::stabilizeRobot, this, _1, _2));
 
+    submarine_state_sub_ = this->create_subscription<scion_types::msg::SubState>("submarine_state", 10, [this](const scion_types::msg::SubState::SharedPtr msg)
+      {
+          if (msg->host_mode == 0) 
+          {
+              exit(EXIT_SUCCESS);
+          }
+      });
+
     controller_ = Scion_Position_PID_Controller(pid_params_object_.get_pid_params());
     controller_.getStatus();
 

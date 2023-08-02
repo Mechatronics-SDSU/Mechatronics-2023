@@ -41,6 +41,7 @@ class CurrentStateNode : public rclcpp::Node
     Interface::ros_timer_t              state_pub_timer_;
     Interface::current_state_t          current_state_  {0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
     Interface::current_state_t          relative_state_ {0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+    Interface::sub_state_sub_t          submarine_state_sub_;
     std::vector<float>                  current_orientation_{0.0F, 0.0F, 0.0F};
     std::vector<float>                  current_position_   {0.0F, 0.0F, 0.0F};
     bool current_state_valid_ =         false;

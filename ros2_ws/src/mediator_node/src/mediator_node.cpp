@@ -26,6 +26,14 @@ Mediator::Mediator() : Node("Mediator")
     commands_in_queue_count_pub_ = this->create_publisher<std_msgs::msg::Int32>("is_command_queue_empty", 10);
     commands_count_timer_ = this->create_wall_timer(50ms, std::bind(&Mediator::commands_count_timer_callback, this));
 
+    submarine_state_sub_ = this->create_subscription<scion_types::msg::SubState>("submarine_state", 10, [this](const scion_types::msg::SubState::SharedPtr msg)
+    {
+        if (msg->host_mode == 0) 
+        {
+            exit(EXIT_SUCCESS);
+        }
+    });
+
     current_state_sub_ = this->create_subscription<scion_types::msg::State>
     (
       "relative_current_state_data", 

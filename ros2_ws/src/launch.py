@@ -31,9 +31,9 @@ def generate_launch_description():
         # launch_ros.actions.Node(
         #     package='ahrs_node', executable='ahrs_exec', output='screen'
         #     ),
-        # launch_ros.actions.Node(
-        #     package='brain_node', executable='brain_exec', output='screen' 
-        #     ),
+        launch_ros.actions.Node(
+            package='brain_node', executable='brain_exec', output='screen' 
+            ),
         # launch_ros.actions.Node(
         #     package='controller_node', executable='controller_exec', output='screen', 
         #     parameters= [
@@ -65,14 +65,14 @@ def generate_launch_description():
         # launch_ros.actions.Node(
         #     package='test_node', executable='test_exec', output='screen' 
         #     ),    
-        launch_ros.actions.Node(
-            package='unified_can_driver', executable='unified_can_driver', output='screen',         
-            parameters= [
-                            {"can_bus_interface": "can0"},
-                            {"do_module_polling": False},
-                            {"module_bitfield": 0}
-                        ]
-            ),
+        # launch_ros.actions.Node(
+        #     package='unified_can_driver', executable='unified_can_driver', output='screen',         
+        #     parameters= [
+        #                     {"can_bus_interface": "can0"},
+        #                     {"do_module_polling": False},
+        #                     {"module_bitfield": 0}
+        #                 ]
+        #     ),
         # launch_ros.actions.Node(
         #     package='zed_orientation_node', executable='zed_orientation_exec' 
         #     ),   

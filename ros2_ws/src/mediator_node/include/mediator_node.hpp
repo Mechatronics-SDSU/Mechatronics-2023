@@ -44,6 +44,8 @@ private:
     Interface::ros_timer_t                  commands_count_timer_;
     Interface::Command*                     current_command_; 
     Interface::current_state_t              current_state_{0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F};
+    Interface::sub_state_sub_t              submarine_state_sub_;
+
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
                                             // COMMAND HANDLING // 
