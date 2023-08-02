@@ -27,7 +27,7 @@
 #include <cmath>
 #include "brain_node.hpp"
 #include "scion_types/action/pid.hpp"
-// #include "control_interface.hpp"
+#include "control_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "vector_operations.hpp"
@@ -43,6 +43,7 @@ Brain::Brain() : Node("brain_node")
     {
         if (msg->host_mode == 0) 
         {
+            canClient::turnOffLight(Interface::ros_sendframe_client_t can_client) 
             exit(EXIT_SUCCESS);
         }
     });
@@ -141,6 +142,8 @@ unique_ptr<Filter> Brain::populateFilterBuffer(int object_identifier)
     Interface::vision_sub_t object_sub = temp_node->create_subscription<scion_types::msg::ZedObject>
     ("zed_vision_data", 10, [this, &temp_node, &buffer_filled, &moving_average_filter, &object_identifier, &blind_cycles, &camera_frame_midpoint](const scion_types::msg::ZedObject::SharedPtr msg) {
             if (msg->label_id != object_identifier) {return;}
+            RCLCPP_INFO(this->get_logger(), "Filling Buffer");
+
             // if (!msg->tracking_available) {blind_cycles++;} else {blind_cycles = 0;}
             // if (blind_cycles > BLIND_THRESHOLD) {this->adjustToCenter(this->lastUnFilteredMidpoint_, camera_frame_midpoint[0]); return;}
             unique_ptr<vector<vector<uint32_t>>>ros_bounding_box = zed_to_ros_bounding_box(msg->corners);
@@ -169,6 +172,9 @@ void Brain::centerRobot(int object_identifier)
     Interface::vision_sub_t object_sub = temp_node->create_subscription<scion_types::msg::ZedObject>
     ("zed_vision_data", 10, [this, &temp_node, &camera_frame_midpoint, &robot_centered, &moving_average_filter, &object_identifier, &blind_cycles](const scion_types::msg::ZedObject::SharedPtr msg) {
             if (msg->label_id != object_identifier) {return;}
+            RCLCPP_INFO(this->get_logger(), "Centering Robot");
+            RCLCPP_INFO(this->get_logger(), "Midpoint Equals %f", filtered_bounding_box_midpoint);
+
             // if (!msg->tracking_available) {blind_cycles++;} else {blind_cycles = 0;}
             // if (blind_cycles > BLIND_THRESHOLD) {this->adjustToCenter(this->lastFilteredMidpoint_, camera_frame_midpoint[0]);}
             unique_ptr<vector<vector<uint32_t>>>ros_bounding_box = zed_to_ros_bounding_box(msg->corners);
@@ -342,14 +348,17 @@ void Brain::keepMoving(float power)
 
 void Brain::performMission()
 {
-    string GATE_NAME = "Full- Gate";
-    const int object_identifier = 0;
-    this->centerRobot(object_identifier);
-    doUntil(&Brain::keepTurning, &Brain::objectSeen, &Brain::stop, this->object_seen_, GATE_NAME, SMOOTH_TURN_DEGREE);
-    this->centerRobot(object_identifier);
+    string GATE_NAME = "Gate- Left Earth";
+    const int object_identifier = 1;
+
     levitate(SUBMERGE_DISTANCE);
-    moveForward(this->getDistanceFromCamera(GATE_NAME)/2);
     this->centerRobot(object_identifier);
+    // doUntil(&Brain::keepTurning, &Brain::objectSeen, &Brain::stop, this->object_seen_, GATE_NAME, SMOOTH_TURN_DEGREE);
+    moveForward(2);
+    this->centerRobot(object_identifier);
+    moveForward(6);
+    // moveForward(this->getDistanceFromCamera(GATE_NAME)/2);
+    // this->centerRobot(object_identifier);
     exit(0);
 } 
 
