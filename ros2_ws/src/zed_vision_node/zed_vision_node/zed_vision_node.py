@@ -144,29 +144,30 @@ class ZedVision(Node):
         msg = ZedObject()
         if object_list:
             for object in object_list:
-                msg.label_id = object.raw_label
-                msg.position = [object.position[0], object.position[1], object.position[2]]
-                corners = []
-                for point in object.bounding_box_2d:
-                    kp = Keypoint2Di()
-                    kp.kp = [0,0]
-                    kp.kp.append(int(point[0]))
-                    kp.kp.append(int(point[1]))
-                    corners.append(kp)
-                msg.corners = corners
-                msg.tracking_available = True
-                
+                if object.raw_label == 1:
+                    msg = ZedObject()
+                    msg.label_id = object.raw_label
+                    msg.position = [object.position[0], object.position[1], object.position[2]]
+                    corners = []
+                    for point in object.bounding_box_2d:
+                        kp = Keypoint2Di()
+                        kp.kp = [0,0]
+                        kp.kp[0] = (int(point[0]))
+                        kp.kp[1] = (int(point[1]))
+                        corners.append(kp)
+                    msg.corners = corners
+                    self.vision_publisher.publish(msg)
 
-                    # x = [object.bounding_box_2d[0][0], object.bounding_box_2d[1][0], object.bounding_box_2d[2][0], object.bounding_box_2d[3][0], (object.bounding_box_2d[0][0] + object.bounding_box_2d[1][0]) / 2]
-                    # y = [object.bounding_box_2d[0][1], object.bounding_box_2d[1][1], object.bounding_box_2d[2][1], object.bounding_box_2d[3][1], (object.bounding_box_2d[0][1] + object.bounding_box_2d[2][1]) / 2]
-                    # smooth_x = []
-                    # smooth_y = []
-                    # for index, x_point in enumerate(x):
-                    #     tmp_x = self.smoother.smooth(self.smoother.points[index], coeffs, x_point)
-                    #     smooth_x.append(tmp_x)
-                    # for index, y_point in enumerate(y):
-                    #     tmp_y = self.smoother.smooth(self.smoother.points[index + 5], coeffs, y_point)
-                    #     smooth_y.append(tmp_y)
+                    x = [object.bounding_box_2d[0][0], object.bounding_box_2d[1][0], object.bounding_box_2d[2][0], object.bounding_box_2d[3][0], (object.bounding_box_2d[0][0] + object.bounding_box_2d[1][0]) / 2]
+                    y = [object.bounding_box_2d[0][1], object.bounding_box_2d[1][1], object.bounding_box_2d[2][1], object.bounding_box_2d[3][1], (object.bounding_box_2d[0][1] + object.bounding_box_2d[2][1]) / 2]
+                    smooth_x = []
+                    smooth_y = []
+                    for index, x_point in enumerate(x):
+                        tmp_x = self.smoother.smooth(self.smoother.points[index], coeffs, x_point)
+                        smooth_x.append(tmp_x)
+                    for index, y_point in enumerate(y):
+                        tmp_y = self.smoother.smooth(self.smoother.points[index + 5], coeffs, y_point)
+                        smooth_y.append(tmp_y)
 
                     # x = (object.bounding_box_2d[0][0] + object.bounding_box_2d[3][0]) / 2
                     # y = 720 - ((object.bounding_box_2d[0][1] + object.bounding_box_2d[2][1]) / 2)
@@ -174,15 +175,17 @@ class ZedVision(Node):
                     # smooth_y = self.smoother.smooth(self.smoother.y_avg_fir, coeffs, y)
                     # print(x,y)
 
-                    # matplotlib.use('TkAgg')
-                    # plt.axis([0, 1280, 0, 720])
-                    # plt.plot(smooth_x,smooth_y,'b*', markersize=20)
-                    # plt.plot(x,y,'r*', markersize=20)
-                    # plt.grid()
-                    # plt.ion()
-                    # plt.show()                                                                  # [0,0], [1,1], [], []
-                    # plt.pause(.01)
-                    # plt.clf()
+                    matplotlib.use('TkAgg')
+                    plt.axis([0, 1280, 0, 720])
+                    plt.plot(smooth_x,smooth_y,'b*', markersize=20)
+                    plt.plot(x,y,'r*', markersize=20)
+                    plt.grid()
+                    plt.ion()
+                    plt.show()                                                                  
+                    plt.pause(.01)
+                    plt.clf()
+
+                    msg.confidence = float(smooth_x[4])
 
                     # Recomment to here - joseph
                     #print(object.bounding_box_2d)
@@ -192,12 +195,7 @@ class ZedVision(Node):
                     ##self.vision_publisher.publish(msg)
         
                     
-            else:
-                msg.tracking_available = False
                     # print(object.bounding_box_2d)
-
-
-            self.vision_publisher.publish(msg)
         
 
         if vision_object_list:

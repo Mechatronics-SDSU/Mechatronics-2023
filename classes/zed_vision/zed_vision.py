@@ -32,12 +32,12 @@ from utils.augmentations import letterbox
 from threading import Lock, Thread
 from time import sleep
 
-# YAML_FILE = '/home/mechatronics/master/vision/new_gate.yaml'
-# MODEL_FILE = '/home/mechatronics/new_gate.pt'
+YAML_FILE = '/home/mechatronics/master/vision/new_gate.yaml'
+MODEL_FILE = '/home/mechatronics/new_gate.pt'
 
 '/home/mechatronics/master/vision/underwater.yaml'
 
-with open("/home/mechatronics/master/classes/zed_vision/yolov5/data/coco128.yaml") as f:
+with open(YAML_FILE) as f:
     items = yaml.load(f, Loader=yaml.FullLoader)
 lock = Lock()
 run_signal = False
@@ -156,7 +156,7 @@ class Zed_Vision():
     def initCamera(self):
         parser = argparse.ArgumentParser()
         # parser.add_argument('--weights', nargs='+', type=str, default=yolov, help='model.pt path(s)') #where we put weights at
-        parser.add_argument('--weights', nargs='+', type=str, default='yolov5m.pt', help='model.pt path(s)')
+        parser.add_argument('--weights', nargs='+', type=str, default=MODEL_FILE, help='model.pt path(s)')
         parser.add_argument('--svo', type=str, default=None, help='optional svo file')
         parser.add_argument('--img_size', type=int, default=640, help='inference size (pixels)')
         parser.add_argument('--conf_thres', type=float, default=0.4, help='object confidence threshold')
