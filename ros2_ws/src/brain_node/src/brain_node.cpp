@@ -43,7 +43,7 @@ Brain::Brain() : Node("brain_node")
     {
         if (msg->host_mode == 0) 
         {
-            canClient::turnOffLight(Interface::ros_sendframe_client_t can_client) 
+            canClient::turnOffLight(this->can_client_);
             exit(EXIT_SUCCESS);
         }
     });
@@ -173,7 +173,6 @@ void Brain::centerRobot(int object_identifier)
     ("zed_vision_data", 10, [this, &temp_node, &camera_frame_midpoint, &robot_centered, &moving_average_filter, &object_identifier, &blind_cycles](const scion_types::msg::ZedObject::SharedPtr msg) {
             if (msg->label_id != object_identifier) {return;}
             RCLCPP_INFO(this->get_logger(), "Centering Robot");
-            RCLCPP_INFO(this->get_logger(), "Midpoint Equals %f", filtered_bounding_box_midpoint);
 
             // if (!msg->tracking_available) {blind_cycles++;} else {blind_cycles = 0;}
             // if (blind_cycles > BLIND_THRESHOLD) {this->adjustToCenter(this->lastFilteredMidpoint_, camera_frame_midpoint[0]);}
@@ -181,6 +180,7 @@ void Brain::centerRobot(int object_identifier)
             vector<uint32_t> bounding_box_midpoint = findMidpoint(*ros_bounding_box);
             float filtered_bounding_box_midpoint = moving_average_filter->smooth(moving_average_filter->data_streams[0], (float)bounding_box_midpoint[0]);
             this->lastFilteredMidpoint_ = filtered_bounding_box_midpoint;
+            RCLCPP_INFO(this->get_logger(), "Midpoint Equals %f", filtered_bounding_box_midpoint);
             
             if (areEqual(filtered_bounding_box_midpoint, camera_frame_midpoint[0])) {robot_centered.set_value(true);}
             else {
