@@ -57,8 +57,8 @@ void Brain::ready(const std::shared_ptr<std_srvs::srv::Trigger::Request> request
                     std::shared_ptr<std_srvs::srv::Trigger::Response> response)
 {
     canClient::turnOnLight(this->can_client_);
-    RCLCPP_INFO(this->get_logger(), "Camera is On");
-    this->waitForReady();
+    // RCLCPP_INFO(this->get_logger(), "Camera is On");
+    // this->waitForReady();
     this->performMission();
 }
 
