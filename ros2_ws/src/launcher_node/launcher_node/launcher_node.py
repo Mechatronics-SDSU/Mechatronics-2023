@@ -12,10 +12,11 @@ class RobotLauncher(Node):
     def sub_state_callback(self, msg):
         if msg.host_mode == 4:
             self.child = subprocess.Popen(["ros2", "launch", "launch.py"])
-            self.vision_child = subprocess.Popen(["ros2 run zed_vision_node zed_vision_exec"])
+            # self.vision_child = subprocess.Popen(["ros2 run zed_vision_node zed_vision_exec"])
         if msg.host_mode == 0:
-            self.child.terminate()
-            self.child = None
+            if self.child == None:
+                self.child.terminate()
+                self.child = None
             
 def main(args=None):
     rclpy.init(args=args)
