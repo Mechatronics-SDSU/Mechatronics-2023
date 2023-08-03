@@ -24,7 +24,7 @@ using namespace std;
 #define SLEEP_TIME              50ms
 #define SMOOTH_TURN_DEGREE      25.0f
 #define SMOOTH_MOVE_DEGREE      1.0f
-#define SUBMERGE_DISTANCE       1.5f
+#define SUBMERGE_DISTANCE       0.0f
 #define MID_X_PIXEL             640
 #define MID_Y_PIXEL             360
 #define NUM_CORNERS             4
@@ -51,6 +51,7 @@ class Brain : public rclcpp::Node
         Interface::ros_trigger_service_t            pid_ready_service_;
         Interface::ros_trigger_service_t            vision_ready_service_;
         Interface::sub_state_sub_t                  submarine_state_sub_;
+        Interface::sub_state_pub_t                  submarine_state_pub_;
         float                                       lastFilteredMidpoint_;
         float                                       lastUnFilteredMidpoint_;
         std::string                                 mode_param_;
@@ -93,6 +94,8 @@ class Brain : public rclcpp::Node
         void levitate(float degree);
         void keepTurning(float power);
         void keepMoving(float power);
+        void endMission();
+
         ////////////////////////////////////////////////////////////////////////////////
         //                                  MISSION                                   //
         ////////////////////////////////////////////////////////////////////////////////

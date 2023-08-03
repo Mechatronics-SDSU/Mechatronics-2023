@@ -61,7 +61,7 @@ PID_Params::PID_Params()
     
     this->x_pos =
     {
-        {"kp", 0.016},
+        {"kp", 0.16},
         {"ki", 0.005},
         {"kd", 0.008},
         {"ctrl_val_offset", 0.0},
@@ -73,7 +73,7 @@ PID_Params::PID_Params()
 
     this->y_pos = 
     {
-        {"kp", 0.016},
+        {"kp", 0.16},
         {"ki", 0.005},
         {"kd", 0.008},
         {"ctrl_val_offset", 0.0},

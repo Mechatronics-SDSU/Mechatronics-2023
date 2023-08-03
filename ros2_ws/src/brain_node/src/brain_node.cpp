@@ -39,6 +39,7 @@ Brain::Brain() : Node("brain_node")
     can_client_ = this->create_client<scion_types::srv::SendFrame>("send_can_raw");
     pid_ready_service_ = this->create_service<std_srvs::srv::Trigger>("pid_ready", std::bind(&Brain::ready, this, _1, _2));
     // vision_ready_service_ = this->create_service<std_srvs::srv::Trigger>("vision_ready", std::bind(&Brain::ready, this, _1, _2));
+    submarine_state_pub_ = this->create_publisher<scion_types::msg::SubState>("submarine_state", 10);
     submarine_state_sub_ = this->create_subscription<scion_types::msg::SubState>("submarine_state", 10, [this](const scion_types::msg::SubState::SharedPtr msg)
     {
         if (msg->host_mode == 0) 
@@ -57,8 +58,6 @@ void Brain::ready(const std::shared_ptr<std_srvs::srv::Trigger::Request> request
                     std::shared_ptr<std_srvs::srv::Trigger::Response> response)
 {
     canClient::turnOnLight(this->can_client_);
-    // RCLCPP_INFO(this->get_logger(), "Camera is On");
-    // this->waitForReady();
     this->performMission();
 }
 
@@ -342,6 +341,14 @@ void Brain::keepMoving(float power)
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 }
 
+void Brain::endMission()
+{
+    #define KILL_MODE 0
+    scion_types::msg::SubState sub_state = scion_types::msg::SubState();
+    sub_state.host_mode = KILL_MODE;
+    submarine_state_pub_->publish(sub_state);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //                                  MISSION                                   //
 ////////////////////////////////////////////////////////////////////////////////
@@ -351,15 +358,17 @@ void Brain::performMission()
     string GATE_NAME = "Gate- Left Earth";
     const int object_identifier = 1;
 
-    levitate(SUBMERGE_DISTANCE);
-    this->centerRobot(object_identifier);
+    // levitate(SUBMERGE_DISTANCE);
+    // this->centerRobot(object_identifier);
     // doUntil(&Brain::keepTurning, &Brain::objectSeen, &Brain::stop, this->object_seen_, GATE_NAME, SMOOTH_TURN_DEGREE);
-    moveForward(2);
-    this->centerRobot(object_identifier);
-    moveForward(6);
+    // turn(90);
+    // tros2 launch minimal_launch.py
+    // this->centerRobot(object_identifier);
+    moveForward(1);
     // moveForward(this->getDistanceFromCamera(GATE_NAME)/2);
     // this->centerRobot(object_identifier);
-    exit(0);
+    // waitForCommandQueueEmpty();
+    // endMission();
 } 
 
 
