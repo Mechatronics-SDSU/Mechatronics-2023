@@ -21,6 +21,7 @@ from scion_types.msg import ZedObject
 from scion_types.msg import VisionObject
 from scion_types.msg import Position
 from scion_types.msg import Keypoint2Di
+from scion_types.msg import SubState
 import math
 import matplotlib
 import matplotlib.pyplot as plt
@@ -85,6 +86,7 @@ class ZedVision(Node):
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.vision_ready_service = self.create_client(Trigger, 'vision_ready')
         self.request = Trigger.Request()
+        self.sub_state_sub = self.create_subscription(SubState, 'submarine_state', self.sub_state_callback, 10)
     
         self.vision = Zed_Vision()
         self.zed, self.opt = self.vision.initCamera()
@@ -93,7 +95,10 @@ class ZedVision(Node):
                                 kwargs={'weights': self.opt.weights, 'img_size': self.opt.img_size, "conf_thres": self.opt.conf_thres})
         capture_thread.start()
         
-                       
+    def sub_state_callback(self, msg):
+        if msg.host_mode == 0:
+            exit()
+
     def iterate_pixels(self, depth_ocv) -> int:
         inf = 0
         lessThan = 0
