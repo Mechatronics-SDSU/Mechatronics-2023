@@ -10,8 +10,8 @@
 FROM ubuntu:22.04
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get install libxcb-xinerama0
-RUN apt-get install '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev
+# RUN apt-get install libxcb-xinerama0
+# RUN apt-get install '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev
 
 RUN \
     set -eux && \
@@ -27,7 +27,8 @@ RUN \
         libxcb-render0-dev libxcb-shape0-dev libxcb-sync-dev libxcb-util-dev libxcb-xfixes0-dev libxcb-xinerama0-dev libxcb-xkb-dev xorg-dev \
         libconfuse-dev libnl-3-dev libnl-route-3-dev libncurses-dev dh-autoreconf freeglut3 freeglut3-dev libglfw3-dev \
         apt-transport-https g++ graphviz xdot golang-go qt6-base-dev libglx-dev libx11-dev libmd4c-dev libmd4c-html0-dev \
-        mesa-utils libglu1-mesa-dev libglew-dev libglm-dev libao-dev libmpg123-dev libclang-dev && \
+        mesa-utils libglu1-mesa-dev libglew-dev libglm-dev libao-dev libmpg123-dev libclang-dev libxcb-xinerama0  '^libxcb.*-dev' \
+        libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev && \
     go version && \
     ssh-keygen -A && \
     curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > /usr/share/keyrings/bazel.gpg && \
