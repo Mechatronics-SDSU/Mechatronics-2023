@@ -83,6 +83,7 @@ void MainWindow::rosButtonClicked()
 //     kd_publisher->publish(message);
 // }
 
+// Halie's new code
 
 void MainWindow::kpPushButtonClicked()
 {
