@@ -100,6 +100,11 @@ TEST_F(ROBOT_TEST_SUITE, zed_to_ros) {
 //     }
 // }
 
+TEST_F(ROBOT_TEST_SUITE, fill_buffer) {
+    shared_ptr<Brain> brain_ptr = std::make_shared<Brain>();
+    
+}
+
 // int main(int argc, char ** argv)
 // {
 //   ::testing::InitGoogleTest(&argc, argv);

@@ -25,10 +25,10 @@ if(ANDROID)
 endif()
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
-# find_package(ament_cmake REQUIRED)
-# find_package(rclcpp REQUIRED)
-# find_package(scion_types REQUIRED)
-# find_package(std_msgs REQUIRED)
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(scion_types REQUIRED)
+find_package(std_msgs REQUIRED)
 
 include_directories(include)
 
@@ -55,10 +55,10 @@ add_executable(test_gui_exec
 )
 
 
-# target_include_directories(test_gui_exec PUBLIC include
-#                                     ../control_interface/include)
+target_include_directories(test_gui_exec PUBLIC include
+                                    ../control_interface/include)
 
-# ament_target_dependencies(test_gui_exec PUBLIC rclcpp scion_types std_msgs)
+ament_target_dependencies(test_gui_exec PUBLIC rclcpp scion_types std_msgs)
 
 target_link_libraries(test_gui_exec PRIVATE Qt5::Widgets)
 
@@ -70,11 +70,11 @@ target_link_libraries(test_gui_exec PRIVATE Qt5::Widgets)
 #    WIN32_EXECUTABLE TRUE
 # )
 
-# install(TARGETS test_gui_exec
-#     DESTINATION lib/${PROJECT_NAME}
-#     BUNDLE DESTINATION .
-#     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-# )
+install(TARGETS test_gui_exec
+    DESTINATION lib/${PROJECT_NAME}
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
 
-# ament_package()
+ament_package()

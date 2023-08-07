@@ -23,7 +23,7 @@ from ultralytics.yolo.data.dataloaders.v5augmentations import letterbox
 from ultralytics.yolo.utils.checks import check_imgsz
 """
 
-# sys.path.append("/home/mechatronics/master/classes/zed_vision/yolov5")
+sys.path.append("/home/mechatronics/master/classes/zed_vision/yolov5")
 from models.experimental import attempt_load
 from utils.general import check_img_size, non_max_suppression, scale_boxes, xyxy2xywh
 from utils.torch_utils import select_device
