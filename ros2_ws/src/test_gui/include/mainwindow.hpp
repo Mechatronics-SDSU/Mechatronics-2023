@@ -3,8 +3,8 @@
 
 #include <QWidget>
 #include <QMainWindow>
-#include <pid_controller.hpp>
 #include <mission_planning.hpp>
+#include <pid_controller.hpp>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,7 +22,9 @@ private slots:
 
     void on_pid_controller_clicked();
     void on_mission_planning_clicked();
+//    void moveHome();
 
+    void on_homeButton_clicked();
 
 private:
     Ui::MainWindow *ui;

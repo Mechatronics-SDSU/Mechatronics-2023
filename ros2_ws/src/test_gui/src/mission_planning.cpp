@@ -14,7 +14,13 @@ MissionPlanning::~MissionPlanning()
     delete ui;
 }
 
-void MissionPlanning::on_home_button_clicked()
+//void MissionPlanning::on_home_button_clicked()
+//{
+//    emit HomeClicked();
+//}
+
+
+void MissionPlanning::on_page2_button_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(0);
+    ui->stackedWidget->setCurrentIndex(1);
 }

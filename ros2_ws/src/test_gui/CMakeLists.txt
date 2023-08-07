@@ -30,7 +30,7 @@ find_package(rclcpp REQUIRED)
 find_package(scion_types REQUIRED)
 find_package(std_msgs REQUIRED)
 
-include_directories(include)
+ include_directories(include)
 
 
   #  add_library(test_gui SHARED

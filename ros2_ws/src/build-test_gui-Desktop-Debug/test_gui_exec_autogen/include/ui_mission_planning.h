@@ -25,7 +25,7 @@ public:
     QWidget *page;
     QLabel *label;
     QPushButton *home_button;
-    QPushButton *pushButton_2;
+    QPushButton *page2_button;
     QWidget *page_2;
 
     void setupUi(QWidget *MissionPlanning)
@@ -55,10 +55,10 @@ public:
         home_button->setObjectName(QString::fromUtf8("home_button"));
         home_button->setGeometry(QRect(80, 60, 161, 61));
         home_button->setStyleSheet(QString::fromUtf8(""));
-        pushButton_2 = new QPushButton(page);
-        pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
-        pushButton_2->setGeometry(QRect(1950, 50, 181, 61));
-        pushButton_2->setStyleSheet(QString::fromUtf8(""));
+        page2_button = new QPushButton(page);
+        page2_button->setObjectName(QString::fromUtf8("page2_button"));
+        page2_button->setGeometry(QRect(1950, 50, 181, 61));
+        page2_button->setStyleSheet(QString::fromUtf8(""));
         stackedWidget->addWidget(page);
         page_2 = new QWidget();
         page_2->setObjectName(QString::fromUtf8("page_2"));
@@ -77,7 +77,7 @@ public:
         MissionPlanning->setWindowTitle(QApplication::translate("MissionPlanning", "Form", nullptr));
         label->setText(QApplication::translate("MissionPlanning", "MISSION PLANNING", nullptr));
         home_button->setText(QApplication::translate("MissionPlanning", "Home", nullptr));
-        pushButton_2->setText(QApplication::translate("MissionPlanning", "Page 2", nullptr));
+        page2_button->setText(QApplication::translate("MissionPlanning", "Page 2", nullptr));
     } // retranslateUi
 
 };

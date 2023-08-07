@@ -22,7 +22,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MissionPlanning_t {
     QByteArrayData data[3];
-    char stringdata0[40];
+    char stringdata0[41];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -32,11 +32,11 @@ struct qt_meta_stringdata_MissionPlanning_t {
 static const qt_meta_stringdata_MissionPlanning_t qt_meta_stringdata_MissionPlanning = {
     {
 QT_MOC_LITERAL(0, 0, 15), // "MissionPlanning"
-QT_MOC_LITERAL(1, 16, 22), // "on_home_button_clicked"
-QT_MOC_LITERAL(2, 39, 0) // ""
+QT_MOC_LITERAL(1, 16, 23), // "on_page2_button_clicked"
+QT_MOC_LITERAL(2, 40, 0) // ""
 
     },
-    "MissionPlanning\0on_home_button_clicked\0"
+    "MissionPlanning\0on_page2_button_clicked\0"
     ""
 };
 #undef QT_MOC_LITERAL
@@ -69,7 +69,7 @@ void MissionPlanning::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         auto *_t = static_cast<MissionPlanning *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->on_home_button_clicked(); break;
+        case 0: _t->on_page2_button_clicked(); break;
         default: ;
         }
     }

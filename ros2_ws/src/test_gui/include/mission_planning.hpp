@@ -15,7 +15,12 @@ public:
     ~MissionPlanning();
 
 private slots:
-    void on_home_button_clicked();
+//    void on_home_button_clicked();
+
+    void on_page2_button_clicked();
+
+//signals:
+//    void HomeClicked();
 
 private:
     Ui::MissionPlanning *ui;
