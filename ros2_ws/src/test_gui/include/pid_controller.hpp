@@ -28,6 +28,9 @@ private:
     float kiVal = 0.0;
     float kdVal = 0.0;
 
+protected:
+    void keyPressEvent(QKeyEvent *event);
+
 signals:
 //    void HomeClicked();
 
@@ -43,6 +46,7 @@ private slots:
     void on_kiClearButton_clicked();
     void on_kdClearButton_clicked();
     void on_clearAllButton_clicked();
+    void navigateFocus(Qt::Key key);
 };
 
 #endif // PID_CONTROLLER_HPP

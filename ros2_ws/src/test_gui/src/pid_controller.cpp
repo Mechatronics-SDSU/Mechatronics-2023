@@ -7,6 +7,8 @@
 #include <QProcess>
 #include <QWidget>
 #include <memory> 
+#include <QKeyEvent>
+#include <QPushButton>
 
 PIDController::PIDController(QWidget *parent) :
     QWidget(parent),
@@ -18,14 +20,13 @@ PIDController::PIDController(QWidget *parent) :
     this->kd_publisher = node->create_publisher<scion_types::msg::PidTuning>("kd_dial_data", 10);
     ui->setupUi(this);
 
-    connect(ui->kp_val,  &QLineEdit::editingFinished, this, &PIDController::on_KpValue_editingFinished);
-    connect(ui->ki_val,  &QLineEdit::editingFinished, this, &PIDController::on_KiValue_editingFinished);
-    connect(ui->kd_val,  &QLineEdit::editingFinished, this, &PIDController::on_KdValue_editingFinished);
+    connect(ui->kp_val,  &QLineEdit::returnPressed, this, &PIDController::on_KpValue_editingFinished);
+    connect(ui->ki_val,  &QLineEdit::returnPressed, this, &PIDController::on_KiValue_editingFinished);
+    connect(ui->kd_val,  &QLineEdit::returnPressed, this, &PIDController::on_KdValue_editingFinished);
 
     connect(ui->kp_verticalSlider,  SIGNAL(valueChanged(int)), ui->kp_progressBar, SLOT(setValue(int)));
     connect(ui->ki_verticalSlider,  SIGNAL(valueChanged(int)), ui->ki_progressBar, SLOT(setValue(int)));
     connect(ui->kd_verticalSlider,  SIGNAL(valueChanged(int)), ui->kd_progressBar, SLOT(setValue(int)));
-
 
 }
 
@@ -132,4 +133,40 @@ void PIDController::on_clearAllButton_clicked()
     on_kpClearButton_clicked();
     on_kiClearButton_clicked();
     on_kdClearButton_clicked();
+}
+
+
+void PIDController::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_Up:
+    case Qt::Key_Down:
+        navigateFocus(static_cast<Qt::Key>(event->key()));
+        break;
+
+    }
+}
+
+
+void PIDController::navigateFocus(Qt::Key key)
+{
+    if (ui->kp_val->hasFocus()) {
+        if (key == Qt::Key_Up) {
+            ui->kd_val->setFocus();
+        } else if (key == Qt::Key_Down) {
+            ui->ki_val->setFocus();
+        }
+    } else if (ui->ki_val->hasFocus()) {
+        if (key == Qt::Key_Up) {
+            ui->kp_val->setFocus();
+        } else if (key == Qt::Key_Down) {
+            ui->kd_val->setFocus();
+        }
+    } else if (ui->kd_val->hasFocus()) {
+        if (key == Qt::Key_Up) {
+            ui->ki_val->setFocus();
+        } else if (key == Qt::Key_Down) {
+            ui->kp_val->setFocus();
+        }
+    }
 }
