@@ -9,6 +9,7 @@
 #include <memory> 
 #include <QKeyEvent>
 #include <QPushButton>
+#include <QVBoxLayout>
 
 PIDController::PIDController(QWidget *parent) :
     QWidget(parent),
@@ -18,6 +19,7 @@ PIDController::PIDController(QWidget *parent) :
     this->kp_publisher = node->create_publisher<scion_types::msg::PidTuning>("kp_dial_data", 10);
     this->ki_publisher = node->create_publisher<scion_types::msg::PidTuning>("ki_dial_data", 10);
     this->kd_publisher = node->create_publisher<scion_types::msg::PidTuning>("kd_dial_data", 10);
+    
     ui->setupUi(this);
 
     connect(ui->kp_val,  &QLineEdit::returnPressed, this, &PIDController::on_KpValue_editingFinished);
@@ -90,21 +92,6 @@ void PIDController::on_Tuning_Axis_currentIndexChanged(int index)
 
  void PIDController::executeCommands(QTextEdit* textBoxObject, const scion_types::msg::PidTuning& output) 
     {
-        // QString commands[] = {
-        //     "cd ~/master/ros2_ws"
-        //     "source /opt/ros/foxy/setup.bash"
-        //     "source install/setup.bash",
-        //     "ros2 topic echo " + topic_name,
-        // };
-        // for (const QString &command : commands) {
-        //     QProcess process;
-        //     process.start(command);
-        //     process.waitForFinished(-1);
-
-        //     QString output = process.readAllStandardOutput();
-        //     ui->textBoxObject->appendPlainText(output + "\n");
-        // }
-
         QString textToDisplay = "Data: " + QString::number(output.data) +
                                 ", Axis: " + QString::number(output.axis);
 
