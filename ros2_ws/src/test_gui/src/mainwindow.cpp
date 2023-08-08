@@ -1,7 +1,6 @@
 #include "mainwindow.hpp"
 #include "./ui_mainwindow.h"
 
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -42,3 +41,18 @@ void MainWindow::on_homeButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(0);
 }
+
+// void executeTerminalCommand(const char* command) {
+//     int result = std::system(command);
+    
+//     if (result == 0) {
+//         std::cout << "Command executed successfully." << std::endl;
+//     } else {
+//         std::cerr << "Command execution failed." << std::endl;
+//     }
+// }
+
+// void MainWindow::on_visionButton_clicked()
+// {
+//     executeTerminalCommand("python3 ~/master/scripts/vision/make_dataset.py");
+// }

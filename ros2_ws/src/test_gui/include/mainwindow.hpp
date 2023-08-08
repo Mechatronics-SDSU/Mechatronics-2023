@@ -25,6 +25,8 @@ private slots:
 //    void moveHome();
 
     void on_homeButton_clicked();
+    // void on_visionButton_clicked();
+    // void executeTerminalCommand(const char* command);
 
 private:
     Ui::MainWindow *ui;

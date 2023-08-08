@@ -3,6 +3,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "scion_types/msg/pid_tuning.hpp"
 #include <QWidget>
+#include <QTextEdit> 
 
 namespace Ui {
 class PIDController;
@@ -36,8 +37,12 @@ private slots:
     void on_KpValue_editingFinished();
     void on_KiValue_editingFinished();
     void on_KdValue_editingFinished();
-
     void on_Tuning_Axis_currentIndexChanged(int index);
+    void executeCommands(QTextEdit* textBoxObject, const scion_types::msg::PidTuning& output);
+    void on_kpClearButton_clicked();
+    void on_kiClearButton_clicked();
+    void on_kdClearButton_clicked();
+    void on_clearAllButton_clicked();
 };
 
 #endif // PID_CONTROLLER_HPP

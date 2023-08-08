@@ -23,8 +23,8 @@
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
-      <x>358</x>
-      <y>4</y>
+      <x>390</x>
+      <y>120</y>
       <width>1921</width>
       <height>1271</height>
      </rect>
@@ -33,8 +33,7 @@
      <bool>true</bool>
     </property>
     <property name="styleSheet">
-     <string notr="true">
-</string>
+     <string notr="true"/>
     </property>
     <property name="currentIndex">
      <number>0</number>
@@ -206,6 +205,25 @@
        </item>
       </layout>
      </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>760</x>
+        <y>50</y>
+        <width>463</width>
+        <height>69</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 22pt &quot;Sans Serif&quot;;</string>
+      </property>
+      <property name="text">
+       <string>GUI HOMEPAGE</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="page_2"/>
    </widget>
@@ -304,7 +322,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_4">
+       <widget class="QPushButton" name="visionButton">
         <property name="text">
          <string>Vision</string>
         </property>
@@ -332,25 +350,6 @@
       </item>
      </layout>
     </widget>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>1000</x>
-      <y>60</y>
-      <width>463</width>
-      <height>69</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">font: 22pt &quot;Sans Serif&quot;;</string>
-    </property>
-    <property name="text">
-     <string>GUI HOMEPAGE</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
