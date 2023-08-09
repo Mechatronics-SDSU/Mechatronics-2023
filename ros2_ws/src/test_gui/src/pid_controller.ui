@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>837</width>
-    <height>670</height>
+    <width>2493</width>
+    <height>1472</height>
    </rect>
   </property>
   <property name="mouseTracking">
@@ -575,7 +575,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton">
+             <widget class="QPushButton" name="kpClearButton">
               <property name="maximumSize">
                <size>
                 <width>100</width>
@@ -627,7 +627,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_4">
+             <widget class="QPushButton" name="kiClearButton">
               <property name="maximumSize">
                <size>
                 <width>100</width>
@@ -679,7 +679,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_2">
+             <widget class="QPushButton" name="kdClearButton">
               <property name="maximumSize">
                <size>
                 <width>100</width>
@@ -713,7 +713,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="QPushButton" name="clearAllButton">
           <property name="text">
            <string>Clear all</string>
           </property>

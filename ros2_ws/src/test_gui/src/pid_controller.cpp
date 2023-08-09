@@ -19,7 +19,7 @@ PIDController::PIDController(QWidget *parent) :
     this->kp_publisher = node->create_publisher<scion_types::msg::PidTuning>("kp_dial_data", 10);
     this->ki_publisher = node->create_publisher<scion_types::msg::PidTuning>("ki_dial_data", 10);
     this->kd_publisher = node->create_publisher<scion_types::msg::PidTuning>("kd_dial_data", 10);
-    
+
     ui->setupUi(this);
 
     connect(ui->kp_val,  &QLineEdit::returnPressed, this, &PIDController::on_KpValue_editingFinished);
@@ -84,6 +84,12 @@ void PIDController::on_KdValue_editingFinished()
     executeCommands(ui->kdOutput, message);
 }
 
+//string brain = "brain";
+//string mediator = "mediator";
+//string[] array = ["brain", "mediator"]
+
+//json_string["nodes_to_enable"] = array;
+//return json_string
 
 void PIDController::on_Tuning_Axis_currentIndexChanged(int index)
 {

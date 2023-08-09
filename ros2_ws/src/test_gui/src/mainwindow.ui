@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1233</width>
-    <height>682</height>
+    <width>2503</width>
+    <height>1510</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -220,7 +220,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton">
+            <widget class="QPushButton" name="brain">
              <property name="minimumSize">
               <size>
                <width>200</width>
@@ -246,7 +246,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_2">
+            <widget class="QPushButton" name="mediator">
              <property name="minimumSize">
               <size>
                <width>200</width>
@@ -272,7 +272,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_3">
+            <widget class="QPushButton" name="pid">
              <property name="minimumSize">
               <size>
                <width>200</width>
