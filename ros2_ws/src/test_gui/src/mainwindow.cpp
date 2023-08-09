@@ -54,19 +54,3 @@ void MainWindow::on_homeButton_clicked()
 //     executeTerminalCommand("python3 ~/master/scripts/vision/make_dataset.py");
 // }
 
-
-
-void MainWindow::on_brain_clicked()
-{
-
-}
-
-void MainWindow::on_mediator_clicked()
-{
-
-}
-
-void MainWindow::on_pid_clicked()
-{
-
-}

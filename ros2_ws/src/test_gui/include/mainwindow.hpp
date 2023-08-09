@@ -28,11 +28,6 @@ private slots:
     // void on_visionButton_clicked();
     // void executeTerminalCommand(const char* command);
 
-    void on_brain_clicked();
-
-    void on_mediator_clicked();
-
-    void on_pid_clicked();
 
 private:
     Ui::MainWindow *ui;
