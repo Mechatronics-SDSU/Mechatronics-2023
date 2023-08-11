@@ -23,6 +23,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/CanFrame.msg"
   "msg/Datapoint.msg"
   "msg/Idea.msg"
+  "msg/JsonString.msg"
   "msg/Keypoint2Di.msg"
   "msg/Orientation.msg"
   "msg/PidTuning.msg"

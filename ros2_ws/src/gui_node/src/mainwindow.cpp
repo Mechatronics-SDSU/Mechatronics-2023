@@ -3,6 +3,8 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include <QString>
+#include "scion_types/msg/json_string.hpp"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -12,12 +14,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->stackedWidget->insertWidget(1, &_pid_controller);
     ui->stackedWidget->insertWidget(2, &_mission_planner);
     ui->nodes_to_enable->setReadOnly(true);
-    this->json_string["nodes_to_enable"] = this->jsonArray;
+    // this->json_string["nodes_to_enable"] = this->jsonArray;
 
     QString styleSheet = "color: #607cff; background-color: #242526;";
     ui->nodes_to_enable->setStyleSheet(styleSheet);
 //    connect(&_pid_controller, SIGNAL(HomeClicked()), this, SLOT(moveHome()));
 //    connect(&_mission_planner, SIGNAL(HomeClicked()), this, SLOT(moveHome()));
+
+    this->json_gui_node = rclcpp::Node::make_shared("json_gui_node");
+    this->json_string_publisher = json_gui_node->create_publisher<scion_types::msg::JsonString>("gui_data", 10);
 
 }
 
@@ -104,4 +109,11 @@ void MainWindow::on_pid_toggled(bool checked)
                               ui->pid->text().toStdString()), this->jsonArray.end());
     }
     print_nodes_list();
+}
+
+void MainWindow::on_start_nodes_clicked()
+{
+    auto message = scion_types::msg::JsonString();
+    message.data = this->json_string.dump(4);
+    this->json_string_publisher->publish(message);
 }

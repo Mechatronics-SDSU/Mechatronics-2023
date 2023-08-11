@@ -8,6 +8,8 @@
 #include <nlohmann/json.hpp>
 #include <vector>
 #include <string>
+#include "scion_types/msg/json_string.hpp"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -39,6 +41,7 @@ private slots:
     void on_mediator_toggled(bool checked);
 
     void on_pid_toggled(bool checked);
+    void on_start_nodes_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -48,5 +51,8 @@ private:
     using json = nlohmann::json;
     json jsonArray = json::array();
     json json_string;
+
+    rclcpp::Node::SharedPtr json_gui_node;
+    rclcpp::Publisher<scion_types::msg::JsonString>::SharedPtr json_string_publisher;
 };
 #endif // MAINWINDOW_H

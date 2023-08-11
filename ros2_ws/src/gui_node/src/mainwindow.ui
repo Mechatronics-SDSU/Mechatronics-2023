@@ -177,7 +177,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_8">
+           <widget class="QPushButton" name="start_nodes">
             <property name="minimumSize">
              <size>
               <width>200</width>
