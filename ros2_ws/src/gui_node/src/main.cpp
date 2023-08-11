@@ -1,22 +1,18 @@
-#include <QFile>
-#include <QApplication>
-#include <chrono>
-#include <unistd.h>
-#include "rclcpp/rclcpp.hpp"
 #include "mainwindow.hpp"
+#include <QApplication>
+#include <QFile>
 
-
-int main(int argc, char * argv[])
+int main(int argc, char *argv[])
 {
     rclcpp::init(argc, argv);
-    QApplication app(argc, argv);
-    QFile styleFile("/home/mechatronics/master/ros2_ws/src/gui_node/styles.qss");
+    QApplication a(argc, argv);
+    QFile styleFile("/home/mechatronics/master/ros2_ws/src/test_gui/Darkeum.qss");
     styleFile.open(QFile::ReadOnly);
     QString style(styleFile.readAll());
-    app.setStyleSheet(style);
-    MainWindow window;
-    window.show();
-    app.exec();
+    a.setStyleSheet(style);
+    MainWindow w;
+    w.show();
+    a.exec();
     rclcpp::shutdown();
     return 0;
 }
