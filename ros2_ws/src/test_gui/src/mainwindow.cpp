@@ -62,8 +62,6 @@ void MainWindow::on_homeButton_clicked()
 //     executeTerminalCommand("python3 ~/master/scripts/vision/make_dataset.py");
 // }
 
-<<<<<<< Updated upstream
-=======
 
 void MainWindow::on_brain_toggled(bool checked)
 {
@@ -107,4 +105,3 @@ void MainWindow::on_pid_toggled(bool checked)
     }
     print_nodes_list();
 }
->>>>>>> Stashed changes
