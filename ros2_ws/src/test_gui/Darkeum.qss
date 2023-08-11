@@ -505,10 +505,9 @@ QGroupBox::title::disabled
 QCheckBox::indicator
 {
     color: #b1b1b1;
-    background-color: #323232;
     border: 1px solid #b1b1b1;
-    width: 12px;
-    height: 12px;
+    width: 30px;
+    height: 30px;
 
 }
 
