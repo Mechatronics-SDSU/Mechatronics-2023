@@ -44,13 +44,16 @@ add_executable(gui_exec
   src/main.cpp
   src/mainwindow.cpp
   src/mission_planning.cpp
+  src/meow.cpp
   src/pid_controller.cpp
   include/mainwindow.hpp
   include/pid_controller.hpp
   include/mission_planning.hpp
+  include/meow.hpp
   src/mainwindow.ui
   src/mission_planning.ui
   src/pid_controller.ui
+  src/meow.ui
 
 )
 

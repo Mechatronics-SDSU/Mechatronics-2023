@@ -123,9 +123,9 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_5">
+           <widget class="QPushButton" name="meowButton">
             <property name="text">
-             <string>PushButton</string>
+             <string>Meow &lt;3</string>
             </property>
            </widget>
           </item>

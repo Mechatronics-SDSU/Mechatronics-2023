@@ -7,6 +7,8 @@ MissionPlanning::MissionPlanning(QWidget *parent) :
     ui(new Ui::MissionPlanning)
 {
     ui->setupUi(this);
+
+    ui->stackedWidget->insertWidget(1, ui->page_2);
 }
 
 MissionPlanning::~MissionPlanning()

@@ -25,6 +25,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Idea.msg"
   "msg/JsonString.msg"
   "msg/Keypoint2Di.msg"
+  "msg/Meow.msg"
   "msg/Orientation.msg"
   "msg/PidTuning.msg"
   "msg/Position.msg"

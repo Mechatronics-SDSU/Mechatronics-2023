@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     ui->stackedWidget->insertWidget(1, &_pid_controller);
     ui->stackedWidget->insertWidget(2, &_mission_planner);
+    ui->stackedWidget->insertWidget(3, &_meow);
     ui->nodes_to_enable->setReadOnly(true);
     // this->json_string["nodes_to_enable"] = this->jsonArray;
 
@@ -34,12 +35,16 @@ MainWindow::~MainWindow()
 void MainWindow::on_pid_controller_clicked()
 {
     ui->stackedWidget->setCurrentIndex(1);
-
 }
 
 void MainWindow::on_mission_planning_clicked()
 {
         ui->stackedWidget->setCurrentIndex(2);
+}
+
+void MainWindow::on_meowButton_clicked()
+{
+        ui->stackedWidget->setCurrentIndex(3);
 }
 
 //void MainWindow::moveHome()
