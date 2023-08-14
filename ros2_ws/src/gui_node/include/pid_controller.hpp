@@ -46,6 +46,7 @@ private slots:
     void on_kiClearButton_clicked();
     void on_kdClearButton_clicked();
     void on_clearAllButton_clicked();
+    void on_topicListButton_clicked();
     void navigateFocus(Qt::Key key);
 };
 

@@ -10,6 +10,7 @@
 #include <QKeyEvent>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QDoubleValidator>
 
 PIDController::PIDController(QWidget *parent) :
     QWidget(parent),
@@ -29,6 +30,17 @@ PIDController::PIDController(QWidget *parent) :
     connect(ui->kp_verticalSlider,  SIGNAL(valueChanged(int)), ui->kp_progressBar, SLOT(setValue(int)));
     connect(ui->ki_verticalSlider,  SIGNAL(valueChanged(int)), ui->ki_progressBar, SLOT(setValue(int)));
     connect(ui->kd_verticalSlider,  SIGNAL(valueChanged(int)), ui->kd_progressBar, SLOT(setValue(int)));
+
+    // Create a QDoubleValidator
+    QDoubleValidator *pidValRange = new QDoubleValidator(this);
+    pidValRange->setBottom(0.0);  // Set the lower bound
+    pidValRange->setTop(1.0);   // Set the upper bound
+
+    // Set the validator on the QLineEdit
+    ui->kp_val->setValidator(pidValRange);
+    ui->ki_val->setValidator(pidValRange);
+    ui->kd_val->setValidator(pidValRange);
+    
 
 }
 
@@ -128,6 +140,21 @@ void PIDController::on_clearAllButton_clicked()
     on_kdClearButton_clicked();
 }
 
+void PIDController::on_topicListButton_clicked()
+{
+    QProcess process;
+    process.setWorkingDirectory("/home/mechatronics/check-gui/ros2_ws"); // Set the desired working directory
+    QStringList arguments;
+    arguments << "-c" << "source /opt/ros/foxy/setup.bash && source install/setup.bash && ros2 topic list";
+
+    process.start("bash", arguments);
+
+    process.waitForFinished();
+
+    QByteArray output = process.readAllStandardOutput();
+    ui->topicList->setStyleSheet("color: white;");
+    ui->topicList->setText(output);
+}
 
 void PIDController::keyPressEvent(QKeyEvent *event)
 {
